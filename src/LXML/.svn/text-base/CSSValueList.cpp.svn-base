@@ -1,0 +1,792 @@
+#include "stdafx.h"
+#include "LXML2.h"
+
+#include "CSSValueList.h"
+
+#include "CSSPrimitiveValue.h"
+
+#include "parsecolor.h"
+#include "cssunits.h"
+
+namespace System
+{
+namespace Web
+{
+
+// TODO, put this function somewhere else
+CSSPrimitiveValue* CreateCSSPrimitiveValue(int propertyIndex)
+{
+	CSSPrimitiveValue* p = new CSSPrimitiveValue;
+	p->m_propertyIndex = propertyIndex;
+	return p;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CSSValueList
+
+CSSValueList::CSSValueList()
+{
+	m_propertyIndex = -1;
+
+	m_pListener = NULL;
+}
+
+CSSValueList::~CSSValueList()
+{
+}
+
+/*
+void CSSValueList::FinalRelease()
+{
+	for (int i = 0; i < m_items.GetSize(); i++)
+	{
+//		m_items[i]->Release();
+	}
+	m_items.RemoveAll();
+}
+*/
+
+void CSSValueList::UpdateCSSText()
+{
+	ASSERT(0);
+#if 0
+
+	switch (m_propertyIndex)
+	{
+	// comma separated values
+	case CSSProperty_font_family:
+		{
+			StringW* str;
+
+			for (int i = 0; i < m_items.GetSize(); i++)
+			{
+				if (i > 0) str += OLESTR(",");
+
+				sysstring cssText = m_items[i]->get_cssText();
+
+				str += cssText;
+			}
+
+			m_cssText = str;
+		}
+		break;
+
+	case CSSProperty_enable_background:
+		{
+			// TODO
+		}
+		break;
+
+	// 'none' or comma separated list
+	case CSSProperty_stroke_dasharray:
+	case CSSProperty_behavior:
+	case -2:	// <shadow>
+		{
+			if (m_items.GetSize() == 0)
+			{
+				m_cssText = OLESTR("none");
+			}
+			else
+			{
+				sysstring str;
+
+				for (int i = 0; i < m_items.GetSize(); i++)
+				{
+					if (i > 0) str += OLESTR(",");
+
+					sysstring cssText = m_items[i]->get_cssText();
+
+					str += cssText;
+				}
+
+				m_cssText = str;
+			}
+		}
+		break;
+
+	case CSSProperty_content:
+		{
+			if (m_items.GetSize() == 0)
+			{
+				m_cssText = OLESTR("normal");
+			}
+			else
+			{
+				// TODO
+				ASSERT(0);
+			}
+		}
+		break;
+
+	default:
+		ASSERT(0);
+	}
+#endif
+}
+
+ErrorCode CSSValueList::ParseCSSText(StringIn newstring)
+{
+	CStringw cstr(newstring);
+
+	const WCHAR* newVal = cstr.c_str();
+	ASSERT(newVal);
+
+	switch (m_propertyIndex)
+	{
+	case CSSProperty_font_family:
+		{
+			const WCHAR* p = newVal;
+
+			while (*p)
+			{
+				String str = NULL;
+
+				CSSUnitType stringType = CSS_UNKNOWN;
+
+				if (*p == L'"' || *p == L'\'')
+				{
+					int delimiter = *p;
+					p++;
+
+					const WCHAR* start = p;
+					while (*p && *p != delimiter)
+					{
+						p++;
+					}
+					str = string_copy(start, p - start);
+
+					if (*p == delimiter)
+					{
+						p++;
+
+						stringType = CSS_STRING;
+					}
+
+					while (isspace(*p)) p++;
+				}
+				else
+				{
+					String strbuilder;
+
+					while (*p)
+					{
+						if (*p == ',')
+							break;
+
+						if (isspace(*p))
+						{
+							p++;
+							while (isspace(*p)) p++;
+							strbuilder += L" ";
+						}
+						else
+						{
+							strbuilder += *p;
+							p++;
+						}
+					}
+
+					str = strbuilder;
+				//	str = str->TrimRight();
+
+					if (str == L"serif" ||
+						str == L"sans-serif" ||
+						str == L"cursive" ||
+						str == L"fantasy" ||
+						str == L"monospace")
+					{
+						stringType = CSS_IDENT;
+					}
+					else
+					{
+						stringType = CSS_STRING;
+					}
+				}
+
+				if (stringType != CSS_UNKNOWN && str.GetLength() > 0)
+				{
+					CSSPrimitiveValue* pValue = new CSSPrimitiveValue;
+				//	pValue->AddRef();
+
+					ASSERT(str.GetLength() > 0);
+					pValue->setStringValue(stringType, str);
+
+					pValue->m_pListener = this;
+					m_items.Add(pValue);
+				}
+
+				if (*p == L',')
+				{
+					p++;
+				}
+
+				while (isspace(*p)) p++;
+			}
+		}
+		break;
+#if 0
+	case CSSProperty_behavior: // 'none' or comma separated list of urls
+		{
+			if (std::wcscmp(newVal, L"none"))
+			{
+				vector<StringW*> values;
+				GetCommaSepStringArray(newstring, values);
+
+				for (int i = 0; i < values.GetSize(); i++)
+				{
+					CSSPrimitiveValue* pValue = new CSSPrimitiveValue;
+					//pValue->AddRef();
+					pValue->m_propertyIndex = -4;	// <uri> with no associated property
+
+					pValue->set_cssText(values[i]);
+
+					pValue->m_pListener = this;
+					m_items.Add(pValue);
+				}
+			}
+		}
+		break;
+
+	case CSSProperty_stroke_dasharray:	// 'none' or comma separated list of lenghts
+		{
+			if (std::wcscmp(newVal, L"none"))
+			{
+				vector<StringW*> values;
+				GetCommaSepStringArray(newstring, values);
+
+				for (int i = 0; i < values.GetSize(); i++)
+				{
+					CSSPrimitiveValue* pValue = new CSSPrimitiveValue;
+				//	pValue->AddRef();
+					pValue->m_propertyIndex = -3;	// <length> with no associated property
+
+					pValue->set_cssText(values[i]);
+
+					pValue->m_pListener = this;
+					m_items.Add(pValue);
+				}
+			}
+		}
+		break;
+
+#if 0	// Now a shorthand
+	case CSSProperty_text_decoration:
+		{
+			if (tcscmp(newVal, OLESTR("none") != 0)
+			{
+				OLECHAR* p = newVal;
+
+				while (*p)
+				{
+					sysstring str = OLESTR("";
+
+					while (*p && !iswspace(*p))
+					{
+						str += *p;
+						p++;
+					}
+
+					if (!tcscmp(str, OLESTR("underline") ||
+						!tcscmp(str, OLESTR("overline") ||
+						!tcscmp(str, OLESTR("line-through") ||
+						!tcscmp(str, OLESTR("blink"))
+					{
+						CSSPrimitiveValue>* pValue;
+						CSSPrimitiveValue>::CreateInstance(&pValue);
+						pValue->AddRef();
+
+						pValue->setStringValue(CSS_IDENT, str);
+
+						pValue->m_pListener = this;
+						m_items.Add(pValue);
+					}
+
+					while (iswspace(*p)) p++;
+				}
+			}
+		}
+		break;
+#endif
+
+	case CSSProperty_border_top_left_radius:
+	case CSSProperty_border_top_right_radius:
+	case CSSProperty_border_bottom_left_radius:
+	case CSSProperty_border_bottom_right_radius:
+
+	case CSSProperty_border_spacing:
+
+		// "Length Length?"
+		// A length, optionally followed by another length
+		{
+			vector<StringW*> values;
+			GetSpaceSepStringArray(newstring, values);
+
+			for (int i = 0; i < values.GetSize(); i++)
+			{
+				CSSPrimitiveValue* pValue = CreateCSSPrimitiveValue(-3);// <length> with no associated property
+				if (pValue)
+				{
+					pValue->set_cssText(values[i]);
+
+					pValue->m_pListener = this;
+					m_items.Add(pValue);
+				}
+			}
+		}
+		break;
+
+	case CSSProperty_enable_background:
+		{
+			// TODO
+		}
+		break;
+
+		/*
+		 It seems that these don't use the same, but it doesn't matter here
+		since we're only collecting a comma separated list of
+		color/length valuelists (in any order)
+		*/
+	case CSSProperty_text_shadow:
+// "none | [<shadow>, ] * <shadow>"
+// <shadow>:  "[<color> <length> <length> <length>? | <length> <length> <length>? <color>?]".
+
+	case CSSProperty_box_shadow:
+		/*
+		none | [ <length> <length> <length>? || <color> ] [ , <length> <length> <length>? || <color> ]+ 
+		*/
+
+		{
+			ASSERT(0);
+#if 0
+			if (tcsicmp(newVal, OLESTR("none")) != 0)
+			{
+				const OLECHAR* p = newVal;
+				while (*p)
+				{
+					CSSValueList* pValueList = new CSSValueList;
+			//		pValueList->AddRef();
+					pValueList->m_propertyIndex = -2;	// <shadow>
+
+					while (*p && *p != L',')
+					{
+						CSSUnitType unitType;
+						LDraw::Color color;
+						double floatValue;
+
+						const OLECHAR* pp;
+						if (unitType = ParseColor(p, &pp, &color))
+						{
+							CSSPrimitiveValue* pValue = CreateCSSPrimitiveValue(-2);// <color> with no associated property
+							pValue->GetCSSTextRef().Empty();
+							pValue->GetCSSTextRef().Attach(SysAllocStringLen(p, pp-p));
+							pValue->SetPrimitiveType(unitType, pValue->GetCSSTextRef(), color);
+
+							pValue->m_pListener = pValueList;
+							pValueList->m_items.Add(pValue);
+						}
+						else if (unitType = ParseValueUnitString(p, &pp, &floatValue))
+						{
+							CSSPrimitiveValue* pValue = CreateCSSPrimitiveValue(-3);// <length> with no associated property
+							pValue->GetCSSTextRef().Empty();
+							pValue->GetCSSTextRef().Attach(SysAllocStringLen(p, pp-p));
+							pValue->SetPrimitiveType(unitType, floatValue);
+
+							pValue->m_pListener = pValueList;
+							pValueList->m_items.Add(pValue);
+						}
+						else
+						{
+							ASSERT(0);	// TODO remove
+						}
+
+						p = pp;
+						while (iswspace(*p)) p++;
+					}
+
+					pValueList->m_pListener = this;
+					m_items.Add(pValueList);
+
+					if (*p == L',') p++;
+
+					while (iswspace(*p)) p++;
+				}
+			}
+#endif
+		}
+		break;
+
+	case CSSProperty_counter_increment:
+	case CSSProperty_counter_reset:
+		{
+			if (!_wcsicmp(newVal, L"none"))
+			{
+				return Success;
+			}
+			else
+			{
+				const WCHAR* p = newVal;
+				while (*p)
+				{
+					CSSPrimitiveValue* pValue = CreateCSSPrimitiveValue(-5);// <ident> with no associated property
+		//			pValue->m_propertyIndex = -5;
+					const WCHAR* start = p;
+					while (*p)
+					{
+						if (std::isspace(*p))
+							break;
+
+						//name += *p;
+						p++;
+					}
+					StringW* name = new StringW(string_copy(start, p - start));
+
+					pValue->setStringValue(CSS_IDENT, name);
+
+					if (false)
+					{
+						CSSValueList* pValueList = new CSSValueList;
+			//			pValueList->AddRef();
+
+						pValue->m_pListener = pValueList;
+						pValueList->m_items.Add(pValue);
+
+						pValueList->m_pListener = this;
+						m_items.Add(pValueList);
+					}
+					else
+					{
+						pValue->m_pListener = this;
+						m_items.Add(pValue);
+					}
+
+					while (std::isspace(*p)) p++;
+				}
+			}
+		}
+		break;
+
+	case CSSProperty_content:
+		{
+			if (!_wcsicmp(newVal, L"normal"))
+			{
+				return Success;
+			}
+			else
+			{
+				const WCHAR* p = newVal;
+			// Spaces at start of string have already been skipped
+				while (*p)
+				{
+					if (*p == L'"' || *p == L'\'')	// String
+					{
+						int delimiter = *p;
+						p++;
+
+						//sysstring string;
+						const WCHAR* start = p;
+						while (*p)
+						{
+							if (*p == delimiter)
+							{
+								break;
+							}
+
+							p++;
+						}
+						StringW* string = new StringW(string_copy(start, p - start));
+
+						if (*p != delimiter)
+						{
+							return Error_InvalidArgument;
+						}
+						p++;
+
+						CSSPrimitiveValue* pValue = new CSSPrimitiveValue;
+					//	pValue->AddRef();
+
+						pValue->setStringValue(CSS_STRING, string);
+
+						pValue->m_pListener = this;
+						m_items.Add(pValue);
+					}
+					else if (!_wcsnicmp(p, L"attr", 4))
+					{
+						ASSERT(0);
+#if 0
+						p += 4;
+
+						while (iswspace(*p)) p++;
+
+						if (*p != L'(')
+							return Error_InvalidArgument;
+
+						while (iswspace(*p)) p++;
+						
+						m_stringValue = OLESTR("";
+
+						while (*p && !iswspace(*p))
+						{
+							WCHAR c2[] = {*p, 0};
+							m_stringValue += c2;
+
+							p++;
+						}
+
+						while (iswspace(*p)) p++;
+
+						if (*p != L')')
+							return Error_InvalidArgument;
+
+						m_unitType = CSS_ATTR;
+#endif
+					}
+					else if (!_wcsnicmp(p, L"counter", 7))
+					{
+						p += 7;
+						while (std::isspace(*p)) p++;
+
+						if (*p == L'(')
+						{
+							p++;
+
+							//sysstring identifier;
+							//sysstring listStyle;
+
+							const WCHAR* start = p;
+
+						// Get identifier
+							while (*p)
+							{
+								if (!(std::isalnum(*p) || *p == '-'))
+								{
+									break;
+								}
+
+								//identifier += *p;
+								p++;
+							}
+							StringW* identifier = new StringW(string_copy(start, p - start));
+
+							while (std::isspace(*p)) p++;
+
+							StringW* listStyle = NULL;
+
+						// Get optional liststyle
+							if (*p == L',')
+							{
+								p++;
+								while (std::isspace(*p)) p++;
+
+								const WCHAR* start = p;
+
+								while (*p)
+								{
+									if (!(std::isalnum(*p) || *p == '-'))
+									{
+										break;
+									}
+
+									//listStyle += *p;
+									p++;
+								}
+								listStyle = new StringW(string_copy(start, p - start));
+
+								while (std::isspace(*p)) p++;
+							}
+
+							if (*p == L')')
+							{
+								p++;
+
+								CSSPrimitiveValue* pValue = new CSSPrimitiveValue;
+					//			pValue->AddRef();
+
+								pValue->m_counterValue = new CSSCounter;
+								//pValue->m_counterValue->AddRef();
+
+								pValue->m_counterValue->m_identifier = identifier;
+								pValue->m_counterValue->m_listStyle = listStyle;
+
+								pValue->m_unitType = CSS_COUNTER;
+								pValue->m_pListener = this;
+								m_items.Add(pValue);
+							}
+							else
+							{
+								ASSERT(0);	// TODO remove
+								return Error_InvalidArgument;
+							}
+						}
+						else
+						{
+							ASSERT(0);	// TODO remove
+							return Error_InvalidArgument;
+						}
+					}
+					else
+					{
+						ASSERT(0);
+						return Error_InvalidArgument;
+					}
+
+					while (std::isspace(*p)) p++;
+				}
+			}
+		}
+		break;
+#endif
+	default:	// unknown property
+		{
+			ASSERT(0);
+			return Error;
+		}
+		break;
+	}
+
+	return Success;
+}
+
+unsigned int CSSValueList::get_length() const
+{
+	return m_items.size();
+}
+
+CSSValue* CSSValueList::item(unsigned int index)
+{
+	if (index < m_items.size())
+	{
+		return m_items[index];
+	}
+	else
+		return NULL;
+}
+
+void CSSValueList::deleteValue(unsigned int index)
+{
+	if (index < m_items.size())
+	{
+		//m_items[index]->m_pListener = NULL;	// TODO, have this
+		//m_items[index]->Release();
+		m_items.RemoveAt(index);
+
+		m_bCSSTextUpdated = false;
+
+		if (m_pListener)
+		{
+			m_pListener->OnCSSValueChanged(this);
+		}
+	}
+}
+
+unsigned int CSSValueList::insertValue(StringIn value, unsigned int index)
+{
+// TODO here, call part of parseCSSText
+
+	CSSPrimitiveValue* pValue = new CSSPrimitiveValue;
+//	pValue->AddRef();
+
+	switch (m_propertyIndex)
+	{
+	case CSSProperty_font_family:
+		{
+			pValue->setStringValue(CSS_STRING, value);
+		}
+		break;
+
+	case CSSProperty_stroke_dasharray:
+		{
+			pValue->set_cssText(value);
+		}
+		break;
+	}
+
+	pValue->m_pListener = this;
+	m_items.InsertAt(index, pValue);
+
+	m_bCSSTextUpdated = false;
+
+	if (m_pListener)
+	{
+		m_pListener->OnCSSValueChanged(this);
+	}
+
+	// TODO
+	return 0;
+}
+
+String CSSValueList::get_cssText()
+{
+	if (!m_bCSSTextUpdated)
+	{
+		UpdateCSSText();
+		m_bCSSTextUpdated = true;
+	}
+
+	return CSSValue::get_cssText();
+}
+
+void CSSValueList::set_cssText(StringIn newVal)
+{
+	{
+		for (size_t i = 0; i < m_items.GetSize(); i++)
+		{
+			// TODO set m_pListener = NULL
+//			m_items[i]->Release();
+		}
+		m_items.clear();
+	}
+
+	// TODO
+	if (newVal.CompareNoCase(L"inherit") == 0)
+	{
+		m_cssText = newVal;
+		m_cssValueType = CSS_INHERIT;
+
+		m_bCSSTextUpdated = true;
+	}
+	else
+	{
+		ParseCSSText(newVal);
+
+		m_cssValueType = CSS_VALUE_LIST;
+
+		m_cssText = newVal;
+		m_bCSSTextUpdated = true;
+	}
+
+	if (m_pListener)
+	{
+		m_pListener->OnCSSValueChanged(this);
+	}
+}
+
+// virtual
+void CSSValueList::OnCSSValueChanged(CSSPrimitiveValue* pValue)
+{
+//	UpdateCSSText();
+	m_bCSSTextUpdated = false;
+	if (m_pListener) m_pListener->OnCSSValueChanged(this);
+}
+
+// virtual
+void CSSValueList::OnCSSValueChanged(CSSValueList* pValue)
+{
+//	UpdateCSSText();
+	m_bCSSTextUpdated = false;
+	if (m_pListener) m_pListener->OnCSSValueChanged(this);
+}
+
+/*
+void CSSValueList::operator = (const CSSValueList& value)
+{
+	ASSERT(0);
+}
+
+void CSSValueList::operator += (const CSSValueList& value)
+{
+	ASSERT(0);
+}
+*/
+
+}	// Web
+}

@@ -1,0 +1,67 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+Panel::Panel() : UIElement(get_Class())
+{
+}
+
+Panel::Panel(DependencyClass* depClass) : UIElement(depClass)
+{
+}
+
+size_t Panel::GetChildrenCount()
+{
+	return m_children.size();
+}
+
+/*
+void Panel::OnSetRoot(IRootVisual* root)
+{
+	unsigned int nchildren = GetChildrenCount();
+	for (unsigned int i = 0; i < nchildren; ++i)
+	{
+		Visual* child = GetChild(i);
+
+		child->SetRoot(root);
+	}
+}
+*/
+
+void Panel::AddChild(Visual* element)
+{
+	element->set_Parent(this);
+	m_children.push_back(element);
+
+	/*
+	if (element->GetRoot() != GetRoot())
+	{
+		element->SetRoot(
+	}
+	m_children.push_back(element);
+	*/
+}
+
+Visual* Panel::GetChild(size_t index)
+{
+	return m_children[index];
+}
+
+/*
+void Panel::RenderRetained(ManagedRetainedRenderContext renderContext)
+{
+	for (size_t i = 0; i < m_children.size(); ++i)
+	{
+		Visual* child = m_children[i];
+
+		child->RenderRetained(renderContext);
+	}
+}
+*/
+
+}	// Gui
+}	// System

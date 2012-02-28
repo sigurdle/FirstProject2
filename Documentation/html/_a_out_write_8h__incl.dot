@@ -1,0 +1,18 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="include/CodeComp/AOutWrite.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="codegen.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$codegen_8h.html"];
+  Node2 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="objectfileparser.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$objectfileparser_8h.html"];
+  Node3 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="LFC/Debug.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_debug_8h.html"];
+  Node2 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="LFC/disasm.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$disasm_8h.html"];
+  Node2 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="ir.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$ir_8h.html"];
+  Node1 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="a_out.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$a__out_8h.html"];
+}

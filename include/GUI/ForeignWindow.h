@@ -1,0 +1,211 @@
+namespace System
+{
+
+inline size_t hash_value(const HWND hWnd)
+{
+	return (size_t)hWnd;
+}
+
+namespace Gui
+{
+
+#if 0
+class GUIEXT Window : public ContentControl
+{
+protected:
+
+	CTOR Window(DependencyClass* depClass);
+
+public:
+
+	CTOR Window();
+
+	DEFINE_THIS(_Window)
+
+	bool Show();
+	void Hide();
+
+	void OnMouseButtonDown(LDraw::PointF clientMousePos, int button);
+
+	float get_Left();
+	void set_Left(float left);
+
+	float get_Top();
+	void set_Top(float top);
+
+	bool get_Topmost();
+	void set_Topmost(bool topmost);
+
+	bool get_Minimized();
+	void set_Minimized(bool minimized);
+
+	String get_TitleText();
+	void set_TitleText(StringIn title);
+
+	Window* get_Owner();
+	void set_Owner(Window* owner);
+
+	Element* get_Icon();
+	void set_Icon(Element* element);
+
+	void set_RT(StringIn title);
+
+	void Restore();
+	void Minimize();
+	void Maximize();
+
+	LDraw::Bitmap* GetContentBitmap();
+
+	int get_State();
+
+	static Window* FromHwnd(HWND hWnd);
+
+	static _Window get_ActiveWindow();
+	static _Window get_ForegroundWindow();
+	static _Window get_FocusWindow();
+	static Window* get_GetDesktopWindow();	// Never changes
+
+	static Window* Find(const WCHAR* className, const WCHAR* windowName = NULL);
+	static _Window Find(const Expressive::typed_expression<StringW*>& className);
+
+	static ValueBinding<Window*> ActiveWindowBinding;
+	static ValueBinding<Window*> ForegroundWindowBinding;
+	static ValueBinding<Window*> FocusWindowBinding;
+
+	static DependencyClass* get_Class();
+
+	static TypedDependencyProperty<float>* get_LeftProperty();
+	static TypedDependencyProperty<float>* get_TopProperty();
+
+	static TypedDependencyProperty<float> ContentLeftProperty;
+	static TypedDependencyProperty<float> ContentTopProperty;
+	static TypedDependencyProperty<bool> TopmostProperty;
+	static TypedDependencyProperty<int> StateProperty;
+	static TypedDependencyProperty<StringW*> TitleTextProperty;
+	static TypedDependencyProperty<Element*> IconProperty;
+	static TypedDependencyProperty<StringObject*> RTProperty;
+	static TypedDependencyProperty<Window*> OwnerProperty;
+	static TypedDependencyProperty<Vector<Window*>*> OwnedProperty;
+
+	// Computed properties
+	static TypedDependencyProperty<float> RightProperty;
+	static TypedDependencyProperty<float> BottomProperty;
+
+protected:
+
+	virtual UIElement* CreateShadowTree();
+	virtual bool OnSetRoot(IRootVisual* root);
+
+public:
+
+	static unordered_map<HWND,Window*> m_windows;
+
+	list<Window*>::iterator m_windowIt;
+	bool m_animate;
+
+private:
+
+	static DependencyClass* Class;
+};
+
+class _Window : public _ContentControl
+{
+public:
+
+	CTOR _Window(const Expressive::expression& exp) : _ContentControl(exp)
+	{
+	}
+
+	Expressive::typed_expression<int> getState() const
+	{
+		return getProperty(Window::StateProperty);
+	}
+
+	Expressive::typed_expression<StringObject*> getRT() const
+	{
+		return getProperty(Window::RTProperty);
+	}
+
+	Expressive::typed_expression<float> getLeft() const
+	{
+		return getProperty(*Window::get_LeftProperty());
+	}
+
+	Expressive::typed_expression<float> getTop() const
+	{
+		return getProperty(*Window::get_TopProperty());
+	}
+
+	Expressive::typed_expression<float> getWidth() const
+	{
+		return getProperty(Window::WidthProperty);
+	}
+
+	Expressive::typed_expression<float> getHeight() const
+	{
+		return getProperty(Window::HeightProperty);
+	}
+
+	Expressive::typed_expression<float> getContentLeft() const
+	{
+		return getProperty(Window::ContentLeftProperty);
+	}
+
+	Expressive::typed_expression<float> getContentTop() const
+	{
+		return getProperty(Window::ContentTopProperty);
+	}
+
+	Expressive::typed_expression<bool> getTopmost() const
+	{
+		return getProperty(Window::TopmostProperty);
+	}
+
+	Expressive::typed_expression<StringW*> getTitleText() const
+	{
+		return getProperty(Window::TitleTextProperty);
+	}
+
+	_Window getOwner() const
+	{
+		return getProperty(Window::OwnerProperty);
+	}
+
+	_Visual getIcon() const
+	{
+		return getProperty(Window::IconProperty);
+	}
+};
+#endif
+
+////
+
+class GUIEXT ForeignWindow : public Window
+{
+public:
+
+	CTOR ForeignWindow();
+
+	class ClientAreaContent : public Object
+	{
+	public:
+	};
+
+	static DependencyClass Class;
+
+	ForeignPlatformWindow* m_wnd;
+
+protected:
+
+	virtual Visual* CreateVisual();
+
+	virtual bool HasLocalPropertyValue(PropertyValue* pPropertyVal);
+	virtual Variant GetLocalPropertyValue(PropertyValue* pPropertyVal);
+
+private:
+
+	ClientAreaContent* m_content;
+};
+
+}	// Gui
+}

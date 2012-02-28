@@ -1,0 +1,1626 @@
+#include "stdafx.h"
+#include "LXML2.h"
+#include "CSSPrimitiveValue.h"
+
+//#include "../LXUI/parsestring.h"
+//#include "../LXUI/parsenumber.h"
+
+#include "parsecolor.h"
+#include "cssunits.h"
+
+//int IdentNameToIndex(const OLECHAR* ident, const OLECHAR* idents[]);
+
+namespace System
+{
+namespace Web
+{
+
+WEBEXT int IdentNameToIndex(StringIn ident, ImmutableString<WCHAR> idents[]);
+
+extern ImmutableString<WCHAR> FontStretchIdents[];
+extern ImmutableString<WCHAR> BorderCollapseIdents[];
+extern ImmutableString<WCHAR> EmptyCellsIdents[];
+extern ImmutableString<WCHAR> BorderStyleIdents[];
+
+ImmutableString<WCHAR> BorderStyleIdents[] =
+{
+	WSTR("none"),
+	WSTR("hidden"),
+	WSTR("dotted"),
+	WSTR("dashed"),
+	WSTR("solid"),
+	WSTR("double"),
+	WSTR("dot-dash"),
+	WSTR("dot-dot-dash"),
+	WSTR("wave"),
+	WSTR("groove"),
+	WSTR("ridge"),
+	WSTR("inset"),
+	WSTR("outset"),
+	NULL
+};
+
+ImmutableString<WCHAR> FontStretchIdents[] =
+{
+	WSTR("normal"),
+	WSTR("wider"),
+	WSTR("narrower"),
+	WSTR("ultra-condensed"),
+	WSTR("extra-condensed"),
+	WSTR("condensed"),
+	WSTR("semi-condensed"),
+	WSTR("semi-expanded"),
+	WSTR("expanded"),
+	WSTR("extra-expanded"),
+	WSTR("ultra-expanded"),
+	NULL
+};
+
+ImmutableString<WCHAR> BorderCollapseIdents[] =
+{
+	WSTR("collapse"),
+	WSTR("separate"),
+	NULL,
+};
+
+ImmutableString<WCHAR> EmptyCellsIdents[] =
+{
+	WSTR("show"),
+	WSTR("hide"),
+	NULL,
+};
+
+//#include "LRGBColor.h"
+
+#if 0
+_bstr_t stripspaces(BSTR s);
+#endif
+
+String ExtractUrl(StringIn str)
+{
+	ASSERT(0);
+#if 0
+
+	StringIn::const_iterator<WCHAR> bstr = str.begin();
+
+	if (towlower(bstr[0]) == L'u' &&
+		towlower(bstr[1]) == L'r' &&
+		towlower(bstr[2]) == L'l')
+	{
+		const WCHAR* p = bstr;
+		p += 3;	// skip 'url'
+
+		while (*p && isspace(*p)) p++;
+		if (*p != L'(') return WSTR(""); p++;
+
+		while (*p && isspace(*p)) p++;
+
+		StringStream url;
+
+		if (*p == L'"' || *p == L'\'')
+		{
+			int delimiter = *p++;
+			while (*p && *p != delimiter)
+			{
+				//WCHAR c2[] = {*p, 0};
+				url << *p;//c2;
+				p++;
+			}
+
+			while (*p && std::isspace(*p)) p++;
+
+			p++;	// closing paranthese
+		}
+		else
+		{
+			while (*p && *p != L')')
+			{
+			//	WCHAR c2[] = {*p, 0};
+				url << *p;
+				p++;
+			}
+		}
+
+		if (*p != L')') return WSTR(""); p++;
+
+		while (*p && isspace(*p)) p++;
+		if (*p != 0) return WSTR("");
+
+		//strid.TrimLeft();
+		//strid.TrimRight();
+
+	// TODO, url trim right
+		//url.TrimRight();
+
+		return buffer.DetachToString()->TrimRight();
+	}
+	else
+#endif
+	{
+		return nullptr;
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////
+// CSSPrimitiveValue
+
+CSSPrimitiveValue::CSSPrimitiveValue()
+{
+	m_propertyIndex = -1;
+	//m_pProperty = NULL;
+	m_unitType = CSS_UNKNOWN;
+
+	m_floatValue = 0;
+	m_floatValueUserUnit = 0;
+	m_colorValue = nullptr;
+	m_rectValue = nullptr;
+	m_counterValue = nullptr;
+
+	m_pListener = nullptr;
+}
+
+CSSPrimitiveValue::~CSSPrimitiveValue()
+{
+	if (m_colorValue)
+	{
+		m_colorValue->m_pListener = nullptr;
+//		m_colorValue->Release();
+		m_colorValue = nullptr;
+	}
+
+	if (m_rectValue)
+	{
+		m_rectValue->m_pListener = nullptr;
+//		m_rectValue->Release();
+		m_rectValue = nullptr;
+	}
+
+	// TODO have this
+//	ASSERT(m_pListener == NULL);
+}
+
+void CSSPrimitiveValue::SetPrimitiveType(CSSUnitType unitType, double floatValue)
+{
+	ASSERT(
+			unitType == CSS_NUMBER ||
+			unitType == CSS_PERCENTAGE ||
+			unitType == CSS_EMS ||
+			unitType == CSS_EXS ||
+			unitType == CSS_PX ||
+			unitType == CSS_CM ||
+			unitType == CSS_MM ||
+			unitType == CSS_IN ||
+			unitType == CSS_PT ||
+			unitType == CSS_PC ||
+			unitType == CSS_DEG ||
+			unitType == CSS_RAD ||
+			unitType == CSS_GRAD ||
+			unitType == CSS_MS ||
+			unitType == CSS_S ||
+			unitType == CSS_HZ ||
+			unitType == CSS_KHZ ||
+			unitType == CSS_DIMENSION);
+
+	m_unitType = unitType;
+	m_floatValue = floatValue;
+	m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(unitType, floatValue);
+}
+
+void CSSPrimitiveValue::SetPrimitiveType(CSSUnitType unitType, StringIn stringValue, Graphics::Color color)
+{
+	m_unitType = unitType;
+
+	if (unitType == CSS_IDENT)
+	{
+		m_stringValue = stringValue;
+	}
+	else if (unitType == CSS_RGBCOLOR)
+	{
+		SetRGBColor(color);
+	}
+	else
+		ASSERT(0);
+}
+
+void CSSPrimitiveValue::SetRGBColor(Graphics::Color clr)
+{
+	if (m_colorValue == nullptr)
+	{
+		m_colorValue = new RGBColor;
+		if (m_colorValue)
+		{
+//			m_colorValue->AddRef();
+			m_colorValue->m_pListener = this;
+		}
+	}
+
+	if (m_colorValue)
+	{
+		/*
+		m_colorValue->m_red->setFloatValue(CSS_NUMBER, GetRValue(clr));
+		m_colorValue->m_green->setFloatValue(CSS_NUMBER, GetGValue(clr));
+		m_colorValue->m_blue->setFloatValue(CSS_NUMBER, GetBValue(clr));
+		*/
+		m_colorValue->m_red->m_floatValue = m_colorValue->m_red->m_floatValueUserUnit = clr.GetR();
+		m_colorValue->m_red->m_unitType = CSS_NUMBER;
+
+		m_colorValue->m_green->m_floatValue = m_colorValue->m_green->m_floatValueUserUnit = clr.GetG();
+		m_colorValue->m_green->m_unitType = CSS_NUMBER;
+
+		m_colorValue->m_blue->m_floatValue = m_colorValue->m_blue->m_floatValueUserUnit = clr.GetB();
+		m_colorValue->m_blue->m_unitType = CSS_NUMBER;
+
+		m_colorValue->m_alpha = clr.GetAlpha()/255.0;
+
+		m_unitType = CSS_RGBCOLOR;
+	}
+}
+
+double FontSizes[7];
+
+void CSSPrimitiveValue::UpdateCSSText()
+{
+	switch (m_unitType)
+	{
+	case CSS_RGBCOLOR:
+		{
+			ASSERT(m_colorValue != nullptr);
+
+			WCHAR buf[32];
+
+			if (m_colorValue->m_alpha == 1.0)
+			{
+			// TODO, check for %
+				swprintf_s(buf, L"#%2.2X%2.2X%2.2X", (uint8)m_colorValue->m_red->m_floatValueUserUnit, (uint8)m_colorValue->m_green->m_floatValueUserUnit, (uint8)m_colorValue->m_blue->m_floatValueUserUnit);
+			}
+			else if (m_colorValue->m_alpha == 0.0)
+			{
+				//          OLESTR("rgba(0,0,0,0)"	// 'transparent' is shorter
+				wcscpy_s(buf, L"transparent");
+			}
+			else
+			{
+			// TODO, check for %
+				swprintf_s(buf, L"rgba(%d,%d,%d,%g)", (uint8)m_colorValue->m_red->m_floatValueUserUnit, (uint8)m_colorValue->m_green->m_floatValueUserUnit, (uint8)m_colorValue->m_blue->m_floatValueUserUnit, m_colorValue->m_alpha);
+			}
+
+			m_cssText = string_copy(buf);
+		}
+		break;
+
+	case CSS_RECT:
+		{
+			ASSERT(m_rectValue != nullptr);
+
+			WCHAR buf[256];
+
+			String top = m_rectValue->m_top->get_cssText();
+			String right = m_rectValue->m_right->get_cssText();
+			String bottom = m_rectValue->m_bottom->get_cssText();
+			String left = m_rectValue->m_left->get_cssText();
+
+			ASSERT(0);
+			//swprintf_s(buf, L"rect(%s,%s,%s,%s)", top->c_str(), right->c_str(), bottom->c_str(), left->c_str());
+
+			m_cssText = string_copy(buf);
+		}
+		break;
+
+	case CSS_ATTR:
+		{
+			ASSERT(0);
+#if 0
+
+			StringBuilderW strbuilder;
+			strbuilder << L"attr(";
+			strbuilder << *m_stringValue;
+			strbuilder << L")";
+
+			m_cssText = strbuilder.DetachToString()
+#endif
+		}
+		break;
+
+	case CSS_URI:
+		{
+			ASSERT(0);
+#if 0
+			m_cssText = OLESTR("url(");
+			m_cssText += m_stringValue;
+			m_cssText += OLESTR(")");
+#endif
+		}
+		break;
+
+	case CSS_IDENT:
+		{
+			m_cssText = m_stringValue;
+		}
+		break;
+
+	case CSS_STRING:
+		{
+			// ?? have '' around ?? and convert " to &xxx ?
+			m_cssText = m_stringValue;
+		}
+		break;
+
+	default:
+		ASSERT(0);
+	}
+}
+
+ErrorCode CSSPrimitiveValue::ParseCSSText(StringIn string)
+{
+	CStringw cstr(string); 
+	const WCHAR* newVal = cstr.c_str();
+	//ASSERT(newVal);
+
+	while (*newVal == ' ') ++newVal;
+
+	switch (m_propertyIndex)
+	{
+	case CSSProperty_text_align:
+	case CSSProperty_font_weight:
+	case CSSProperty_direction:
+
+	case CSSProperty_visibility:
+	case CSSProperty_display_role:
+	case CSSProperty_display_model:
+
+	case CSSProperty_overflow:
+	case CSSProperty_position:
+	case CSSProperty_float:
+	case CSSProperty_clear:
+
+	case CSSProperty_background_repeat:
+	case CSSProperty_background_attachment:
+
+	case CSSProperty_text_anchor:
+	case CSSProperty_unicode_bidi:
+	case CSSProperty_writing_mode:
+	case CSSProperty_alignment_baseline:
+	case CSSProperty_dominant_baseline:
+
+	case CSSProperty_list_style_type:
+	case CSSProperty_list_style_position:
+
+	case CSSProperty_background_position:	// Is this always ident? (check that)
+	case CSSProperty_vertical_align:	// Is this always ident? (check that)
+
+	case CSSProperty_wrap_option:
+	case CSSProperty_linefeed_treatment:
+	case CSSProperty_white_space_treatment:
+	case CSSProperty_all_space_treatment:
+
+	case CSSProperty__box_orient:	// Mozilla XUL
+	case CSSProperty__box_align:	// Mozilla XUL
+
+	case CSSProperty_stroke_linecap:	// SVG
+	case CSSProperty_stroke_linejoin:	// SVG
+	case CSSProperty_pointer_events:	// SVG
+
+	case CSSProperty_color_interpolation:	// SVG
+	case CSSProperty_color_interpolation_filters:	// SVG
+
+	case CSSProperty_color_rendering:	// SVG
+	case CSSProperty_shape_rendering:	// SVG
+	case CSSProperty_text_rendering:	// SVG
+		{
+			m_stringValue = string;
+			m_unitType = CSS_IDENT;
+		}
+		break;
+
+	case CSSProperty_font_variant:
+		{
+			// normal | small-caps
+
+			m_stringValue = string;
+			m_unitType = CSS_IDENT;
+		}
+		break;
+
+	case CSSProperty_font_style:
+		{
+			// italic | oblique | normal
+
+			m_stringValue = string;
+			m_unitType = CSS_IDENT;
+		}
+		break;
+
+	case CSSProperty_text_underline_style:
+	case CSSProperty_text_overline_style:
+	case CSSProperty_text_line_through_style:
+
+	case CSSProperty_border_left_style:
+	case CSSProperty_border_top_style:
+	case CSSProperty_border_right_style:
+	case CSSProperty_border_bottom_style:
+
+	case CSSProperty_outline_style:
+		{
+			int n = IdentNameToIndex(string, BorderStyleIdents);
+			if (n >= 0)
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+			{
+				ASSERT(0);	// TODO remove
+				return Error_InvalidArgument;
+			}
+		}
+		break;
+
+	case CSSProperty_text_underline_mode:
+	case CSSProperty_text_overline_mode:
+	case CSSProperty_text_line_through_mode:
+		{
+			if (!_wcsicmp(newVal, L"continuous") ||
+				!_wcsicmp(newVal, L"skip-white-space"))
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+			{
+				ASSERT(0);	// TODO remove
+				return Error_InvalidArgument;
+			}
+		}
+		break;
+
+	case CSSProperty_fill_rule:	// SVG
+	case CSSProperty_clip_rule:	// SVG
+		{
+			if (!_wcsicmp(newVal, L"nonzero") ||
+				!_wcsicmp(newVal, L"evenodd"))
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+			{
+				return Error_InvalidArgument;
+			}
+		}
+		break;
+
+	case CSSProperty__box_flex:	// Mozilla XUL
+
+	case CSSProperty_opacity:
+	case CSSProperty_stroke_opacity:	// SVG
+	case CSSProperty_fill_opacity:	// SVG
+	case CSSProperty_stop_opacity:	// SVG
+	case CSSProperty_solid_opacity:	// SVG
+	case CSSProperty_flood_opacity:	// SVG
+
+	case CSSProperty_stroke_miterlimit:	// SVG
+		{
+			const WCHAR* p = newVal;
+			double value = getfnumber(&p);
+			if (p && *p == 0)
+			{
+				m_unitType = CSS_NUMBER;
+				m_floatValue = value;
+				m_floatValueUserUnit = m_floatValue;
+			}
+			else
+			{
+				return Error_InvalidArgument;
+			}
+		}
+		break;
+
+	case CSSProperty_min_width:
+	case CSSProperty_min_height:
+
+	case CSSProperty_text_indent:
+
+	case CSSProperty_stroke_width:	// SVG
+	case CSSProperty_stroke_dashoffset:	// SVG
+		{
+			CSSUnitType unitType;
+			double floatValue = ParseValueUnitString(newVal, (int*)&unitType);
+			if (unitType)
+			{
+				m_unitType = unitType;
+				m_floatValue = floatValue;
+				m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_unitType, m_floatValue);
+			}
+			else
+			{
+				return Error_InvalidArgument;
+			}
+		}
+		break;
+
+	case CSSProperty_cursor:	// TODO, urls
+		{
+			vector<String> values;
+			GetCommaSepStringArray(string, values);
+
+			if (values.GetSize() > 0)
+			{
+				String url = ExtractUrl(values[0]);
+				if (url.GetLength())
+				{
+					m_stringValue = url;
+					m_unitType = CSS_URI;
+				}
+				else
+				{
+					m_stringValue = values[0];
+					m_unitType = CSS_IDENT;
+				}
+			}
+		}
+		break;
+
+	case CSSProperty_text_underline_width:
+	case CSSProperty_text_overline_width:
+	case CSSProperty_text_line_through_width:
+		{
+			if (string.CompareNoCase(L"auto") == 0)
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+
+				break;
+			}
+		}
+		// Let it fall through
+
+	case CSSProperty_outline_width:
+
+	case CSSProperty_border_left_width:
+	case CSSProperty_border_top_width:
+	case CSSProperty_border_right_width:
+	case CSSProperty_border_bottom_width:
+		{
+			if (!_wcsicmp(newVal, L"thin") ||
+				!_wcsicmp(newVal, L"medium") ||
+				!_wcsicmp(newVal, L"thick"))
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+			{
+				CSSUnitType unitType;
+				double floatValue = ParseValueUnitString(newVal, (int*)&unitType);
+				if (unitType)
+				{
+					m_unitType = unitType;
+					m_floatValue = floatValue;
+					m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_unitType, m_floatValue);
+				}
+				else
+				{
+					return Error_InvalidArgument;
+				}
+			}
+		}
+		break;
+
+	case CSSProperty_max_width:
+	case CSSProperty_max_height:
+		{
+			if (!_wcsicmp(newVal, L"none"))
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+			{
+				CSSUnitType unitType;
+				double floatValue = ParseValueUnitString(newVal, (int*)&unitType);
+				if (unitType)
+				{
+					m_unitType = unitType;
+					m_floatValue = floatValue;
+					m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_unitType, m_floatValue);
+				}
+				else
+				{
+					return Error_InvalidArgument;
+				}
+			}
+		}
+		break;
+
+	case CSSProperty_z_index:
+		{
+			if (!string.CompareNoCase(L"auto"))
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+			{
+				m_unitType = CSS_NUMBER;
+				m_floatValue = str2int(CStringw(string));
+				m_floatValueUserUnit = m_floatValue;
+			}
+		}
+		break;
+
+	case CSSProperty_font_size:
+		{
+			//const WCHAR* cssText = string->c_str();//stripspaces(newVal);
+
+			static ImmutableString<WCHAR> FontSizesNames[7] =
+			{
+				L"xx-small",
+				L"x-small",
+				L"small",
+				L"medium",
+				L"large",
+				L"x-large",
+				L"xx-large",
+			};
+
+			int i;
+			for (i = 0; i < 7; ++i)
+			{
+				if (string.Compare(&FontSizesNames[i]) == 0)
+				{
+					break;
+				}
+			}
+
+			if (i < 7)	// matched a name
+			{
+				static bool bFontSizesCalculated = false;
+			// TODO do this somewhere else
+				if (!bFontSizesCalculated)
+				{
+#if 0
+				// medium
+					FontSizes[3] = 12*1.2;	// TODO, this shouldn't just be set like that
+
+					int j;
+
+				// CSS2 recommends a scaling factor of 1.2 between each
+
+					for (j = 1; j <= 3; j++)
+						FontSizes[3-j] = FontSizes[3-j+1]/1.2;
+
+					for (j = 1; j <= 3; j++)
+						FontSizes[3+j] = FontSizes[3]*(1.2*j);
+#endif
+
+#if 0
+				// medium
+					FontSizes[3] = int(16*1.2 + 0.5);	// TODO, this shouldn't just be set like that
+
+					int j;
+
+				// CSS2 recommends a scaling factor of 1.2 between each
+
+					for (j = 1; j <= 3; j++)
+						FontSizes[3-j] = FontSizes[3-j+1]/1.2;
+
+					/*
+					for (j = 1; j <= 3; j++)
+						FontSizes[3+j] = FontSizes[3]*(1.2*j);
+						*/
+					for (j = 1; j <= 3; j++)
+						FontSizes[3+j] = (int)(FontSizes[3+j-1]*1.2+0.5);
+#endif
+
+				// This is offset from the CSS2.1 spec
+					FontSizes[0] = 16*3/5;	// xx-small okay
+					//FontSizes[0] = 16*3/4;
+					FontSizes[1] = 16*8/9;
+					FontSizes[2] = 16*1/1;	// okay	// small
+					FontSizes[3] = 16*6/5;
+					FontSizes[4] = 16*3/2;
+					FontSizes[5] = 16*2/1;
+					FontSizes[6] = 16*3/1;		// okay
+
+														/*
+				// This is offset from the CSS2.1 spec
+					//FontSizes[-1] = 16*3/5;
+					FontSizes[0] = 16*3/4;
+					FontSizes[1] = 16*8/9;
+					FontSizes[2] = 16*1/1;	// okay
+					FontSizes[3] = 16*6/5;
+					FontSizes[4] = 16*3/2;
+					FontSizes[5] = 16*2/1;
+					FontSizes[6] = 16*3/1;		// okay
+					*/
+
+					bFontSizesCalculated = true;
+				}
+
+		//		m_unitType = CSS_PT;
+				m_unitType = CSS_PX;
+				m_floatValue = FontSizes[i];
+				m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_unitType, m_floatValue);
+			}
+			else // no match on name
+			{
+				m_floatValue = ParseValueUnitString(newVal, (int*)&m_unitType);
+				m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_unitType, m_floatValue);
+			}
+		}
+		break;
+
+	case CSSProperty_outline_color:
+		{
+			if (!_wcsicmp(newVal, L"invert"))
+			// TODO ??, should transparent and currentColor also be allowed here?
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+			{
+				const OLECHAR* p;
+				Graphics::Color clr;
+				if (ParseRGBAColor(newVal, &p, &clr) < 0)
+					return Error_InvalidArgument;
+				if (*p != 0) return Error_InvalidArgument;
+
+				SetRGBColor(clr);
+			}
+		}
+		break;
+
+// CSS3 allows for all these properties to be (transparent|currentColor|color-value)
+
+	case -2:	// <color> value with no associated property
+	case CSSProperty_color:
+	case CSSProperty_background_color:
+
+	case CSSProperty_border_left_color:
+	case CSSProperty_border_top_color:
+	case CSSProperty_border_right_color:
+	case CSSProperty_border_bottom_color:
+
+	case CSSProperty_text_underline_color:
+	case CSSProperty_text_overline_color:
+	case CSSProperty_text_line_through_color:
+		{
+			if (!_wcsicmp(newVal, L"transparent") ||
+				!_wcsicmp(newVal, L"currentColor"))
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+			{
+				const OLECHAR* p;
+				Graphics::Color clr;
+				if (ParseRGBAColor(newVal, &p, &clr) < 0)
+					return Error_InvalidArgument;
+				if (*p != 0) return Error_InvalidArgument;
+
+				SetRGBColor(clr);
+			}
+		}
+		break;
+
+	case CSSProperty_mask:	// SVG
+	case CSSProperty_clip_path:	// SVG
+	case CSSProperty_filter:	// SVG
+
+	case CSSProperty_marker_start:	// SVG
+	case CSSProperty_marker_end:	// SVG
+	case CSSProperty_marker_mid:	// SVG
+
+	case CSSProperty_background_image:
+		{
+			if (!_wcsicmp(newVal, L"none"))
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+			{
+				String url = ExtractUrl(string);
+				if (url.GetLength())
+				{
+					m_stringValue = url;
+					m_unitType = CSS_URI;
+				}
+				else
+				{
+					ASSERT(0);
+					return Error_InvalidArgument;
+					/*
+					m_stringValue = newVal;
+					m_unitType = CSS_STRING;
+					*/
+				}
+			}
+		}
+		break;
+
+	case CSSProperty_color_profile:
+		{
+			if (!_wcsicmp(newVal, L"auto") ||
+				!_wcsicmp(newVal, L"sRGB"))
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+			{
+				String url = ExtractUrl(string);
+				if (url.GetLength())
+				{
+					m_stringValue = url;
+					m_unitType = CSS_URI;
+				}
+				else	// name
+				{
+					m_stringValue = string;
+					m_unitType = CSS_STRING;
+				}
+			}
+		}
+		break;
+
+	case CSSProperty_clip:
+		{
+			if (m_rectValue == NULL)
+			{
+				m_rectValue = new CSSRect;
+				if (m_rectValue)
+				{
+//					m_rectValue->AddRef();
+					m_rectValue->m_pListener = this;
+				}
+			}
+
+			if (m_rectValue)
+			{
+				if (!_wcsicmp(newVal, L"auto"))
+				{
+					m_stringValue = string;
+					m_unitType = CSS_IDENT;
+
+					/*
+					m_rectValue->m_top->m_cssText = newVal;
+					m_rectValue->m_top->m_stringValue = OLESTR(L"auto";
+					m_rectValue->m_top->m_floatValue = m_rectValue->m_top->m_floatValueUserUnit = 0;
+					m_rectValue->m_top->m_unitType = CSS_IDENT;
+
+					m_rectValue->m_right->m_cssText = newVal;
+					m_rectValue->m_right->m_stringValue = OLESTR(L"auto";
+					m_rectValue->m_right->m_floatValue = m_rectValue->m_right->m_floatValueUserUnit = 0;
+					m_rectValue->m_right->m_unitType = CSS_IDENT;
+
+					m_rectValue->m_bottom->m_cssText = newVal;
+					m_rectValue->m_bottom->m_stringValue = OLESTR(L"auto";
+					m_rectValue->m_bottom->m_floatValue = m_rectValue->m_bottom->m_floatValueUserUnit = 0;
+					m_rectValue->m_bottom->m_unitType = CSS_IDENT;
+
+					m_rectValue->m_left->m_cssText = newVal;
+					m_rectValue->m_left->m_stringValue = OLESTR(L"auto";
+					m_rectValue->m_left->m_floatValue = m_rectValue->m_left->m_floatValueUserUnit = 0;
+					m_rectValue->m_left->m_unitType = CSS_IDENT;
+					*/
+				}
+				else
+				{
+					if (!_wcsnicmp(newVal, L"rect", 4))
+					{
+						const WCHAR* p = newVal+4;	// skip 'rect'
+
+						while (isspace(*p)) p++;
+
+						if (*p == L'(')
+						{
+							p++;
+
+							vector<String> values;
+
+							while (isspace(*p)) p++;
+
+							while (*p && *p != L')')
+							{
+								String str = nullptr;
+
+								while (*p && !isspace(*p) && *p != L')' && *p != L',')
+								{
+									ASSERT(0);
+#if 0
+									str += *p++;
+#endif
+								}
+
+								while (isspace(*p)) p++;
+
+								if (*p == L',')
+									p++;
+
+								while (isspace(*p)) p++;
+
+								values.Add(str);
+							}
+
+							if (*p == L')')
+								p++;
+
+							while (isspace(*p)) p++;
+
+							if (*p == L'\0')
+							{
+								if (values.GetSize() == 4)
+								{
+									m_rectValue->m_top->m_cssText = values[0];
+									if (values[0].CompareNoCase(L"auto")== 0)
+									{
+										m_rectValue->m_top->m_stringValue = WSTR("auto");
+										m_rectValue->m_top->m_floatValue = m_rectValue->m_top->m_floatValueUserUnit = 0;
+										m_rectValue->m_top->m_unitType = CSS_IDENT;
+									}
+									else
+									{
+										CSSUnitType unitType;
+										double floatValue = ParseValueUnitString(CStringw(values[0]).c_str(), (int*)&unitType);
+										if (unitType != 0)
+										{
+											m_rectValue->m_top->m_floatValue = floatValue;
+											m_rectValue->m_top->m_unitType = unitType;
+											m_rectValue->m_top->m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_rectValue->m_top->m_unitType, m_rectValue->m_top->m_floatValue);
+										}
+										else
+											return Error_InvalidArgument;
+									}
+
+									m_rectValue->m_right->m_cssText = values[1];
+									if (values[1].Compare(L"auto") == 0)
+									{
+										m_rectValue->m_right->m_stringValue = WSTR("auto");
+										m_rectValue->m_right->m_floatValue = m_rectValue->m_right->m_floatValueUserUnit = 0;
+										m_rectValue->m_right->m_unitType = CSS_IDENT;
+									}
+									else
+									{
+										CSSUnitType unitType;
+										double floatValue = ParseValueUnitString(CStringw(values[1]).c_str(), (int*)&unitType);
+										if (unitType != 0)
+										{
+											m_rectValue->m_right->m_unitType = unitType;
+											m_rectValue->m_right->m_floatValue = floatValue;
+											m_rectValue->m_right->m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_rectValue->m_right->m_unitType, m_rectValue->m_right->m_floatValue);
+										}
+										else
+											return Error_InvalidArgument;
+									}
+
+									m_rectValue->m_bottom->m_cssText = values[2];
+									if (!values[2].CompareNoCase(L"auto") == 0)
+									{
+										m_rectValue->m_bottom->m_stringValue = WSTR("auto");
+										m_rectValue->m_bottom->m_floatValue = m_rectValue->m_bottom->m_floatValueUserUnit = 0;
+										m_rectValue->m_bottom->m_unitType = CSS_IDENT;
+									}
+									else
+									{
+										CSSUnitType unitType;
+										double floatValue = ParseValueUnitString(CStringw(values[2]).c_str(), (int*)&unitType);
+										if (unitType != 0)
+										{
+											m_rectValue->m_bottom->m_unitType = unitType;
+											m_rectValue->m_bottom->m_floatValue = floatValue;
+											m_rectValue->m_bottom->m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_rectValue->m_bottom->m_unitType, m_rectValue->m_bottom->m_floatValue);
+										}
+										else
+											return Error_InvalidArgument;
+									}
+
+									m_rectValue->m_left->m_cssText = values[3];
+									if (values[3].CompareNoCase(L"auto") == 0)
+									{
+										m_rectValue->m_left->m_stringValue = WSTR("auto");
+										m_rectValue->m_left->m_floatValue = m_rectValue->m_top->m_floatValueUserUnit = 0;
+										m_rectValue->m_left->m_unitType = CSS_IDENT;
+									}
+									else
+									{
+										CSSUnitType unitType;
+										double floatValue = ParseValueUnitString(CStringw(values[3]).c_str(), (int*)&unitType);
+										if (unitType != 0)
+										{
+											m_rectValue->m_left->m_unitType = unitType;
+											m_rectValue->m_left->m_floatValue = floatValue;
+											m_rectValue->m_left->m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_rectValue->m_left->m_unitType, m_rectValue->m_left->m_floatValue);
+										}
+										else
+											return Error_InvalidArgument;
+									}
+								}
+								else
+									return Error_InvalidArgument;
+							}
+							else
+								return Error_InvalidArgument;
+						}
+						else
+							return Error_InvalidArgument;
+
+						m_unitType = CSS_RECT;
+					}
+					else
+						return Error_InvalidArgument;
+				}
+			}
+		}
+		break;
+
+	case CSSProperty_enable_background:	// SVG, TODO: They say it's a list of ident/numbers ?
+		{
+			if (!_wcsnicmp(newVal, L"accumulate", 10) ||
+				!_wcsnicmp(newVal, L"new", 3))
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+			{
+				ASSERT(0);	// TODO remove
+				return Error_InvalidArgument;
+			}
+		}
+		break;
+
+	case CSSProperty_left:
+	case CSSProperty_top:
+	case CSSProperty_right:
+	case CSSProperty_bottom:
+	case CSSProperty_width:
+	case CSSProperty_height:
+
+	case CSSProperty_padding_left:
+	case CSSProperty_padding_top:
+	case CSSProperty_padding_right:
+	case CSSProperty_padding_bottom:
+
+	case CSSProperty_margin_left:
+	case CSSProperty_margin_top:
+	case CSSProperty_margin_right:
+	case CSSProperty_margin_bottom:
+		{
+			if (!_wcsicmp(newVal, L"auto"))
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+			{
+				CSSUnitType unitType;
+				double floatValue = ParseValueUnitString(newVal, (int*)&unitType);
+				if (unitType)
+				{
+					m_unitType = unitType;
+					m_floatValue = floatValue;
+					m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_unitType, m_floatValue);
+				}
+				else
+				{
+					return Error_InvalidArgument;
+				}
+			}
+		}
+		break;
+
+	case CSSProperty_line_height:
+	case CSSProperty_word_spacing:
+	case CSSProperty_letter_spacing:
+		{
+			if (!_wcsicmp(newVal, L"normal"))
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+			{
+				CSSUnitType unitType;
+				double floatValue = ParseValueUnitString(newVal, (int*)&unitType);
+				if (unitType)
+				{
+					m_unitType = unitType;
+					m_floatValue = floatValue;
+					m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_unitType, m_floatValue);
+				}
+				else
+				{
+					ASSERT(0);	// TODO remove
+					return Error_InvalidArgument;
+				}
+			}
+		}
+		break;
+
+	case CSSProperty_image_rendering:	// SVG
+		{
+			// auto | optimizeSpeed | optimizeQuality 
+
+			m_stringValue = string;
+			m_unitType = CSS_IDENT;
+		}
+		break;
+
+	case CSSProperty_baseline_shift:
+		{
+			if (!_wcsicmp(newVal, L"baseline") ||
+				!_wcsicmp(newVal, L"sub") ||
+				!_wcsicmp(newVal, L"super"))
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+			{
+				CSSUnitType unitType;
+				double floatValue = ParseValueUnitString(newVal, (int*)&unitType);
+				if (unitType)
+				{
+					m_unitType = unitType;
+					m_floatValue = floatValue;
+					m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_unitType, m_floatValue);
+				}
+				else
+				{
+					//ASSERT(0);	// TODO remove
+					return Error_InvalidArgument;
+				}
+			}
+		}
+		break;
+
+	case CSSProperty_font_stretch:
+		{
+			if (IdentNameToIndex(string, FontStretchIdents) >= 0)
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+				return Error_InvalidArgument;
+		}
+		break;
+
+	case CSSProperty_border_collapse:	// CSS Table
+		{
+			if (IdentNameToIndex(string, BorderCollapseIdents) >= 0)
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+				return Error_InvalidArgument;
+		}
+		break;
+
+	case CSSProperty_empty_cells:	// CSS Table
+		{
+			if (IdentNameToIndex(string, EmptyCellsIdents) >= 0)
+			{
+				m_stringValue = string;
+				m_unitType = CSS_IDENT;
+			}
+			else
+				return Error_InvalidArgument;
+		}
+		break;
+
+	case -3:	// <length> with no associated property
+		{
+			CSSUnitType unitType;
+			double floatValue = ParseValueUnitString(newVal, (int*)&unitType);
+			if (unitType)
+			{
+				m_unitType = unitType;
+				m_floatValue = floatValue;
+				m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_unitType, m_floatValue);
+			}
+			else
+			{
+				return Error_InvalidArgument;
+			}
+		}
+		break;
+
+	case -4:	// <uri> with no associated property
+		{
+			String url = ExtractUrl(string);
+			if (url.GetLength())
+			{
+				m_stringValue = url;
+				m_unitType = CSS_URI;
+			}
+			else
+			{
+				return Error_InvalidArgument;
+			}
+		}
+		break;
+
+	case -5:	// ident with no associated property
+		{
+			m_stringValue = string;
+			m_unitType = CSS_IDENT;
+		}
+		break;
+
+	case -1:	// not a property or unknown property
+		{
+			String url = ExtractUrl(string);
+			if (url.GetLength())
+			{
+				m_stringValue = url;
+				m_unitType = CSS_URI;
+			}
+			else
+			{
+				m_floatValue = ParseValueUnitString(newVal, (int*)&m_unitType);
+				m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_unitType, m_floatValue);
+
+				m_stringValue = string;
+			}
+		}
+		break;
+
+	default:	// we should have a case for all our defined properties
+		ASSERT(0);
+	}
+
+	return Success;
+}
+
+String CSSPrimitiveValue::get_cssText()
+{
+	if (!m_bCSSTextUpdated)
+	{
+		UpdateCSSText();
+		m_bCSSTextUpdated = true;
+	}
+
+	return CSSValue::get_cssText();
+}
+
+void CSSPrimitiveValue::set_cssText(StringIn newVal)
+{
+//	ASSERT(newVal);
+//	if (newVal == NULL) THROW(-1);
+
+	ErrorCode hr;
+
+#if 0
+	m_urlDocument.Release();
+#endif
+
+	if (newVal == L"inherit")
+	{
+		m_cssText = newVal;
+		m_cssValueType = CSS_INHERIT;
+
+		m_bCSSTextUpdated = true;
+
+		hr = Success;
+	}
+	else
+	{
+		hr = ParseCSSText(newVal);
+
+		m_cssValueType = CSS_PRIMITIVE_VALUE;
+
+		//if (hr == S_OK)	// set text even if parsing failed (LXMLEditor requires that)
+		{
+			m_cssText = newVal;
+
+			m_bCSSTextUpdated = true;
+		}
+	}
+
+	//if (hr == S_OK)
+	{
+		if (m_pListener)
+		{
+			m_pListener->OnCSSValueChanged(this);
+		}
+	}
+
+	if (hr < 0)
+		THROW(-1);
+}
+
+CSSUnitType CSSPrimitiveValue::get_primitiveType() const
+{
+	return m_unitType;
+}
+
+void CSSPrimitiveValue::setFloatValue(CSSUnitType unitType, double floatValue)
+{
+	if (!(unitType == CSS_NUMBER ||
+			unitType == CSS_PERCENTAGE ||
+			unitType == CSS_EMS ||
+			unitType == CSS_EXS ||
+			unitType == CSS_PX ||
+			unitType == CSS_CM ||
+			unitType == CSS_MM ||
+			unitType == CSS_IN ||
+			unitType == CSS_PT ||
+			unitType == CSS_PC ||
+			unitType == CSS_DEG ||
+			unitType == CSS_RAD ||
+			unitType == CSS_GRAD ||
+			unitType == CSS_MS ||
+			unitType == CSS_S ||
+			unitType == CSS_HZ ||
+			unitType == CSS_KHZ ||
+			unitType == CSS_DIMENSION))
+	{
+		ASSERT(0);
+		THROW(-1);
+	}
+
+	m_unitType = unitType;
+
+	m_floatValue = floatValue;
+	m_floatValueUserUnit = ConvertSpecifiedValueToUserUnit(m_unitType, m_floatValue);
+
+	String cssText = CreateValueUnitString(m_floatValue, m_unitType);
+
+	CSSValue::set_cssText(cssText);
+
+	m_bCSSTextUpdated = true;
+
+	if (m_pListener)
+	{
+		m_pListener->OnCSSValueChanged(this);
+	}
+}
+
+double CSSPrimitiveValue::getFloatValue(CSSUnitType unitType) const
+{
+	if (!(unitType == CSS_NUMBER ||
+			unitType == CSS_PERCENTAGE ||
+			unitType == CSS_EMS ||
+			unitType == CSS_EXS ||
+			unitType == CSS_PX ||
+			unitType == CSS_CM ||
+			unitType == CSS_MM ||
+			unitType == CSS_IN ||
+			unitType == CSS_PT ||
+			unitType == CSS_PC ||
+			unitType == CSS_DEG ||
+			unitType == CSS_RAD ||
+			unitType == CSS_GRAD ||
+			unitType == CSS_MS ||
+			unitType == CSS_S ||
+			unitType == CSS_HZ ||
+			unitType == CSS_KHZ ||
+			unitType == CSS_DIMENSION))
+	{
+		ASSERT(0);
+		THROW(-1);
+	}
+
+	if (!(m_unitType == CSS_NUMBER ||
+			m_unitType == CSS_PERCENTAGE ||
+			m_unitType == CSS_EMS ||
+			m_unitType == CSS_EXS ||
+			m_unitType == CSS_PX ||
+			m_unitType == CSS_CM ||
+			m_unitType == CSS_MM ||
+			m_unitType == CSS_IN ||
+			m_unitType == CSS_PT ||
+			m_unitType == CSS_PC ||
+			m_unitType == CSS_DEG ||
+			m_unitType == CSS_RAD ||
+			m_unitType == CSS_GRAD ||
+			m_unitType == CSS_MS ||
+			m_unitType == CSS_S ||
+			m_unitType == CSS_HZ ||
+			m_unitType == CSS_KHZ ||
+			m_unitType == CSS_DIMENSION))
+	{
+		ASSERT(0);
+		THROW(-1);
+	}
+
+	if (m_unitType == unitType)	// No conversion necessary
+	{
+		return m_floatValue;
+	}
+	/*
+	if (m_unitType == CSS_PERCENTAGE)	// No conversion possible
+	{
+		*pVal = m_floatValue;
+	}
+	*/
+	else
+	{
+		return ConvertUserUnitToSpecifiedValue(m_floatValueUserUnit, unitType);
+	}
+}
+
+void CSSPrimitiveValue::setStringValue(CSSUnitType stringType, StringIn stringValue)
+{
+	if (!(stringType == CSS_STRING ||
+				stringType == CSS_URI ||
+				stringType == CSS_IDENT ||
+				stringType == CSS_ATTR))
+	{
+		ASSERT(0);
+		THROW(-1);
+	}
+
+	m_unitType = stringType;
+	m_stringValue = stringValue;
+
+	m_bCSSTextUpdated = false;
+
+	/*
+	switch (stringType)
+	{
+	case CSS_URI:
+		{
+			CSSValueImpl<ILCSSPrimitiveValue>::set_cssText(_bstr_t(OLESTR(L"url(") + m_stringValue + _bstr_t(OLESTR(L")"));
+		}
+		break;
+
+	default:
+		CSSValueImpl<ILCSSPrimitiveValue>::set_cssText(m_stringValue);
+	}
+
+	m_bCSSTextUpdated = true;
+	*/
+
+	if (m_pListener)
+	{
+		m_pListener->OnCSSValueChanged(this);
+	}
+}
+
+String CSSPrimitiveValue::getStringValue()
+{
+	if (!(m_unitType == CSS_STRING ||
+			m_unitType == CSS_URI ||
+			m_unitType == CSS_IDENT ||
+			m_unitType == CSS_ATTR))
+	{
+		ASSERT(0);
+		THROW(-1);
+	}
+
+	return m_stringValue;
+}
+
+RGBColor* CSSPrimitiveValue::getRGBColorValue() const
+{
+	if (m_unitType == CSS_RGBCOLOR)
+	{
+		ASSERT(m_colorValue != nullptr);
+
+		return m_colorValue;
+	}
+	else
+	{
+	/*
+	DOMException
+	 INVALID_ACCESS_ERR: Raised if the attached property can't return a RGB color value (e.g. this is not CSS_RGBCOLOR).
+	 */
+
+		THROW(-1);
+		return NULL;
+ 	}
+}
+
+CSSRect* CSSPrimitiveValue::getRectValue() const
+{
+	if (m_unitType == CSS_RECT)
+	{
+		ASSERT(m_rectValue != nullptr);
+		return m_rectValue;
+	}
+	else
+	{
+	/*
+	DOMException
+	 INVALID_ACCESS_ERR: Raised if the attached property can't return a rect value (e.g. this is not CSS_RECT).
+	 */
+		THROW(-1);
+		return NULL;
+ 	}
+}
+
+CSSCounter* CSSPrimitiveValue::getCounterValue() const
+{
+	if (m_unitType == CSS_COUNTER)
+	{
+		ASSERT(m_counterValue != nullptr);
+		return m_counterValue;
+	}
+	else
+	{
+		THROW(-1);
+		return NULL;
+	}
+}
+
+//virtual
+void CSSPrimitiveValue::OnChangedRGBColor(RGBColor* pRGBColor)
+{
+//	UpdateCSSText();
+	m_bCSSTextUpdated = false;	// ??
+
+	if (m_pListener)
+	{
+		m_pListener->OnCSSValueChanged(this);
+	}
+}
+
+//virtual
+void CSSPrimitiveValue::OnChangedRect(CSSRect* pRect)
+{
+	m_bCSSTextUpdated = false;	// ??
+
+	if (m_pListener)
+	{
+		m_pListener->OnCSSValueChanged(this);
+	}
+}
+
+//////////
+
+void CSSPrimitiveValue::operator = (const CSSPrimitiveValue& value)
+{
+	ASSERT(m_propertyIndex == value.m_propertyIndex);
+
+	m_cssValueType = value.m_cssValueType;
+	m_unitType = value.m_unitType;
+	m_floatValue = value.m_floatValue;
+	m_floatValueUserUnit = value.m_floatValueUserUnit;
+	m_stringValue = value.m_stringValue;
+
+	m_cssText = value.m_cssText;
+}
+
+void CSSPrimitiveValue::operator += (const CSSPrimitiveValue& value)
+{
+	ASSERT(0);
+}
+
+void CSSPrimitiveValue::InterpolateValue(const CSSPrimitiveValue& a, const CSSPrimitiveValue& b, double t)
+{
+	m_cssValueType = a.m_cssValueType;
+
+	switch (m_propertyIndex)
+	{
+	case CSSProperty_opacity:
+	case CSSProperty_stroke_opacity:
+	case CSSProperty_fill_opacity:
+	case CSSProperty_stop_opacity:
+	case CSSProperty_solid_opacity:
+	case CSSProperty_flood_opacity:
+
+	case CSSProperty_stroke_width:
+	case CSSProperty_stroke_miterlimit:
+		{
+			m_unitType = CSS_NUMBER;
+			m_floatValue = a.m_floatValue + (b.m_floatValue - a.m_floatValue)*t;
+			m_floatValueUserUnit = m_floatValue;
+
+			m_cssText = CreateValueUnitString(m_floatValueUserUnit, m_unitType);
+		}
+		break;
+
+	default:	// TODO
+		DebugTrace("CSSPrimitiveValue::InterpolateValue() - " << String(&CSSProperties::csspropertyList[m_propertyIndex]->m_name) << "\n");
+		ASSERT(0);
+	}
+}
+
+}	// Web
+}	// System

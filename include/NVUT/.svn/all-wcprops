@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/NVUT
+END
+nvutmesh.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/NVUT/nvutmesh.h
+END
+nvutfxhelper.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/NVUT/nvutfxhelper.h
+END
+NVUTSkybox.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/NVUT/NVUTSkybox.h
+END
+nvutmedia.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/NVUT/nvutmedia.h
+END
+NVUTSyncConstantBuffer.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/NVUT/NVUTSyncConstantBuffer.h
+END
+NVUTDXGIFormatHelper.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/NVUT/NVUTDXGIFormatHelper.h
+END
+NVUTVertexShader.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/NVUT/NVUTVertexShader.h
+END
+NVUTShader.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/NVUT/NVUTShader.h
+END
+NVUTPixelShader.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/NVUT/NVUTPixelShader.h
+END
+nvutcamera.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/NVUT/nvutcamera.h
+END
+nvutPCH.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/NVUT/nvutPCH.h
+END

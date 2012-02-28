@@ -1,0 +1,16 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="System::Mpeg4::MP4ASampleDescription",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Mpeg4::SampleDescription",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_mpeg4_1_1_sample_description.html"];
+  Node3 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" es_descriptor" ,fontname="Helvetica"];
+  Node3 [label="System::Mpeg4::ESDescriptor",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_mpeg4_1_1_e_s_descriptor.html"];
+  Node4 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_SLConfigDescr" ,fontname="Helvetica"];
+  Node4 [label="System::Mpeg4::SLConfigDescriptor",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_mpeg4_1_1_s_l_config_descriptor.html"];
+  Node5 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_decoderConfigDescriptor" ,fontname="Helvetica"];
+  Node5 [label="System::Mpeg4::DecoderConfigDescriptor",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_mpeg4_1_1_decoder_config_descriptor.html"];
+  Node6 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pDecoderSpecificInfo" ,fontname="Helvetica"];
+  Node6 [label="System::Mpeg4::DecoderSpecificInfo",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_mpeg4_1_1_decoder_specific_info.html"];
+}

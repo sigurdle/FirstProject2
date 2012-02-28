@@ -1,0 +1,817 @@
+#include "stdafx.h"
+#include "GIF.h"
+#include "GIFFile.h"
+
+namespace System
+{
+using namespace IO;
+
+namespace Imaging
+{
+#define MAX_LZW_BITS		12	// maximum LZW code size
+//#define LZW_TABLE_SIZE	(1<<MAX_LZW_BITS) // # of possible LZW symbols
+
+GIFDecoder::GIFDecoder()
+{
+}
+
+int GIFDecoder::GetWidth() const
+{
+	return m_gsd.gifWidth;
+}
+
+int GIFDecoder::GetHeight() const
+{
+	return m_gsd.gifHeight;
+}
+
+/* Read a GIF data block, which has a leading count byte */
+/* A zero-length block marks the end of a data block sequence */
+uint8 GIFDecoder::GetDataBlock(ubyte* buf)
+{
+	size_t nRead;
+
+	uint8 count;
+
+	nRead = m_stream->Read(&count, 1);
+	if (nRead != 1)
+	{
+		count = 0;
+	}
+
+	if (count)
+	{
+		nRead = m_stream->Read(buf, count);
+		if (nRead < count) raise(IO::EndOfStreamException());
+	}
+
+	return count;
+}
+
+/* Skip a series of data blocks, until a block terminator is found */
+void GIFDecoder::SkipDataBlocks()
+{
+  ubyte buf[256];
+
+  while (GetDataBlock(buf) > 0)
+	 /* skip */;
+}
+
+int GIFDecoder::LZWReadByte()
+{
+	return m_LZWDecoder->GetNextChar();
+}
+
+ErrorCode GIFDecoder::GetPixelRows(ubyte* idata, int rowbytes, int bitcount, const GIFSCREENDESCR *gsd, const GIFIMAGEDESCR *gid, const GIFCONTROL *gctrl, const GIFCOLORTRIPLET* colorTable, bool bReadData)
+{
+	int transparentColor;
+	int pass2_offset, pass3_offset, pass4_offset;
+
+	if (!gctrl || !gctrl->Transparent/* || m_currentFrame == 0*/)
+		transparentColor = 0x7fff;	// No transparency
+	else
+		transparentColor = gctrl->TransparentIndex;
+
+	if (gid->gifInterlaced)
+	{
+		pass2_offset = (gid->gifHeight+7)/8;
+		pass3_offset = pass2_offset+(gid->gifHeight+3)/8;
+		pass4_offset = pass3_offset+(gid->gifHeight+1)/4;
+	}
+
+	//ASSERT(0);
+	//SHORT	bitcount = sampleinfo->bitcount;//m_bitcount;//g->bmi->bmiHeader.biBitCount;
+
+	//LPBYTE	bmbits = NULL;//g->bits;
+	//LVideoSampleInfo sampleinfo;
+
+	for (int row = gid->gifTop; row < (gid->gifTop+gid->gifHeight); ++row)
+	{
+		int actual_row;
+
+		if (!gid->gifInterlaced)
+		{
+			actual_row = row;	// For non-interlaced, the rows are one after the other
+		}
+		else
+		{
+			int row2 = row-gid->gifTop;
+
+			if (row2 < pass2_offset)								// pass1
+				actual_row = row2 << 3;
+			else if (row2 < pass3_offset)  						// pass2
+				actual_row = ((row2-pass2_offset) << 3)+4;
+			else if (row2 < pass4_offset)							// pass3
+				actual_row = ((row2-pass3_offset) << 2)+2;
+			else															// pass4
+				actual_row = ((row2-pass4_offset) << 1)+1;
+		}
+
+		uint8* ptr;
+
+		if (bReadData)
+		{
+			if (bitcount == 24)
+			{
+				ptr = &idata[rowbytes*actual_row+gid->gifLeft*3];
+			}
+			else if (bitcount == 8)
+			{
+				ptr = &idata[rowbytes*actual_row+gid->gifLeft];
+			}
+			else if (bitcount == 4)
+			{
+				ptr = &idata[rowbytes*actual_row+(gid->gifLeft>>1)];
+			}
+			else	// 1
+			{
+				ptr = &idata[rowbytes*actual_row+(gid->gifLeft>>3)];
+			}
+		}
+
+		for (int col = gid->gifLeft; col < (gid->gifLeft+gid->gifWidth); ++col)
+		{
+			int c;
+			if ((c = LZWReadByte()) < 0) return Success_False;//FORMAT_CORRUPTED_FILE;
+
+			if (bReadData)
+			{
+				if (bitcount == 24)
+				{
+					if (c != transparentColor)
+					{
+						*ptr++ = colorTable[c].Blue;
+						*ptr++ = colorTable[c].Green;
+						*ptr++ = colorTable[c].Red;
+					}
+					else
+						ptr += 3;
+				}
+				else if (bitcount == 8)
+				{
+					if (c != transparentColor) *ptr = c;
+					ptr++;
+				}
+				else if (bitcount == 4)
+				{
+					if (col & 1)
+					{
+						if (c != transparentColor) *ptr = c | (*ptr & 0xf0);
+						ptr++;
+					}
+					else
+					{
+						if (c != transparentColor) *ptr = (c<<4) | (*ptr & 0x0f);
+					}
+				}
+				else	// 1
+				{
+					int bit = 7-(col%8);
+					
+					if (c)
+						*ptr |= (1<<bit);		// set bit
+					else
+						*ptr &= ~(1<<bit);	// clear bit
+					
+					if (bit == 0) ptr++;
+				}
+			}
+		}
+	}
+
+	return Success;
+}
+
+static void FillColor(uint8* bits, uint8 color)
+{
+	ASSERT(0);
+#if 0
+	if (r->mode == IMODE_MONO)
+	{
+		FillMemory(r->bits, r->bytesPerRow*r->height, (color)? 0xff: 0x00);
+	}
+	else if (r->mode == IMODE_INDEXED4)
+	{
+		FillMemory(r->bits, r->bytesPerRow*r->height, color | (color<<4));
+	}
+	else	// 8
+	{
+		FillMemory(r->bits, r->bytesPerRow*r->height, color);
+	}
+#endif
+}
+
+#if 0
+static void ParsePalette(PixelDef* pPalette, GIFCOLORTRIPLET* gifColors, WORD numColors)
+{
+	for (WORD i = 0; i < numColors; i++)
+	{
+		pPalette[i].red = gifColors[i].Red;
+		pPalette[i].green = gifColors[i].Green;
+		pPalette[i].blue = gifColors[i].Blue;
+	}
+}
+#endif
+
+void GIFDecoder::Stream::ReadByte(uint8* pv)
+{
+	if (m_p->m_code_offset == m_p->m_code_len)
+	{
+		m_p->m_code_len = m_p->GetDataBlock(m_p->m_code_buf);
+		m_p->m_code_offset = 0;
+	}
+
+	*pv = m_p->m_code_buf[m_p->m_code_offset++];
+}
+
+size_t GIFDecoder::Stream::Read(void* pv, size_t cb)
+{
+	// TODO, optimize this
+
+	uint8* pb = (uint8*)pv;
+
+	ULONG i;
+
+	for (i = 0; i < cb; i++)
+	{
+		ReadByte(pb);
+		pb++;
+	}
+
+	return i;
+}
+
+// static
+ErrorCode GIFDecoder::ReadMarker(IO::Stream* stream)
+{
+	GIFFILEHEADER gfh;     // Gif file header
+
+	size_t nRead;
+	nRead = stream->Read(&gfh, sizeof(GIFFILEHEADER));
+	if (nRead != sizeof(GIFFILEHEADER))
+	{
+		return Error;
+	}
+
+	if ((gfh.gifSignature[0] != 'G') || (gfh.gifSignature[1] != 'I') || (gfh.gifSignature[2] != 'F'))
+	{
+		return Error;
+	}
+
+	if (((gfh.gifVersion[0] != '8') || (gfh.gifVersion[1] != '7') || (gfh.gifVersion[2] != 'a')) &&
+		 ((gfh.gifVersion[0] != '8') || (gfh.gifVersion[1] != '9') || (gfh.gifVersion[2] != 'a')))
+	{
+		//sprintf(r->errorMsg, "Unknown GIF version %3.3s", gfh.gifVersion);
+		return Error;//PLUGIN_MSG;
+	}
+
+	return 0;
+}
+
+ErrorCode GIFDecoder::Open(IO::Stream* stream)
+{
+	if (ReadMarker(stream) != 0)
+	{
+		return Error;
+	}
+
+	size_t nRead;
+
+	m_stream = stream;
+
+	GIFSCREENDESCR gsd;		// Logical screen description
+
+	int bitcount;
+
+	/*
+	if (r->fileSize < sizeof(GIFDecoderHEADER))
+	{
+		return E_FAIL;//result = FORMAT_CORRUPTED_FILE;
+		//goto cleanup;
+	}
+	*/
+
+//	r->SetFilePos(r->file, sizeof(gfh), FILE_BEGIN);
+
+// Read GIF logical screen description
+	
+	nRead = m_stream->Read(&gsd, sizeof(GIFSCREENDESCR));
+	if (nRead < sizeof(GIFSCREENDESCR))
+	{
+		return Error;
+	}
+
+	/*
+	m_symbol_head = (WORD *)GlobalAlloc(GMEM_ZEROINIT, LZW_TABLE_SIZE*sizeof(WORD));
+	m_symbol_tail = (BYTE *)GlobalAlloc(GMEM_ZEROINIT, LZW_TABLE_SIZE*sizeof(BYTE));
+	m_symbol_stack = (BYTE *)GlobalAlloc(GMEM_ZEROINIT, LZW_TABLE_SIZE*sizeof(BYTE));
+	*/
+
+//	m_gfh = gfh;
+	m_gsd = gsd;
+
+	bitcount = gsd.gifColorRes;
+	if (gsd.gifGlobalCTableSize > bitcount) bitcount = gsd.gifGlobalCTableSize;
+
+	if (gsd.gifGlobalCTable)	// There is a global colortable
+	{
+		m_numColors = 1<<(gsd.gifGlobalCTableSize+1);
+		m_globalColors = new GIFCOLORTRIPLET[m_numColors];
+		int colorMapSize = m_numColors*sizeof(GIFCOLORTRIPLET);
+
+		nRead = m_stream->Read(m_globalColors, colorMapSize);
+		if (nRead < colorMapSize)
+		{
+			return Error;
+		}
+
+	//	ParsePalette(r->bmi->bmiColors, gifColors, numColors);
+	}
+
+	bitcount++;
+
+	/*
+	if (bitcount == 1)
+	{
+		r->bitcount = 1;
+		r->mode = IMODE_MONO;
+	}
+	else if (bitcount <= 4)
+	{
+		r->bitcount = 4;
+		r->mode = IMODE_INDEXED4;
+	}
+	else if (bitcount <= 8)
+	{
+		r->bitcount = 8;
+		r->mode = IMODE_INDEXED8;
+	}
+	*/
+
+	/*
+	r->width = gsd.gifWidth;
+	r->height = gsd.gifHeight;
+	r->totalFrames = 0;	// Unknown number of total frames
+	r->frameRate = 10;
+	*/
+
+	return Success;
+}
+
+int GIFDecoder::AddNextFrame()
+{
+	LONG result = 1;
+
+	/*
+	if (bReadData)
+	{
+		if (m_globalColors)	// First set global color palette
+		{
+			//ParsePalette(r->pPalette8, m_globalColors, m_numColors);
+		}
+	}
+	*/
+
+//	BOOL more_image;
+
+//	GIFIMAGEDESCR		gid = {0};		// Logical image description
+	GIFCONTROL	gctrl = {0};//[2] = {0,0};	// Graphic control extension
+	//WORD			ctrlindex = 0;
+
+	bool bGotImage = false;
+
+	while (!bGotImage || (result != 0))
+	{
+		ULONG nRead;
+
+		uint8	ch;
+		nRead = m_stream->Read(&ch, 1);
+		if (nRead != 1)
+//		if ((ch = r->ReadB(r->file)) == -1)
+		{
+			result = 1;
+			return result;
+			//	goto cleanup;
+		}
+
+		if (ch == ';')	// GIF terminator
+		{
+			return 1;	// Last frame
+			//	done = TRUE;	// Quit loop
+		}
+		else if (ch == 0x21)	// Extension
+		{
+			uint8 extlabel;
+			uint8 blocksize;
+			
+			nRead = m_stream->Read(&extlabel, 1);
+			/* Read extension label byte */
+			if (nRead != 1)
+			//if ((extlabel = r->ReadB(r->file)) == -1)
+			{
+				result = 1;
+				goto cleanup;
+			}
+			
+			if (extlabel == 0xf9)	// Graphic control block
+			{
+				nRead = m_stream->Read(&blocksize, 1);
+				if (nRead != 1)
+				//if ((blocksize = r->ReadB(r->file)) ==-1)
+				{
+					result = 1;
+					goto cleanup;
+				}
+
+				nRead = m_stream->Read(&gctrl/*[ctrlindex]*/, sizeof(GIFCONTROL));
+				if (nRead != sizeof(GIFCONTROL))
+				{
+					result = 1;
+					goto cleanup;
+				}
+				
+				//	gctrl.DelayTime = 100/g->frameRate; // (1/100) of a second to wait
+				//	r->frameRate = gctrl[ctrlindex].DelayTime/100; // (1/100) of a second to wait
+				
+#if 0
+				if (gctrl/*[ctrlindex]*/.Transparent)
+				{
+					r->transparentColor = gctrl/*[ctrlindex]*/.TransparentIndex;
+				}
+				
+				ctrlindex ^= 1;
+#endif
+			}
+			else if (extlabel == 0xfe)	// Comment
+			{
+			}
+			else if (extlabel == 0x01)	// Plain text
+			{
+			}
+			else if (extlabel == 0xff)	// Application specific
+			{
+				char identifier[11];
+				//	BYTE	dat;
+				
+				nRead = m_stream->Read(&blocksize, 1);
+				//if ((blocksize = r->ReadB(r->file)) ==-1)
+				if (nRead != 1)
+				{
+					result = 1;
+					goto cleanup;
+				}
+				
+				nRead = m_stream->Read(identifier, 11);
+				//if (r->ReadF(r->file, identifier, 11) < 11)
+				if (nRead != 11)
+				{
+					result = 1;
+					goto cleanup;
+				}
+				
+				if (_strnicmp(identifier, "NETSCAPE2.0", 11) == 0)	// Loop extension
+				{
+					GIFLOOP	loop;
+					nRead = m_stream->Read(&blocksize, 1);
+					if (nRead != 1)
+					//if ((blocksize = r->ReadB(r->file)) == -1)
+					{
+						result = 1;
+						goto cleanup;
+					}
+					
+					nRead = m_stream->Read(&loop, 3);
+					if (nRead != 3)
+					//if (r->ReadF(r->file, &loop, 3) < 3)
+					{
+						result = 1;
+						goto cleanup;
+					}
+				}
+			}
+			else
+			{
+			}
+
+			// Skip the data block(s) associated with the extension
+			SkipDataBlocks();
+		}
+		else if (ch == 0x2c)	// Image separator
+		{
+			GIFFrame* pFrame = new GIFFrame;
+			//pFrame->gid = gid;
+			pFrame->gctrl = gctrl;
+
+			// Read local image description
+			nRead = m_stream->Read(&pFrame->gid, sizeof(GIFIMAGEDESCR));
+			if (nRead != sizeof(GIFIMAGEDESCR))
+			{
+				result = 1;
+				goto cleanup;
+			}
+			
+			// The local image is larger than the global image, error?
+			if ((pFrame->gid.gifLeft+pFrame->gid.gifWidth > m_gsd.gifWidth) || (pFrame->gid.gifTop+pFrame->gid.gifHeight > m_gsd.gifHeight))
+			{
+				result = Success_False;//PLUGIN_MSG;
+				//lstrcpy(r->errorMsg, "Local image is larger than global image");
+				goto cleanup;
+			}
+
+			if (pFrame->gid.gifInterlaced)
+			{
+				pFrame->pass2_offset = (pFrame->gid.gifHeight+7)/8;
+				pFrame->pass3_offset = pFrame->pass2_offset+(pFrame->gid.gifHeight+3)/8;
+				pFrame->pass4_offset = pFrame->pass3_offset+(pFrame->gid.gifHeight+1)/4;
+			}
+
+			m_frames.Add(pFrame);
+
+		/////////////////////
+		//	image data
+			
+		// Remember file offset to image data
+			pFrame->m_fileOffset = m_stream->Seek(0, System::IO::STREAM_SEEK_CUR);
+
+#if 0
+			result = DecodeImage(pFrame, NULL, 0, 0, false);
+			if (result != 0)
+				goto cleanup;
+#endif
+
+			result = 0;
+			bGotImage = true;
+
+			//	if (more_image) r->fileType = 1;	// multiple frames
+
+			//	more_image = TRUE;
+		}
+	}
+
+cleanup:
+
+	return result;
+}
+
+int GIFDecoder::StartScan(GIFFrame* pFrame)
+{
+	pFrame = m_frames[0];
+
+	ULONG nRead;
+
+	if (pFrame->gid.gifLocalCTable)	// There is a local colortable
+	{
+		int numColors = 1<<(pFrame->gid.gifLocalCTableSize+1);
+		int colorMapSize = numColors*sizeof(GIFCOLORTRIPLET);
+		
+		GIFCOLORTRIPLET	localColors[256];
+		// Nothing is done with this colortable yet
+		
+		// Read the color table
+		nRead = m_stream->Read(localColors, colorMapSize);
+		if (nRead != colorMapSize)
+		{
+			return -1;//result = 1;
+			//return result;//goto cleanup;
+		}
+		
+		//	if (result = r->FramePalette(r)) goto cleanup;
+		//		ParsePalette(r->bmi->bmiColors, gifColors, numColors);
+	}
+	
+	// Get min-code-size byte
+	nRead = m_stream->Read(&m_input_code_size, 1);
+	if (nRead != 1)
+	{
+		return -1;//re	result = 1;
+		//goto cleanup;
+	}
+	
+	if ((m_input_code_size < 2) || (m_input_code_size >= MAX_LZW_BITS))
+	{
+		//strcpy(r->errorMsg, "input_code_size out of range");
+		//result = PLUGIN_MSG;
+		//goto cleanup;
+		return -1;
+	}
+
+	// Initialize LZW decompressor
+	m_lzwstream = new Stream;
+	m_lzwstream->m_p = this;
+
+	m_LZWDecoder = new LZWDecoder<0>(new GIFBitStream(m_lzwstream), m_input_code_size);
+	m_code_offset = 0;
+	m_code_len = 0;
+
+	row = 0;
+	colorTable = m_globalColors;
+
+	return 0;
+}
+
+int GIFDecoder::ReadScanline(GIFFrame* pFrame, uint8* idata, int bitcount)
+{
+	pFrame = m_frames[0];
+
+	int transparentColor;
+	if (/*!pFrame->gctrl ||*/ !pFrame->gctrl.Transparent/* || m_currentFrame == 0*/)
+		transparentColor = 0x7fff;	// No transparency
+	else
+		transparentColor = pFrame->gctrl.TransparentIndex;
+
+	int actual_row;
+
+	if (!pFrame->gid.gifInterlaced)
+	{
+		actual_row = row;	// For non-interlaced, the rows are one after the other
+	}
+	else
+	{
+		int row2 = row - pFrame->gid.gifTop;
+
+		if (row2 < pFrame->pass2_offset)								// pass1
+			actual_row = row2 << 3;
+		else if (row2 < pFrame->pass3_offset)  						// pass2
+			actual_row = ((row2 - pFrame->pass2_offset) << 3)+4;
+		else if (row2 < pFrame->pass4_offset)							// pass3
+			actual_row = ((row2 - pFrame->pass3_offset) << 2)+2;
+		else															// pass4
+			actual_row = ((row2 - pFrame->pass4_offset) << 1)+1;
+	}
+
+	uint8* ptr = idata;
+
+	/*
+	if (bitcount == 24)
+	{
+		ptr = &idata[rowbytes*actual_row+pFrame->gid.gifLeft*3];
+	}
+	else if (bitcount == 8)
+	{
+		ptr = &idata[rowbytes*actual_row+pFrame->gid.gifLeft];
+	}
+	else if (bitcount == 4)
+	{
+		ptr = &idata[rowbytes*actual_row+(pFrame->gid.gifLeft>>1)];
+	}
+	else	// 1
+	{
+		ptr = &idata[rowbytes*actual_row+(pFrame->gid.gifLeft>>3)];
+	}
+	*/
+
+	for (int col = pFrame->gid.gifLeft; col < (pFrame->gid.gifLeft + pFrame->gid.gifWidth); col++)
+	{
+		int c;
+		if ((c = LZWReadByte()) < 0)
+		{
+			return 1;
+		}
+
+		if (bitcount == 24)
+		{
+			if (c != transparentColor)
+			{
+				*ptr++ = colorTable[c].Blue;
+				*ptr++ = colorTable[c].Green;
+				*ptr++ = colorTable[c].Red;
+			}
+			else
+				ptr += 3;
+		}
+		else if (bitcount == 8)
+		{
+			if (c != transparentColor) *ptr = c;
+			ptr++;
+		}
+		else if (bitcount == 4)
+		{
+			if (col & 1)
+			{
+				if (c != transparentColor) *ptr = c | (*ptr & 0xf0);
+				ptr++;
+			}
+			else
+			{
+				if (c != transparentColor) *ptr = (c<<4) | (*ptr & 0x0f);
+			}
+		}
+		else	// 1
+		{
+			int bit = 7-(col%8);
+			
+			if (c)
+				*ptr |= (1<<bit);		// set bit
+			else
+				*ptr &= ~(1<<bit);	// clear bit
+			
+			if (bit == 0) ptr++;
+		}
+	}
+
+	return 0;
+}
+
+int GIFDecoder::DecodeImage(GIFFrame* pFrame, uint8* bits, int rowbytes, int bitcount, bool bReadData)
+{
+	ULONG nRead;
+
+	if (pFrame->gid.gifLocalCTable)	// There is a local colortable
+	{
+		int numColors = 1<<(pFrame->gid.gifLocalCTableSize+1);
+		int colorMapSize = numColors*sizeof(GIFCOLORTRIPLET);
+		
+		GIFCOLORTRIPLET	localColors[256];
+		// Nothing is done with this colortable yet
+		
+		// Read the color table
+		nRead = m_stream->Read(localColors, colorMapSize);
+		if (nRead != colorMapSize)
+		{
+			return 1;//result = 1;
+			//return result;//goto cleanup;
+		}
+		
+		//	if (result = r->FramePalette(r)) goto cleanup;
+		//		ParsePalette(r->bmi->bmiColors, gifColors, numColors);
+	}
+	
+	// Get min-code-size byte
+	nRead = m_stream->Read(&m_input_code_size, 1);
+	if (nRead != 1)
+	{
+		return 1;//re	result = 1;
+		//goto cleanup;
+	}
+	
+	if ((m_input_code_size < 2) || (m_input_code_size >= MAX_LZW_BITS))
+	{
+		//strcpy(r->errorMsg, "input_code_size out of range");
+		//result = PLUGIN_MSG;
+		//goto cleanup;
+		return 1;
+	}
+	
+// Add the frame
+
+	// Initialize LZW decompressor
+//	m_pFilter->InitLZWCode();
+	m_lzwstream = new Stream;
+	m_lzwstream->m_p = this;
+
+	m_LZWDecoder = new LZWDecoder<0>(new GIFBitStream(m_lzwstream), m_input_code_size);
+	m_code_offset = 0;
+	m_code_len = 0;
+
+#if 0
+	// Apply the dispose on the frame
+	if (gctrl[ctrlindex].Disposal == 0)	// Nothing
+	{
+	}
+	else if (gctrl[ctrlindex].Disposal == 1)	// Do not dispose
+	{
+	}
+	else if (gctrl[ctrlindex].Disposal == 2)	// Dispose to background
+	{
+		// Fill with background color
+		/*
+		FillColor(r, gsd.gifBgColor);
+		
+		  FillColor(r, (gctrl[ctrlindex^more_image].Transparent)?
+		  gctrl[ctrlindex^more_image].TransparentIndex:
+		  gsd.gifBgColor);
+		*/
+	}
+	else if (gctrl[ctrlindex].Disposal == 3)	// Dispose to previous
+	{
+	}
+#endif
+
+//	more_image = FALSE;//(r->currentFrame > 0)? TRUE: FALSE;
+
+	/*
+	LSampleData sampledata;
+	if (bReadData)
+	{
+		sample->LockBits(&sampledata);
+	}
+	*/
+
+	// Read and decompress the graphic data
+	if (GetPixelRows(bits, rowbytes, bitcount, &m_gsd, &pFrame->gid, &pFrame->gctrl/*[ctrlindex^more_image]*/, m_globalColors, bReadData))
+	{
+	//	if (bReadData)
+	//		sample->UnlockBits();
+
+		return 1;//S_FALSE;//FORMAT_CORRUPTED_FILE;
+	}
+
+//	if (bReadData)
+//		sample->UnlockBits();
+
+	return 0;	// success
+//	return result;
+}
+
+}	// Imaging
+}

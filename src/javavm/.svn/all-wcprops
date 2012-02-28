@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/firstproject2/!svn/ver/114/FirstProject2/trunk/src/javavm
+END
+JavaClassFileLoader.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/firstproject2/!svn/ver/95/FirstProject2/trunk/src/javavm/JavaClassFileLoader.cpp
+END
+dllmain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/114/FirstProject2/trunk/src/javavm/dllmain.cpp
+END
+javavm.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/95/FirstProject2/trunk/src/javavm/javavm.cpp
+END
+StdAfx.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/95/FirstProject2/trunk/src/javavm/StdAfx.cpp
+END
+JavaVirtualMachine.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/firstproject2/!svn/ver/95/FirstProject2/trunk/src/javavm/JavaVirtualMachine.cpp
+END

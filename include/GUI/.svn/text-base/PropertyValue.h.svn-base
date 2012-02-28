@@ -1,0 +1,64 @@
+namespace System
+{
+namespace Gui
+{
+
+// 1 input, 0 or more outputs
+class GUIEXT PropertyValue : public Object, public IBinding, public IObjectChangedNotify
+{
+public:
+
+	CTOR PropertyValue(DependencyObject* owner, DependencyProperty* dp);
+
+	virtual Type* GetOutputType() override;	// IBinding
+	virtual Object* GetOutput(IBinding* caller) override;	// IBinding
+	virtual int SetOutput(IBinding* caller, Object* value) override;	// IBinding
+	virtual int SetInput(IBinding* caller, Object* value) override;	// IBinding
+//	virtual Object* GetInput(IBinding* caller) = 0;
+	virtual void* Connect(IInputBinding* binding) override;	// IBinding
+
+	operator Expressive::Expression* ()
+	{
+		return new BindingExpression(this);
+	}
+
+	void SetInputBinding(IBinding* inBinding);
+
+	DependencyProperty* GetPropertyDefinition();
+	DependencyObject* GetOwner();
+
+	void SetLocalObjectValue(Object* value);
+	Object* GetLocalObjectValue();
+	Object* GetComputedObjectValue();
+
+	void UpdateObjectValue(Object* value);
+
+	void OnComputedValueChanged();
+	void OnComputedValueChanging(Object* oldValue, Object* newValue);
+
+	virtual void OnObjectChanged(Object*) override;	// IObjectChangedNotify
+
+	int SendComputedValueDownStreamExcept(IBinding* exceptThis);
+
+	inline int SendComputedValueDownStream()
+	{
+		return SendComputedValueDownStreamExcept(NULL);
+	}
+
+	DependencyObject* m_owner;
+	DependencyProperty* m_dp;
+
+	Object* m_computedValue;
+	Object* m_localValue;
+
+	IBinding* m_inBinding;
+	void* m_inBindingPtr;
+	list<IInputBinding*> m_outBindings;
+
+	bool m_valueChanged;
+
+	static Object UnsetValue;
+};
+
+}	// Gui
+}	// System

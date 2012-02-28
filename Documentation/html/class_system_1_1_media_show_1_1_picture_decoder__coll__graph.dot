@@ -1,0 +1,41 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::MediaShow::PictureDecoder",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node4 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_sequence" ,fontname="Helvetica"];
+  Node4 [label="System::MediaShow::MpegVideoSequenceFormat",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_media_show_1_1_mpeg_video_sequence_format.html"];
+  Node2 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_file" ,fontname="Helvetica"];
+  Node5 [label="System::MediaShow::BitStreamEx",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_media_show_1_1_bit_stream_ex.html"];
+  Node6 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="System::IO::CBitStream32",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_i_o_1_1_c_bit_stream32.html"];
+  Node2 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_groupPictures" ,fontname="Helvetica"];
+  Node7 [label="System::list\< PictureDecoder * \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1list.html"];
+  Node8 -> Node7 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_allocator" ,fontname="Helvetica"];
+  Node8 [label="System::__gc_allocator",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__allocator.html"];
+  Node9 -> Node7 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_head" ,fontname="Helvetica"];
+  Node9 [label="System::list\< T, A \>::list_node",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1list_1_1list__node.html"];
+  Node2 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 -> Node9 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_prev\nm_next" ,fontname="Helvetica"];
+  Node10 -> Node9 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_value" ,fontname="Helvetica"];
+  Node10 [label="T",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node1 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pRefPic" ,fontname="Helvetica"];
+  Node11 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_buffer" ,fontname="Helvetica"];
+  Node11 [label="System::MediaShow::ImageBuffer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_media_show_1_1_image_buffer.html"];
+  Node12 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pos" ,fontname="Helvetica"];
+  Node12 [label="System::list\< PictureDecoder *, System::__gc_allocator \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1list.html"];
+  Node8 -> Node12 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_allocator" ,fontname="Helvetica"];
+  Node9 -> Node12 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_head" ,fontname="Helvetica"];
+  Node5 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_file" ,fontname="Helvetica"];
+  Node13 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pic" ,fontname="Helvetica"];
+  Node13 [label="System::MediaShow::Picture",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_media_show_1_1_picture.html"];
+  Node2 -> Node13 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node13 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_decoder" ,fontname="Helvetica"];
+}

@@ -1,0 +1,80 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: SWF - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14BB.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O2 /I "../../include/SWF" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SWF_EXPORTS" /FR"../../Intermediate/Win32/SWF/Release/" /Fp"../../Intermediate/Win32/SWF/Release/SWF.pch" /Yu"stdafx.h" /Fo"../../Intermediate/Win32/SWF/Release/" /Fd"../../Intermediate/Win32/SWF/Release/" /FD /c 
+"C:\MMStudio\src\SWF\ActionNames.cpp"
+"C:\MMStudio\src\SWF\Movie.cpp"
+"C:\MMStudio\src\swf\SWF.cpp"
+"C:\MMStudio\src\SWF\swfdebug.cpp"
+"C:\MMStudio\src\SWF\swfdecoder.cpp"
+"C:\MMStudio\src\SWF\swfencoder.cpp"
+"C:\MMStudio\src\SWF\swfplayer.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14BB.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14BC.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O2 /I "../../include/SWF" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SWF_EXPORTS" /FR"../../Intermediate/Win32/SWF/Release/" /Fp"../../Intermediate/Win32/SWF/Release/SWF.pch" /Yc"stdafx.h" /Fo"../../Intermediate/Win32/SWF/Release/" /Fd"../../Intermediate/Win32/SWF/Release/" /FD /c 
+"C:\MMStudio\src\swf\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14BC.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14BD.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /incremental:no /pdb:"Release/SWF.pdb" /map:"../../Intermediate/Win32/SWF/Release/SWF.map" /debug /machine:I386 /out:"../../bin/Win32/Release/SWF.dll" /implib:"Release/SWF.lib" 
+\MMStudio\Intermediate\Win32\SWF\Release\ActionNames.obj
+\MMStudio\Intermediate\Win32\SWF\Release\Movie.obj
+\MMStudio\Intermediate\Win32\SWF\Release\StdAfx.obj
+\MMStudio\Intermediate\Win32\SWF\Release\SWF.obj
+\MMStudio\Intermediate\Win32\SWF\Release\swfdebug.obj
+\MMStudio\Intermediate\Win32\SWF\Release\swfdecoder.obj
+\MMStudio\Intermediate\Win32\SWF\Release\swfencoder.obj
+\MMStudio\Intermediate\Win32\SWF\Release\swfplayer.obj
+]
+Creating command line "link.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14BD.tmp"
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14BE.bat" with contents
+[
+@echo off
+ParseMap .\../../Intermediate/Win32/SWF/Release/SWF.map "../../bin/Win32/Debug/SWF.typeinfo" "../../bin/Win32/Release/SWF.ad"
+]
+Creating command line "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14BE.bat"
+Compiling...
+StdAfx.cpp
+Compiling...
+ActionNames.cpp
+Movie.cpp
+SWF.cpp
+swfdebug.cpp
+swfdecoder.cpp
+C:\MMStudio\src\SWF\swfdecoder.cpp(1359) : warning C4065: switch statement contains 'default' but no 'case' labels
+swfencoder.cpp
+swfplayer.cpp
+C:\MMStudio\src\SWF\swfplayer.cpp(486) : warning C4305: 'argument' : truncation from 'const double' to 'float'
+C:\MMStudio\src\SWF\swfplayer.cpp(486) : warning C4305: 'argument' : truncation from 'const double' to 'float'
+C:\MMStudio\src\SWF\swfplayer.cpp(529) : warning C4305: 'argument' : truncation from 'const double' to 'float'
+C:\MMStudio\src\SWF\swfplayer.cpp(529) : warning C4305: 'argument' : truncation from 'const double' to 'float'
+Generating Code...
+C:\MMStudio\src\SWF\swfplayer.cpp(205) : warning C4700: local variable 'path' used without having been initialized
+Linking...
+   Creating library Release/SWF.lib and object Release/SWF.exp
+<h3>Output Window</h3>
+Performing Custom Build Step on \MMStudio\bin\Win32\Release\SWF.dll
+Heap
+..Heap()
+FileByteStream::Open(../../bin/Win32/Debug/SWF.typeinfo)
+FileByteStream::Open(../../bin/Win32/Debug/Draw.typeinfo)
+FileByteStream::Open(../../bin/Win32/Debug/LFC.typeinfo)
+FileByteStream::Open(../../bin/Win32/Debug/LXUI.typeinfo)
+
+
+
+<h3>Results</h3>
+SWF.dll - 0 error(s), 6 warning(s)
+</pre>
+</body>
+</html>

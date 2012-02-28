@@ -1,0 +1,20 @@
+<filter name="WAVE Parser">
+ <inputpin name="Stream Input" minOccurs="1" maxOccurs="1">
+   <mediatypes>
+	 <mediatype majortype="Stream">
+	   <streamcontent>
+		 <match>
+ 	     <pattern offset="0" mask="FFFFFFFF 00000000 FFFFFFFF" value="52494646 00000000 57415645" />
+		 </match>
+		</streamcontent>
+	 </mediatype>
+ 	</mediatypes>
+ </inputpin>
+
+ <outputpin name="Audio Output" minOccurs="0" maxOccurs="unbounded">
+	<mediatypes>
+	 <mediatype majortype="Audio" />
+	</mediatypes>
+ </outputpin>
+
+</filter>

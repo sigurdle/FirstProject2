@@ -1,0 +1,10 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="System::Web::LinkStyleStyleImpl",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Web::HTMLStyleElement",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_h_t_m_l_style_element.html"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Web::SVGStyleElement",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_s_v_g_style_element.html"];
+}

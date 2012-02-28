@@ -1,0 +1,27 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::stub_interface_base",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::stub_interface1\< return_type, arg1_type \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1stub__interface1.html"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="System::stub1\< return_type, arg1_type \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1stub1.html"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="System::stub_interface2\< return_type, arg1_type, arg2_type \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1stub__interface2.html"];
+  Node6 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="System::stub2\< return_type, arg1_type, arg2_type \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1stub2.html"];
+  Node1 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="System::stub_interface3\< return_type, arg1_type, arg2_type, arg3_type \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1stub__interface3.html"];
+  Node8 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="System::stub3\< return_type, arg1_type, arg2_type, arg3_type \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1stub3.html"];
+  Node1 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="System::stub_interface4\< return_type, arg1_type, arg2_type, arg3_type, arg4_type \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1stub__interface4.html"];
+  Node10 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="System::stub4\< return_type, arg1_type, arg2_type, arg3_type, arg4_type \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1stub4.html"];
+}

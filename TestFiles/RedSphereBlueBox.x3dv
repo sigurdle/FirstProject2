@@ -1,0 +1,284 @@
+#X3D V3.0 utf8
+PROFILE Interchange
+META "filename" "RedSphereBlueBox.x3dv"
+
+  DEF myColor PositionInterpolator {
+  key [ 0 1]
+  keyValue [ -2 0 10, -8 0 10 ]
+    }
+  
+ DEF myClock TimeSensor {
+  cycleInterval 10.0
+  loop TRUE
+}
+
+Group {
+  children [
+
+#	Background
+#	{
+	#	skyAngle [2]
+	#	skyColor [ 1 1 1, 0 0 1 ]
+
+	#	groundAngle [1]
+	#	groundColor [ 1 0 0, 0 1 0 ]
+		
+#		frontUrl [ "D:\Backgrounds\mountain_skybox\front.bmp"]
+#		backUrl [ "D:\Backgrounds\mountain_skybox\back.bmp"]
+#		rightUrl [ "D:\Backgrounds\mountain_skybox\right.bmp"]
+#		leftUrl [ "D:\Backgrounds\mountain_skybox\left.bmp"]
+#		topUrl [ "D:\Backgrounds\mountain_skybox\top.bmp"]
+#		bottomUrl [ "D:\Backgrounds\mountain_skybox\bottom.bmp"]
+#	}
+
+#	Fog
+#	{
+#		fogType "LINEAR"
+#		color 0.4 0 0
+#		visibilityRange 40
+#	}
+  
+  Viewpoint {
+  orientation 0 0 1 0
+  position 0 0 -10
+  }
+    NavigationInfo {
+      headlight FALSE
+      avatarSize [ 0.25 1.6 0.75 ]
+      type [ "EXAMINE" ]
+      speed 0
+    }
+
+	DEF myShader ProgramShader
+	{
+		language "HLSL_10"
+		programs
+		[
+			ShaderProgram
+			{
+				type "VERTEX"
+				url "inline://
+				
+				struct VS_OUTPUT
+				{
+					float4 pos : SV_Position;
+					float2 tex : TEXCOORD0;
+				};
+
+				cbuffer cb0
+				{
+					row_major float4x4 modelViewProjection : packoffset(c0);     // World * View * Projection transformation
+				};
+				
+				VS_OUTPUT main(float4 vPos : POSITION, float2 vTexCoord0 : TEXCOORD0)
+				{
+					VS_OUTPUT output;
+					output.pos = mul(vPos, modelViewProjection);
+					output.tex = vTexCoord0;
+					return output;
+				}
+				"
+			}
+
+			ShaderProgram
+			{
+				type "FRAGMENT"
+
+				inputOnly SFVec4f gcolor 1 1 1 1
+				inputOnly SFNode texture1 DEF Image1 ImageTexture
+				{
+					url "iron_man_5.bmp"
+				}
+
+				url "inline://
+
+				cbuffer cb1
+				{
+					float4 gcolor;
+				};
+
+				Texture2D texture1;
+
+				SamplerState sampler1
+				{
+					Filter = MIN_MAG_MIP_LINEAR;
+					AddressU = Border;
+					AddressV = Border;
+				};
+
+				struct VS_OUTPUT
+				{
+					float4 pos : SV_Position;
+					float2 tex : TEXCOORD0;
+				};
+				
+				float4 main(VS_OUTPUT v) : SV_Target
+				{
+					float4 tcolor = texture1.Sample(sampler1, v.tex);
+					float4 color = tcolor * gcolor;
+					return color;
+				}
+				"
+			}
+		]
+	}
+	
+    
+ #   PointLight {
+#	    color 1 1 1
+#		location 0 4 10
+ #   }
+
+    DEF light PointLight {
+	   color 1 1 1
+		location 0 0 -10
+    }
+
+	Shape {
+	  appearance Appearance {
+	    material Material { diffuseColor 1.0 0.0 1.0   }
+	    }
+	    
+		geometry IndexedFaceSet
+		{
+			solid TRUE
+			coord Coordinate
+			{
+				point [
+				-4 0 50,
+				4 0 50,
+				0 10 50,
+				]
+			}
+			coordIndex [
+				0
+				1
+				2
+				-1
+			]
+		}
+	}
+    
+   # Transform {
+    # translation 3.0 0.0 6.0
+     # children [
+      
+	Shape {
+	  geometry Sphere { radius 1
+	  }
+	  appearance Appearance {
+	    material Material { diffuseColor 1.0 0.0 0.0
+	    }
+	  }
+	}
+    #  ]
+   # }
+
+
+    Group {
+    #  translation -2.4 0.2 1.0
+    #  rotation 0.0 0.707 0.707 0.9
+
+      children [
+
+#	Shape {
+#	  geometry Cylinder {
+#	  height 4
+#	  radius 2
+#	  }
+#	  appearance Appearance {
+#	    material Material { diffuseColor 1.0 0.0 0.0
+#	    }
+#	  }
+#	}
+
+#	Shape {
+#	  geometry Cone {
+#	  height 4
+#	  bottomRadius 2
+#	  }
+#	  appearance Appearance {
+#	    material Material { diffuseColor 1.0 0.0 0.0
+#	    }
+#	  }
+#	}
+
+	DEF shape1 CollidableShape {
+	shape Shape {
+	  geometry Box {
+	  }
+	  appearance Appearance {
+	    material Material { diffuseColor 0.0 1.0 1.0 }
+	    shaders [USE myShader]
+	    texture ImageTexture
+	    {
+			url "iron_man_5.bmp"
+	    }
+	  }
+	}
+	}
+	
+#    Transform {
+ #    translation 0.0 -3.0 0.0
+  #    children [
+	DEF shape2 CollidableShape
+	{ shape Shape {
+	  geometry Box {
+	  }
+	  appearance Appearance {
+	    material Material { diffuseColor 1.0 1.0 1.0 }
+	    texture ImageTexture
+	    {
+			url "iron_man_5.bmp"
+	    }
+	  }
+	}
+	}	
+#]
+#}
+
+	DEF shape3 CollidableShape
+	{ shape Shape {
+	  geometry Box {
+	  }
+	  appearance Appearance {
+	    material Material { diffuseColor 1.0 0.0 1.0 }
+#	    shaders [USE myShader]
+	  }
+	}
+	}	
+
+      ]
+    }
+
+    RigidBodyCollection
+    {
+		bodies
+		[
+			RigidBody
+			{
+				geometry [ USE shape1 ]
+				position 0 7 10
+				fixed FALSE
+			}
+
+			DEF body2 RigidBody
+			{
+				geometry [ USE shape2 ]
+				position 1 -2 10
+				fixed TRUE
+			}
+
+			DEF body3 RigidBody
+			{
+				geometry [ USE shape3 ]
+				position -1 -4 10
+				fixed TRUE
+			}
+		]
+	}    
+  ]
+}
+
+ROUTE myClock.fraction_changed TO myColor.set_fraction
+ROUTE myColor.value_changed TO body3.position

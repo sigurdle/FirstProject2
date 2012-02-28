@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/firstproject2/!svn/ver/122/FirstProject2/trunk/src/ImageEdit
+END
+ShapeTool.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/123/FirstProject2/trunk/src/ImageEdit/ShapeTool.cpp
+END
+MaskOutlineVisual.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/firstproject2/!svn/ver/124/FirstProject2/trunk/src/ImageEdit/MaskOutlineVisual.cpp
+END
+ImageDocument.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/123/FirstProject2/trunk/src/ImageEdit/ImageDocument.cpp
+END
+BitmapEditor.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/124/FirstProject2/trunk/src/ImageEdit/BitmapEditor.cpp
+END
+SelectionTool.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/123/FirstProject2/trunk/src/ImageEdit/SelectionTool.cpp
+END
+HandTool.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/123/FirstProject2/trunk/src/ImageEdit/HandTool.cpp
+END
+MagnifyTool.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/123/FirstProject2/trunk/src/ImageEdit/MagnifyTool.cpp
+END
+PencilTool.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/124/FirstProject2/trunk/src/ImageEdit/PencilTool.cpp
+END
+TransformTool.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/123/FirstProject2/trunk/src/ImageEdit/TransformTool.cpp
+END
+StrokeVisual.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/124/FirstProject2/trunk/src/ImageEdit/StrokeVisual.cpp
+END
+ColorPicker.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/122/FirstProject2/trunk/src/ImageEdit/ColorPicker.cpp
+END
+Layer.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/122/FirstProject2/trunk/src/ImageEdit/Layer.cpp
+END
+PaintBrushTool.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/firstproject2/!svn/ver/124/FirstProject2/trunk/src/ImageEdit/PaintBrushTool.cpp
+END

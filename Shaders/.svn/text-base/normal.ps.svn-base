@@ -1,0 +1,42 @@
+Texture2D texture0;
+
+SamplerState textureSampler
+{
+	Filter = MIN_MAG_MIP_LINEAR;
+	//BorderColor = 0;
+	AddressU = Clamp;
+	AddressV = Clamp;
+};
+
+float4 main(float4 Position : SV_Position,
+			float2 TextureUV : TEXCOORD0,
+			float4 E : COLOR0) : SV_Target
+{
+	float2 screenpos = Position.xy;
+//	float2 destpos = mul(TextureUV, screenpos);
+//	In.TextureUV[1]
+
+/*
+Er, Eg, Eb    - Element color value
+Ea            - Element alpha value
+Cr, Cg, Cb    - Canvas color value (before blending)
+Ca            - Canvas alpha value (before blending)
+Cr', Cg', Cb' - Canvas color value (after blending)
+Ca'           - Canvas alpha value (after blending)
+Ca' = 1 - (1 - Ea) * (1 - Ca)
+Cr' = (1 - Ea) * Cr + Er
+Cg' = (1 - Ea) * Cg + Eg
+Cb' = (1 - Ea) * Cb + Eb
+*/
+
+	float4 C = texture0.Sample(textureSampler, screenpos);
+
+	float inv_Ea = 1 - E.a;
+
+	float Ca_ = 1 - inv_Ea * (1 - C.a);
+	float Cr_ = inv_Ea * C.r + E.r;
+	float Cg_ = inv_Ea * C.g + E.g;
+	float Cb_ = inv_Ea * C.b + E.b;
+
+	return float4(Cr_, Cg_, Cb_, Ca_);
+}

@@ -1,0 +1,7 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::MachO::MACHO_SYMTAB_NLIST",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$struct_system_1_1_mach_o_1_1_m_a_c_h_o___s_y_m_t_a_b___n_l_i_s_t.html"];
+}

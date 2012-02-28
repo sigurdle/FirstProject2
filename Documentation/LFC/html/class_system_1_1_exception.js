@@ -1,0 +1,27 @@
+var class_system_1_1_exception =
+[
+    [ "Exception", "class_system_1_1_exception.html#a93f69a2b4685c950dfe1decdcd8bba6e", null ],
+    [ "Exception", "class_system_1_1_exception.html#afcba4b1762933a6a408929ff5bb67332", null ],
+    [ "FromHResult", "class_system_1_1_exception.html#a535f1d06aa2f9a20425b921e05500b09", null ],
+    [ "FromHResult", "class_system_1_1_exception.html#a9f065be02b084b639ac96303a00d0009", null ],
+    [ "FromStdException", "class_system_1_1_exception.html#a40944c1f31b52cdc912d3721ae7bf077", null ],
+    [ "get_Filename", "class_system_1_1_exception.html#a7e104cd6ec6184809f72729557574906", null ],
+    [ "get_HResult", "class_system_1_1_exception.html#aada7a34f6bfa1b6c296f523935995e63", null ],
+    [ "get_innerException", "class_system_1_1_exception.html#a0d5a4845e033a970adcaa7717b770725", null ],
+    [ "get_Line", "class_system_1_1_exception.html#a89d83813cdc9e4f9c3d9c863b43aae4c", null ],
+    [ "get_Reason", "class_system_1_1_exception.html#a020c1b0850c9fd50d072f2abb9b3f762", null ],
+    [ "get_Source", "class_system_1_1_exception.html#a64275821f27e3f7d3b29e82d8f746033", null ],
+    [ "operator new", "class_system_1_1_exception.html#ae15e25ffbd7d8e178390f8890c154c02", null ],
+    [ "operator new", "class_system_1_1_exception.html#aa2220e73dc6b56b7a526e4e6f5955e74", null ],
+    [ "WriteToStream", "class_system_1_1_exception.html#a76d2936a1d8a24614c4a9d40946f3e0b", null ],
+    [ "m_backtraces", "class_system_1_1_exception.html#ab5f0ac938f51528c46681d1c0e010b16", null ],
+    [ "m_bFree", "class_system_1_1_exception.html#a111d52806667826b23e897847991bce9", null ],
+    [ "m_errorInfo", "class_system_1_1_exception.html#a7443f7e1f448bcde5900972508527729", null ],
+    [ "m_filename", "class_system_1_1_exception.html#a06d05922a31620aaaed2f9a34c26c33d", null ],
+    [ "m_HResult", "class_system_1_1_exception.html#adfe40eba7ae42fb839b2fd43486d1206", null ],
+    [ "m_innerException", "class_system_1_1_exception.html#a22510e287d645f971b749adf04205699", null ],
+    [ "m_line", "class_system_1_1_exception.html#a4846743a42f3e9197729913b1526b9ee", null ],
+    [ "m_nframes", "class_system_1_1_exception.html#a6070b3af6451b3fe45b9d7ff8e266e15", null ],
+    [ "m_reason", "class_system_1_1_exception.html#ac5febc3bd03c9bef91d91f384353eb5d", null ],
+    [ "m_source", "class_system_1_1_exception.html#aaf2538743793c52f5ac436c15bbf4585", null ]
+];

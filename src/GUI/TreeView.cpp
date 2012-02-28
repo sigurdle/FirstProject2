@@ -1,0 +1,121 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+DependencyClass* TreeView::get_Class()
+{
+	static DependencyClass depclass(typeid(thisClass), baseClass::get_Class());
+
+	static DependencyProperty* properties[] =
+	{
+		get_BackgroundBrushProperty(),
+	};
+
+	return &depclass;
+}
+
+DependencyClass* TreeView::pClass(get_Class());
+
+IMP_DEPENDENCY_PROPERTY(Brush*, TreeView, BackgroundBrush, new Gui::SolidColorBrush(1,1,1,1))
+
+IMP_ROUTEDEVENT(ClickedItem, TreeView, RoutingStrategy_Bubble, typeid(Event2<Object*, DragEventArgs*>));
+//RoutedEvent* TreeView::ClickedItemEvent = EventManager::RegisterRoutedEvent("ClickedItem", RoutingStrategy_Bubble, typeid(Event2<TreeView*, RoutedEventArgs*>), typeid(TreeView));
+
+TreeView::TreeView(ITreeViewController* controller) : FrameworkElement(get_Class())
+{
+	m_item = controller->GetRoot();
+}
+
+void TreeView::Render(ManagedRenderContext renderContext)
+{
+	float width = get_ActualWidth();
+	float height = get_ActualHeight();
+
+	renderContext.FillRectangle(gm::RectF(0,0, width, height), get_BackgroundBrush());
+
+	RenderItem(renderContext, m_item, 0, 0, width);
+}
+
+float TreeView::RenderItem(ManagedRenderContext renderContext, TreeItem item, float x, float y, float width)
+{
+	float itemheight = m_item.controller->GetItemHeight(item);
+
+	gm::RectF rect(x, y, width, itemheight);
+	m_item.controller->RenderItem(item, renderContext, rect);
+
+	y += itemheight;
+
+	itemheight += RenderItemChildren(renderContext, item, x+20, y, width-20);
+
+	return itemheight;
+}
+
+float TreeView::RenderItemChildren(ManagedRenderContext renderContext, TreeItem item, float x, float y, float width)
+{
+	float height = 0;
+	size_t nchildren = item.controller->GetChildrenCount(item);
+	for (size_t i = 0; i < nchildren; ++i)
+	{
+		TreeItem child = item.controller->GetChild(item, i);
+		float itemheight = RenderItem(renderContext, child, x, y, width);
+
+		height += itemheight;
+		y += itemheight;
+	}
+
+	return height;
+}
+
+float TreeView::ClickItem(TreeItem item, float x, float y, float width, gm::PointF clickpos)
+{
+	float itemheight = m_item.controller->GetItemHeight(item);
+
+	RoutedEventArgs* args = new RoutedEventArgs(get_ClickedItemEvent());
+	RaiseEvent(args);
+
+	gm::RectF rect(x, y, width, itemheight);
+	if (rect.Contains(clickpos))
+	{
+		m_item.controller->ClickItem(item, rect, clickpos);
+		InvalidateVisual();
+	}
+
+	y += itemheight;
+
+	itemheight += ClickItemChildren(item, x+20, y, width-20, clickpos);
+
+	return itemheight;
+}
+
+float TreeView::ClickItemChildren(TreeItem item, float x, float y, float width, gm::PointF clickpos)
+{
+	float height = 0;
+	size_t nchildren = item.controller->GetChildrenCount(item);
+	for (size_t i = 0; i < nchildren; ++i)
+	{
+		TreeItem child = item.controller->GetChild(item, i);
+		float itemheight = ClickItem(child, x, y, width, clickpos);
+
+		height += itemheight;
+		y += itemheight;
+	}
+
+	return height;
+}
+
+void TreeView::OnMouseLeftButtonDown(MouseButtonEventArgs* args)
+{
+	float width = get_ActualWidth();
+	float height = get_ActualHeight();
+
+	gm::PointF pos = args->GetPosition(this);
+
+	ClickItem(m_item, 0, 0, width, pos);
+}
+
+}	// Gui
+}	// System

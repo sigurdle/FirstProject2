@@ -1,0 +1,412 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: HTML - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x414 /fo"../../Intermediate/Win32/HTML/Release/HTML.res" /d "NDEBUG" "C:\MMStudio\Win32\HTML\HTML.rc"" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1475.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O1 /I "../Include/" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_USRDLL" /FR"../../Intermediate/Win32/HTML/Release/" /Fp"../../Intermediate/Win32/HTML/Release/HTML.pch" /Yu"stdafx.h" /Fo"../../Intermediate/Win32/HTML/Release/" /Fd"../../Intermediate/Win32/HTML/Release/" /FD /Zm400 /c 
+"C:\MMStudio\src\HTML\HTMLScriptSite.cpp"
+"C:\MMStudio\src\HTML\MediaSource.cpp"
+"C:\MMStudio\src\HTML\PSMILElement.cpp"
+"C:\MMStudio\src\HTML\PSMILLayoutElement.cpp"
+"C:\MMStudio\src\HTML\PSMILRegionElement.cpp"
+"C:\MMStudio\src\HTML\PSMILRootLayoutElement.cpp"
+"C:\MMStudio\src\HTML\PSMILTopLayoutElement.cpp"
+"C:\MMStudio\src\HTML\SMILAnimateColorElement.cpp"
+"C:\MMStudio\src\HTML\SMILAnimateElement.cpp"
+"C:\MMStudio\src\HTML\SMILAnimateMotionElement.cpp"
+"C:\MMStudio\src\HTML\SMILDocument.cpp"
+"C:\MMStudio\src\HTML\SMILMediaElement.cpp"
+"C:\MMStudio\src\HTML\SMILParElement.cpp"
+"C:\MMStudio\src\HTML\SMILRegionElement.cpp"
+"C:\MMStudio\src\HTML\SMILRootLayoutElement.cpp"
+"C:\MMStudio\src\HTML\SMILSeqElement.cpp"
+"C:\MMStudio\src\HTML\SMILTopLayoutElement.cpp"
+"C:\MMStudio\src\HTML\SMILTransitionElement.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegListValue.cpp"
+"C:\MMStudio\src\HTML\PathSegListUtils.cpp"
+"C:\MMStudio\src\HTML\SVGAnimatedString.cpp"
+"C:\MMStudio\src\HTML\SVGLength.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegArcAbs.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegArcRel.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegClosePath.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegCurvetoCubicAbs.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegCurvetoCubicRel.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegCurvetoCubicSmoothAbs.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegCurvetoCubicSmoothRel.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegCurvetoQuadraticAbs.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegCurvetoQuadraticRel.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegCurvetoQuadraticSmoothAbs.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegCurvetoQuadraticSmoothRel.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegLinetoAbs.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegLinetoHorizontalAbs.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegLinetoHorizontalRel.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegLinetoRel.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegLinetoVerticalAbs.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegLinetoVerticalRel.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegList.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegMovetoAbs.cpp"
+"C:\MMStudio\src\HTML\SVGPathSegMovetoRel.cpp"
+"C:\MMStudio\src\HTML\SVGStringList.cpp"
+"C:\MMStudio\src\gm\ggveclib.cpp"
+"C:\MMStudio\src\HTML\NITFDocument.cpp"
+"C:\MMStudio\src\HTML\NewsMLDocument.cpp"
+"C:\MMStudio\src\HTML\NewsMLElement.cpp"
+"C:\MMStudio\src\HTML\HTMLAnchorElement.cpp"
+"C:\MMStudio\src\HTML\HTMLBodyElement.cpp"
+"C:\MMStudio\src\HTML\HTMLDocument.cpp"
+"C:\MMStudio\src\HTML\HTMLElement.cpp"
+"C:\MMStudio\src\HTML\HTMLFormElement.cpp"
+"C:\MMStudio\src\HTML\HTMLFrameElement.cpp"
+"C:\MMStudio\src\HTML\HTMLFrameSetElement.cpp"
+"C:\MMStudio\src\HTML\HTMLGenericElement.cpp"
+"C:\MMStudio\src\HTML\HTMLIFrameElement.cpp"
+"C:\MMStudio\src\HTML\HTMLImageElement.cpp"
+"C:\MMStudio\src\HTML\HTMLLinkElement.cpp"
+"C:\MMStudio\src\HTML\HTMLObjectElement.cpp"
+"C:\MMStudio\src\HTML\HTMLParamElement.cpp"
+"C:\MMStudio\src\HTML\HTMLScreen.cpp"
+"C:\MMStudio\src\HTML\HTMLSelectElement.cpp"
+"C:\MMStudio\src\HTML\HTMLStyleElement.cpp"
+"C:\MMStudio\src\HTML\HTMLTableElement.cpp"
+"C:\MMStudio\src\HTML\PHTMLElement.cpp"
+"C:\MMStudio\src\HTML\PHTMLFrameElement.cpp"
+"C:\MMStudio\src\HTML\PHTMLFrameSetBaseElement.cpp"
+"C:\MMStudio\src\HTML\PHTMLFrameSetElement.cpp"
+"C:\MMStudio\src\HTML\PHTMLIFrameElement.cpp"
+"C:\MMStudio\src\HTML\PHTMLImageElement.cpp"
+"C:\MMStudio\src\HTML\PHTMLInputElement.cpp"
+"C:\MMStudio\src\HTML\PHTMLObjectElement.cpp"
+"C:\MMStudio\src\HTML\PHTMLSelectElement.cpp"
+"C:\MMStudio\src\HTML\PHTMLTextAreaElement.cpp"
+"C:\MMStudio\src\HTML\tag_Span.cpp"
+"C:\MMStudio\src\HTML\ASXMLAttributeDeclaration.cpp"
+"C:\MMStudio\src\HTML\ASXMLSchemaComplexContentType.cpp"
+"C:\MMStudio\src\HTML\ASXMLSchemaGlobalElementDefinition.cpp"
+"C:\MMStudio\src\HTML\ASXDRSchemaModel.cpp"
+"C:\MMStudio\src\HTML\HTML.cpp"
+"C:\MMStudio\src\HTML\HTML2.cpp"
+"C:\MMStudio\src\HTML\SMILFitValue.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1475.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1476.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O1 /I "../Include/" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_USRDLL" /FR"../../Intermediate/Win32/HTML/Release/" /Fp"../../Intermediate/Win32/HTML/Release/HTML.pch" /Yc"stdafx.h" /Fo"../../Intermediate/Win32/HTML/Release/" /Fd"../../Intermediate/Win32/HTML/Release/" /FD /Zm400 /c 
+"C:\MMStudio\src\HTML\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1476.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1477.tmp" with contents
+[
+shfolder.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /pdb:none /map:"../../Intermediate/Win32/HTML/Release/HTML.map" /debug /machine:I386 /nodefaultlib:"libcmt.lib" /def:".\HTML.def" /out:"../../bin/Win32/Release/HTML.dll" /implib:"Release/HTML.lib" 
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLScriptSite.obj
+\MMStudio\Intermediate\Win32\HTML\Release\MediaSource.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PSMILElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PSMILLayoutElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PSMILRegionElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PSMILRootLayoutElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PSMILTopLayoutElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SMILAnimateColorElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SMILAnimateElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SMILAnimateMotionElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SMILDocument.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SMILMediaElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SMILParElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SMILRegionElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SMILRootLayoutElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SMILSeqElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SMILTopLayoutElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SMILTransitionElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegListValue.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PathSegListUtils.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGAnimatedString.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGLength.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegArcAbs.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegArcRel.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegClosePath.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoCubicAbs.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoCubicRel.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoCubicSmoothAbs.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoCubicSmoothRel.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoQuadraticAbs.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoQuadraticRel.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoQuadraticSmoothAbs.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoQuadraticSmoothRel.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegLinetoAbs.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegLinetoHorizontalAbs.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegLinetoHorizontalRel.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegLinetoRel.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegLinetoVerticalAbs.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegLinetoVerticalRel.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegList.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegMovetoAbs.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegMovetoRel.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SVGStringList.obj
+\MMStudio\Intermediate\Win32\HTML\Release\ggveclib.obj
+\MMStudio\Intermediate\Win32\HTML\Release\NITFDocument.obj
+\MMStudio\Intermediate\Win32\HTML\Release\NewsMLDocument.obj
+\MMStudio\Intermediate\Win32\HTML\Release\NewsMLElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLAnchorElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLBodyElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLDocument.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLFormElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLFrameElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLFrameSetElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLGenericElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLIFrameElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLImageElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLLinkElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLObjectElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLParamElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLScreen.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLSelectElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLStyleElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLTableElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLFrameElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLFrameSetBaseElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLFrameSetElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLIFrameElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLImageElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLInputElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLObjectElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLSelectElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLTextAreaElement.obj
+\MMStudio\Intermediate\Win32\HTML\Release\tag_Span.obj
+\MMStudio\Intermediate\Win32\HTML\Release\ASXMLAttributeDeclaration.obj
+\MMStudio\Intermediate\Win32\HTML\Release\ASXMLSchemaComplexContentType.obj
+\MMStudio\Intermediate\Win32\HTML\Release\ASXMLSchemaGlobalElementDefinition.obj
+\MMStudio\Intermediate\Win32\HTML\Release\ASXDRSchemaModel.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTML.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTML2.obj
+\MMStudio\Intermediate\Win32\HTML\Release\SMILFitValue.obj
+\MMStudio\Intermediate\Win32\HTML\Release\StdAfx.obj
+\MMStudio\Intermediate\Win32\HTML\Release\HTML.res
+]
+Creating command line "link.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1477.tmp"
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1478.bat" with contents
+[
+@echo off
+ParseMap .\../../Intermediate/Win32/HTML/Release/HTML.map "../../bin/Win32/Debug/HTML.typeinfo" "../../bin/Win32/Release/HTML.ad"
+]
+Creating command line "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1478.bat"
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+HTMLScriptSite.cpp
+MediaSource.cpp
+PSMILElement.cpp
+PSMILLayoutElement.cpp
+PSMILRegionElement.cpp
+PSMILRootLayoutElement.cpp
+PSMILTopLayoutElement.cpp
+SMILAnimateColorElement.cpp
+SMILAnimateElement.cpp
+SMILAnimateMotionElement.cpp
+SMILDocument.cpp
+SMILMediaElement.cpp
+SMILParElement.cpp
+SMILRegionElement.cpp
+SMILRootLayoutElement.cpp
+SMILSeqElement.cpp
+SMILTopLayoutElement.cpp
+SMILTransitionElement.cpp
+SVGPathSegListValue.cpp
+PathSegListUtils.cpp
+Generating Code...
+C:\MMStudio\src\HTML\../LXML/AnimationElement.h(560) : warning C4700: local variable 'str' used without having been initialized
+C:\MMStudio\src\HTML\../LXML/AnimationElement.h(972) : warning C4700: local variable 'valuesstr' used without having been initialized
+C:\MMStudio\src\HTML\../LXML/AnimationElement.h(973) : warning C4700: local variable 'keytimesstr' used without having been initialized
+C:\MMStudio\src\HTML\../LXML/AnimationElement.h(560) : warning C4700: local variable 'str' used without having been initialized
+C:\MMStudio\src\HTML\../LXML/AnimationElement.h(972) : warning C4700: local variable 'valuesstr' used without having been initialized
+C:\MMStudio\src\HTML\../LXML/AnimationElement.h(973) : warning C4700: local variable 'keytimesstr' used without having been initialized
+C:\MMStudio\src\HTML\../LXML/AnimationElement.h(560) : warning C4700: local variable 'str' used without having been initialized
+C:\MMStudio\src\HTML\../LXML/AnimationElement.h(972) : warning C4700: local variable 'valuesstr' used without having been initialized
+C:\MMStudio\src\HTML\../LXML/AnimationElement.h(973) : warning C4700: local variable 'keytimesstr' used without having been initialized
+Compiling...
+SVGAnimatedString.cpp
+SVGLength.cpp
+SVGPathSegArcAbs.cpp
+SVGPathSegArcRel.cpp
+SVGPathSegClosePath.cpp
+SVGPathSegCurvetoCubicAbs.cpp
+SVGPathSegCurvetoCubicRel.cpp
+SVGPathSegCurvetoCubicSmoothAbs.cpp
+SVGPathSegCurvetoCubicSmoothRel.cpp
+SVGPathSegCurvetoQuadraticAbs.cpp
+SVGPathSegCurvetoQuadraticRel.cpp
+SVGPathSegCurvetoQuadraticSmoothAbs.cpp
+SVGPathSegCurvetoQuadraticSmoothRel.cpp
+SVGPathSegLinetoAbs.cpp
+SVGPathSegLinetoHorizontalAbs.cpp
+SVGPathSegLinetoHorizontalRel.cpp
+SVGPathSegLinetoRel.cpp
+SVGPathSegLinetoVerticalAbs.cpp
+SVGPathSegLinetoVerticalRel.cpp
+SVGPathSegList.cpp
+C:\MMStudio\src\HTML\SVGPathSegList.cpp(2602) : warning C4101: 'str2' : unreferenced local variable
+Generating Code...
+Compiling...
+SVGPathSegMovetoAbs.cpp
+SVGPathSegMovetoRel.cpp
+SVGStringList.cpp
+ggveclib.cpp
+NITFDocument.cpp
+NewsMLDocument.cpp
+NewsMLElement.cpp
+HTMLAnchorElement.cpp
+HTMLBodyElement.cpp
+HTMLDocument.cpp
+HTMLElement.cpp
+HTMLFormElement.cpp
+HTMLFrameElement.cpp
+HTMLFrameSetElement.cpp
+HTMLGenericElement.cpp
+HTMLIFrameElement.cpp
+HTMLImageElement.cpp
+HTMLLinkElement.cpp
+HTMLObjectElement.cpp
+HTMLParamElement.cpp
+Generating Code...
+Compiling...
+HTMLScreen.cpp
+HTMLSelectElement.cpp
+HTMLStyleElement.cpp
+HTMLTableElement.cpp
+PHTMLElement.cpp
+PHTMLFrameElement.cpp
+PHTMLFrameSetBaseElement.cpp
+PHTMLFrameSetElement.cpp
+PHTMLIFrameElement.cpp
+PHTMLImageElement.cpp
+PHTMLInputElement.cpp
+PHTMLObjectElement.cpp
+PHTMLSelectElement.cpp
+PHTMLTextAreaElement.cpp
+tag_Span.cpp
+ASXMLAttributeDeclaration.cpp
+ASXMLSchemaComplexContentType.cpp
+ASXMLSchemaGlobalElementDefinition.cpp
+ASXDRSchemaModel.cpp
+HTML.cpp
+Generating Code...
+Compiling...
+HTML2.cpp
+SMILFitValue.cpp
+Generating Code...
+Linking...
+   Creating library Release/HTML.lib and object Release/HTML.exp
+<h3>Output Window</h3>
+Performing Custom Build Step on \MMStudio\bin\Win32\Release\HTML.dll
+Heap
+..Heap()
+FileByteStream::Open(../../bin/Win32/Debug/HTML.typeinfo)
+FileByteStream::Open(../../bin/Win32/Debug/Draw.typeinfo)
+FileByteStream::Open(../../bin/Win32/Debug/LFC.typeinfo)
+FileByteStream::Open(../../bin/Win32/Debug/LMedia.typeinfo)
+FileByteStream::Open(../../bin/Win32/Debug/LXML.typeinfo)
+FileByteStream::Open(../../bin/Win32/Debug/LXUI.typeinfo)
+FileByteStream::Open(../../bin/Win32/Debug/XPath.typeinfo)
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP147C.tmp" with contents
+[
+/nologo /o"Release/HTML.bsc" 
+\MMStudio\Intermediate\Win32\HTML\Release\StdAfx.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLScriptSite.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\MediaSource.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PSMILElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PSMILLayoutElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PSMILRegionElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PSMILRootLayoutElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PSMILTopLayoutElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SMILAnimateColorElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SMILAnimateElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SMILAnimateMotionElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SMILDocument.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SMILMediaElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SMILParElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SMILRegionElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SMILRootLayoutElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SMILSeqElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SMILTopLayoutElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SMILTransitionElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegListValue.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PathSegListUtils.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGAnimatedString.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGLength.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegArcAbs.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegArcRel.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegClosePath.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoCubicAbs.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoCubicRel.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoCubicSmoothAbs.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoCubicSmoothRel.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoQuadraticAbs.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoQuadraticRel.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoQuadraticSmoothAbs.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegCurvetoQuadraticSmoothRel.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegLinetoAbs.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegLinetoHorizontalAbs.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegLinetoHorizontalRel.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegLinetoRel.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegLinetoVerticalAbs.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegLinetoVerticalRel.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegList.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegMovetoAbs.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGPathSegMovetoRel.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SVGStringList.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\ggveclib.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\NITFDocument.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\NewsMLDocument.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\NewsMLElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLAnchorElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLBodyElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLDocument.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLFormElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLFrameElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLFrameSetElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLGenericElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLIFrameElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLImageElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLLinkElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLObjectElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLParamElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLScreen.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLSelectElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLStyleElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTMLTableElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLFrameElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLFrameSetBaseElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLFrameSetElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLIFrameElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLImageElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLInputElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLObjectElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLSelectElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\PHTMLTextAreaElement.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\tag_Span.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\ASXMLAttributeDeclaration.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\ASXMLSchemaComplexContentType.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\ASXMLSchemaGlobalElementDefinition.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\ASXDRSchemaModel.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTML.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\HTML2.sbr
+\MMStudio\Intermediate\Win32\HTML\Release\SMILFitValue.sbr]
+Creating command line "bscmake.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP147C.tmp"
+Creating browse info file...
+<h3>Output Window</h3>
+
+
+
+<h3>Results</h3>
+HTML.dll - 0 error(s), 10 warning(s)
+</pre>
+</body>
+</html>

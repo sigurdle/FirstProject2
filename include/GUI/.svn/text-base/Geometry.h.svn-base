@@ -1,0 +1,200 @@
+namespace System
+{
+namespace Gui
+{
+
+enum CombineOp
+{
+	CombineOp_Union,
+	CombineOp_Intersect,
+	CombineOp_Complement,
+	CombineOp_Subtract,
+};
+
+class GUIEXT Geometry : public DependencyObject, public IBitwiseOr
+{
+protected:
+
+	CTOR Geometry(DependencyClass* depClass);
+
+public:
+
+	// Computed properties
+	DEPENDENCY_PROPERTY(float, BoundsLeft)
+	DEPENDENCY_PROPERTY(float, BoundsTop)
+	DEPENDENCY_PROPERTY(float, BoundsWidth)
+	DEPENDENCY_PROPERTY(float, BoundsHeight)
+
+	DEPENDENCY_PROPERTY(float, FillArea)
+	DEPENDENCY_PROPERTY(float, ContourLength)
+
+	DEPENDENCY_CLASS_ABSTRACT(Geometry, DependencyObject)
+
+	virtual gm::RectF GetBounds();
+	virtual gm::RectF GetBounds(const D2D1_MATRIX_3X2_F& transform);
+
+	virtual D2D1_GEOMETRY_RELATION CompareWithGeometry(Geometry* geometry, const D2D1_MATRIX_3X2_F* inputGeometryTransform);
+	virtual Geometry* CombineWithGeometry(Geometry* geometry, D2D1_COMBINE_MODE combineMode, const D2D1_MATRIX_3X2_F* inputGeometryTransform);
+
+	virtual bool FillContainsPoint(gm::PointF point);
+	virtual bool FillContainsPoint(gm::PointF point, const D2D1_MATRIX_3X2_F& transform);
+
+	virtual void RenderFill(ManagedRenderContext renderContext, Brush* brush);
+	virtual void RenderStroke(ManagedRenderContext renderContext, Brush* brush, float width);
+	virtual ID2D1Geometry* GetD2DGeometry() = 0;
+	virtual HRGN CreateHRGN() = 0;
+
+	virtual Geometry* Widen(float strokeWidth, const D2D1_MATRIX_3X2_F* worldTransform);
+
+	virtual Object* BitWiseOr(Object* obj)
+	{
+		ASSERT(0);
+		return NULL;
+	}
+
+	// Helpers
+	virtual D2D1_GEOMETRY_RELATION CompareWithGeometry(Geometry* geometry)
+	{
+		return CompareWithGeometry(geometry, NULL);
+	}
+
+	virtual Geometry* CombineWithGeometry(Geometry* geometry, D2D1_COMBINE_MODE combineMode)
+	{
+		return CombineWithGeometry(geometry, combineMode, NULL);
+	}
+
+	virtual Geometry* Widen(float strokeWidth)
+	{
+		return Widen(strokeWidth, NULL);
+	}
+
+	bool Contains(gm::PointF point)
+	{
+		return FillContainsPoint(point);
+	}
+
+	DEFINE_THIS(_Geometry)
+};
+
+class GUIEXT geometry
+{
+public:
+
+	CTOR geometry() : m_p(NULL)
+	{
+	}
+
+	CTOR geometry(Geometry* p) : m_p(p)
+	{
+	}
+
+	CTOR geometry(gm::RectF rect);
+
+	gm::RectF GetBounds() const
+	{
+		if (m_p)
+			return m_p->GetBounds();
+		else
+			return gm::RectF();
+	}
+
+	operator Geometry* () const
+	{
+		return m_p;
+	}
+
+	bool operator == (const geometry& other) const
+	{
+		return m_p == other.m_p;
+	}
+
+	bool operator != (const geometry& other) const
+	{
+		return !(*this == other);
+	}
+
+	bool Contains(const geometry& other) const
+	{
+		return m_p->CompareWithGeometry(other.m_p, NULL) == D2D1_GEOMETRY_RELATION_CONTAINS;
+	}
+
+	bool Overlaps(const geometry& other) const
+	{
+		return m_p->CompareWithGeometry(other.m_p, NULL) == D2D1_GEOMETRY_RELATION_OVERLAP;
+	}
+
+	geometry Widened(float strokeWidth) const
+	{
+		return m_p->Widen(strokeWidth, NULL);
+	}
+
+	geometry operator | (const geometry& other) const
+	{
+		return m_p->CombineWithGeometry(other.m_p, D2D1_COMBINE_MODE_UNION, NULL);
+	}
+
+	geometry operator & (const geometry& other) const
+	{
+		return m_p->CombineWithGeometry(other.m_p, D2D1_COMBINE_MODE_INTERSECT, NULL);
+	}
+
+	geometry operator ^ (const geometry& other) const
+	{
+		return m_p->CombineWithGeometry(other.m_p, D2D1_COMBINE_MODE_XOR, NULL);
+	}
+
+	geometry operator - (const geometry& other) const
+	{
+		return m_p->CombineWithGeometry(other.m_p, D2D1_COMBINE_MODE_EXCLUDE, NULL);
+	}
+
+//
+
+	geometry& operator = (const geometry& other)
+	{
+		m_p = other.m_p;
+		return *this;
+	}
+
+	geometry& operator |= (const geometry& other)
+	{
+		m_p = m_p->CombineWithGeometry(other.m_p, D2D1_COMBINE_MODE_UNION, NULL);
+		return *this;
+	}
+
+	geometry& operator &= (const geometry& other);
+
+	geometry& operator ^= (const geometry& other)
+	{
+		m_p = m_p->CombineWithGeometry(other.m_p, D2D1_COMBINE_MODE_XOR, NULL);
+		return *this;
+	}
+
+	geometry& operator -= (const geometry& other)
+	{
+		m_p = m_p->CombineWithGeometry(other.m_p, D2D1_COMBINE_MODE_EXCLUDE, NULL);
+		return *this;
+	}
+
+//////////////
+
+protected:
+
+	Geometry* m_p;
+};
+
+class _Geometry : public _DependencyObject
+{
+public:
+	CTOR _Geometry(const Expressive::expression& exp) : _DependencyObject(exp)
+	{
+	}
+
+	Expressive::typed_expression<bool> fillContainsPoint(Expressive::typed_expression<float> x, Expressive::typed_expression<float> y) const
+	{
+		return new Expressive::MethodCall2Expression<bool, float, float>(*this, GetDispatch(typeid(Geometry).GetType()->GetClass())->GetMethod("FillContainsPoint"), x, y);
+	}
+};
+
+}	// Gui
+}	// System

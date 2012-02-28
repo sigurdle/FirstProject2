@@ -1,0 +1,63 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: LVOC - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x414 /fo"../../Intermediate/Win32/LVOC/Release/LVOC.res" /d "NDEBUG" "C:\MMStudio\Win32\LVOC\LVOC.rc"" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14CC.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_USRDLL" /FR"../../Intermediate/Win32/LVOC/Release/" /Fp"../../Intermediate/Win32/LVOC/Release/LVOC.pch" /Yu"stdafx.h" /Fo"../../Intermediate/Win32/LVOC/Release/" /Fd"../../Intermediate/Win32/LVOC/Release/" /FD /c 
+"C:\MMStudio\src\LVOC\LVOC.cpp"
+"C:\MMStudio\src\LVOC\LVOCLoader.cpp"
+"C:\MMStudio\src\LVOC\VOCLoader.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14CC.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14CD.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_USRDLL" /FR"../../Intermediate/Win32/LVOC/Release/" /Fp"../../Intermediate/Win32/LVOC/Release/LVOC.pch" /Yc"stdafx.h" /Fo"../../Intermediate/Win32/LVOC/Release/" /Fd"../../Intermediate/Win32/LVOC/Release/" /FD /c 
+"C:\MMStudio\src\LVOC\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14CD.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14CE.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /pdb:none /map:"../../Intermediate/Win32/LVOC/Release/LVOC.map" /debug /machine:I386 /def:".\LVOC.def" /out:"../../bin/Win32/Release/LVOC.dll" /implib:"Release/LVOC.lib" 
+\MMStudio\Intermediate\Win32\LVOC\Release\LVOC.obj
+\MMStudio\Intermediate\Win32\LVOC\Release\LVOCLoader.obj
+\MMStudio\Intermediate\Win32\LVOC\Release\StdAfx.obj
+\MMStudio\Intermediate\Win32\LVOC\Release\VOCLoader.obj
+\MMStudio\Intermediate\Win32\LVOC\Release\LVOC.res
+]
+Creating command line "link.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14CE.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+LVOC.cpp
+C:\MMStudio\src\LVOC\LVOC.cpp(36) : warning C4390: ';' : empty controlled statement found; is this the intent?
+LVOCLoader.cpp
+VOCLoader.cpp
+Generating Code...
+Linking...
+   Creating library Release/LVOC.lib and object Release/LVOC.exp
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14D2.tmp" with contents
+[
+/nologo /o"Release/LVOC.bsc" 
+\MMStudio\Intermediate\Win32\LVOC\Release\StdAfx.sbr
+\MMStudio\Intermediate\Win32\LVOC\Release\LVOC.sbr
+\MMStudio\Intermediate\Win32\LVOC\Release\LVOCLoader.sbr
+\MMStudio\Intermediate\Win32\LVOC\Release\VOCLoader.sbr]
+Creating command line "bscmake.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14D2.tmp"
+Creating browse info file...
+<h3>Output Window</h3>
+
+
+
+<h3>Results</h3>
+LVOC.dll - 0 error(s), 1 warning(s)
+</pre>
+</body>
+</html>

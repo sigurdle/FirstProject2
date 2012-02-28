@@ -1,0 +1,27 @@
+var class_c_wave_file =
+[
+    [ "CWaveFile", "class_c_wave_file.html#a4b7eb059e75249788ca628533fea295f", null ],
+    [ "~CWaveFile", "class_c_wave_file.html#aea59e99b66ec0c314cfcc239df26ca05", null ],
+    [ "Close", "class_c_wave_file.html#a8ff8d99701abd0e8b15972619e6ac951", null ],
+    [ "GetFormat", "class_c_wave_file.html#adb0ec4bcfd6d91248dfe778275928559", null ],
+    [ "GetSize", "class_c_wave_file.html#a230c359dba9e652c0468b42345176984", null ],
+    [ "Open", "class_c_wave_file.html#a14ce677a0c459fd4f1798ff8c2d66005", null ],
+    [ "OpenFromMemory", "class_c_wave_file.html#abf4405c91380ebd3377f1368b45d7cbb", null ],
+    [ "Read", "class_c_wave_file.html#a1eb28886c3d56d2ff278de51803cfe64", null ],
+    [ "ReadMMIO", "class_c_wave_file.html#af5607e7ba6d1502735dc5bfa0da8d2b9", null ],
+    [ "ResetFile", "class_c_wave_file.html#ae6791a066f89f5e147cc0f5d9f2dbdbc", null ],
+    [ "Write", "class_c_wave_file.html#a7c82ff281e7c3378b5a8f08c3561e537", null ],
+    [ "WriteMMIO", "class_c_wave_file.html#aa3524cf0271959bb3f190a58b5669002", null ],
+    [ "m_bIsReadingFromMemory", "class_c_wave_file.html#a0cffb36318ba8d1fa7998fbaad3369ea", null ],
+    [ "m_ck", "class_c_wave_file.html#aab9779a9fa7ba2d7da6a0212b1f2c33a", null ],
+    [ "m_ckRiff", "class_c_wave_file.html#aa18dcef80431faa12e36900136117e79", null ],
+    [ "m_dwFlags", "class_c_wave_file.html#a0d7fac94c4d49660080f9f77ad2606d2", null ],
+    [ "m_dwSize", "class_c_wave_file.html#a1d9d2e7e77831165fcacebba1546fe32", null ],
+    [ "m_hmmio", "class_c_wave_file.html#aec1872e4a8671bf4ba1df0a5d730cfc9", null ],
+    [ "m_mmioinfoOut", "class_c_wave_file.html#ae248583fb5f147af50447efdac04f308", null ],
+    [ "m_pbData", "class_c_wave_file.html#af904f348df995e199a3f2c829732382e", null ],
+    [ "m_pbDataCur", "class_c_wave_file.html#a2a6915b6dc9f1a6769f7599c838aab92", null ],
+    [ "m_pResourceBuffer", "class_c_wave_file.html#afe9cccf84bd794e6f55c3e5e06f558a8", null ],
+    [ "m_pwfx", "class_c_wave_file.html#af6ddc54fd08fab871fb6dea739bde255", null ],
+    [ "m_ulDataSize", "class_c_wave_file.html#ab6a9adffa66b801758e14431b9fa988d", null ]
+];

@@ -1,0 +1,44 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+namespace Media3D
+{
+
+DependencyClass* Box::get_Class()
+{
+	static DependencyClass depclass(typeid(Box), baseClass::get_Class());
+
+	/*
+	static DependencyProperty* properties[] =
+	{
+		get_DataProperty(),
+	};
+	*/
+
+	return &depclass;
+}
+
+DependencyClass* Box::pClass(get_Class());
+
+Box::Box() : Geometry3D(get_Class())
+{
+}
+
+void Box::Render(ManagedRenderContext renderContext)
+{
+	ImmediateRenderContext* imm = dynamic_cast<ImmediateRenderContext*>(renderContext.m_p);
+
+	if (!m_shape.IsValid(imm))
+	{
+		m_shape.Create(imm, gm::vector3f(2,2,2));
+	}
+	m_shape.Draw(imm);
+}
+
+}	// Media3D
+}	// Gui
+}	// System

@@ -1,0 +1,20 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="System::Web::SVGPathSegClosePath",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Web::SVGPathSeg",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_s_v_g_path_seg.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node5 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pSegList" ,fontname="Helvetica"];
+  Node5 [label="System::Web::SVGPathSegList",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_s_v_g_path_seg_list.html"];
+  Node3 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_items" ,fontname="Helvetica"];
+  Node6 [label="System::vector\< SVGPathSeg *, __gc_allocator \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1vector.html"];
+  Node7 -> Node6 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_allocator" ,fontname="Helvetica"];
+  Node7 [label="System::__gc_allocator",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__allocator.html"];
+  Node2 -> Node6 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pData" ,fontname="Helvetica"];
+}

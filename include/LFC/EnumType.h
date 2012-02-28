@@ -1,0 +1,76 @@
+namespace System
+{
+
+class LFCEXT EnumDef// : public Object
+{
+public:
+	CTOR EnumDef();
+	CTOR EnumDef(StringIn name, int value);
+
+	bool Equals(const EnumDef& other) const;
+
+	String m_name;
+	union
+	{
+		signed char m_byte_value;
+		short m_short_value;
+		int m_value;
+		long long m_ll_value;
+	};
+};
+
+/*
+class EnumDefList
+{
+public:
+	EnumDefList(EnumDef* _head, EnumDefList* _tail)
+	{
+		head = _head;
+		tail = _tail;
+	}
+
+	EnumDef* head;
+	EnumDefList* tail;
+};
+*/
+
+class LFCEXT EnumType : public NamedType
+{
+public:
+	CTOR EnumType();
+	CTOR EnumType(Type* baseType);
+	CTOR EnumType(StringIn name);
+	CTOR EnumType(StringIn name, Type* baseType);
+
+	virtual Type_type get_Kind() const override
+	{
+		return type_enum;
+	}
+
+	virtual Type* GetBaseType() override;
+
+	EnumDef* GetItem(int value);
+	EnumDef* GetItemL(long long value);
+	EnumDef* GetItem(StringIn name);
+
+	bool Equals(const EnumType* pOther) const;
+
+	virtual uint get_sizeof(uint sizeofptr = 0) const override;
+	virtual Type* Clone() const override;
+	virtual String ToString() override;
+	virtual IO::TextWriter& Write(IO::TextWriter& stream) const override;
+	virtual Class_Type GetSerializableType() const override;
+	virtual void Load(TypeArchive& stream) override;
+	virtual void Store(TypeArchive& stream) const override;
+
+	static EnumType* CreateFromArchive(TypeArchive& ar, uint32 id);
+
+	Type* m_baseType;
+	vector<EnumDef> m_deflist;
+
+private:
+	CTOR EnumType(const EnumType&);
+	EnumType& operator = (const EnumType&);
+};
+
+}	// System

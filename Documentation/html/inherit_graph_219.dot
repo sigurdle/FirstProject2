@@ -1,0 +1,11 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::CNotifyGetImpl\< CLSMILBrushElement \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_c_notify_get_impl.html"];
+  Node1 -> Node2 [dir="back",color="darkgreen",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Web::CLSMILBrushElement",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_c_l_s_m_i_l_brush_element.html"];
+  Node3 [label="System::CNotifySendImpl\< CLSMILBrushElement \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_c_notify_send_impl.html"];
+  Node3 -> Node2 [dir="back",color="darkgreen",fontsize="10",style="solid",fontname="Helvetica"];
+}

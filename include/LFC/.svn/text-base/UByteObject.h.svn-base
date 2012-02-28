@@ -1,0 +1,33 @@
+namespace System
+{
+
+class LFCEXT UByteObject : public Object
+{
+public:
+
+	virtual String ToString() override;
+
+	inline ubyte GetValue() const
+	{
+		return m_value;
+	}
+
+	inline operator ubyte () const
+	{
+		return GetValue();
+	}
+
+	static UByteObject* GetObject(ubyte value);
+
+private:
+
+	inline CTOR UByteObject(ubyte value) : m_value(value)
+	{
+	}
+
+	ubyte m_value;
+
+	static UByteObject s_values[256];	// 0 .. 255
+};
+
+}	// System

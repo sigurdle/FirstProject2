@@ -1,0 +1,212 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+GetDPByDPExpression::GetDPByDPExpression(Expressive::Expression* object, DependencyProperty* dp) :
+	GetDPExpression(object), m_dp(dp),
+	m_setting(false)
+{
+	object->m_parent = this;
+}
+
+void GetDPByDPExpression::OnChildChanged(Expressive::Expression* exp)
+{
+	Expressive::EvalContext context;
+	context.m_userObject = m_ownerBinding;
+	context.m_this = m_ownerBinding->m_this;
+	TraceCallback(&context, Expressive::ExpTrace(), NULL);
+
+	if (m_parent)
+		m_parent->OnChildChanged(this);
+	else
+		m_ownerBinding->ReEval();
+}
+
+int GetDPByDPExpression::SetInput(IBinding* caller, Object* value)
+{
+	if (m_setting == false)
+	{
+		m_setting = true;
+		ExpressionBinding* expBinding = dynamic_cast<ExpressionBinding*>(m_ownerBinding);
+		ASSERT(expBinding);
+
+		Expressive::EvalContext context;
+		context.m_userObject = m_ownerBinding;
+		context.m_this = m_ownerBinding->m_this;
+
+	//	m_parent->OnChildChanged(this);
+		m_ownerBinding->m_exp->TraceCallback(&context, Expressive::ExpTrace(), NULL);
+
+		m_ownerBinding->ReEval();
+		m_setting = false;
+	}
+
+	return 0;
+}
+
+Type* GetDPByDPExpression::GetInputType()
+{
+	return m_pType;
+	//return m_dp->get_Type().GetType();
+}
+
+void GetDPByDPExpression::TraceCallback(Expressive::EvalContext* context, Expressive::ExpTrace& trace, Expressive::ITraceCallback* callback)
+{
+	m_ownerBinding = dynamic_cast<ExpressionBinding*>(context->m_userObject);
+	m_object->TraceCallback(context, Expressive::ExpTrace(trace, this), callback);
+
+	Object* obj = m_object->Evaluate(context);
+	DependencyObject* depObj = dynamic_cast<DependencyObject*>(obj);
+
+//	DebugTrace(".getPropertyByDP(");
+//	DebugTrace(m_dp->get_Name());
+
+	if (depObj)
+	{
+		ASSERT(depObj);
+
+		/*
+		Expression* dpExp = m_dp->get_Expression();
+		if (dpExp)
+		{
+			ExpressionBinding* expBinding = new ExpressionBinding(NULL, dpExp);
+			expBinding->m_this = depObj;
+
+			Expressive::EvalContext evalContext;
+			evalContext.m_this = depObj;
+			evalContext.m_templateOwner = NULL;//templateOwner;
+			evalContext.m_userObject = expBinding;
+			dpExp->TraceCallback(&evalContext, Expressive::ExpTrace(), NULL);
+
+			depObj->GetProperty(m_dp)->SetInputBinding(expBinding);
+		}
+		else
+		*/
+		{
+			PropertyValue* pProperty = depObj->GetProperty(m_dp);
+			ASSERT(pProperty);
+
+			if (m_inBinding == NULL)
+			{
+				m_inBinding = pProperty;
+
+				void* ptr = pProperty->Connect(this);
+			//	ASSERT(expBinding->m_inBindings.find(pProperty) == expBinding->m_inBindings.end());
+			//	expBinding->m_inBindings.push_back(pProperty);
+				// TODO, store ptr
+			}
+
+			/*
+			DependencyObject* depObj = dynamic_cast<DependencyObject*>(obj);
+
+			Object* val = pProperty->GetComputedObjectValue();
+			DependencyObject* depObj = dynamic_cast<DependencyObject*>(obj);
+			if (depObj)
+			{
+				TraceCallback(context, ExpTrace(trace, callback), callback);
+			}
+			*/
+
+#if 0
+			ExpressionBinding* expBinding = dynamic_cast<ExpressionBinding*>(context->m_userObject);
+			ASSERT(expBinding);
+			if (expBinding->m_inBindings.find(pProperty) == expBinding->m_inBindings.end())
+			{
+				void* ptr = pProperty->Connect(expBinding);
+				ASSERT(expBinding->m_inBindings.find(pProperty) == expBinding->m_inBindings.end());
+				expBinding->m_inBindings.push_back(pProperty);
+				// TODO, store ptr
+			}
+#endif
+		}
+	}
+//	DebugTrace(")");
+}
+
+Object* GetDPByDPExpression::Evaluate(Expressive::EvalContext* context)
+{
+	if (m_object == NULL)
+	{
+		ASSERT(0);
+		raise(Exception(WSTR("(null).GetDPPropertyByDPExpression")));
+	}
+
+	Object* obj = m_object->Evaluate(context);
+	if (obj == NULL)
+	{
+		raise(Exception("null object"));
+	}
+	DependencyObject* depObj = dynamic_cast<DependencyObject*>(obj);
+	if (depObj == NULL)
+	{
+		VERIFY(0);
+	}
+
+#if 0
+	Expressive::Expression* exp = m_dp->get_Expression();
+	if (exp)
+	{
+		Expressive::EvalContext context2 = *context;;
+		context2.m_this = depObj;
+		return exp->Evaluate(&context2);
+
+		/*
+		IFunctionT1<float, DependencyObject*>* p = dynamic_cast<IFunctionT1<float, DependencyObject*>*>(m_dp->m_function);
+
+		ASSERT(p);
+
+		float result = p->call(depObj);
+		return box_cast(result);
+		*/
+	}
+	else
+#endif
+	{
+		return depObj->GetProperty(m_dp)->GetComputedObjectValue();
+	}
+}
+
+bool GetDPByDPExpression::Set(Expressive::EvalContext* context, Object* value)
+{
+	ASSERT(!m_setting);
+
+	Object* obj = m_object->Evaluate(context);
+	DependencyObject* depObj = dynamic_cast<DependencyObject*>(obj);
+	if (depObj == NULL)
+	{
+		VERIFY(0);
+	}
+
+	Expressive::Expression* exp = m_dp->get_Expression();
+	if (exp)
+	{
+		ASSERT(0);
+		/*
+		IFunctionT1<float, DependencyObject*>* p = dynamic_cast<IFunctionT1<float, DependencyObject*>*>(m_dp->m_function);
+
+		ASSERT(p);
+
+		float result = p->call(depObj);
+		return box_cast(result);
+		*/
+		return false;
+	}
+	else
+	{
+		ExpressionBinding* binding = dynamic_cast<ExpressionBinding*>(context->m_userObject);
+		ASSERT(binding);
+
+	//	m_setting = true;
+		depObj->GetProperty(m_dp)->SetOutput(binding, value);
+	//	m_setting = false;
+
+		return true;
+	}
+}
+
+}	// Expressive
+}	// System

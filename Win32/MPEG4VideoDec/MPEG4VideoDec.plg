@@ -1,0 +1,62 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: MPEG4VideoDec - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1491.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O2 /I "../../include/MPEG4VideoDec/" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_USRDLL" /D "MPEG4VIDEODEC_EXPORTS" /FR"../../Intermediate/Win32/MPEG4VideoDec/Release/" /Fp"../../Intermediate/Win32/MPEG4VideoDec/Release/MPEG4VideoDec.pch" /Yu"stdafx.h" /Fo"../../Intermediate/Win32/MPEG4VideoDec/Release/" /Fd"../../Intermediate/Win32/MPEG4VideoDec/Release/" /FD /c 
+"C:\MMStudio\src\MPEG4VideoDec\MPEG4VideoDec.cpp"
+"C:\MMStudio\src\MPEG4VideoDec\VideoDec.cpp"
+"C:\MMStudio\src\MPEG4VideoDec\vlctables.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1491.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1492.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O2 /I "../../include/MPEG4VideoDec/" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_USRDLL" /D "MPEG4VIDEODEC_EXPORTS" /FR"../../Intermediate/Win32/MPEG4VideoDec/Release/" /Fp"../../Intermediate/Win32/MPEG4VideoDec/Release/MPEG4VideoDec.pch" /Yc"stdafx.h" /Fo"../../Intermediate/Win32/MPEG4VideoDec/Release/" /Fd"../../Intermediate/Win32/MPEG4VideoDec/Release/" /FD /c 
+"C:\MMStudio\Win32\MPEG4VideoDec\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1492.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1493.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /pdb:none /map:"../../Intermediate/Win32/MPEG4VideoDec/Release/MPEG4VideoDec.map" /machine:I386 /out:"../../bin/Win32/Release/MPEG4VideoDec.dll" /implib:"Release/MPEG4VideoDec.lib" 
+\MMStudio\Intermediate\Win32\MPEG4VideoDec\Release\MPEG4VideoDec.obj
+\MMStudio\Intermediate\Win32\MPEG4VideoDec\Release\StdAfx.obj
+\MMStudio\Intermediate\Win32\MPEG4VideoDec\Release\VideoDec.obj
+\MMStudio\Intermediate\Win32\MPEG4VideoDec\Release\vlctables.obj
+]
+Creating command line "link.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1493.tmp"
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1494.bat" with contents
+[
+@echo off
+ParseMap .\../../Intermediate/Win32/MPEG4VideoDec/Release/MPEG4VideoDec.map "../../bin/Win32/Debug/MPEG4VideoDec.typeinfo" "../../bin/Win32/Release/MPEG4VideoDec.ad"
+]
+Creating command line "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP1494.bat"
+Compiling...
+StdAfx.cpp
+Compiling...
+MPEG4VideoDec.cpp
+VideoDec.cpp
+C:\MMStudio\src\MPEG4VideoDec\VideoDec.cpp(4020) : warning C4101: 'nextbits' : unreferenced local variable
+vlctables.cpp
+Generating Code...
+C:\MMStudio\src\MPEG4VideoDec\VideoDec.cpp(1501) : warning C4700: local variable 'nextbits' used without having been initialized
+Linking...
+   Creating library Release/MPEG4VideoDec.lib and object Release/MPEG4VideoDec.exp
+<h3>Output Window</h3>
+Performing Custom Build Step on \MMStudio\bin\Win32\Release\MPEG4VideoDec.dll
+Heap
+..Heap()
+FileByteStream::Open(../../bin/Win32/Debug/MPEG4VideoDec.typeinfo)
+FileByteStream::Open(../../bin/Win32/Debug/LFC.typeinfo)
+
+
+
+<h3>Results</h3>
+MPEG4VideoDec.dll - 0 error(s), 2 warning(s)
+</pre>
+</body>
+</html>

@@ -1,0 +1,21 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="ISVGExternalResourcesRequired",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Web::SVGExternalResourcesRequiredImpl\< SVGCircleElement \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_s_v_g_external_resources_required_impl.html"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Web::SVGCircleElement",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_s_v_g_circle_element.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::Web::SVGExternalResourcesRequiredImpl\< SVGFlowDivElement \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_s_v_g_external_resources_required_impl.html"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="System::Web::SVGFlowDivElement",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_s_v_g_flow_div_element.html"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="System::Web::SVGExternalResourcesRequiredImpl\< SVGFlowTextElement \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_s_v_g_external_resources_required_impl.html"];
+  Node6 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="System::Web::SVGFlowTextElement",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_s_v_g_flow_text_element.html"];
+  Node1 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="System::Web::SVGExternalResourcesRequiredImpl\< T \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_s_v_g_external_resources_required_impl.html"];
+}

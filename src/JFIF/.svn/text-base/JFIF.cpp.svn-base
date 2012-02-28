@@ -1,0 +1,2102 @@
+#include "stdafx.h"
+#include "JFIF.h"
+
+#pragma comment(lib, "LFC")
+
+namespace System
+{
+using namespace IO;
+
+LFCEXT void init_idct(void);
+LFCEXT void idct(short *block);
+
+namespace Imaging
+{
+
+	uint8 zigzag[64] =
+	{
+		0, 1, 5, 6, 14, 15, 27, 28,
+		2, 4, 7, 13, 16, 26, 29, 42,
+		3, 8, 12, 17, 25, 30, 41, 43,
+		9, 11, 18, 24, 31, 40, 44, 53,
+		10, 19, 23, 32, 39, 45, 52, 54,
+		20, 22, 33, 38, 46, 51, 55, 60,
+		21, 34, 37, 47, 50, 56, 59, 61,
+		35, 36, 48, 49, 57, 58, 62, 63,
+	};
+
+uint8 GetByte(Stream& stream)
+{
+	uint8 v;
+	stream.Read(&v, 1);
+	return v;
+}
+
+short GetWord(Stream& stream)
+{
+	short v;
+	stream.Read(&v, 2);
+	return v;
+}
+
+long GetLong(Stream& stream)
+{
+	long v;
+	stream.Read(&v, 4);
+	return v;
+}
+
+#if 0
+uint8 toR[256][256];
+uint8 toB[256][256];
+short CrCb[256][256];
+short YTab[256];
+bool bInitedTabs = false;
+
+void SetSampleRGBData(uint8* ybuf, PictureDecoder* pPic, LSampleData* sampledata)
+{
+	if (!bInitedTabs)
+	{
+		bInitedTabs = true;
+
+		{
+			for (int i = 0; i < 256; i++)
+			{
+				YTab[i] = 1.164*(i - 16);
+			}
+		}
+
+		{
+			for (int Y = 0; Y < 256; Y++)
+			{
+				for (int Cr = 0; Cr < 256; Cr++)
+				{
+					int value = YTab[Y] + 1.596*(Cr - 128);
+
+					if (value < 0) value = 0;
+					else if (value > 255) value = 255;
+
+					toR[Y][Cr] = value;
+				}
+			}
+		}
+
+		{
+			for (int Y = 0; Y < 256; Y++)
+			{
+				for (int Cb = 0; Cb < 256; Cb++)
+				{
+					int value = YTab[Y] + 2.017*(Cb - 128);
+
+					if (value < 0) value = 0;
+					else if (value > 255) value = 255;
+
+					toB[Y][Cb] = value;
+				}
+			}
+		}
+
+		for (int Cr = 0; Cr < 256; Cr++)
+		{
+			for (int Cb = 0; Cb < 256; Cb++)
+			{
+				CrCb[Cr][Cb] = - 0.813*(Cr - 128) - 0.392*(Cb - 128);
+			}
+		}
+	}
+
+//	if (m_currentFrame >= 0)
+	{
+
+	//	UPOSITION pos = m_pictures.FindIndex(m_currentFrame);
+	//	PictureDecoder* pPic = (PictureDecoder*)m_pictures.GetAt(pos);
+
+	//	for (int y = 0; y < m_mpeg_video->m_vertical_size; y++)
+		{
+			uint8* pY = pPic->m_ybuf + m_mpeg_video->m_mb_width*16*y;
+
+			uint8* pCr;
+			uint8* pCb;
+
+			if (m_mpeg_video->m_chroma_format == 1)
+			{
+				pCr = pPic->m_crbuf + m_mpeg_video->m_mb_width*8*(y/2);
+				pCb = pPic->m_cbbuf + m_mpeg_video->m_mb_width*8*(y/2);
+			}
+			else if (m_mpeg_video->m_chroma_format == 2)
+			{
+				pCr = pPic->m_crbuf + m_mpeg_video->m_horizontal_size*y;
+				pCb = pPic->m_cbbuf + m_mpeg_video->m_horizontal_size/2*y/2;
+			}
+			else if (m_mpeg_video->m_chroma_format == 3)
+			{
+				pCr = pPic->m_crbuf + m_mpeg_video->m_horizontal_size*y;
+				pCb = pPic->m_cbbuf + m_mpeg_video->m_horizontal_size*y;
+			}
+
+			uint8* out = sampledata->idata + sampledata->rowbytes*y;
+
+			for (int x = 0; x < m_mpeg_video->m_horizontal_size; x++)
+			{
+				if (false)
+				{
+					uint8 Y = *pY;
+
+					uint8 R_ = Y;
+					uint8 G_ = Y;
+					uint8 B_ = Y;
+
+					/*
+					if (R_ < 0) R_ = 0;
+					else if (R_ > 255) R_ = 255;
+
+					if (G_ < 0) G_ = 0;
+					else if (G_ > 255) G_ = 255;
+
+					if (B_ < 0) B_ = 0;
+					else if (B_ > 255) B_ = 255;
+					*/
+
+					out[0] = R_;
+					out[1] = G_;
+					out[2] = B_;
+				}
+				else
+				{
+					uint8 Y = *pY;
+					int Cr = *pCr;
+					uint8 Cb = *pCb;
+
+					uint8 R_ = toR[Y][Cr];//YTab[Y] + 1.596*(Cr - 128);
+					int G_ = YTab[Y] + CrCb[Cr][Cb];//- 0.813*(Cr - 128) - 0.392*(Cb - 128);
+					uint8 B_ = toB[Y][Cb];//int B_ = YTab[Y] + 2.017*(Cb - 128);
+
+					/*
+					if (R_ < 0) R_ = 0;
+					else if (R_ > 255) R_ = 255;
+					*/
+
+					if (G_ < 0) G_ = 0;
+					else if (G_ > 255) G_ = 255;
+
+					/*
+					if (B_ < 0) B_ = 0;
+					else if (B_ > 255) B_ = 255;
+					*/
+
+					out[0] = R_;
+					out[1] = G_;
+					out[2] = B_;
+				}
+
+				out += 3;
+				pY++;
+
+				if (m_mpeg_video->m_chroma_format == 1)
+				{
+					if (x & 1)
+					{
+						pCr++;
+						pCb++;
+					}
+				}
+				else if (m_mpeg_video->m_chroma_format == 2)
+				{
+					pCr++;
+
+					if (x & 1)
+					{
+						pCb++;
+					}
+				}
+				else
+				{
+					pCr++;
+					pCb++;
+				}
+			}
+		}
+	}
+}
+#endif
+
+///////////////////////////////////////////////////////////////////////////
+// JPEGDecoder
+
+JPEGDecoder::JPEGDecoder()
+{
+	m_imageWidth = 0;
+	m_imageHeight = 0;
+	m_components = 0;
+//	m_SOSDataOffset = 0;
+
+//	m_stream = stream;
+
+	m_components = 0;
+
+	m_nMCU = 0;
+
+	m_huffmanTable[0][0] = NULL;
+	m_huffmanTable[0][1] = NULL;
+	m_huffmanTable[0][2] = NULL;
+	m_huffmanTable[0][3] = NULL;
+	m_huffmanTable[1][0] = NULL;
+	m_huffmanTable[1][1] = NULL;
+	m_huffmanTable[1][2] = NULL;
+	m_huffmanTable[1][3] = NULL;
+
+	m_previousDC[0] = 0;
+	m_previousDC[1] = 0;
+	m_previousDC[2] = 0;
+	m_previousDC[3] = 0;
+
+//	m_mcu = NULL;
+	/*
+	m_rowblock[0] = NULL;
+	m_rowblock[1] = NULL;
+	m_rowblock[2] = NULL;
+	m_rowblock[3] = NULL;
+	*/
+
+//	m_stream = stream;
+
+	m_unitsType = 0;
+	m_thumbnailWidth = 0;
+	m_thumbnailHeight = 0;
+	m_x_density = 0;
+	m_y_density = 0;
+
+	m_cury = 254;
+
+	m_buffers[0] = NULL;
+	m_buffers[1] = NULL;
+	m_buffers[2] = NULL;
+	m_planes[0] = NULL;
+	m_planes[1] = NULL;
+	m_planes[2] = NULL;
+}
+
+JPEGDecoder::~JPEGDecoder()
+{
+	delete m_buffers[0];
+	delete m_buffers[1];
+	delete m_buffers[2];
+
+	delete m_planes[0];
+	delete m_planes[1];
+	delete m_planes[2];
+
+	if (m_mcu_blocks)
+	{
+		delete m_mcu_blocks[0];
+		delete m_mcu_blocks[1];
+		delete m_mcu_blocks[2];
+		delete m_mcu_blocks[3];
+		delete m_mcu_blocks[4];
+		delete m_mcu_blocks[5];
+		delete m_mcu_blocks;
+		m_mcu_blocks = NULL;
+	}
+
+	delete m_bitstream;
+
+	/*
+	for (int i = 0; i < m_components; i++)
+	{
+		delete m_mcu->component[i];
+	}
+	delete m_mcu;
+	*/
+	/*
+	delete m_rowblock[0];
+	delete m_rowblock[1];
+	delete m_rowblock[2];
+	delete m_rowblock[3];
+	*/
+}
+
+// static
+ErrorCode JPEGDecoder::ReadMarker(IO::Stream* stream)
+{
+	uint16 marker;
+	ULONG nRead = stream->Read(&marker, 2);
+	if (nRead != 2) return Error;
+	marker = BigEndian16(marker);
+	if (marker != 0xffd8)
+	{
+		return Error;	// Not a JPEG stream
+	}
+
+	return Success;
+}
+
+ErrorCode JPEGDecoder::ReadHeader()
+{
+	m_restartMarkers = false;
+
+	bool bDone = false;
+
+	while (!bDone)
+	{
+		ULONG nRead;
+
+		uint16 marker;
+		nRead = Read(&marker, 2);
+		if (nRead != 2) return Error;
+		marker = BigEndian16(marker);
+
+		uint16 length;
+		nRead = Read(&length, 2);
+		length = BigEndian16(length);
+		length -= 2;	// length includes the two bytes
+
+		LONGLONG start = m_stream->Seek(0, IO::STREAM_SEEK_CUR);
+
+		switch (marker)
+		{
+		case 0xffd9:	// End of Image (EOI)
+			{
+				bDone = true;
+			}
+			break;
+
+			/*
+		case 0xffe0:	// APP0
+			{
+			}
+			break;
+			*/
+
+		case 0xffdb: // Define Quantization Table
+			{
+				ULONG cb = 0;
+				while (cb < length)
+				{
+					uint8 bitfield = GetByte(m_stream);
+
+					cb++;
+
+					int QTNumber = (bitfield & 0xff);
+					if (QTNumber > 3) return Error;
+
+					int precision = (bitfield >> 4);
+					if (precision > 0)
+					{
+						TRACE("Quant precision not supported\nNotify Author\n");
+						return Error;
+					}
+
+					for (int i = 0; i < 64; i++)
+					{
+						if (precision == 0)
+						{
+							uint8 value = GetByte(m_stream);
+							QuantTable[QTNumber][i] = value;
+						}
+					}
+
+					cb += 64;
+				}
+			}
+			break;
+
+		case 0xffc0: // Start of frame (SOF-0) Baseline
+		case 0xffc2: // Start of frame (SOF-2) Progressive
+			{
+				uint8 precision = GetByte(m_stream);
+
+				if (marker == 0xffc0)	// Baseline
+				{
+					if (precision != 8)
+					{
+						raise(JFIFException(L"baseline - precision != 8"));
+					}
+				}
+				else
+				{
+					if (precision != 8 && precision != 12)
+					{
+						raise(JFIFException(L"precision != 8 && precision != 12"));
+					}
+				}
+
+				if (precision != 8)
+				{
+					TRACE("precision != 8\nNotify Author\n");
+					return Error;
+				}
+
+				Read(&m_imageHeight, 2);
+				Read(&m_imageWidth, 2);
+				m_imageHeight = BigEndian16(m_imageHeight);
+				m_imageWidth = BigEndian16(m_imageWidth);
+
+				if (m_imageWidth == 0) THROW(-1);
+				if (m_imageHeight == 0) THROW(-1);
+
+				m_components = m_bitstream->m_t.getnbits(8);
+
+				if (m_components < 1 || m_components > 4)
+				{
+					raise(JFIFException(L"components<1 || components>4"));
+				}
+
+				if (m_components != 1 && m_components != 3)
+				{
+					TRACE("Unsupported number of components, Notify Author\n");
+					return Error;
+				}
+
+				m_max_horizontalSamplingFactor = 0;
+				m_max_verticalSamplingFactor = 0;
+
+				for (int i = 0; i < m_components; i++)
+				{
+					uint8 c = m_bitstream->m_t.getnbits(8);
+					if (c < 1 || c > m_components) raise(Exception(L"components"));
+					c--;
+
+					m_horizontalSamplingFactor[c] = m_bitstream->m_t.getnbits(4);
+					if (m_horizontalSamplingFactor[c] == 0)
+					{
+						raise(JFIFException(L"horizonalSamplingFactor"));
+					}
+
+					m_verticalSamplingFactor[c] = m_bitstream->m_t.getnbits(4);
+					if (m_verticalSamplingFactor[c] == 0)
+					{
+						raise(JFIFException(L"verticalSamplingFactor"));
+					}
+
+					m_QuantTableSelector[c] = m_bitstream->m_t.getnbits(8);
+
+					m_max_horizontalSamplingFactor = MAX(m_max_horizontalSamplingFactor, m_horizontalSamplingFactor[c]);
+					m_max_verticalSamplingFactor = MAX(m_max_verticalSamplingFactor, m_verticalSamplingFactor[c]);
+				}
+			}
+			break;
+
+		case 0xffdd: // Define Restart Interval (DRI)
+			{
+				if (length != 2)
+				{
+					TRACE("Unexpected length in marker\n");
+					return Error;
+				}
+
+				Read(&m_MCURestart, 2);
+				m_MCURestart = BigEndian16(m_MCURestart);
+
+				if (m_MCURestart == 0)
+					m_restartMarkers = false;
+				else
+					m_restartMarkers = true;
+			}
+			break;
+
+		case 0xffc4: // Define Huffman table
+			{
+				DefineHuffmanTable(length);
+			}
+			break;
+
+		case 0xffda: // Start of scan (SOS)
+			{
+				uint8 components = m_bitstream->m_t.getnbits(8);
+
+				for (int i = 0; i < components; i++)
+				{
+					uint8 cs = m_bitstream->m_t.getnbits(8);
+					if (cs < 1 || cs > m_components)
+						THROW(-1);
+					cs--;
+
+					DCTableSelector[cs] = m_bitstream->m_t.getnbits(4);
+					if (DCTableSelector[cs] >= 4)
+						THROW(-1);
+
+					ACTableSelector[cs] = m_bitstream->m_t.getnbits(4);
+					if (ACTableSelector[cs] >= 4)
+						THROW(-1);
+				}
+
+				m_SStart = m_bitstream->m_t.getnbits(8);
+				/*
+				if (SStart != 0)
+				{
+					ASSERT(0);
+					THROW(-1);
+				}
+				*/
+
+				m_SEnd = m_bitstream->m_t.getnbits(8);
+				if (m_SEnd < m_SStart)
+				{
+					raise(JFIFException(L"sEnd < sStart"));
+				}
+
+				/*
+				if (SEnd != 63)
+				{
+					ASSERT(0);
+					THROW(-1);
+				}
+				*/
+
+				uint8 Ah = m_bitstream->m_t.getnbits(4);
+				uint8 Al = m_bitstream->m_t.getnbits(4);
+
+				/*
+				static_cast<JPEGDecoder*>(this)->StartScans();
+
+				for (int y = 0; y < m_imageHeight; y++)
+				{
+					static_cast<JPEGDecoder*>(this)->NextScanline();
+				}
+				*/
+
+				bDone = true;
+			}
+			break;
+
+		default:
+			{
+				// Skip Unknown
+				m_stream->Seek(length, IO::STREAM_SEEK_CUR);
+			}
+			break;
+		}
+
+		//if (!bDone)
+		{
+			uint64 cur = m_stream->GetPosition();//Seek(0, IO::STREAM_SEEK_CUR);
+		//	ASSERT(cur == start + length);
+			if (cur != start + length)
+			{
+				raise(JFIFException("JPEG - Error, marker length not right\n"));
+				return Error;
+			}
+		}
+	}
+
+	return Success;
+}
+
+void JPEGDecoder::DefineHuffmanTable(uint16 length)
+{
+	ULONG cb = 0;
+	//m_bitstream->m_countBits = 0;
+	while (cb < length)//m_bitstream->m_countBits/8 < length)
+	{
+		uint8 flags = GetByte(m_stream);
+		cb++;
+
+		uint8 tableClass = flags >> 4;	// 0=DC, 1=AC
+		if (tableClass >= 2)
+		{
+			ASSERT(0);
+			THROW(-1);
+		}
+
+		uint8 tableSelect = flags & 0xF;
+		if (tableSelect >= 4)
+		{
+			ASSERT(0);
+			THROW(-1);
+		}
+
+		uint8 numberOfCodesOfLength[16];
+
+		{
+			for (int i = 0; i < 16; i++)
+			{
+				numberOfCodesOfLength[i] = GetByte(m_stream);
+				ASSERT(numberOfCodesOfLength[i] <= 1<<(i+1));
+			}
+		}
+		cb += 16;
+
+		HuffmanTable* huffman = new HuffmanTable;
+
+		ASSERT(m_huffmanTable[tableClass][tableSelect] == NULL);
+
+		m_huffmanTable[tableClass][tableSelect] = huffman;
+
+		{
+			// For each code, get the length in bits
+			int k = 0;
+
+			for (int i = 0; i < 16; i++)
+			{
+				for (int j = 0; j < numberOfCodesOfLength[i]; j++)
+				{
+					huffman->huffsize[k++] = i+1;
+				}
+			}
+
+			ASSERT(k < 256);
+			huffman->lastk = k;
+
+		// Assign codes
+
+			uint16 code = 0;
+
+			int si = huffman->huffsize[0];
+
+			k = 0;
+
+			while (1)//k < huffman->lastk)
+			{
+				huffman->huffcode[k] = code;
+				code++;
+				k++;
+
+				if (k == huffman->lastk)
+					break;
+
+				while (huffman->huffsize[k] != si)
+				{
+				//	ASSERT(huffman->huffsize[k] > si);
+					si += 1;//huffman->huffsize[k];
+					code <<= 1;
+				}
+			}
+		}
+
+		int n = 0;
+
+		for (int i = 0; i < 16; i++)
+		{
+			for (int j = 0; j < numberOfCodesOfLength[i]; j++)
+			{
+				huffman->huffval[n++] = GetByte(m_stream);
+			}
+
+			cb += numberOfCodesOfLength[i];
+		}
+	}
+}
+
+void JPEGDecoder::DecodeMCU(short* mcu_blocks[])
+{
+	int nblock = 0;
+
+	for (int c = 0; c < m_components/*3*//*TODO, number of components in this scan*/; c++)
+	{
+		int cblocks = m_horizontalSamplingFactor[c]*m_verticalSamplingFactor[c];
+
+		for (int cblock = 0; cblock < cblocks; cblock++)
+		{
+			short* f = mcu_blocks[nblock];
+
+			block(f, c);
+
+			{
+				for (int j = m_SStart; j <= m_SEnd; j++)
+				{
+					f[j] = f[j] * QuantTable[m_QuantTableSelector[c]][zigzag[j]];
+				}
+			}
+
+			nblock++;
+		}
+	}
+
+	m_nMCU++;
+
+	if (m_restartMarkers && (m_nMCU % m_MCURestart)==0)
+	{
+		m_bitstream->m_t.byte_align();
+
+		uint16 marker;
+		ULONG nRead = Read(&marker, 2);
+		if (nRead != 2) THROW(-1);
+		marker = BigEndian16(marker);
+
+		/*
+		WORD length;
+		Read(&length, 2);
+		length = BigEndian16(length);
+		*/
+
+		if (marker == 0xffd9)	// EOI
+		{
+		}
+		else if (marker >= 0xffd0 && marker <= 0xffd7)	// RSTm
+		{
+			m_previousDC[0] = 0;
+			m_previousDC[1] = 0;
+			m_previousDC[2] = 0;
+			m_previousDC[3] = 0;
+		}
+		else
+			THROW(-1);
+	}
+}
+
+void JPEGDecoder::Transform(short* mcu_blocks[], short** buffer)
+{
+	int nblock = 0;
+
+	for (int c = 0; c < m_components/*3*//*TODO, number of components in this scan*/; c++)
+	{
+		int cblocks = m_horizontalSamplingFactor[c]*m_verticalSamplingFactor[c];
+
+		for (int cblock = 0; cblock < cblocks; cblock++)
+		{
+			short* f = mcu_blocks[nblock];
+
+			idct(f);
+
+			int row = cblock / m_horizontalSamplingFactor[c];
+			int col = cblock % m_horizontalSamplingFactor[c];
+
+			int top = row*8;
+			int left = col*8;
+
+			for (int y = 0; y < 8; y++)
+			{
+				short *dst = buffer[c] + (top+y)*8*m_horizontalSamplingFactor[c] + left;
+				const short* fp = f + y*8;
+				for (int x = 0; x < 8; x++)
+				{
+					short s = *fp + 128;
+					if (s < 0) s = 0;
+					else if (s > 255) s = 255;
+					*dst = s;
+
+					dst++;
+					fp++;
+				}
+			}
+
+			nblock++;
+		}
+	}
+}
+
+#define PREC	8
+
+void JPEGDecoder::TransformToRGB(short* const buffer[], uint8* planes[3], int dest_left, int dest_top, int dest_colbytes, int dest_rowbytes)
+{
+//	int cblocks = m_horizontalSamplingFactor[c]*m_verticalSamplingFactor[c];
+
+	int mcu_width = 8 * m_max_horizontalSamplingFactor;
+	int mcu_height = 8 * m_max_verticalSamplingFactor;
+
+	int width = MIN(mcu_width, m_imageWidth - dest_left);
+	int height = MIN(mcu_height, m_imageHeight - dest_top);
+
+	int src_cols[3];
+	src_cols[0] = m_horizontalSamplingFactor[0] * 8;
+	src_cols[1] = m_horizontalSamplingFactor[1] * 8;
+	src_cols[2] = m_horizontalSamplingFactor[2] * 8;
+
+	int addy[3];
+	addy[0] = (m_verticalSamplingFactor[0]<<PREC) / m_max_verticalSamplingFactor;
+	addy[1] = (m_verticalSamplingFactor[1]<<PREC) / m_max_verticalSamplingFactor;
+	addy[2] = (m_verticalSamplingFactor[2]<<PREC) / m_max_verticalSamplingFactor;
+
+	int addx[3];
+	addx[0] = (m_horizontalSamplingFactor[0]<<PREC) / m_max_horizontalSamplingFactor;
+	addx[1] = (m_horizontalSamplingFactor[1]<<PREC) / m_max_horizontalSamplingFactor;
+	addx[2] = (m_horizontalSamplingFactor[2]<<PREC) / m_max_horizontalSamplingFactor;
+
+	int srcy[3];
+	srcy[0] = 0;
+	srcy[1] = 0;
+	srcy[2] = 0;
+
+	uint8* dest_r_plane = planes[0];
+	uint8* dest_g_plane = planes[1];
+	uint8* dest_b_plane = planes[2];
+
+	dest_r_plane += (dest_top * dest_rowbytes) + dest_left*dest_colbytes;
+	dest_g_plane += (dest_top * dest_rowbytes) + dest_left*dest_colbytes;
+	dest_b_plane += (dest_top * dest_rowbytes) + dest_left*dest_colbytes;
+
+	for (int y = 0; y < height; y++)
+	{
+		uint8* r_dst = dest_r_plane + (y * dest_rowbytes);
+		uint8* g_dst = dest_g_plane + (y * dest_rowbytes);
+		uint8* b_dst = dest_b_plane + (y * dest_rowbytes);
+
+		int srcx[3];
+		srcx[0] = 0;
+		srcx[1] = 0;
+		srcx[2] = 0;
+
+		for (int x = 0; x < width; x++)
+		{
+			const short* pY = buffer[0] + (srcy[0]>>PREC) * src_cols[0] + (srcx[0]>>PREC);
+
+			if (m_components == 3)
+			{
+				const short* pCb = buffer[1] + (srcy[1]>>PREC) * src_cols[1] + (srcx[1]>>PREC);
+				const short* pCr = buffer[2] + (srcy[2]>>PREC) * src_cols[2] + (srcx[2]>>PREC);
+
+				int _y = *pY;
+				int cb = *pCb;
+				int cr = *pCr;
+
+				int R_ = _y + 1.402 * (cr - 128);
+				int G_ = _y - 0.34414*(cb - 128) - 0.71414 * (cr - 128);
+				int B_ = _y + 1.772 * (cb - 128);
+
+				if (R_ < 0) R_ = 0;
+				else if (R_ > 255) R_ = 255;
+
+				if (G_ < 0) G_ = 0;
+				else if (G_ > 255) G_ = 255;
+
+				if (B_ < 0) B_ = 0;
+				else if (B_ > 255) B_ = 255;
+
+				*r_dst = R_;
+				*g_dst = G_;
+				*b_dst = B_;
+			}
+			else
+			{
+				*r_dst = *pY;
+				*g_dst = *pY;
+				*b_dst = *pY;
+			}
+
+			r_dst += dest_colbytes;
+			g_dst += dest_colbytes;
+			b_dst += dest_colbytes;
+
+			srcx[0] += addx[0];
+			srcx[1] += addx[1];
+			srcx[2] += addx[2];
+		}
+
+		srcy[0] += addy[0];
+		srcy[1] += addy[1];
+		srcy[2] += addy[2];
+	}
+}
+
+#if 0
+void JPEGDecoder::TransformMCU(short* mcu_blocks[], int c, int bl, int left, int top, uint8* r_plane, uint8* g_plane, uint8* b_plane)
+{
+//	int row = bl / m_horizontalSamplingFactor[c];
+//	int col = bl % m_horizontalSamplingFactor[c];
+
+//	int top = row*8;
+//	int left = col*8;
+
+	int width = min(8, m_imageWidth - left);
+	int height = min(8, m_imageHeight - top);
+
+	int iy = 0;
+
+	for (int y = 0; y < height; y++)
+	{
+		BYTE *rdst = r_plane + (top+y)*8 + left;
+
+	//	int y_ = iy>>8;
+
+		int Cr_y = y * m_verticalSamplingFactor[1] / m_max_verticalSamplingFactor;
+		int Cb_y = y * m_verticalSamplingFactor[2] / m_max_verticalSamplingFactor;
+
+		for (int x = 0; x < width; x++)
+		{
+		//	int x_ = ix>>8;
+
+			BYTE Yc = *Ybuffer + y*;
+
+			short s = f[y*8 + x] + 128;
+			if (s < 0) s = 0;
+			else if (s > 255) s = 255;
+
+			int Cr_x = x * m_horizontalSamplingFactor[1] / m_max_horizontalSamplingFactor;
+			int Cb_x = x * m_horizontalSamplingFactor[2] / m_max_horizontalSamplingFactor;
+
+			*dst++ = s;
+
+			Cr = *pCr + *p
+
+			int R_ = 1.164*(Y - 16) + 1.596*(Cr - 128);
+			int G_ = 1.164*(Y - 16) - 0.813*(Cr - 128) - 0.392*(Cb - 128);
+			int B_ = 1.164*(Y - 16) + 2.017*(Cb - 128);
+
+			if (R_ < 0) R_ = 0;
+			else if (R_ > 255) R_ = 255;
+
+			if (G_ < 0) G_ = 0;
+			else if (G_ > 255) G_ = 255;
+
+			if (B_ < 0) B_ = 0;
+			else if (B_ > 255) B_ = 255;
+
+			*r_plane++ = B_;
+			*g_plane++ = G_;
+			*b_plane++ = R_;
+
+			ix += 256;
+		}
+
+		iy += 256;
+	}
+}
+#endif
+
+void JPEGDecoder::block(short* f, uint8 c)
+{
+	short zz[64];
+	for (int j = 0; j < 64; j++)
+		zz[j] = 0;
+
+	int k = m_SStart;
+
+	if (k == 0)
+	{
+		int dcbits = m_bitstream->GetCode(m_huffmanTable[0][DCTableSelector[c]]);
+		int dcdiff;
+		if (dcbits == 0)
+		{
+			dcdiff = m_previousDC[c];
+		}
+		else
+		{
+			dcdiff = m_bitstream->m_t.getnbits(dcbits);
+			int half_range = 1<<(dcbits - 1);
+			if (dcdiff < half_range)
+			{
+				dcdiff = (dcdiff + 1) - (2 * half_range);
+			}
+
+			dcdiff += m_previousDC[c];
+			m_previousDC[c] = dcdiff;
+		}
+
+		zz[0] = dcdiff;
+
+		k++;
+	}
+
+	// decode AC coefficients using the AC table destination specified in the scan header
+	while (k <= m_SEnd)
+	{
+		int rs = m_bitstream->GetCode(m_huffmanTable[1][ACTableSelector[c]]);
+
+		int ssss = rs & 0xf;
+		int rrrr = rs >> 4;
+		int r = rrrr;
+		if (ssss == 0)
+		{
+			if (r == 15)
+			{
+				k += 16;
+				continue;
+			}
+			else
+				break;
+		}
+
+		k += r;
+
+		int zzk = m_bitstream->m_t.getnbits(ssss);
+		int half_range = 1<<(ssss - 1);
+		if (zzk < half_range)
+		{
+			zzk = (zzk + 1) - (2 * half_range);
+		}
+
+		if (k > m_SEnd)
+		{
+			THROW(-1);
+		}
+
+		zz[k] = zzk;
+
+		k++;
+	}
+
+	{
+		for (int j = m_SStart; j <= m_SEnd; j++)
+		{
+			f[j] = zz[zigzag[j]];
+		}
+	}
+}
+
+/////////////////////////////////////////////////////////////////////
+// JPEGDecoder
+
+/*
+JPEGDecoder::JPEGDecoder(ISequentialByteStream* stream) : JPEGDecoder(stream)
+{
+//	m_stream = stream;
+
+	m_unitsType = 0;
+	m_thumbnailWidth = 0;
+	m_thumbnailHeight = 0;
+	m_x_density = 0;
+	m_y_density = 0;
+
+	m_cury = 254;
+
+	m_buffers[0] = NULL;
+	m_buffers[1] = NULL;
+	m_buffers[2] = NULL;
+	m_planes[0] = NULL;
+	m_planes[1] = NULL;
+	m_planes[2] = NULL;
+}
+*/
+
+/*
+JPEGDecoder::~JPEGDecoder()
+{
+	delete m_buffers[0];
+	delete m_buffers[1];
+	delete m_buffers[2];
+
+	delete m_planes[0];
+	delete m_planes[1];
+	delete m_planes[2];
+
+	if (m_mcu_blocks)
+	{
+		delete m_mcu_blocks[0];
+		delete m_mcu_blocks[1];
+		delete m_mcu_blocks[2];
+		delete m_mcu_blocks[3];
+		delete m_mcu_blocks[4];
+		delete m_mcu_blocks[5];
+		delete m_mcu_blocks;
+		m_mcu_blocks = NULL;
+	}
+}
+*/
+
+int JPEGDecoder::ReadHeader(IO::Stream* stream, BitmapFormat* bitmapFormat)
+{
+	m_stream = stream;
+	m_bitstream = new BitStream(m_stream);
+
+	JPEGDecoder::ReadHeader();
+
+	bitmapFormat->width = m_imageWidth;
+	bitmapFormat->height = m_imageHeight;
+	if (m_components == 3)
+	{
+		bitmapFormat->pixelFormat = PixelFormat_R8G8B8A8_UNORM;
+	}
+	else if (m_components == 1)
+	{
+		bitmapFormat->pixelFormat = PixelFormat_R8_UNORM;
+	}
+	else
+		raise(Exception("JPEG unsupported number of components"));
+
+	return 0;
+}
+
+ErrorCode JPEGDecoder::Read()
+{
+//	prepare_range_limit_table();
+//	precalculate_Cr_Cb_tables();
+
+	ULONG nRead;
+
+	/*
+	WORD marker;
+	m_stream->Read(&marker, 2, &nRead);
+	if (nRead != 2) return E_FAIL;
+	marker = BigEndian16(marker);
+	if (marker != 0xffd8)
+	{
+		return E_FAIL;	// Not a JPEG file
+	}
+	*/
+	if (ReadMarker(m_stream) != 0)
+	{
+		return Error;
+	}
+
+#if 0
+	WORD marker;
+	nRead = m_stream->Read(&marker, 2);
+	if (nRead != 2) return E_FAIL;
+	marker = BigEndian16(marker);
+
+	if (marker != 0xffe0)	// APP0
+	{
+		return E_FAIL;	// Not a JFIF file
+	}
+
+// Read APP0 JFIF segment
+
+// length includes these two bytes
+	WORD length = GetWord(m_stream);
+	length = BigEndian16(length);
+	length -= 2;
+
+	if (length < 8) return E_FAIL;
+
+	char jfif[5];
+	nRead = m_stream->Read(jfif, 5);
+	if (strcmp(jfif, "JFIF") != 0)
+	{
+		return E_FAIL;
+	}
+
+	BYTE majorVersion;
+	nRead = m_stream->Read(&majorVersion, 1);
+	if (majorVersion != 1)
+	{
+		return E_FAIL;
+	}
+
+	BYTE minorVersion = GetByte(m_stream);	// 0..2 (otherwise try to decode anyway)
+
+	m_unitsType = GetByte(m_stream);
+	m_x_density = GetWord(m_stream);
+	m_y_density = GetWord(m_stream);
+	m_thumbnailWidth = GetByte(m_stream);
+	m_thumbnailHeight = GetByte(m_stream);
+	m_x_density = BigEndian16(m_x_density);
+	m_y_density = BigEndian16(m_y_density);
+
+// - Thumbnail data bytes for thumbnail (RGB 24 bit), n = width*height*3
+
+// Skip thumbnail data
+	m_stream->Seek(length-14, STREAM_SEEK_CUR);
+#endif
+
+	return JPEGDecoder::ReadHeader();
+}
+
+void JPEGDecoder::CopyScanlineGray(uint8* dest_plane, int colbytes)
+{
+	uint8* src_plane = m_planes[0] + m_imageWidth*m_cury;
+
+	for (int i = 0; i < m_imageWidth; i++)
+	{
+		*dest_plane = *src_plane;
+
+		dest_plane += colbytes;
+		src_plane += 1;
+	}
+}
+
+void JPEGDecoder::CopyScanline(uint8* r_plane, uint8* g_plane, uint8* b_plane, int colbytes)
+{
+	uint8* src_r_plane = m_planes[0] + m_imageWidth*m_cury;
+	uint8* src_g_plane = m_planes[1] + m_imageWidth*m_cury;
+	uint8* src_b_plane = m_planes[2] + m_imageWidth*m_cury;
+
+	for (int i = 0; i < m_imageWidth; i++)
+	{
+		*r_plane = *src_r_plane;
+		*g_plane = *src_g_plane;
+		*b_plane = *src_b_plane;
+
+		r_plane += colbytes;
+		g_plane += colbytes;
+		b_plane += colbytes;
+
+		src_r_plane += 1;
+		src_g_plane += 1;
+		src_b_plane += 1;
+	}
+//	return ULL;//m_rowblock + m_cury * m_imageWidth*m_components;
+}
+
+void JPEGDecoder::StartScans()
+{
+	m_mcu_blocks = new short*[6];
+	m_mcu_blocks[0] = new short[64];
+	m_mcu_blocks[1] = new short[64];
+	m_mcu_blocks[2] = new short[64];
+	m_mcu_blocks[3] = new short[64];
+	m_mcu_blocks[4] = new short[64];
+	m_mcu_blocks[5] = new short[64];
+
+	m_buffers[0] = new short[8*8*m_horizontalSamplingFactor[0]*m_verticalSamplingFactor[0]];
+	m_buffers[1] = new short[8*8*m_horizontalSamplingFactor[1]*m_verticalSamplingFactor[1]];
+	m_buffers[2] = new short[8*8*m_horizontalSamplingFactor[2]*m_verticalSamplingFactor[2]];
+
+	int cols = (m_imageWidth+m_max_horizontalSamplingFactor*8-1)/(m_max_horizontalSamplingFactor*8) * 8;
+
+	m_planes[0] = new uint8[m_imageWidth*m_max_verticalSamplingFactor*8];
+	m_planes[1] = new uint8[m_imageWidth*m_max_verticalSamplingFactor*8];
+	m_planes[2] = new uint8[m_imageWidth*m_max_verticalSamplingFactor*8];
+
+	/*
+	m_mcu = new MCU;
+
+	for (int c = 0; c < m_components; c++)
+	{
+	//	int cols = (((m_imageWidth*m_horizontalSamplingFactor[c]) / m_max_horizontalSamplingFactor + 7) & 7);
+		int mcucols = m_horizontalSamplingFactor[c]*8;
+		int mcurows = m_verticalSamplingFactor[c]*8;
+		m_mcu->component[c] = new BYTE[mcucols * mcurows];
+	}
+	*/
+}
+
+int JPEGDecoder::ReadBitmap(IO::Stream* stream, void* data, int rowbytes)
+{
+	StartScans();
+
+	int width = m_imageWidth;
+	int height = m_imageHeight;
+
+	for (int y = 0; y < height; ++y)
+	{
+		NextScanline();
+
+		uint8* dest = (uint8*)data + rowbytes*y;
+
+		if (GetComponents() == 3)
+		{
+			CopyScanline(dest, dest+1, dest+2, 4);
+
+			// Fill Alpha channel
+			for (uint x = 0; x < width; ++x)
+			{
+				dest[x*4+3] = 255;
+			}
+		}
+		else
+		{
+			CopyScanlineGray(dest, 1);
+		}
+	}
+
+	EndScans();
+
+	return 0;
+}
+
+void JPEGDecoder::EndScans()
+{
+	delete m_buffers[0];
+	delete m_buffers[1];
+	delete m_buffers[2];
+
+	delete m_planes[0];
+	delete m_planes[1];
+	delete m_planes[2];
+
+	m_buffers[0] = NULL;
+	m_buffers[1] = NULL;
+	m_buffers[2] = NULL;
+	m_planes[0] = NULL;
+	m_planes[1] = NULL;
+	m_planes[2] = NULL;
+
+	if (m_mcu_blocks)
+	{
+		delete m_mcu_blocks[0];
+		delete m_mcu_blocks[1];
+		delete m_mcu_blocks[2];
+		delete m_mcu_blocks[3];
+		delete m_mcu_blocks[4];
+		delete m_mcu_blocks[5];
+		delete m_mcu_blocks;
+		m_mcu_blocks = NULL;
+	}
+}
+
+/*
+void JPEGDecoder::NextScanline()
+{
+	ASSERT(0);
+}
+*/
+
+/*
+void JPEGDecoder::SetDestPlanes(uint8* planes[], int colbytes)
+{
+	m_planes[0] = planes[0];
+	m_planes[1] = planes[1];
+	m_planes[2] = planes[2];
+	m_planeColBytes = colbytes;
+}
+*/
+
+void JPEGDecoder::NextScanline()
+{
+	m_cury++;
+
+	if (m_cury >= m_max_verticalSamplingFactor*8)
+	{
+		int cols = (m_imageWidth+m_max_horizontalSamplingFactor*8-1)/(m_max_horizontalSamplingFactor*8);
+
+		for (int n = 0; n < cols; n++)
+		{
+			TRY
+			{
+				DecodeMCU(m_mcu_blocks);
+			}
+			CATCH(int)
+			{
+			}
+
+			Transform(m_mcu_blocks, m_buffers);
+			TransformToRGB(m_buffers, m_planes, n*m_max_horizontalSamplingFactor*8, 0, 1, m_imageWidth);
+		}
+
+		m_cury = 0;
+	}
+}
+
+uint8 Q[64] =	// Quantizer table
+{
+16, 11, 10, 16, 124, 140, 151, 161,
+12, 12, 14, 19, 126, 158, 160, 155,
+14, 13, 16, 24, 140, 157, 169, 156,
+14, 17, 22, 29, 151, 187, 180, 162,
+18, 22, 37, 56, 168, 109, 103, 177,
+24, 35, 55, 64, 181, 104, 113, 192,
+49, 64, 78, 87, 103, 121, 120, 101,
+72, 92, 95, 98, 112, 100, 103, 199,
+};
+
+// Find huffman code sizes
+JPEGEncoder::HuffmanTable* JPEGEncoder::GenerateHuffman(const vector<uint8>& symbols)
+{
+	HuffmanTable* table = new HuffmanTable;
+
+	int FREQ[257] = {0};
+	int CODESIZE[257];
+	int OTHERS[257];
+
+	int i;
+	for (i = 0; i < symbols.GetSize(); i++)
+	{
+		FREQ[symbols[i]]++;
+	}
+	FREQ[256] = 1;	// Reserve one code point.
+						// Reserving one code point guarantees that no code word can ever be all “1” bits.
+
+	for (i = 0; i < 257; i++)
+	{
+		CODESIZE[i] = 0;
+		OTHERS[i] = -1;
+	}
+
+	while (1)
+	{
+		// Find the least frequent V1
+
+		int V1 = -1;
+
+		int V;
+		for (V = 0; V < 257; V++)
+		{
+			if (FREQ[V] > 0)
+			{
+				if (V1 == -1 || FREQ[V] <= FREQ[V1])	// Select the one with the larger V
+				{
+					V1 = V;
+				}
+			}
+		}
+
+		// Find V2
+		int V2 = -1;
+
+		//V = V1+1;
+
+		for (V = 0; V < 257; V++)
+		{
+			if (FREQ[V] > 0/* && FREQ[V] > FREQ[V1]*/)
+			{
+				if ((V2 == -1 || FREQ[V] <= FREQ[V2]) && V != V1)
+				{
+					V2 = V;
+				}
+			}
+		}
+
+		if (V2 == -1)
+			break;
+
+		FREQ[V1] += FREQ[V2];
+		FREQ[V2] = 0;
+
+		while (1)
+		{
+			CODESIZE[V1]++;
+
+			if (OTHERS[V1] == -1)
+				break;
+
+			V1 = OTHERS[V1];
+		}
+
+		OTHERS[V1] = V2;
+
+		while (1)
+		{
+			CODESIZE[V2]++;
+
+			if (OTHERS[V2] == -1)
+				break;
+
+			V2 = OTHERS[V2];
+		}
+	}
+
+	// Count bits
+
+	int BITS[33] = {0};
+
+	{
+		for (int i = 0; i < 257; i++)
+		{
+			if (CODESIZE[i] != 0)
+			{
+				BITS[CODESIZE[i]]++;
+			}
+		}
+	}
+
+	// Adjust BITS
+	{
+		int I = 32;
+
+		while (1)
+		{
+			if (BITS[I] > 0)
+			{
+				int J = I - 1;
+
+				do
+				{
+					J--;
+				}
+				while (BITS[J] == 0);
+
+				BITS[I] -= 2;
+				BITS[I-1] += 1;
+				BITS[J+1] -= 2;
+				BITS[J] -= 1;
+			}
+			else
+			{
+				I--;
+
+				if (I == 16)
+				{
+					while (BITS[I] == 0)
+					{
+						I--;
+					}
+
+					BITS[I] -= 1;
+
+					break;
+				}
+			}
+		}
+	}
+
+	{
+		for (int i = 0; i < 17; i++)
+		{
+			table->BITS[i] = BITS[i];
+		}
+	}
+
+	{
+		for (int i = 0; i < 256; i++)
+		{
+			table->codesize[i] = CODESIZE[i];
+		}
+	}
+
+	//uint8 huffval[256];
+
+	// Sort input
+	{
+		int k = 0;
+
+		for (int i = 1; i <= 32; i++)
+		{
+			for (int j = 0; j < 256; j++)
+			{
+				if (CODESIZE[j] == i)
+				{
+					table->huffval[k] = j;
+					k++;
+				}
+			}
+		}
+
+		table->lastk = k;
+	}
+
+	{
+			// For each code, get the length in bits
+			int k = 0;
+
+			for (int i = 0; i < 16; i++)
+			{
+				for (int j = 0; j < BITS[1+i]; j++)
+				{
+					table->huffsize[k++] = i+1;
+				}
+			}
+
+			ASSERT(k < 256);
+			table->lastk = k;
+
+		// Assign codes
+
+			uint16 code = 0;
+
+			int si = table->huffsize[0];
+
+			k = 0;
+
+			while (1)
+			{
+				table->huffcode[k] = code;
+				code++;
+				k++;
+
+				if (k == table->lastk)
+					break;
+
+				while (table->huffsize[k] != si)
+				{
+				//	ASSERT(huffman->huffsize[k] > si);
+					si += 1;//huffman->huffsize[k];
+					code <<= 1;
+				}
+			}
+
+			{
+				for (int i = 0; i < table->lastk; i++)
+				{
+					table->codes[table->huffval[i]] = table->huffcode[i];
+				}
+			}
+	}
+
+	return table;
+}
+
+static int csize[256] =
+{
+0,
+1,
+2,2,
+3,3,3,3,
+4,4,4,4,4,4,4,4,
+5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
+};
+
+inline int GetSNBits(int value)
+{
+	value = abs(value);
+
+	ASSERT(value < 65536);
+
+	if (value > 256)
+	{
+		value >>= 8;
+		return csize[value] + 8;
+	}
+	else
+	{
+		return csize[value];
+	}
+}
+
+void JPEGEncoder::EncodeImage(IO::Stream* stream, uint8* image, int width, int height, int rowbytes)
+{
+//	uint16 width = 8;
+//	uint16 height = 8;
+
+	{
+		for (int i = 0; i < 64; i++)
+		{
+			Q[i] = 10;
+		}
+	}
+
+
+	{
+		uint16 marker = 0xffd8;	// JPEG marker
+		putbyte(stream, marker >> 8);
+		putbyte(stream, marker & 0xFF);
+	}
+
+	{
+	// APP0 JFIF segment
+		uint16 marker = 0xffe0;	// APP0
+		putbyte(stream, marker >> 8);
+		putbyte(stream, marker & 0xFF);
+
+		uint16 length = 2 + 5 + 9;
+		putbyte(stream, length >> 8);
+		putbyte(stream, length & 0xFF);
+
+		stream->Write("JFIF", 5);
+
+		putbyte(stream, 1);	//BYTE majorVersion;
+		putbyte(stream, 2);	//BYTE minorVersion = GetByte(m_stream);	// 0..2 (otherwise try to decode anyway)
+
+		putbyte(stream, 0);
+
+		putbyte(stream, 0);
+		putbyte(stream, 0);
+
+		putbyte(stream, 0);
+		putbyte(stream, 0);
+
+		putbyte(stream, 0);
+		putbyte(stream, 0);
+
+		/*
+		m_unitsType = GetByte(m_stream);
+		m_x_density = GetWord(m_stream);
+		m_y_density = GetWord(m_stream);
+		m_thumbnailWidth = GetByte(m_stream);
+		m_thumbnailHeight = GetByte(m_stream);
+		m_x_density = BigEndian16(m_x_density);
+		m_y_density = BigEndian16(m_y_density);
+		*/
+	}
+
+	{
+		uint16 marker = 0xffdb; // Define Quantization Table
+		putbyte(stream, marker >> 8);
+		putbyte(stream, marker & 0xFF);
+
+		uint16 length = 2 + 1 + 64;
+		putbyte(stream, length >> 8);
+		putbyte(stream, length & 0xFF);
+
+		uint8 bitfield = 0 | (0<<4);
+
+		putbyte(stream, bitfield);
+
+		for (int i = 0; i < 64; i++)
+		{
+			putbyte(stream, Q[i]);
+		}
+	}
+
+	{
+		uint16 marker = 0xffc0;	// Start of frame (SOF-0) Baseline
+		putbyte(stream, marker >> 8);
+		putbyte(stream, marker & 0xFF);
+
+		uint16 length = 2 + 6 + 3*1;
+		putbyte(stream, length >> 8);
+		putbyte(stream, length & 0xFF);
+
+		putbyte(stream, 8);	// precision
+		putbyte(stream, height >> 8);
+		putbyte(stream, height & 0xFF);
+		putbyte(stream, width >> 8);
+		putbyte(stream, width & 0xFF);
+
+		uint8 components = 1;
+
+		putbyte(stream, components);	// components
+
+		for (int i = 0; i < components; i++)
+		{
+			putbyte(stream, i+1);
+
+			// horizontal and vertical sampling factors
+			putbyte(stream, (1<<4) | 1);
+
+			putbyte(stream, 0);	// quant table selector
+		}
+	}
+
+	{
+	// Define Restart Interval (DRI)
+		uint16 marker = 0xffdd;
+		putbyte(stream, marker >> 8);
+		putbyte(stream, marker & 0xFF);
+
+		uint16 length = 2 + 2;
+		putbyte(stream, length >> 8);
+		putbyte(stream, length & 0xFF);
+
+		putbyte(stream, 0);
+		putbyte(stream, 0);
+	}
+
+	int yblocks = (height + 7) / 8;
+	int xblocks = (width + 7) / 8;
+
+	// 8x8 block
+
+	int yb;
+	int xb;
+
+	typedef short BLOCK[64];
+
+	BLOCK *Sz_block = new BLOCK[yblocks*xblocks];
+
+	vector<uint8> dcsymbols;
+	vector<uint8> acsymbols;
+
+	short pred = 0;
+
+	int nblock = 0;
+
+//	ULONG lengthBits = 0;
+
+	for (yb = 0; yb < yblocks; yb++)
+	{
+		for (xb = 0; xb < xblocks; xb++)
+		{
+			short s[64];
+
+			{
+				int n = 0;
+				for (int y = 0; y < 8; y++)
+				{
+					const uint8* p = image + (yb*8+y) * rowbytes + (xb*8);
+
+					for (int x = 0; x < 8; x++)
+					{
+						s[n++] = *p++;
+					}
+				}
+			}
+
+			{
+				for (int i = 0; i < 64; i++)
+				{
+					// level shift
+					s[i] -= 128;	// for 8bit precision
+				}
+			}
+
+			// forward dct
+
+			double S[64];
+
+			{
+				int vu = 0;
+				for (int v = 0; v < 8; v++)
+				{
+					for (int u = 0; u < 8; u++)
+					{
+						S[vu] = 0;
+
+						int yx = 0;
+						for (int y = 0; y < 8; y++)
+						{
+							for (int x = 0; x < 8; x++)
+							{
+								S[vu] += s[yx] * cos((2*x + 1)*u*(M_PI/16.0)) * cos((2*y + 1)*v*(M_PI/16.0));
+								yx++;
+							}
+						}
+
+						if (vu == 0)
+						{
+							S[0] *= 1/sqrt(2.0);
+							S[0] *= 1/sqrt(2.0);
+						}
+						else if (v == 0)
+						{
+							S[vu] *= 1/sqrt(2.0);
+						}
+						else if (u == 0)
+						{
+							S[vu] *= 1/sqrt(2.0);
+						}
+
+						S[vu] *= 0.25;
+						vu++;
+					}
+				}
+			}
+
+			// quantizer
+
+			short Sq[64];
+			for (int i = 0; i < 64; i++)
+			{
+				// TODO round to nearest integer
+
+				Sq[i] = (int)((S[i] / Q[i]));
+			}
+
+			// dc diff
+
+			short *Sz = Sz_block[nblock];//[64];
+
+			Sz[0] = Sq[0] - pred;
+
+			pred = Sq[0];
+
+			// ac zigzag
+			{
+				for (int i = 1; i < 64; i++)
+				{
+					Sz[zigzag[i]] = Sq[i];
+				}
+			}
+
+			// huffman coding
+			{
+				int dcbits = GetSNBits(Sz[0]);
+
+				dcsymbols.Add(dcbits);
+			//	lengthBits += dcbits;
+
+				int n = 1;
+				while (n < 64)
+				{
+					int len = 0;
+					while (n < 64 && Sz[n] == 0)
+					{
+						len++;
+						n++;
+					}
+
+					if (n == 64)
+					{
+						int rs = 0;
+						acsymbols.Add(rs);
+						break;
+					}
+
+					if (len > 15)
+					{
+						int rs = 15<<4;
+						acsymbols.Add(rs);
+						n -= len - 16;
+						continue;
+					}
+
+					int rrrr = len;
+
+					int ssss = GetSNBits(Sz[n]);
+
+					uint8 rs = ssss | (rrrr<<4);
+
+					acsymbols.Add(rs);
+				//	lengthBits += ssss;
+
+					n++;
+				}
+			}
+
+			nblock++;
+		}
+	}
+
+	HuffmanTable* dctable = GenerateHuffman(dcsymbols);
+	HuffmanTable* actable = GenerateHuffman(acsymbols);
+ 
+// Define Huffman table
+	{
+		uint16 marker = 0xffc4;
+		putbyte(stream, marker >> 8);
+		putbyte(stream, marker & 0xFF);
+
+		uint16 length = 2 + (1 + 16 + dctable->lastk) + (1 + 16 + actable->lastk);
+		putbyte(stream, length >> 8);
+		putbyte(stream, length & 0xFF);
+
+		{
+			putbyte(stream, (0<<4) | 0);
+
+			{
+			for (int i = 0; i < 16; i++)
+			{
+				putbyte(stream, dctable->BITS[i+1]);
+			}
+			}
+
+			{
+			for (int i = 0; i < dctable->lastk; i++)
+			{
+				putbyte(stream, dctable->huffval[i]);
+			}
+			}
+		}
+
+		{
+			putbyte(stream, (1<<4) | 0);
+
+			{
+			for (int i = 0; i < 16; i++)
+			{
+				putbyte(stream, actable->BITS[i+1]);
+			}
+			}
+
+			{
+			for (int i = 0; i < actable->lastk; i++)
+			{
+				putbyte(stream, actable->huffval[i]);
+			}
+			}
+		}
+	}
+
+ // Start of scan (SOS)
+	
+	
+	{
+		/*
+		// Update marker length
+		{
+			int FREQ[256] = {0};
+			int i;
+			for (i = 0; i < dcsymbols.size(); i++)
+			{
+				FREQ[dcsymbols[i]]++;
+			}
+
+			for (i = 0; i < 256; i++)
+			{
+				lengthBits += FREQ[i] * dctable->codesize[i];
+			}
+		}
+
+		{
+			int FREQ[256] = {0};
+			int i;
+			for (i = 0; i < acsymbols.size(); i++)
+			{
+				FREQ[acsymbols[i]]++;
+			}
+
+			for (i = 0; i < 256; i++)
+			{
+				lengthBits += FREQ[i] * actable->codesize[i];
+			}
+		}
+		*/
+	}
+
+	{
+		uint16 marker = 0xffda;
+		putbyte(stream, marker >> 8);
+		putbyte(stream, marker & 0xFF);
+
+		uint16 length = 2 + 6;//1 + 2*1 + 3 + ((lengthBits+7)>>3);
+		putbyte(stream, length >> 8);
+		putbyte(stream, length & 0xFF);
+
+		putbyte(stream, 1);	// components
+		for (int i = 0; i < 1; i++)
+		{
+			putbyte(stream, 1);
+
+			putbyte(stream, (0<<4) | 0);
+		}
+
+		putbyte(stream, 0);	// start
+		putbyte(stream, 63);	// end
+
+		putbyte(stream, 0);	// Ah / Al
+
+//	ULONG start = stream->Seek(0, System::IO::STREAM_SEEK_CUR);
+
+		m_bitcnt = 0;
+		nblock = 0;
+
+		for (yb = 0; yb < yblocks; yb++)
+		{
+			for (xb = 0; xb < xblocks; xb++)
+			{
+				const short *Sz = Sz_block[nblock];
+
+				int dcbits = GetSNBits(Sz[0]);
+
+				putnbits(stream, dctable->codes[dcbits], dctable->codesize[dcbits]);
+				//int v;
+				if (Sz[0] < 0)
+				{
+					putnbits(stream, Sz[0]-1, dcbits);
+				//	v = (Sz[0]-1) & ((1<<dcbits)-1);
+				}
+				else
+				{
+					putnbits(stream, Sz[0], dcbits);
+				//	v = Sz[0];
+				}
+
+				int n = 1;
+				while (n < 64)
+				{
+					int len = 0;
+					while (n < 64 && Sz[n] == 0)
+					{
+						len++;
+						n++;
+					}
+
+					if (n == 64)
+					{
+						int rs = 0;
+						putnbits(stream, actable->codes[rs], actable->codesize[rs]);
+						break;
+					}
+
+					if (len > 15)
+					{
+						int rs = 15<<4;
+						putnbits(stream, actable->codes[rs], actable->codesize[rs]);
+						n -= len - 16;
+						continue;
+					}
+
+					int rrrr = len;
+
+					int ssss = GetSNBits(Sz[n]);
+
+					uint8 rs = ssss | (rrrr<<4);
+
+					putnbits(stream, actable->codes[rs], actable->codesize[rs]);
+					if (Sz[n] < 0)
+					{
+						putnbits(stream, Sz[n]-1, ssss);
+					}
+					else
+					{
+						putnbits(stream, Sz[n], ssss);
+					}
+
+					n++;
+				}
+				nblock++;
+			}
+		}
+
+		// TODO, if 0xff append a 0 byte
+
+		while (m_bitcnt)
+		{
+			putbit(stream, 1);
+		}
+	//	byte_align(stream);
+	}
+
+//	ULONG cur = stream->Seek(0, System::IO::STREAM_SEEK_CUR);
+
+	{
+		uint16 marker = 0xffd9; // End Of Image (EOI)
+		putbyte(stream, marker >> 8);
+		putbyte(stream, marker & 0xFF);
+	}
+}
+
+}	// Imaging
+}

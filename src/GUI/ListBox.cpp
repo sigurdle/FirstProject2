@@ -1,0 +1,100 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+////
+
+DependencyClass* ListBox::get_Class()
+{
+	static DependencyClass depclass(typeid(thisClass), baseClass::get_Class());
+
+	/*
+	static DependencyProperty* properties[] =
+	{
+		get_ParentProperty(),
+		get_TransformProperty(),
+		get_VisibleGeometryProperty(),
+		get_HitGeometryProperty(),
+		get_OpacityProperty(),
+		get_OpacityMaskProperty(),
+		get_ClipProperty(),
+	};
+	*/
+
+	return &depclass;
+}
+
+DependencyClass* ListBox::pClass(get_Class());
+
+static Expressive::ADeclarationList* aexp;
+
+ListBox::ListBox() : ItemsControl(get_Class())
+{
+	if (aexp == NULL)
+	{
+		aexp = Expressive::Parser::ProgramFromFile("D:\\ListBox.gui");
+	}
+
+	Expressive::FrameContext frame;
+	frame.m_variables["sc"] = this;
+
+	Expressive::Expression* exp = Expressive::Translator::Translate(aexp, &frame);
+//	Expressive::Expression* exp = Expressive::Translator::Translate(dynamic_cast<Expressive::AExpressionDeclaration*>(aexp->m_items[1])->m_exp);
+	
+	Object* obj = dynamic_cast<Expressive::StaticObjectExpression*>(exp)->m_obj;
+	UIElement* element = dynamic_cast<UIElement*>(obj);
+
+	m_contentContainer = dynamic_cast<UIElement*>(element->FindElement(L"Content"));
+
+	if (m_contentContainer == NULL)
+	{
+		raise(SystemException(L"ListBox - no content container in template"));
+	}
+
+	set_ShadowTree(element);
+}
+
+gm::SizeF ListBox::ArrangeOverride(gm::SizeF size)
+{
+	float width = size.Width;
+
+	float y = 0;
+
+	size_t nchildren = m_contentContainer->GetChildrenCount();
+
+	ASSERT(0);
+#if 0
+
+	for (size_t i = 0; i < nchildren; ++i)
+	{
+		UIElement* child = dynamic_cast<UIElement*>(m_contentContainer->GetChild(i));
+
+		child->set_Transform(new TranslateTransform(0, y));
+
+		child->ArrangeCore(gm::SizeF(width, get_ActualHeight()));
+		float itemheight = child->get_ActualHeight();
+		y += itemheight;
+	}
+#endif
+
+	m_contentContainer->set_Height(y);	// TODO
+
+	return gm::SizeF(width, y);
+}
+
+void ListBox::OnAddElement(UIElement* element)
+{
+	m_contentContainer->AddChild(element);
+}
+
+void ListBox::OnMouseLeftButtonDown(MouseButtonEventArgs* args)
+{
+	Console::WriteLn(args->get_Source()->GetType()->ToString());
+}
+
+}	// Gui
+}	// System

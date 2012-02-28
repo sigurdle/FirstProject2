@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/100/FirstProject2/trunk/include/DShowPlayer
+END
+stdafx.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/119/FirstProject2/trunk/include/DShowPlayer/stdafx.h
+END
+VMR9Allocator.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/include/DShowPlayer/VMR9Allocator.h
+END
+DShowPlayer.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/firstproject2/!svn/ver/126/FirstProject2/trunk/include/DShowPlayer/DShowPlayer.h
+END
+targetver.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/100/FirstProject2/trunk/include/DShowPlayer/targetver.h
+END
+playback.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/119/FirstProject2/trunk/include/DShowPlayer/playback.h
+END
+video.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/119/FirstProject2/trunk/include/DShowPlayer/video.h
+END

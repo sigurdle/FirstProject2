@@ -1,0 +1,66 @@
+namespace System
+{
+namespace x3d
+{
+
+class X3DEXT SceneVisual3D: public Gui::FrameworkElement
+{
+public:
+
+	CTOR SceneVisual3D();
+
+	virtual void Render(Gui::ManagedRenderContext renderContext) override;
+
+	void InitStacks();
+
+	X3DScene* get_Scene();
+	void set_Scene(X3DScene* scene);
+
+	float getCurrentFrameRate()
+	{
+		return m_fps;
+	}
+
+	virtual void OnMouseMove(Gui::MouseEventArgs* args) override;
+	virtual void OnLeftMouseButtonDown(Gui::MouseButtonEventArgs* args) override;
+	virtual void OnLeftMouseButtonUp(Gui::MouseButtonEventArgs* args) override;
+	virtual void OnRightMouseButtonDown(Gui::MouseButtonEventArgs* args) override;
+	virtual void OnRightMouseButtonUp(Gui::MouseButtonEventArgs* args) override;
+
+	virtual void OnComputedPropertyValueChanged(Gui::PropertyValue* pProperty, bool handled) override;
+
+	virtual D3DXMATRIX GetViewMatrix();
+
+	uint64 m_lasttickcount;
+	float m_fps;
+
+	Gui::Timeline* m_timeline;
+
+	static Gui::DependencyClass* get_Class();
+	static Gui::DependencyClass* pClass;
+
+	DEPENDENCY_PROPERTY(ICamera*, Camera)
+	DEPENDENCY_PROPERTY(bool, MultiSample)
+	DEPENDENCY_PROPERTY(X3DNodeSelection*, Selection)
+
+	Gui::Media3D::Lines2 m_origoAxis;
+
+protected:
+
+	void OnSelectionChanged(X3DNodeSelection* selection);
+
+	void OnTick(double tim);
+
+	virtual void OnSetRoot(Gui::IRootVisual* root) override;
+
+	void OnSceneInvalidate(X3DScene* scene);
+
+	X3DScene* m_scene;
+
+	Vec2f m_startmousepos;
+	Vec2f m_oldmousepos;
+	int m_mousedown;
+};
+
+}
+}

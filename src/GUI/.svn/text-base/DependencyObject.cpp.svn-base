@@ -1,0 +1,443 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+int Adjust(DependencyClass* depClass)
+{
+	if (!depClass->inited)
+	{
+		depClass->inited = true;
+		int firstIndex = 0;
+		if (depClass->GetBaseClass())
+		{
+			firstIndex += Adjust(depClass->GetBaseClass());
+		}
+
+		for (size_t i = 0; i < depClass->m_localProperties.size(); ++i)
+		{
+			depClass->m_localProperties[i]->m_index += firstIndex;
+		}
+
+		firstIndex += depClass->m_localProperties.size();
+		depClass->m_localCount = firstIndex;
+	}
+
+	return depClass->m_localCount;
+}
+
+// static
+DependencyClass* DependencyObject::get_Class()
+{
+	static DependencyClass depclass(typeid(DependencyClass), NULL);
+	return &depclass;
+}
+
+void DependencyObject::CreateProperties(DependencyClass* depClass)
+{
+	if (depClass->GetBaseClass())
+	{
+		CreateProperties(depClass->GetBaseClass());
+	}
+
+	// Create connections between all dependency properties that depend on each other
+
+	for (size_t i = 0; i < depClass->m_localProperties.size(); ++i)
+	{
+		DependencyProperty* dp = depClass->m_localProperties[i];
+		
+		m_localProperties[dp->m_index] = new PropertyValue(this, dp);
+	//	DebugTrace("\t" << dp->get_Name());
+
+		Expressive::Expression* dpExp = dp->get_Expression();
+
+		if (dpExp)
+		{
+		//	DebugTrace("=");
+
+			ExpressionBinding* expBinding = new ExpressionBinding(this, dpExp);
+			/*
+			expBinding->m_this = this;
+			if (*dp->get_Name() == L"ClientRight")
+			{
+				MessageBeep(-1);
+			}
+
+			Expressive::EvalContext evalContext;
+			evalContext.m_this = this;
+			evalContext.m_templateOwner = NULL;
+			evalContext.m_userObject = expBinding;
+			dpExp->TraceCallback(&evalContext, Expressive::ExpTrace(), NULL);
+*/
+
+			m_localProperties[dp->m_index]->SetInputBinding(expBinding);
+		}
+	//	DebugTrace("\n");
+	}
+}
+
+DependencyObject::DependencyObject(DependencyClass* depClass)
+{
+//	DependencyClass* depClass = DependencyClass::GetClass(pClassType);
+/*
+	DependencyClass* depClass = (DependencyClass*)GetType()->GetUserData(L"System::Gui::DependencyClass");
+	if (depClass == NULL)
+	{
+		depClass = new DependencyClass(GetType());
+		GetType()->SetUserData(L"System::Gui::DependencyClass", depClass);
+	}
+*/
+
+	Adjust(depClass);
+
+	int localPropertiesCount = depClass->GetLocalPropertiesCount();
+//	int computedPropertiesCount = depClass->GetComputedPropertiesCount();
+
+	// TODO .. hm..
+	m_localProperties.assign(new PropertyValue*[localPropertiesCount], localPropertiesCount);
+//	m_computedProperties.assign(new ComputedPropertyValue[computedPropertiesCount], computedPropertiesCount);
+
+//	DebugTrace("Creating properties for object of call " << depClass->GetClassType()->get_QName() << "\n");
+	CreateProperties(depClass);
+//	DebugTrace("\n");
+}
+
+void DependencyObject::AddNotify(IObjectChangedNotify* callback)
+{
+	ASSERT(m_notifyList.find(callback) == m_notifyList.end());
+	m_notifyList.insert(m_notifyList.end(), callback);
+}
+
+DependencyClass* DependencyObject::GetClass()
+{
+	return DependencyClass::GetClass(GetType());
+//	return (DependencyClass*)GetType()->GetClass()->GetUserData(L"System::Gui::DependencyClass");
+}
+
+PropertyValue* DependencyObject::GetProperty(DependencyProperty* dp)
+{
+	VerifyArgumentNotNull(dp);
+
+	PropertyValue* p = m_localProperties[dp->m_index];
+	return p;
+}
+
+void DependencyObject::UpdatePropertyObjectValue(DependencyProperty* dp, Object* value)
+{
+	GetProperty(dp)->UpdateObjectValue(value);
+}
+
+bool DependencyObject::HasComputedPropertyValue(DependencyProperty* dp)
+{
+	return false;
+}
+
+Object* DependencyObject::GetComputedPropertyObjectValue2(DependencyProperty* dp)
+{
+	return NULL;
+}
+
+Object* DependencyObject::GetComputedObjectValue(DependencyProperty* dp)
+{
+	if (this == NULL)
+	{
+		raise(Exception("Accessing null object"));
+	}
+
+	PropertyValue* value = m_localProperties[dp->m_index];
+	return value->GetComputedObjectValue();
+}
+
+Object* DependencyObject::GetPropertyValue(DependencyProperty* dp)
+{
+	return GetComputedObjectValue(dp);
+}
+
+bool DependencyObject::GetPropertyValueBool(DependencyProperty* dp)
+{
+	return static_cast<BoolObject*>(GetPropertyValue(dp))->GetValue();
+}
+
+unsigned char DependencyObject::GetPropertyValueUByte(DependencyProperty* dp)
+{
+	return static_cast<UByteObject*>(GetPropertyValue(dp))->GetValue();
+}
+
+int DependencyObject::GetPropertyValueInt(DependencyProperty* dp)
+{
+	return static_cast<IntObject*>(GetPropertyValue(dp))->GetValue();
+}
+
+float DependencyObject::GetPropertyValueFloat(DependencyProperty* dp)
+{
+	return static_cast<FloatObject*>(GetPropertyValue(dp))->GetValue();
+}
+
+double DependencyObject::GetPropertyValueDouble(DependencyProperty* dp)
+{
+	return static_cast<DoubleObject*>(GetPropertyValue(dp))->GetValue();
+}
+
+void DependencyObject::SetPropertyValue(DependencyProperty* dp, Object* value)
+{
+	if (this == NULL) raise(SystemException("null object"));
+	if (dp == NULL) raise(ArgumentNullException());
+
+	PropertyValue* p = m_localProperties[dp->m_index];
+	if (p->m_inBinding != NULL && p->m_localValue == &PropertyValue::UnsetValue)
+	{
+		p->UpdateObjectValue(value);
+	}
+	else
+	{
+		p->SetLocalObjectValue(value);
+	}
+}
+
+void DependencyObject::SetPropertyValue(DependencyProperty* dp, String value)
+{
+	PropertyValue* p = m_localProperties[dp->m_index];
+	p->SetLocalObjectValue(value.m_stringObject);
+}
+
+void DependencyObject::SetPropertyValue(DependencyProperty* dp, bool value)
+{
+	SetPropertyValue(dp, BoolObject::GetObject(value));
+}
+
+void DependencyObject::SetPropertyValue(DependencyProperty* dp, int value)
+{
+	SetPropertyValue(dp, IntObject::GetObject(value));
+}
+
+void DependencyObject::SetPropertyValue(DependencyProperty* dp, unsigned int value)
+{
+	SetPropertyValue(dp, UIntObject::GetObject(value));
+}
+
+void DependencyObject::SetPropertyValue(DependencyProperty* dp, unsigned char value)
+{
+	SetPropertyValue(dp, UByteObject::GetObject(value));
+}
+
+void DependencyObject::SetPropertyValue(DependencyProperty* dp, int64 value)
+{
+	SetPropertyValue(dp, LongIntObject::GetObject(value));
+}
+
+void DependencyObject::SetPropertyValue(DependencyProperty* dp, float value)
+{
+	SetPropertyValue(dp, FloatObject::GetObject(value));
+}
+
+void DependencyObject::SetPropertyValue(DependencyProperty* dp, double value)
+{
+	SetPropertyValue(dp, DoubleObject::GetObject(value));
+}
+
+bool DependencyObject::HasLocalPropertyValue(PropertyValue* pPropertyVal)
+{
+	if (pPropertyVal == NULL) raise(ArgumentNullException());
+
+	// TODO, some other place
+	return pPropertyVal->m_localValue != &PropertyValue::UnsetValue;
+}
+
+Object* DependencyObject::GetLocalPropertyValue(PropertyValue* pPropertyVal)
+{
+	if (pPropertyVal == NULL) raise(ArgumentNullException());
+
+	// TODO, some other place
+	return pPropertyVal->m_localValue;
+}
+
+void DependencyObject::ClearLocalPropertyValue(PropertyValue* pPropertyVal)
+{
+	if (pPropertyVal == NULL) raise(ArgumentNullException());
+	pPropertyVal->m_localValue = &PropertyValue::UnsetValue;
+}
+
+String DependencyObject::ToString()
+{
+	IO::StringWriter stream;
+	stream << GetType()->m_name;
+	return stream.str();
+}
+
+String DependencyObject::ToMLString()
+{
+	map<Object*,int> defs;
+
+	IO::StringWriter stream;
+	WriteMLString(stream, defs);
+
+	return stream.str();
+}
+
+IO::TextWriter& DependencyObject::WriteMLString(IO::TextWriter& stream, map<Object*,int>& defs)
+{
+	pair<map<Object*,int>::iterator,bool> it = defs.insert(map<Object*,int>::value_type(this, defs.size()+1));
+	if (!it.second)
+	{
+		stream << "use(" << it.first->second << ")";
+		return stream;
+	}
+
+	stream << GetType()->m_name;
+	stream << "\n{\n";
+
+	for (size_t i = 0; i < m_localProperties.size(); ++i)
+	{
+		PropertyValue* pProperty = m_localProperties[i];
+
+		if (pProperty->m_localValue != &PropertyValue::UnsetValue)
+		{
+			stream << "\t";
+			stream << pProperty->m_dp->get_Name();
+			stream << " ";
+
+			if (DependencyObject* depobj = dynamic_cast<DependencyObject*>(pProperty->m_localValue))
+			{
+				depobj->WriteMLString(stream, defs);
+			}
+			else if (VisualCollection* vc = dynamic_cast<VisualCollection*>(pProperty->m_localValue))
+			{
+				for (auto it = vc->m_items.begin(); it != vc->m_items.end(); ++it)
+				{
+					Visual* item = *it;
+					item->WriteMLString(stream, defs);
+				}
+			}
+			else if (pProperty->m_localValue)
+			{
+				stream << pProperty->m_localValue->ToString();
+			}
+			else
+			{
+				stream << "nil";
+			}
+			stream << "\n";
+		}
+		else if (pProperty->m_inBinding != NULL)
+		{
+			stream << "\t";
+			stream << pProperty->m_dp->get_Name();
+			stream << " ";
+
+			if (ExpressionBinding* exp = dynamic_cast<ExpressionBinding*>(pProperty->m_inBinding))
+			{
+				exp->m_exp->WriteMLString(stream, defs);
+			}
+			stream << "\n";
+		}
+	}
+
+	stream << "}";
+
+	return stream;
+}
+
+void DependencyObject::OnComputedPropertyValueChanged(PropertyValue* pPropertyVal, bool handled)
+{
+	// Notify listeners that this object has changed
+
+	for (auto it = m_notifyList.begin(); it != m_notifyList.end(); ++it)
+	{
+		IObjectChangedNotify* callback = *it;
+		callback->OnObjectChanged(this);	// TODO?? OnContentChanged
+	}
+}
+
+void DependencyObject::OnComputedPropertyValueChanging(PropertyValue* pPropertyVal, Object* oldValue, Object* newValue, bool handled)
+{
+}
+
+//////////////////////////////////
+
+DependencyObject* GetTemplatedOwner(DependencyObject* depObject)
+{
+	UIElement* uielement = dynamic_cast<UIElement*>(depObject);
+	if (uielement)
+	{
+		return uielement->get_TemplatedOwner();
+	}
+
+	return NULL;
+}
+
+//TemplatedOwnerExpression TemplatedOwnerExpression::only;
+
+Refs::Refs()
+{
+	m_p = new Refs2;
+}
+
+template class GUIEXT pair<int, Deps*>;
+template class GUIEXT pair<Refs2*, pair<int, Deps*> >;
+
+pair<Refs2*, pair<int, ObjectTemplateBase*> > Refs::def(int id)
+{
+	ObjectTemplateBase* obj = NULL;
+	pair<map<int, ObjectTemplateBase*>::iterator,bool> r = m_p->m_objects.insert(map<int, ObjectTemplateBase*>::value_type(id, obj));
+
+	/*
+	if (r.first->second == NULL)
+	{
+		r.first->second = new Deps;
+		r.first->second->m_exp = new Expressive::StaticObjectExpression;
+	}
+	*/
+
+	return pair<Refs2*, pair<int, ObjectTemplateBase*> >(m_p, pair<int, ObjectTemplateBase*>(r.first->first, r.first->second));
+}
+
+#if 0
+Expressive::_Object Refs::use(int id)
+{
+	Deps* obj = NULL;
+	pair<map<int, Deps*>::iterator,bool> r = m_p->m_objects.insert(map<int, Deps*>::value_type(id, obj));
+
+	if (r.first->second == NULL)
+	{
+		r.first->second = new Deps;
+		r.first->second->m_exp = new Expressive::StaticObjectExpression;
+	}
+
+	return r.first->second->m_exp;
+}
+#endif
+
+/*
+pair<Refs2*, pair<int, Deps*> > Refs::def(int id)
+{
+	Deps* obj = NULL;
+	pair<map<int, Deps*>::iterator,bool> r = m_p->m_objects.insert(map<int, Deps*>::value_type(id, obj));
+
+	if (r.first->second == NULL)
+	{
+		r.first->second = new Deps;
+		r.first->second->m_exp = new Expressive::StaticObjectExpression;
+	}
+
+	return pair<Refs2*, pair<int, Deps*> >(m_p, pair<int, Deps*>(r.first->first, r.first->second));
+}
+
+Expressive::_Object Refs::use(int id)
+{
+	Deps* obj = NULL;
+	pair<map<int, Deps*>::iterator,bool> r = m_p->m_objects.insert(map<int, Deps*>::value_type(id, obj));
+
+	if (r.first->second == NULL)
+	{
+		r.first->second = new Deps;
+		r.first->second->m_exp = new Expressive::StaticObjectExpression;
+	}
+
+	return r.first->second->m_exp;
+}
+*/
+}	// Gui
+}	// System

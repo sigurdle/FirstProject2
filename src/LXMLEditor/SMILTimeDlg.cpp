@@ -1,0 +1,6 @@
+// SMILTimeDlg.cpp : Implementation of CSMILTimeDlg
+#include "stdafx.h"
+#include "SMILTimeDlg.h"
+
+/////////////////////////////////////////////////////////////////////////////
+// CSMILTimeDlg

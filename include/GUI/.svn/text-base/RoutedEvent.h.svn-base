@@ -1,0 +1,36 @@
+namespace System
+{
+namespace Gui
+{
+
+class GUIEXT RoutedEvent : public Object
+{
+public:
+	CTOR RoutedEvent(StringIn name, RoutingStrategy routingStrategy, const Type_Info& handlerType, const Type_Info& ownerType);
+
+	String get_Name();
+	RoutingStrategy get_RoutingStrategy();
+	ClassType* get_HandlerType();
+	ClassType* get_OwnerType();
+
+	int GetIndex() const
+	{
+		return m_index;
+	}
+
+private:
+
+	friend class EventManager;
+	friend class UIElement;	// TODO remove
+//	friend class ButtonBase;	// TODO remove
+
+	int m_index;
+
+	String m_name;
+	const Type_Info& m_handlerType;
+	const Type_Info& m_ownerType;
+	RoutingStrategy m_routingStrategy;
+};
+
+}	// UI
+}

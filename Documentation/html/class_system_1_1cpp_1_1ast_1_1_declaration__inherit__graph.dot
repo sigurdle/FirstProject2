@@ -1,0 +1,31 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::cpp::ast::Declaration",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::cpp::ast::A_SimpleDeclaration",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1cpp_1_1ast_1_1_a___simple_declaration.html"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="System::cpp::ast::AsmDefinition",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1cpp_1_1ast_1_1_asm_definition.html"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="System::cpp::ast::FunDefDecl",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1cpp_1_1ast_1_1_fun_def_decl.html"];
+  Node1 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="System::cpp::ast::ImportDeclaration",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1cpp_1_1ast_1_1_import_declaration.html"];
+  Node1 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="System::cpp::ast::LinkageDeclaration",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1cpp_1_1ast_1_1_linkage_declaration.html"];
+  Node1 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="System::cpp::ast::NamespaceDefinition",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1cpp_1_1ast_1_1_namespace_definition.html"];
+  Node1 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="System::cpp::ast::PragmaDeclaration",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1cpp_1_1ast_1_1_pragma_declaration.html"];
+  Node1 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="System::cpp::ast::StaticAssertDeclaration",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1cpp_1_1ast_1_1_static_assert_declaration.html"];
+  Node1 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="System::cpp::ast::TemplateDeclaration",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1cpp_1_1ast_1_1_template_declaration.html"];
+  Node1 -> Node13 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="System::cpp::ast::UsingDirectiveDeclaration",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1cpp_1_1ast_1_1_using_directive_declaration.html"];
+}

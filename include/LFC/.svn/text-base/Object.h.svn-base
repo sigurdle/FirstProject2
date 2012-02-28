@@ -1,0 +1,30 @@
+namespace System
+{
+
+class LFCEXT __gc_alloc
+{
+public:
+
+#undef new
+	void* operator new (size_t size, Module* pModule);
+	void* operator new (size_t size, Module* pModule, const char* filename, int line);
+#define new _new
+
+	void operator delete (void* p);
+};
+
+class LFCEXT Object : public __gc_alloc
+{
+public:
+	CTOR Object();
+	virtual ~Object();
+
+	ClassType* GetType() const;
+	virtual String ToString();
+	virtual uint32 GetHashCode();
+
+	// returns true only if they're bit-by bit equal (override, if this isn't what you want)
+	virtual bool Equals(const Object* other) const;
+};
+
+}	// System

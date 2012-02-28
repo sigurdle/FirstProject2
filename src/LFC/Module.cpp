@@ -1,0 +1,829 @@
+#include "stdafx.h"
+#include "LFC.h"
+#include <Psapi.h>
+#include <algorithm>
+#include <functional>
+
+#if WIN32
+#include "vc_typeinfo.h"
+#endif
+
+#ifdef _M_IX86
+
+PVOID RtlPcToFileHeader_(PVOID PcValue, PVOID* BaseOfImage)
+{
+	HANDLE hProcess = GetCurrentProcess();
+
+	HMODULE hModules[1024];
+	DWORD cbBytes;
+	EnumProcessModules(hProcess, hModules, 1024*sizeof(HMODULE), &cbBytes);
+
+	unsigned int count = cbBytes / sizeof(HMODULE);
+
+	for (unsigned int n = 0; n < count; ++n)
+	{
+		MODULEINFO mi;
+		GetModuleInformation(hProcess, hModules[n], &mi, sizeof(mi));
+
+		if ((ULONG_PTR)PcValue >= (ULONG_PTR)mi.lpBaseOfDll && (ULONG_PTR)PcValue < (ULONG_PTR)mi.lpBaseOfDll + mi.SizeOfImage)
+		{
+			*BaseOfImage = mi.lpBaseOfDll;
+			return mi.lpBaseOfDll;
+		}
+	}
+
+	*BaseOfImage = nullptr;
+	return nullptr;
+}
+
+#endif
+
+namespace System
+{
+
+void CalcGCMembers(ClassType* pTopClass, ClassType* pClass, size_t& count, size_t& innercount, size_t& arraycount);
+void MakeGCMembers(ClassType* pTopClass, ClassType* pClass, ptrdiff_t offset, size_t& count, size_t& innercount, size_t& arraycount);
+//void _AddPersistentLiveRoot(void** pp);
+
+/*
+map<String, Module*>* Module::s_Modules;
+map<HMODULE, Module*>* Module::s_HModules;
+List<Module*>* Module::s_modules;
+*/
+
+Module::StaticPrivate* Module::sdata;
+
+Module::Module() : m_hModule(nullptr)
+{
+}
+
+Module::Module(HMODULE hModule)
+{
+	ASSERT(hModule);
+	SetHandle(hModule);
+}
+
+Module::~Module()
+{
+}
+
+BOOL Module::DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
+{
+	switch (ul_reason_for_call)
+	{
+	case DLL_PROCESS_ATTACH:
+		{
+			SetHandle(hModule);
+			return ProcessAttach();
+		}
+		break;
+
+	case DLL_THREAD_ATTACH:
+		{
+		}
+		break;
+
+	case DLL_THREAD_DETACH:
+		{
+		}
+		break;
+
+	case DLL_PROCESS_DETACH:
+		{
+			return Term();
+		}
+		break;
+	}
+	return TRUE;
+}
+
+void Module::SetHandle(HMODULE hModule)
+{
+	m_hModule = hModule;
+
+	if (hModule)
+	{
+		wchar_t filename[512];
+		GetModuleFileNameW(m_hModule, filename, _countof(filename)); 
+		m_fullpath = filename;
+		m_name = IO::Path::GetFileName(filename);
+	//	m_name = FilePath(filename).get_NameExt();
+
+		MODULEINFO mi;
+		BOOL success = GetModuleInformation(GetCurrentProcess(), m_hModule, &mi, sizeof(mi));
+		if (!success)
+		{
+			ASSERT(0);
+			//GetModuleInformation(NULL, m_hModule, &mi, sizeof(mi));
+		}
+		m_sizeOfImage = mi.SizeOfImage;
+
+		CriticalSectionLock lock(sdata->critsec);
+		sdata->s_modules.Add(this);
+		sdata->s_HModules[hModule] = this;
+	}
+}
+
+void Module::Init(HMODULE hModule)
+{
+	// NOTE: This doesn't have to be criticalsection protected, since sdata will only
+	// be null once, and it will be early in startup, and there will be no race conditions
+	if (sdata == nullptr)
+	{
+		sdata = new StaticPrivate();
+	}
+
+	LoadTypes(hModule);
+}
+
+String Module::ToString()
+{
+	return GetFullPath();
+}
+
+String Module::get_Name()
+{
+	// TODO
+	return m_name;
+}
+
+// static
+Module* Module::Load(StringIn filename)
+{
+	HMODULE hModule = LoadLibraryW(filename.c_strw());
+	if (hModule == nullptr)
+	{
+		IO::StringWriter str;
+		str << "Failed to load module " << quote(filename);
+
+		raise(SystemException(str));
+	}
+
+	return Module::FromHandle(hModule);
+}
+
+// static
+Module* Module::FromHandle(HMODULE hModule)
+{
+	if (hModule == nullptr) return nullptr;
+
+	CriticalSectionLock lock(sdata->critsec);
+
+	Module*& module = sdata->s_HModules[hModule];
+	if (module == nullptr)
+	{
+		module = new Module(hModule);
+	}
+
+	return module;
+}
+
+CriticalSectionLock Lock(CRITICAL_SECTION* p)
+{
+	return CriticalSectionLock(p);
+}
+
+/*
+CriticalSectionLock TryLock(CRITICAL_SECTION* p)
+{
+	return CriticalSectionLockTry(p);
+}
+*/
+
+// static
+Module* Module::FindModule(StringIn name)
+{
+	auto lock = Lock(sdata->critsec);
+
+	auto it = sdata->s_Modules.find(name);
+	if (it != sdata->s_Modules.end())
+		return it->second;
+	else
+		return nullptr;
+}
+
+// static
+Module* Module::FromAddress(const void* address)
+{
+#if 1
+
+	// TODO: This doesn't look ok, could optimize
+
+	void* p;
+	void* imageBase2 = RtlPcToFileHeader_((PVOID)address, &p);
+	if (imageBase2 == nullptr) return nullptr;
+
+	return Module::FromHandle((HMODULE)imageBase2);
+
+#else
+
+	HANDLE hProcess = GetCurrentProcess();
+
+	HMODULE hModules[1024];
+	DWORD cbBytes;
+	EnumProcessModules(hProcess, hModules, 1024*sizeof(HMODULE), &cbBytes);
+
+	uint count = cbBytes / sizeof(HMODULE);
+
+	for (uint n = 0; n < count; ++n)
+	{
+		MODULEINFO mi;
+		GetModuleInformation(hProcess, hModules[n], &mi, sizeof(mi));
+
+		if ((ULONG_PTR)address >= (ULONG_PTR)mi.lpBaseOfDll && (ULONG_PTR)address < (ULONG_PTR)mi.lpBaseOfDll + mi.SizeOfImage)
+		{
+			return Module::FromHandle(hModules[n]);
+		}
+	}
+#endif
+	return nullptr;
+}
+
+// static
+List<Module*>* Module::get_Loaded()
+{
+	return &sdata->s_modules;
+}
+
+BOOL Module::ProcessAttach()
+{
+	return TRUE;
+}
+
+BOOL Module::Term()
+{
+	return TRUE;
+}
+
+void Module::AddProc(StringIn name, proctype p)
+{
+	m_procs[name] = p;
+}
+
+Module::proctype Module::GetProc(StringIn name)
+{
+	return m_procs[name];
+}
+
+void Module::LoadTypes(HMODULE hModule)
+{
+	m_hModule = hModule;
+
+	ASSERT(this->_p == nullptr);
+	this->_p = new Data;
+
+	ASSERT(hModule);
+
+	// insert sorted by address
+	auto it = std::lower_bound(TypeDatabase::pD->m_hmodules.begin(), TypeDatabase::pD->m_hmodules.end(), this,
+		[](Module* x, Module* y)
+		{
+			return x->GetHandle() < y->GetHandle();
+		}
+	);
+
+	TypeDatabase::pD->m_hmodules.insert(it, this);
+
+	char modulefilename[512];
+	GetModuleFileNameA(hModule, modulefilename, 512);
+
+	char dirname[8];
+	char pathname[260];
+	char filename[260];
+	char extname[260];
+
+	_splitpath_s(modulefilename, dirname, pathname, filename, extname);
+
+	char typeinfofilename[300];
+	_makepath_s(typeinfofilename, dirname, pathname, filename, "typeinfo");
+
+	char adfilename[300];
+	_makepath_s(adfilename, dirname, pathname, filename, "ad");
+	FILE* fp;
+	fopen_s(&fp, adfilename, "rb");
+	if (fp == nullptr)
+	{
+		raise(Exception(StringIn("Failed to open '") + adfilename + "'"));
+	}
+	IO::CStdFile cfp(fp);
+
+	char adsigid[4];
+	cfp.Read(adsigid, 4);
+	if (strncmp(adsigid, "AD00", 4) != 0)
+	{
+		IO::StringWriter str;
+		str << L"Invalid .ad file " << adfilename;
+		raise(Exception(str.str()));
+	}
+
+	DWORD adsig;
+	cfp.Read(&adsig, 4);
+
+	char fullpath[512];
+	_fullpath(fullpath, typeinfofilename, 512);
+
+	TypeLib* typelib = nullptr;
+
+	auto it2 = TypeDatabase::pD->m_typestuff->m_typelibs_fullpath.find(fullpath);
+	if (it2 == TypeDatabase::pD->m_typestuff->m_typelibs_fullpath.end())
+	{
+		String filename = fullpath;
+
+		IO::FileStream file(filename, IO::FileMode_Open, IO::FileAccess_Read);
+		try
+		{
+			typelib = new TypeLib;
+
+			TypeArchive ar(TypeArchive::Mode_Load, &file, filename);
+			ar.m_bSortedDecls = true;
+			ar.m_pGlobalNamespace = TypeDatabase::pD->m_globalNamespace;
+			ar.m_typestuff = TypeDatabase::pD->m_typestuff;
+			ar.m_typelib = typelib;
+
+			ar.ReadHeader();
+
+			if (ar.m_typelib->m_id != adsig)
+			{
+				raise(Exception(StringIn("typeinfo/ad file mismatch ") + typeinfofilename));
+			}
+			TypeDatabase::pD->m_typestuff->m_typelibs_fullpath.insert(map<String, TypeLib*>::value_type(filename, typelib));
+
+			ar.MapObject(typelib);
+			typelib->Load(ar);
+		}
+		catch (Exception* e)
+		{
+			typelib->m_id = 0;
+			e->raiseme();
+		}
+	}
+	else
+	{
+		typelib = it2->second;
+	}
+
+	if (typelib)
+	{
+		for (auto it = typelib->m_typesByName.begin(); it != typelib->m_typesByName.end(); ++it)
+		{
+			NamedType* pType = it->second;
+
+			// templates can make same type in different typelibs
+			if (TypeDatabase::pD->m_namedTypes.find(pType->get_QName()) == TypeDatabase::pD->m_namedTypes.end())
+			{
+				// fully qualified
+				TypeDatabase::pD->m_namedTypes.insert(map<String, NamedType*>::value_type(pType->get_QName(), pType));
+
+				// unqualified name
+				TypeDatabase::pD->m_namedTypesM.insert(multimap<String, NamedType*>::value_type(pType->get_Name(), pType));
+
+				/*
+				NamespaceType* pNamespace = pType->get_ParentNamespace();
+				while (pNamespace)
+				{
+					if (!pNamespace->
+					pD->m_namedTypesM.insert(multimap<String, NamedType*>::value_type(pType->get_Name(), pType));
+
+					pNamespace = pNamespace->get_ParentNamespace();
+				}
+				*/
+			}
+		}
+
+		for (auto it = typelib->m_namespaces.begin(); it != typelib->m_namespaces.end(); ++it)
+		{
+			NamedType* pType = *it;
+
+		//	if (pD->m_namedTypes.find(pType->get_QName()) == pD->m_namedTypes.end())
+			{
+				ASSERT(TypeDatabase::pD->m_namedTypes.find(pType->get_QName()) == TypeDatabase::pD->m_namedTypes.end());
+
+				// fully qualified
+				TypeDatabase::pD->m_namedTypes.insert(map<String, NamedType*>::value_type(pType->get_QName(), pType));
+
+				// unqualified name
+				TypeDatabase::pD->m_namedTypesM.insert(multimap<String, NamedType*>::value_type(pType->get_Name(), pType));
+			}
+		}
+	}
+
+	if (typelib)
+	{
+		for (auto it = typelib->m_typesByName.begin(); it != typelib->m_typesByName.end(); ++it)
+		{
+			NamedType* pType = it->second;
+
+		//	ASSERT((uint8*)pType >= heap->m_data);
+		//	ASSERT((uint8*)pType < heap->m_data + heap->m_size);
+
+			if (pType->get_Kind() == type_class)
+			{
+				ClassType* pClass = pType->AsClass();
+
+				if (pClass->get_sizeof() != ~0/* && pClass->m_def && pClass->m_pTemplateParams == NULL*/)
+				{
+					size_t count = 0;
+					size_t innercount = 0;
+					size_t arraycount = 0;
+					CalcGCMembers(pClass/*most derived*/, pClass, count, innercount, arraycount);
+
+					pClass->m_gcMembers.assign(new GCMember[count], count);
+					pClass->m_gcInnerMembers.assign(new GCMember[innercount], innercount);
+					pClass->m_gcArrayMembers.assign(new GCArrayMember[arraycount], arraycount);
+
+					count = 0;
+					innercount = 0;
+					arraycount = 0;
+					
+					MakeGCMembers(pClass/*most derived*/, pClass, 0, count, innercount, arraycount);
+
+					GetDispatch(pClass);
+				}
+			}
+		}
+	}
+
+	/*
+	if (fp == nullptr)
+	{
+		_makepath(adfilename, dirname, "mmstudio\\win32\\bin\\debug", filename, "ad");
+		FILE* fp = fopen(adfilename, "rb");
+	}
+	*/
+
+	while (!feof(cfp))
+	{
+		char libname[256];
+		if (fread(libname, 1, 256, fp) != 256)
+		{
+			raise(Exception(StringIn(adfilename) + " corrupt file / read error"));
+		}
+
+		if (libname[0] == 0) break;
+		uint32 id;
+		fread(&id, 4, 1, fp);
+
+		TypeStuff::typelibs::iterator it = TypeDatabase::pD->m_typestuff->m_typelibs.find(libname);
+		if (it == TypeDatabase::pD->m_typestuff->m_typelibs.end())
+		{
+			raise(Exception(StringIn("typelib error '") + libname + "'"));
+		}
+
+		TypeLib* typelib = it->second;
+
+		if (typelib->m_id == 0)
+		{
+			raise(Exception(StringIn("typelib not found '") + typelib->m_typeinfo_filename + "'"));
+		}
+
+//		VERIFY(id == typelib->m_id);
+
+		while (!feof(cfp))
+		{
+			uint32 n;
+			cfp.Read(&n, 4);
+			if (n == ~0)
+				break;
+
+			DWORD rtti_address;
+			cfp.Read(&rtti_address, sizeof(DWORD));
+
+			NamedType* pType = typelib->m_types[n];
+
+			if (pType->get_Kind() == type_typedef)
+			{
+#if 0
+				pType->m_pTypeInfo = ((Typedef*)pType)->m_pType->m_pTypeInfo;
+#endif
+			}
+			else
+			{
+				if (rtti_address != 0)
+				{
+					TypeDescriptor* typedesc = (TypeDescriptor*)((ULONG_PTR)hModule + rtti_address);
+
+#if 0
+					pType->m_pTypeInfo = (Type_Info*)typedesc;
+#endif
+					ASSERT(typedesc->_m_data == nullptr);
+					typedesc->_m_data = pType;
+
+#if 0	// Maybe later, but in conservative garbage collector
+					_AddPersistentLiveRoot((void**)&typedesc->_m_data);
+#endif
+				}
+			}
+		}
+	}
+
+	while (!feof(cfp))
+	{
+		DWORD rtti_address;
+		cfp.Read(&rtti_address, sizeof(DWORD));
+
+		if (rtti_address == 0)
+			break;
+
+		char cstr[512];
+		fgets(cstr, 512, cfp);
+		cstr[strlen(cstr)-1] = 0;
+
+		Type* pType = DemangleNameVC(TypeDatabase::pD->m_globalNamespace, Environment::Is64BitProcess, cstr);
+		if (pType == nullptr)
+		{
+			ASSERT(0);
+		}
+
+		TypeDescriptor* typedesc = (TypeDescriptor*)((ULONG_PTR)hModule + rtti_address);
+		typedesc->_m_data = pType;
+	}
+
+	for (size_t i = 0; i < typelib->m_types.size(); ++i)
+	{
+		NamedType* pType = typelib->m_types[i];
+		ClassType* pClass = pType->AsClass();
+		if (pClass)
+		{
+			while (!feof(cfp))
+			{
+				uint32 n;
+				cfp.Read(&n, 4);
+				if (n == ~0)
+					break;
+
+				Declarator* decl = pClass->m_pScope->m_orderedDecls[n];
+				ASSERT(decl->m_pType->get_Kind() == type_function || decl->m_static);
+			//	ASSERT(!decl->m_virtual);
+
+				DWORD rtti_address;
+				cfp.Read(&rtti_address, sizeof(DWORD));
+
+				decl->m_pModule = this;
+				decl->m_address = rtti_address;
+
+				this->_p->m_allfunctions.push_back(decl);
+
+				// TODO, not necessary in conservative garbage collection
+
+#if 0
+				if (decl->m_static && decl->m_pType->get_Kind() != type_function)
+				{
+
+					Type* pType = decl->m_pType->GetStripped();
+
+					if (pType->get_Kind() == type_class)
+					{
+						ClassType* pClass = static_cast<ClassType*>(pType);
+						for (uint i = 0; i < pClass->m_gcMembers.size(); ++i)
+						{
+							int offset = pClass->m_gcMembers[i].m_offset_and_kind>>1;
+
+							ULONG address = decl->m_offset + offset;
+							_AddPersistentLiveRoot((void**)address);
+						}
+					}
+					else if (pType->get_Kind() == type_pointer/* &&
+						decl->m_pType->GetPointerTo()->get_Kind() == type_class &&
+						decl->m_pType->GetPointerTo()->AsClass()->HasVirtualTable()*/)
+					{
+						/*
+						if (*decl->m_pType->GetPointerTo()->GetClass()->m_name == "DependencyProperty" ||
+							*decl->m_pType->GetPointerTo()->GetClass()->m_name == "RoutedEvent")
+						{
+						}
+						else
+						{
+							MessageBeep(-1);
+						}
+						*/
+
+						_AddPersistentLiveRoot((void**)decl->m_offset);
+					}
+				}
+#endif
+			}
+
+		}
+	}
+
+	// Add "typelib->m_globals" into "pD->m_procs"
+	for (size_t i = 0; i < typelib->m_globals.size(); ++i)
+	{
+		Declarator* decl = typelib->m_globals[i];
+		if (decl->m_pType->AsFunction())
+		{
+			DWORD address;
+			cfp.Read(&address, sizeof(DWORD));
+
+		//	if (address != 0)
+			{
+				decl->m_pModule = this;
+				decl->m_address = address;
+
+				TypeDatabase::pD->m_procs.insert(multimap<String, FunctionObject*>::value_type(decl->get_Name(), new FunctionObject(decl)));
+
+				this->_p->m_allfunctions.push_back(decl);
+			}
+		}
+	}
+
+#if 0
+// finally rtti_locator adjustment (really only necessary on x64)
+
+	while (!feof(cfp))
+	{
+		DWORD address;
+		if (cfp.Read(&address, sizeof(DWORD)) != 4)
+			break;
+
+		if (address == 0)
+			break;
+
+		rtti_object_locator* p = (rtti_object_locator*)((ULONG_PTR)hModule + address);
+
+		/*
+		MEMORY_BASIC_INFORMATION mbi;
+		VirtualQuery(p, &mbi, sizeof(mbi));
+		if (!(mbi.AllocationProtect & PAGE_READWRITE))
+		{
+			DWORD oldProtect;
+			VirtualProtect(p, sizeof(rtti_object_locator), PAGE_READWRITE, &oldProtect);
+			p->cdOffset = (DWORD)((ULONG_PTR)p - (ULONG_PTR)hModule);
+			VirtualProtect(p, sizeof(rtti_object_locator), oldProtect, &oldProtect);
+		}
+		else
+		{
+		//	p->cdOffset = (DWORD)((ULONG_PTR)p - (ULONG_PTR)hModule);
+		}
+		//ASSERT(p->cdOffset == 0);
+	//	cdOffset
+	*/
+	}
+#endif
+
+	cfp.Close();
+
+	std::sort(this->_p->m_allfunctions.begin(), this->_p->m_allfunctions.end(), decl_offset_less_than);
+
+	if (typelib)
+	{
+		// Create attributes, TODO probably not the correct place
+		for (auto it = typelib->m_typesByName.begin(); it != typelib->m_typesByName.end(); ++it)
+		{
+			NamedType* pType = it->second;
+
+			if (pType->get_Kind() == type_class)
+			{
+				ClassType* pClass = static_cast<ClassType*>(pType);
+
+				size_t nattributeDefs = pClass->m_attributeDefs.size();
+				pClass->m_attributes = array<Object*>(new Object*[nattributeDefs], nattributeDefs);
+
+				for (size_t i = 0; i < nattributeDefs; ++i)
+				{
+					AttributeDef& attributedef = pClass->m_attributeDefs[i];
+
+					Dispatch* dispatch = GetDispatch(attributedef.m_pClass);
+					Declarator* pdecl = attributedef.m_pClass->m_pScope->m_orderedDecls[attributedef.m_method];
+
+				//	Object* obj = newobj();
+				//	Attribute* attribute = dynamic_cast<Attribute*>(obj);
+					ubyte* objdata = (ubyte*)allocate_object(attributedef.m_pClass->get_sizeof());
+				//	ZeroMemory(objdata, attributedef.m_pClass->get_sizeof());
+
+					/*
+					Declarator* pMethod = dispatch->GetMethod(pdecl);
+					if (pMethod == nullptr)
+					{
+						raise(SystemException(L"Method not found"));
+					}
+					*/
+
+#if 0
+					uint8 args[512];
+					uint8* p = args;
+					FunctionType* pFunction = (FunctionType*)pMethod->m_decl->m_pType;
+
+					for (size_t j = 0; j < pFunction->m_parameters.m_parameters.size(); ++j)
+					{
+						Type* pType = pFunction->m_parameters.m_parameters[j].m_pType->GetStripped();
+
+						switch (pType->get_Kind())
+						{
+						case type_enum:
+						case type_int:
+						case type_unsigned_int:
+							{
+								*(int*)p = attributedef.m_args[i].int32Val;
+								p += sizeof(int);
+							}
+							break;
+
+						case type_float:
+							{
+								*(float*)p = attributedef.m_args[i].floatVal;
+								p += sizeof(float);
+							}
+							break;
+
+						case type_double:
+							{
+								*(double*)p = attributedef.m_args[i].doubleVal;
+								p += sizeof(double);
+							}
+							break;
+
+						case type_class:
+							{
+								// TODO
+
+								*(int*)p = attributedef.m_args[i].int32Val;
+								p += sizeof(int);
+							}
+							break;
+
+						case type_pointer:
+							{
+								*(void**)p = attributedef.m_args[i].astrVal;
+								p += sizeof(void*);
+							}
+							break;
+						}
+					}
+
+					if (pMethod->m_decl->m_address == ~0)
+					{
+						StringStream stream;
+						stream << pMethod->GetClass()->get_QName() << "::" << pMethod->m_decl->m_name << " not implemented";
+						raise(Exception(stream->str()));
+					}
+
+					pMethod->m_decl->void_invoke_method(objdata, args, p-args);//pDispatch->Invoke(_this, pMethod, NULL, 0);
+#endif
+
+					FunctionType* pFunction = pdecl->m_pType->AsFunction();
+
+					Variant args[32];
+					Variant* p = args;
+
+					for (size_t j = 0; j < pFunction->m_parameters.size(); ++j)
+					{
+						Type* pType = pFunction->m_parameters[j].m_pType->GetStripped();
+
+						switch (pType->GetBaseType()->get_Kind())
+						{
+						//case type_enum:
+						case type_int:
+						case type_unsigned_int:
+							{
+								*p++ = attributedef.m_args[i].int32Val;
+							}
+							break;
+
+						case type_float:
+							{
+								*p++ = attributedef.m_args[i].floatVal;
+							}
+							break;
+
+						case type_double:
+							{
+								*p++ = attributedef.m_args[i].doubleVal;
+							}
+							break;
+
+						case type_class:
+							{
+							//	ASSERT();
+								// TODO, this is completely wrong, but works for now
+
+								*p++ = attributedef.m_args[i].int32Val;
+
+							//	*(int*)p = attributedef.m_args[i].int32Val;
+							//	p += sizeof(int);
+							}
+							break;
+
+						case type_pointer:
+							{
+								ASSERT(0);
+							//	*(void**)p = attributedef.m_args[i].astrVal;
+							//	p += sizeof(void*);
+							}
+							break;
+
+						default:
+							raise(Exception("TODO"));
+						}
+					}
+
+					pdecl->void_invoke_method(objdata, array<Variant>(args, p-args));//pDispatch->Invoke(_this, pMethod, NULL, 0);
+
+					pClass->m_attributes[i] = (Object*)objdata;
+				}
+			}
+		}
+	}
+}
+
+}	// System

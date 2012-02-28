@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/108/FirstProject2/trunk/src/VisionTraining
+END
+dllmain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/108/FirstProject2/trunk/src/VisionTraining/dllmain.cpp
+END
+VisionTraining.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/firstproject2/!svn/ver/108/FirstProject2/trunk/src/VisionTraining/VisionTraining.cpp
+END
+stdafx.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/108/FirstProject2/trunk/src/VisionTraining/stdafx.cpp
+END
+JumpDuctionElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svnroot/firstproject2/!svn/ver/108/FirstProject2/trunk/src/VisionTraining/JumpDuctionElement.cpp
+END
+SeeThreePicturesElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svnroot/firstproject2/!svn/ver/108/FirstProject2/trunk/src/VisionTraining/SeeThreePicturesElement.cpp
+END

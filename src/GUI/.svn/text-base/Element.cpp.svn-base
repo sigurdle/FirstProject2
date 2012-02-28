@@ -1,0 +1,33 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+DependencyClass* Element::get_Class()
+{
+	static DependencyClass depclass(typeid(thisClass), baseClass::get_Class());
+
+	static DependencyProperty* properties[] =
+	{
+		get_IDProperty(),
+	};
+
+	return &depclass;
+}
+
+IMP_DEPENDENCY_PROPERTY(String, Element, ID, NULL/*, new PropertyMetadata()*/);
+
+Element::Element(DependencyClass* depClass) : DependencyObject(depClass)
+{
+}
+
+void Element::RenderRetained(ManagedRetainedRenderContext renderContext)
+{
+	ASSERT(0);
+}
+
+}
+}

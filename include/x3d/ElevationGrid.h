@@ -1,0 +1,61 @@
+#ifndef x3d_ElevationGrid_h
+#define x3d_ElevationGrid_h
+
+namespace System
+{
+namespace x3d
+{
+
+class X3DEXT ElevationGrid :
+	public X3DGeometryNode,
+
+	public RenderImplImpl,
+	public IGeometryRender
+{
+public:
+	CTOR ElevationGrid();
+
+	virtual void Draw(X3DDrawContext* pDC, X3DTextureNodeImplImpl* pTextureNode);
+
+	float GetHeightAt(int x, int z);
+	Vec3f GetVertexAt(int x, int z);
+
+	X3DMFIELD(MFFloat, height, Height)
+	X3DSFIELD(SFInt32, xDimension, XDimension)
+	X3DSFIELD(SFInt32, zDimension, ZDimension)
+	X3DSFIELD(SFFloat, xSpacing, XSpacing)
+	X3DSFIELD(SFFloat, zSpacing, ZSpacing)
+
+	X3DNODE(ElevationGrid, X3DGeometryNode)
+
+protected:
+
+/*
+	MFFloat [in]     set_height
+	SFNode  [in,out] color           NULL [X3DColorNode]
+	SFNode  [in,out] metadata        NULL [X3DMetadataObject]
+	SFNode  [in,out] normal          NULL [X3DNormalNode]
+	SFNode  [in,out] texCoord        NULL [X3DTextureCoordinateNode]
+	SFBool  []       ccw             TRUE  
+	SFBool  []       colorPerVertex  TRUE
+	SFFloat []       creaseAngle     0    [0,8)
+	MFFloat []       height          []   (-8,8)
+	SFBool  []       normalPerVertex TRUE
+	SFBool  []       solid           TRUE
+	SFInt32 []       xDimension      0    [0,8)
+	SFFloat []       xSpacing        1.0  (0,8)
+	SFInt32 []       zDimension      0    [0,8)
+	SFFloat []       zSpacing        1.0  (0,8)
+*/
+
+	ID3D10Buffer* m_d3d10_VertexBuffer[2];
+	ID3D10Buffer* m_d3d10_IndexBuffer;
+
+	ID3D10Texture2D* m_texture;
+	ID3D10ShaderResourceView* m_textureView;
+};
+
+}	// x3d
+}	// System
+
+#endif // x3d_ElevationGrid_h

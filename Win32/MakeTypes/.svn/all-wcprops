@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/firstproject2/!svn/ver/114/FirstProject2/trunk/Win32/MakeTypes
+END
+StdAfx.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/39/FirstProject2/trunk/Win32/MakeTypes/StdAfx.h
+END
+MakeTypes.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/122/FirstProject2/trunk/Win32/MakeTypes/MakeTypes.cpp
+END
+MakeTypes.vcxproj.filters
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svnroot/firstproject2/!svn/ver/39/FirstProject2/trunk/Win32/MakeTypes/MakeTypes.vcxproj.filters
+END
+StdAfx.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/39/FirstProject2/trunk/Win32/MakeTypes/StdAfx.cpp
+END
+MakeTypes.vcxproj
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/firstproject2/!svn/ver/122/FirstProject2/trunk/Win32/MakeTypes/MakeTypes.vcxproj
+END

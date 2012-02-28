@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FEEB1116-4613-4FAA-9C5E-20DF332AB2D1}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Graphics</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <ExecutablePath>..\..\bin\Win32\Debug;C:\GnuWin32\bin;C:\Program Files (x86)\Microsoft DirectX SDK (March 2009)\Utilities\bin\x86;$(ExecutablePath)</ExecutablePath>
+    <OutDir>..\..\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\..\Intermediate\$(Platform)\$(TargetName)\$(Configuration)\</IntDir>
+    <IncludePath>C:\Program Files\NVIDIA Corporation\Cg\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\NVIDIA Corporation\Cg\lib;$(LibraryPath)</LibraryPath>
+    <CustomBuildBeforeTargets>ClCompile</CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <ExecutablePath>..\..\bin\Win32\Debug;C:\GnuWin32\bin;C:\Program Files (x86)\Microsoft DirectX SDK (March 2009)\Utilities\bin\x86;$(ExecutablePath)</ExecutablePath>
+    <OutDir>..\..\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\..\Intermediate\$(Platform)\$(TargetName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;GRAPHICS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../include/Graphics;../../include</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ImportLibrary>../../lib/$(Platform)/$(Configuration)/$(TargetName).lib</ImportLibrary>
+      <AdditionalLibraryDirectories>../../lib/$(Platform)/$(Configuration)</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>d3d10.dll;d3d10_1.dll;d3dx10d.dll;d3dx9d_42.dll;d3dx10d_42.dll;cg.dll;cgGL.dll;cgD3D9.dll;d2d1.dll;dwrite.dll;dxgi.dll</DelayLoadDLLs>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapFileName>$(IntDir)$(TargetName).map</MapFileName>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+    <CustomBuildStep>
+      <Command>MakeTypes "..\..\include\$(ProjectName)\$(TargetName).h" "..\..\bin\$(Platform)\Debug" $(IntDir)  $(OutDir)</Command>
+      <Outputs>..\..\bin\$(Platform)\Debug\$(TargetName).typeinfo;$(OutDir)$(TargetName).ad</Outputs>
+      <Inputs>..\..\include\$(ProjectName)\$(TargetName).h</Inputs>
+    </CustomBuildStep>
+    <PostBuildEvent>
+      <Command>ParseMap $(IntDir)$(TargetName).map $(OutDir)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;GRAPHICS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../include/Graphics;../../include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>../../lib/$(Platform)/$(Configuration)</AdditionalLibraryDirectories>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapFileName>$(IntDir)$(TargetName).map</MapFileName>
+      <LargeAddressAware>true</LargeAddressAware>
+      <ImportLibrary>../../lib/$(Platform)/$(Configuration)/$(TargetName).lib</ImportLibrary>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "..\..\bin\$(PlatformName)\Debug\$(ProjectName).typeinfo" "..\..\bin\$(PlatformName)\Release\"
+ParseMap $(IntDir)$(TargetName).map $(OutDir)
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\Graphics\Bitmap.h" />
+    <ClInclude Include="..\..\include\Graphics\Direct3D10.h" />
+    <ClInclude Include="..\..\include\Graphics\Direct3D11.h" />
+    <ClInclude Include="..\..\include\Graphics\Direct3D9.h" />
+    <ClInclude Include="..\..\include\Graphics\Graphics.h" />
+    <ClInclude Include="..\..\include\Graphics\OpenGL.h" />
+    <ClInclude Include="..\..\include\Graphics\openglext.h" />
+    <ClInclude Include="..\..\include\Graphics\RenderTarget.h" />
+    <ClInclude Include="..\..\include\Graphics\stdafx.h" />
+    <ClInclude Include="..\..\include\Graphics\wmf.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\Graphics\Bitmap.cpp" />
+    <ClCompile Include="..\..\src\Graphics\Direct3D10.cpp" />
+    <ClCompile Include="..\..\src\Graphics\Direct3D11.cpp" />
+    <ClCompile Include="..\..\src\Graphics\Direct3D9.cpp" />
+    <ClCompile Include="..\..\src\Graphics\dllmain.cpp" />
+    <ClCompile Include="..\..\src\Graphics\Graphics.cpp" />
+    <ClCompile Include="..\..\src\Graphics\OpenGL.cpp" />
+    <ClCompile Include="..\..\src\Graphics\RenderTarget.cpp" />
+    <ClCompile Include="..\..\src\Graphics\stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Graphics\VertexDeclaration.cpp" />
+    <ClCompile Include="..\..\src\Graphics\wmf.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

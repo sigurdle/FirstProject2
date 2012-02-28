@@ -1,0 +1,64 @@
+namespace System
+{
+namespace Gui
+{
+
+enum Orientation
+{
+	Orientation_Horizontal,
+	Orientation_Vertical,
+};
+
+}
+
+#ifndef __LERSTAD__
+
+//template<class TYPE> inline TYPE unbox_cast(Object* object);
+
+template<> inline Gui::Orientation unbox_cast<Gui::Orientation>(Object* object)
+{
+	IntObject* value = dynamic_cast<IntObject*>(object);
+	if (value == NULL) raise(Exception(L"Not IntObject"));
+	return (Gui::Orientation)value->GetValue();
+}
+
+#endif
+
+namespace Gui
+{
+
+class GUIEXT Track : public FrameworkElement
+{
+public:
+
+	CTOR Track();
+
+	virtual void Render(ManagedRenderContext renderContext) override;
+	virtual void OnComputedPropertyValueChanged(PropertyValue* pPropertValue, bool handled) override;
+
+	virtual void OnMouseLeftButtonDown(MouseButtonEventArgs* args) override;
+	virtual void OnMouseLeftButtonUp(MouseButtonEventArgs* args) override;
+	virtual void OnMouseMove(MouseEventArgs* args) override;
+
+	DEPENDENCY_PROPERTY(Orientation, Orientation)
+	DEPENDENCY_PROPERTY(float, Minimum)
+	DEPENDENCY_PROPERTY(float, Maximum)
+	DEPENDENCY_PROPERTY(float, ViewportSize)
+	DEPENDENCY_PROPERTY(float, Value)
+	DEPENDENCY_PROPERTY(float, PreviousValue)
+
+	static DependencyClass* get_Class();
+	static DependencyClass* pClass;
+	typedef FrameworkElement baseClass;
+
+	void SetIt();
+
+	gm::PointF m_mousepos;
+	gm::RectF m_slidR;
+	gm::RectF m_knobR;
+
+	double m_totalDelta;
+};
+
+}	// Gui
+}

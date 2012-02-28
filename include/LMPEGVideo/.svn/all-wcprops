@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/LMPEGVideo
+END
+stdafx.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/LMPEGVideo/stdafx.h
+END
+LMPEGVideo.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/LMPEGVideo/LMPEGVideo.h
+END
+Picture.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/LMPEGVideo/Picture.h
+END
+VideoSequence.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/LMPEGVideo/VideoSequence.h
+END
+MPEGVideoDecoder.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/LMPEGVideo/MPEGVideoDecoder.h
+END

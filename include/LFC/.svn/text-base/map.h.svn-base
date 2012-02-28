@@ -1,0 +1,1342 @@
+#ifdef new
+#define OLD_NEW
+#undef new
+#endif
+
+namespace System
+{
+
+enum RedBlack
+{
+	Red,
+	Black
+};
+
+class LFCEXT red_black_node_base : public Object
+{
+public:
+
+	CTOR red_black_node_base() : left(NULL), right(NULL)
+	{
+	}
+
+	red_black_node_base* parent;
+	red_black_node_base* left;
+	red_black_node_base* right;
+
+	RedBlack color;
+};
+
+LFCEXT void left_rotate(red_black_node_base** tree, red_black_node_base* x);
+LFCEXT void right_rotate(red_black_node_base** tree, red_black_node_base* x);
+
+template<class first_t, class second_t> class pair
+{
+public:
+
+	/*
+	CTOR pair()
+	{
+	}
+	*/
+
+	/*
+	pair(const first_t & _first) : first(_first), second(second_t())
+	{
+	}
+	*/
+
+	inline CTOR pair(const first_t & _first, const second_t & _second) : first(_first), second(_second)
+	{
+	}
+
+	template<class u, class v>
+	inline CTOR pair(const pair<u,v> & other) : first(other.first), second(other.second)
+	{
+	}
+
+	first_t first;
+	second_t second;
+};
+
+template<class key_t, class value_t> class keyvalue_t
+{
+public:
+
+	inline CTOR keyvalue_t(const key_t& _first, const value_t& _second) : key(_first), value(_second)
+	{
+	}
+
+	template<class u, class v>
+	inline CTOR keyvalue_t(const keyvalue_t<u,v>& other) : key(other.key), value(other.value)
+	{
+	}
+
+	key_t key;
+	value_t value;
+};
+
+template<class key_t, class value_t> class red_black_node : public Object //: public red_black_node_base
+{
+public:
+
+	CTOR red_black_node(const pair<key_t, value_t>& keyval) : item(keyval), left(NULL), right(NULL)
+	{
+	}
+
+	red_black_node* parent;
+	red_black_node* left;
+	red_black_node* right;
+	RedBlack color;
+
+	pair<key_t, value_t> item;
+};
+
+class LFCEXT rb_tree_iterator
+{
+public:
+	CTOR rb_tree_iterator()
+	{
+	}
+
+	CTOR rb_tree_iterator(red_black_node_base * p) : m_p(p)
+	{
+	}
+
+	CTOR rb_tree_iterator(const rb_tree_iterator & other) : m_p(other.m_p)
+	{
+	}
+
+	static red_black_node_base* leftmost(red_black_node_base* p)
+	{
+		while (p->left)
+		{
+			p = p->left;
+		}
+
+		return p;
+	}
+
+	static red_black_node_base* rightmost(red_black_node_base* p)
+	{
+		while (p->right)
+		{
+			p = p->right;
+		}
+
+		return p;
+	}
+
+	void Inc();
+
+	red_black_node_base * m_p;
+};
+
+class LFCEXT rb_tree_base
+{
+public:
+//	rb_tree_base();
+//	~rb_tree_base();
+
+	void find_leaves(red_black_node_base * node, vector<red_black_node_base**> & leaves)
+	{
+		if (node->left == NULL)
+			leaves.push_back(&node->left);
+
+		if (node->right == NULL)
+			leaves.push_back(&node->right);
+	}
+
+	/*
+	countblacks(red_black_node_base * node)
+	{
+		if (node == NULL)
+		{
+		}
+		else
+		{
+		countblacks(node->left
+	}
+	*/
+
+	void validate(red_black_node_base * node)
+	{
+		ASSERT(0);
+
+	//	If a node is red, then both its children are black
+		if (node->color == Red)
+		{
+			VERIFY(node->left == NULL || node->left->color == Black);
+			VERIFY(node->right == NULL || node->right->color == Black);
+		}
+
+		// For each node, all paths from the node to descendant leaves contain the same number of black nodes
+		///countblacks(node->left, 0)
+
+		/*
+		vector<red_black_node_base**> leaves;
+		find_leaves(node, leaves);
+		int nblacks2;
+		for (int i = 0; i < leaves.size(); i++)
+		{
+			red_black_node_base** p = leaves[i];
+
+			int nblacks = 0;
+
+			red_black_node_base* parent = (red_black_node_base*)((uint8*)p - offsetof(red_black_node_base, left));
+			while (parent != node)
+			{
+				if (parent->color == Black)
+					nblacks++;
+
+				parent = parent->parent;
+			}
+
+			if (i == 0)
+				nblacks2 = nblacks;
+			else
+			{
+				ASSERT(nblacks == nblacks2);
+			}
+		}
+		*/
+
+		if (node->left)
+		{
+			ASSERT(node->left->parent == node);
+		}
+
+		if (node->right)
+		{
+			ASSERT(node->right->parent == node);
+		}
+
+		if (node->left) validate(node->left);
+		if (node->right) validate(node->right);
+	}
+
+	inline size_t size() const
+	{
+		return m_size;
+	}
+
+	void balance(red_black_node_base* x);
+
+	red_black_node_base* head;
+	size_t m_size;
+	bool m_bMulti;
+};
+
+template<class T>
+class less : public binary_function<T, T, bool>
+{
+public:
+
+	bool operator () (const T& a, const T& b) const
+	{
+		return a < b;
+	}
+};
+
+template<class T>
+class greater : public binary_function<T, T, bool>
+{
+public:
+
+	bool operator () (const T& a, const T& b) const
+	{
+		return a > b;
+	}
+};
+
+template<class key_t, class value_t, class pred = less<key_t>, class A = __gc_allocator> class rb_tree// : public rb_tree_base
+{
+public:
+
+	typedef pair<key_t, value_t> value_type;
+	typedef red_black_node<key_t, value_t> Node;
+	typedef Node* Nodeptr;
+
+	class iterator;
+
+	Nodeptr newnode()
+	{
+		Node* x = (Node*)m_allocator.allocate_object(sizeof(*x), &_Module/*, __FILE__, __LINE__*/);
+		return x;
+	}
+
+	explicit CTOR rb_tree(const pred& comp = pred(), const A& al = A(), bool bMulti = false) : m_key_compare(comp), m_allocator(al), m_bMulti(bMulti)
+	{
+		m_size = 0;
+
+		m_head = newnode();
+		::new (m_head) red_black_node_base();
+		//::new (m_head) Node();
+
+		m_head->color = Red;
+		m_head->parent = NULL;	// root
+		m_head->left = m_head;	// leftmost
+		m_head->right = m_head;	// rightmost
+	}
+
+	void clear()
+	{
+		m_size = 0;
+
+		m_head = newnode();
+		::new (m_head) red_black_node_base();
+		//::new (m_head) Node();
+
+		m_head->color = Red;
+		m_head->parent = NULL;	// root
+		m_head->left = m_head;	// leftmost
+		m_head->right = m_head;	// rightmost
+	}
+
+	class const_iterator// : public rb_tree_iterator
+	{
+	public:
+		CTOR const_iterator() : m_p(NULL)
+		{
+		}
+
+		CTOR const_iterator(const iterator& other) : m_p(other.m_p)
+		{
+		}
+
+		CTOR const_iterator(const const_iterator& other) : m_p(other.m_p)
+		{
+		}
+
+		CTOR const_iterator(Nodeptr p) : m_p(p)
+		{
+		}
+
+		const_iterator& operator ++ ()	// prefix increment
+		{
+			((rb_tree_iterator*)this)->Inc();
+			return *this;
+		}
+
+		const_iterator operator ++ (int)	// postfix increment
+		{
+#ifndef __LERSTAD__
+			const_iterator it(*this);
+#endif
+			((rb_tree_iterator*)this)->Inc();
+			return it;
+		}
+
+		pair<key_t, value_t>& operator * ()
+		{
+			return m_p->item;
+		}
+
+		const pair<key_t, value_t>& operator * () const
+		{
+			return m_p->item;
+		}
+
+		const pair<key_t, value_t>* operator -> () const
+		{
+			return &m_p->item;
+		}
+
+		bool operator == (const const_iterator& other) const
+		{
+			return m_p == other.m_p;
+		}
+
+		inline bool operator != (const const_iterator& other) const
+		{
+			return !(m_p == other.m_p);
+		}
+
+		Nodeptr m_p;
+	};
+
+	class iterator : public const_iterator
+	{
+	public:
+		CTOR iterator()
+		{
+		}
+
+		CTOR iterator(const iterator& other) : const_iterator(other)
+		{
+		}
+
+		CTOR iterator(Nodeptr p) : const_iterator(p)
+		{
+		}
+
+		iterator& operator ++ () // prefix increment
+		{
+			((rb_tree_iterator*)this)->Inc();
+			return *this;
+		}
+
+		iterator operator ++ (int)	// postfix increment
+		{
+#ifndef __LERSTAD__
+			iterator it(*this);
+#endif
+			((rb_tree_iterator*)this)->Inc();
+			return it;
+		}
+
+		pair<key_t, value_t>& operator * ()
+		{
+			return (const_iterator::m_p)->item;
+		}
+
+		const pair<key_t, value_t>& operator * () const
+		{
+			return (const_iterator::m_p)->item;
+		}
+
+		pair<key_t, value_t>* operator -> () const
+		{
+			return &(const_iterator::m_p)->item;
+		}
+
+		bool operator == (const iterator& other) const
+		{
+			return const_iterator::m_p == other.m_p;
+		}
+
+		inline bool operator != (const iterator& other) const
+		{
+			return !(const_iterator::m_p == other.m_p);
+		}
+	};
+
+	inline size_t size() const
+	{
+		return m_size;
+	}
+
+//	typedef iterator_t<key_t, value_t> iterator;
+//	typedef iterator_t<key_t, value_t> iterator;
+
+//	pair<Nodeptr, bool> tree_find_or_insert(Nodeptr cur, const key_t & x_key);
+//	pair<Nodeptr, bool> rb_find_or_insert(const key_t & x_key);
+
+//	value_t& operator [] (const key_t & key);
+
+	iterator begin()
+	{
+		return iterator(m_head->left);
+	}
+
+	iterator end()
+	{
+		return iterator(m_head);
+	}
+
+	const_iterator begin() const
+	{
+		return const_iterator(m_head->left);
+	}
+
+	const_iterator end() const
+	{
+		return const_iterator(m_head);
+	}
+
+	template<class key_type> iterator lower_bound(key_type key)
+	{
+		Nodeptr cur = m_head->parent;
+		Nodeptr ret = m_head;
+		while (cur)
+		{
+			if (m_key_compare(cur->item.first, key))
+			{
+				cur = cur->right;
+			}
+			else
+			{
+				ret = cur;
+				cur = cur->left;
+			}
+		}
+
+		return iterator((Nodeptr)ret);
+	}
+
+	template<class key_type> const_iterator lower_bound(key_type key) const
+	{
+		Nodeptr cur = m_head->parent;
+		Nodeptr ret = m_head;
+		while (cur)
+		{
+			if (m_key_compare(cur->item.first, key))
+			{
+				cur = cur->right;
+			}
+			else
+			{
+				ret = cur;
+				cur = cur->left;
+			}
+		}
+
+		return const_iterator((Nodeptr)ret);
+	}
+
+	/*
+	const_iterator lower_bound(const key_t& key) const
+	{
+		Nodeptr cur = m_head->parent;
+		Nodeptr ret = m_head;
+		while (cur)
+		{
+			if (m_key_compare(cur->item.first, key))
+			{
+				cur = cur->right;
+			}
+			else
+			{
+				ret = cur;
+				cur = cur->left;
+			}
+		}
+
+		return const_iterator((Nodeptr)ret);
+	}
+	*/
+
+	template<class key_type> iterator find(key_type key)
+	{
+		iterator it = lower_bound(key);
+		return (it == end() || m_key_compare(key, it.m_p->item.first)? end() : it);
+	}
+
+	template<class key_type> const_iterator find(key_type key) const
+	{
+		const_iterator it = lower_bound(key);
+		return (it == end() || m_key_compare(key, it.m_p->item.first)? end() : it);
+	}
+
+	pair<Nodeptr, bool> tree_find_or_insert_key(Nodeptr cur, const key_t& key)
+	{
+		while (1)
+		{
+			if (m_key_compare(key, cur->item.first))
+			{
+				if (cur->left == NULL)
+				{
+					// insert new
+
+					Nodeptr x = newnode();
+					::new (x) red_black_node<key_t, value_t>(pair<key_t, value_t>(key, value_t()));
+					x->color = Red;
+					cur->left = x;
+					x->parent = cur;
+					++m_size;
+					if (m_head->left == cur)
+					{
+						m_head->left = x;
+					}
+
+					return pair<Nodeptr, bool>(x, true);
+				}
+				else
+				{
+					// traverse down the tree
+					cur = cur->left;
+				}
+			}
+			else if (m_key_compare(cur->item.first, key))
+			{
+				if (cur->right == NULL)
+				{
+					// insert new
+					Nodeptr x = newnode();
+					::new (x) red_black_node<key_t, value_t>(pair<key_t, value_t>(key, value_t()));
+					x->color = Red;
+					cur->right = x;
+					x->parent = cur;
+					++m_size;
+					if (m_head->right == cur)
+					{
+						m_head->right = x;
+					}
+					return pair<Nodeptr, bool>(x, true);
+				}
+				else
+				{
+					// traverse down the tree
+					cur = cur->right;
+				}
+			}
+			else
+			{
+				// return existing
+				return pair<Nodeptr, bool>(cur, false);
+			}
+		}
+	}
+
+	pair<Nodeptr, bool> tree_find_or_insert(Nodeptr cur, const pair<key_t, value_t>& keyval)
+	{
+		while (1)
+		{
+			if (m_key_compare(keyval.first, cur->item.first))
+			{
+				if (cur->left == NULL)
+				{
+					// insert new
+
+					Nodeptr x = newnode();
+					::new (x) red_black_node<key_t, value_t>(keyval);
+					x->color = Red;
+				//	x->item.first = x_key;
+					cur->left = x;
+					x->parent = cur;
+					++m_size;
+					if (m_head->left == cur)
+					{
+						m_head->left = x;
+					}
+
+					return pair<Nodeptr, bool>(x, true);
+				}
+				else
+				{
+					// traverse down the tree
+					cur = cur->left;
+				}
+			}
+			else if (/*m_bMulti ||*/ m_key_compare(cur->item.first, keyval.first))
+			{
+				if (cur->right == NULL)
+				{
+					// insert new
+					Nodeptr x = newnode();
+					::new (x) red_black_node<key_t, value_t>(keyval);
+					x->color = Red;
+				//	x->item.first = x_key;
+					cur->right = x;
+					x->parent = cur;
+					++m_size;
+					if (m_head->right == cur)
+					{
+						m_head->right = x;
+					}
+					return pair<Nodeptr, bool>(x, true);
+				}
+				else
+				{
+					// traverse down the tree
+					cur = cur->right;
+				}
+			}
+			else
+			{
+				//if (!m_bMulti)
+				{
+					// return existing
+					return pair<Nodeptr, bool>(cur, false);
+				}
+			}
+		}
+	}
+
+	Nodeptr tree_insert(Nodeptr cur, const pair<key_t, value_t> & keyval)
+	{
+		while (1)
+		{
+			if (m_key_compare(keyval.first, cur->item.first))
+			{
+				if (cur->left == NULL)
+				{
+					// insert new
+
+					Nodeptr x = newnode();
+					::new (x) red_black_node<key_t, value_t>(keyval);
+					x->color = Red;
+				//	x->item.first = x_key;
+					cur->left = x;
+					x->parent = cur;
+					++m_size;
+					if (m_head->left == cur)
+					{
+						m_head->left = x;
+					}
+
+					return x;
+				}
+				else
+				{
+					// traverse down the tree
+					cur = (Nodeptr)cur->left;
+				}
+			}
+			else //if (m_bMulti || key_compare(cur->item.first, x_key))
+			{
+				if (cur->right == NULL)
+				{
+					// insert new
+					Nodeptr x = newnode();
+					::new (x) red_black_node<key_t, value_t>(keyval);
+					x->color = Red;
+				//	x->item.first = x_key;
+					cur->right = x;
+					x->parent = cur;
+					++m_size;
+					if (m_head->right == cur)
+					{
+						m_head->right = x;
+					}
+					return x;
+				}
+				else
+				{
+					// traverse down the tree
+					cur = cur->right;
+				}
+			}
+			/*
+			else
+			{
+				//if (!m_bMulti)
+				{
+					// return existing
+					return pair<Nodeptr, bool>(cur, false);
+				}
+			}
+			*/
+		}
+	}
+
+	pair<Nodeptr, bool> rb_find_or_insert(const pair<key_t, value_t> & keyval)
+	{
+		if (m_head->parent == NULL)
+		{
+			Nodeptr x = newnode();
+			::new (x) red_black_node<key_t, value_t>(keyval);
+			x->parent = NULL;
+			x->color = Black;
+		//	x->item.first = x_key;
+			m_head->parent = x;	// root
+			m_head->left = x;	// lmost
+			m_head->right = x;	// rmost
+			x->parent = m_head;
+			++m_size;
+
+			return pair<Nodeptr, bool>(x, true);
+		}
+		else
+		{
+			pair<Nodeptr, bool> result = tree_find_or_insert(m_head->parent, keyval);
+
+			if (result.second == true)
+			{
+				((rb_tree_base*)this)->balance((red_black_node_base*)result.first);
+
+				m_head->parent->color = Black;
+
+			//	validate(m_head->parent);
+			}
+
+			return result;
+		}
+	}
+
+	pair<Nodeptr, bool> rb_find_or_insert_key(const key_t& key)
+	{
+		if (m_head->parent == NULL)
+		{
+			Nodeptr x = newnode();
+			::new (x) red_black_node<key_t, value_t>(pair<key_t, value_t>(key, value_t()));
+			x->parent = NULL;
+			x->color = Black;
+		//	x->item.first = x_key;
+			m_head->parent = x;	// root
+			m_head->left = x;	// lmost
+			m_head->right = x;	// rmost
+			x->parent = m_head;
+			++m_size;
+
+		//	validate(m_head->parent);
+
+			return pair<Nodeptr, bool>(x, true);
+		}
+		else
+		{
+			pair<Nodeptr, bool> result = tree_find_or_insert_key(m_head->parent, key);
+
+			if (result.second == true)
+			{
+				((rb_tree_base*)this)->balance((red_black_node_base*)result.first);
+
+				m_head->parent->color = Black;
+			}
+
+		//	validate(m_head->parent);
+
+			return result;
+		}
+	}
+
+	Nodeptr rb_insert(const pair<key_t, value_t>& keyval)
+	{
+		if (m_head->parent == NULL)
+		{
+			Nodeptr x = newnode();
+			::new (x) red_black_node<key_t, value_t>(keyval);
+			x->parent = NULL;
+			x->color = Black;
+			m_head->parent = x;	// root
+			m_head->left = x;	// lmost
+			m_head->right = x;	// rmost
+			x->parent = m_head;
+			++m_size;
+
+		//	validate(m_head->parent);
+
+			return x;
+		}
+		else
+		{
+			Nodeptr result = tree_insert(m_head->parent, keyval);
+
+			((rb_tree_base*)this)->balance((red_black_node_base*)result);
+
+			m_head->parent->color = Black;
+
+		//	validate(m_head->parent);
+
+			return result;
+		}
+	}
+
+	value_t& operator [] (const key_t& key)
+	{
+		pair<Nodeptr, bool> result = rb_find_or_insert_key(key);
+
+		return result.first->item.second;
+	}
+
+#if 0
+
+	// TODO, try to figure something like this out
+
+	template<class key_type> value_t& operator [] (key_type key)
+	{
+		pair<Nodeptr, bool> result = rb_find_or_insert_key(key);
+
+		return result.first->item.second;
+	}
+#endif
+
+	void find_leaves(Nodeptr node, vector<Nodeptr>& leaves)
+	{
+		if (node->left == NULL)
+			leaves.push_back(node);
+		else
+			find_leaves(node->left, leaves);
+
+		if (node->right == NULL)
+			leaves.push_back(node);
+		else
+			find_leaves(node->right, leaves);
+	}
+
+	void validate(Nodeptr node)
+	{
+	//	If a node is red, then both its children are black
+		if (node->color == Red)
+		{
+			VERIFY(node->left == NULL || node->left->color == Black);
+			VERIFY(node->right == NULL || node->right->color == Black);
+		}
+
+		// For each node, all paths from the node to descendant leaves contain the same number of black nodes
+		///countblacks(node->left, 0)
+
+		vector<Nodeptr> leaves;
+		find_leaves(node, leaves);
+		int nblacks2;
+		for (unsigned int i = 0; i < leaves.size(); i++)
+		{
+			Nodeptr p = leaves[i];
+
+			int nblacks = 0;
+
+			Nodeptr parent = p;//(Nodeptr)((uint8*)p - offsetof(Node, left));
+			while (parent != node)
+			{
+				if (parent->color == Black)
+					nblacks++;
+
+				parent = parent->parent;
+			}
+
+			if (i == 0)
+				nblacks2 = nblacks;
+			else
+			{
+				//ASSERT(nblacks == nblacks2);
+			}
+		}
+
+		if (node->left)
+		{
+			ASSERT(node->left->parent == node);
+		}
+
+		if (node->right)
+		{
+			ASSERT(node->right->parent == node);
+		}
+
+		if (node->left)
+		{
+			ASSERT(m_key_compare(node->left->item.first, node->item.first));
+		}
+
+		if (node->right)
+		{
+			ASSERT(m_key_compare(node->item.first, node->right->item.first));
+		}
+
+		if (node->left) validate(node->left);
+		if (node->right) validate(node->right);
+	}
+
+	A get_allocator() const
+	{
+		return m_allocator;
+	}
+
+	Nodeptr m_head;
+
+protected:
+
+	size_t m_size;
+	bool m_bMulti;
+
+	A m_allocator;
+	pred m_key_compare;
+};
+
+#ifdef __LERSTAD__
+#define TYPENAME
+#elif WIN32 && _MSC_VER
+#define TYPENAME
+#else
+#define TYPENAME typename
+#endif
+
+template<class key_t, class value_t, class pred = less<key_t>, class A = __gc_allocator > 
+class map : public rb_tree<key_t, value_t, pred, A>
+{
+public:
+	CTOR map(const pred& comp = pred(), const A& al = A()) : rb_tree<key_t, value_t, pred, A>(comp, al, false)
+	{
+	}
+
+	typedef rb_tree<key_t, value_t, pred, A> base;
+
+	pair<TYPENAME base::iterator, bool> insert(const TYPENAME base::value_type& x)
+	{
+		pair<TYPENAME base::Nodeptr, bool> result = rb_find_or_insert(x);
+		//result.first->item.second = x.second;
+
+		//ASSERT(result.second == true);
+
+		return pair<TYPENAME base::iterator, bool>(TYPENAME base::iterator(result.first), result.second);
+	}
+
+	/*
+	int countblacks(red_black_node_base * node, int nblacks)
+	{
+		if (node)
+		{
+			ncountblacks(
+		}
+	}
+	*/
+
+	TYPENAME base::iterator erase(TYPENAME base::iterator it)
+	{
+//		validate(head->parent);
+
+		TYPENAME base::Nodeptr cur = it.m_p;
+
+		ASSERT(cur != base::m_head);
+
+		if (base::m_size == 1)	// ??
+		{
+			ASSERT(base::m_head->parent == cur);
+			base::m_head->parent = NULL;
+			base::m_head->left = base::m_head;
+			base::m_head->right = base::m_head;
+			base::m_size = 0;
+			return base::begin();
+		}
+
+		/*
+		ASSERT(cur != base::m_head->left);	// TODO
+		ASSERT(cur != base::m_head->right);	// TODO
+		ASSERT(cur != base::m_head->parent);	// TODO
+		*/
+
+		// first standard binary remove
+
+		TYPENAME base::Nodeptr v;	// node that is actually removed
+		TYPENAME base::Nodeptr u;	// node that replaces v in the tree structure
+
+
+		v = cur;
+
+		TYPENAME base::Nodeptr tokenparent;
+
+		if (cur->left == NULL && cur->right == NULL)	// no children
+		{
+			if (cur == base::m_head->parent)
+			{
+				base::m_head->parent = NULL;
+				base::m_head->left = base::m_head;
+				base::m_head->right = base::m_head;
+			}
+			else if (cur == cur->parent->left)
+			{
+				cur->parent->left = NULL;
+				if (cur == base::m_head->left) base::m_head->left = cur->parent;
+				// TODO
+			}
+			else
+			{
+				cur->parent->right = NULL;
+				if (cur == base::m_head->right) base::m_head->right = cur->parent;
+				// TODO
+			}
+
+			v = cur;
+			u = NULL;
+		}
+		else if (cur->left == NULL || cur->right == NULL)	// one child
+		{
+			TYPENAME base::Nodeptr child = cur->left? cur->left: cur->right;
+
+			if (cur->parent == NULL)
+			{
+				base::m_head->parent = child;
+				base::m_head->left = child;
+				base::m_head->right = child;
+			}
+			else if (cur == cur->parent->left)
+			{
+				cur->parent->left = child;
+				child->parent = cur->parent;
+			}
+			else
+			{
+				cur->parent->right = child;
+				child->parent = cur->parent;
+			}
+
+			v = cur;
+			u = child;
+		}
+		else	// two children
+		{
+		//	MessageBeep(-1);
+			TYPENAME base::Nodeptr succ = (TYPENAME base::Nodeptr)rb_tree_iterator::leftmost((red_black_node_base *)cur->right);
+
+			if (succ->right == NULL)
+			{
+			//	ASSERT(0);
+				tokenparent = succ;
+				u = succ->right;
+			}
+			else
+				u = succ->right;
+			v = cur;
+
+			ASSERT(base::m_head->parent != cur);	// TODO
+
+			// The data elements in these two nodes are swapped and then succ is removed
+
+			// We do it the other way and swap the actual nodes, so must remember to revert the color
+
+			ASSERT(succ->left == NULL);
+		//	ASSERT(succ->right == NULL);
+
+			// detach succ from parent
+			if (succ->parent != cur)
+			{
+				if (succ == succ->parent->left)
+					succ->parent->left = NULL;
+				else
+					succ->parent->right = NULL;
+
+				succ->right = cur->right;
+				succ->right->parent = succ;
+			}
+
+			// have succ where cur is
+
+			// swap color
+			RedBlack succ_color = succ->color;
+			succ->color = cur->color;
+			cur->color = succ_color;
+
+			//
+			succ->left = cur->left;
+			if (succ->left) succ->left->parent = succ;
+
+			succ->parent = cur->parent;
+			if (cur == cur->parent->left)
+				cur->parent->left = succ;
+			else
+				cur->parent->right = succ;
+		
+			// ??
+		
+		//	goto here;
+		//	ASSERT(0);
+		}
+
+		// If v is red, we are done 
+		if (v->color == Black)
+		{
+			TYPENAME base::Nodeptr token = u;
+			while (1)
+			{
+				//ASSERT(token);
+
+				if (token)
+					tokenparent = token->parent;
+
+				// If the node with the token is red or the root of the tree (or both), simply set its color to black and we're done
+				if (token && (token == base::m_head->parent || token->color == Red))
+				{
+					token->color = Black;
+					break;
+				}
+
+				// If the sibling and both nephews of the doubly black node are also black, then we change the sibling to red and move the token up one step towards the root
+
+				if (token && token == token->parent->left)
+				{
+					TYPENAME base::Nodeptr sibling = token->parent->right;
+					ASSERT(sibling);
+
+					if (sibling->color == Red)
+					{
+						sibling->parent->color = Red;
+						sibling->color = Black;
+						left_rotate((red_black_node_base**)&base::m_head->parent, (red_black_node_base*)token->parent);
+						sibling = token->parent->right;
+					}
+
+					if ((sibling->left == NULL || sibling->left->color == Black) &&
+						(sibling->right == NULL || sibling->right->color == Black))
+					{
+						sibling->color = Red;
+						token = token->parent;
+					}
+					else
+					{
+						TYPENAME base::Nodeptr near_nephew;
+						TYPENAME base::Nodeptr far_nephew;
+
+						near_nephew = sibling->left;
+						far_nephew = sibling->right;
+
+						if (far_nephew == NULL || far_nephew->color == Black)
+						{
+							ASSERT(near_nephew && near_nephew->color == Red);
+
+							near_nephew->color = Black;
+							sibling->color = Red;
+							right_rotate((red_black_node_base**)&base::m_head->parent, (red_black_node_base*)sibling);
+							sibling = token->parent->right;//near_nephew;
+						}
+
+						ASSERT(sibling->right->color == Red);
+
+						sibling->color = token->parent->color;
+						token->parent->color = Black;
+						sibling->right->color = Black;
+						left_rotate((red_black_node_base**)&base::m_head->parent, (red_black_node_base*)token->parent);
+
+						// We're done
+						break;
+					}
+				}
+				else
+				{
+					TYPENAME base::Nodeptr sibling = tokenparent->left;
+					ASSERT(sibling);
+
+					if (sibling->color == Red)
+					{
+						sibling->parent->color = Red;
+						sibling->color = Black;
+						right_rotate((red_black_node_base**)&base::m_head->parent, (red_black_node_base*)tokenparent);
+						sibling = tokenparent->right->left;
+					}
+
+					if ((sibling->left == NULL || sibling->left->color == Black) &&
+						(sibling->right == NULL || sibling->right->color == Black))
+					{
+						sibling->color = Red;
+						token = tokenparent;
+					}
+					else
+					{
+						TYPENAME base::Nodeptr near_nephew;
+						TYPENAME base::Nodeptr far_nephew;
+
+						near_nephew = sibling->right;
+						far_nephew = sibling->left;
+
+						if (far_nephew == NULL || far_nephew->color == Black)
+						{
+							ASSERT(near_nephew && near_nephew->color == Red);
+
+							near_nephew->color = Black;
+							sibling->color = Red;
+							left_rotate((red_black_node_base**)&base::m_head->parent, (red_black_node_base*)sibling);
+							sibling = token->parent->left;//near_nephew;
+						}
+
+						ASSERT(sibling->left->color == Red);
+
+						sibling->color = token->parent->color;
+						token->parent->color = Black;
+						sibling->left->color = Black;
+						right_rotate((red_black_node_base**)&base::m_head->parent, (red_black_node_base*)token->parent);
+
+						// We're done
+						break;
+					}
+				}
+			}
+		}
+
+		--base::m_size;
+
+		validate(base::m_head->parent);
+		ASSERT((red_black_node_base*)base::m_head->left == rb_tree_iterator::leftmost((red_black_node_base*)base::m_head->parent));
+		ASSERT((red_black_node_base*)base::m_head->right == rb_tree_iterator::rightmost((red_black_node_base*)base::m_head->parent));
+
+#if 0
+
+		ASSERT(cur != head->parent);	// TODO
+		ASSERT(cur != head->left);	// TODO
+		ASSERT(cur != head->right);	// TODO
+
+		if (cur->left != NULL && cur->right != NULL)
+		{
+			cur = rb_tree_iterator::leftmost(cur->right);
+		}
+
+		if (cur->left == NULL || cur->right == NULL)	// Has max one child
+		{
+			if (cur->color == Red)
+			{
+				ASSERT(cur->left == NULL && cur->right == NULL);
+
+				if (cur == cur->parent->left)
+				{
+					cur->parent->left = NULL;
+				}
+				else
+				{
+					cur->parent->right = NULL;
+				}
+			}
+			else if (cur->color == Black && cur->left == NULL && cur->right == NULL) // Current is black and has no children
+			{
+				red_black_node_base * sibling = (cur == cur->parent->left) ? cur->parent->right : cur->parent->left;
+				ASSERT(sibling);
+
+				if (sibling && sibling->color == Red)
+				{
+				// Current's sibling is red
+					ASSERT(0);
+				}
+				else if (sibling->color == Black &&
+							(sibling->left == NULL || sibling->left->color == Black) &&
+							(sibling->right == NULL || sibling->right->color == Black)
+							)
+				{
+				//	Current's sibling is black with two black children
+					ASSERT(0);
+				}
+				else
+				{
+				// Current's sibling is black with one or two red children
+					ASSERT(0);
+				}
+			}
+			else	// Current is black with one red child
+			{
+				ASSERT(0);
+			}
+		}
+		else
+			ASSERT(0);
+#endif
+		return base::iterator(NULL);	// TODO
+	}
+
+	int erase(const key_t & key)
+	{
+		TYPENAME base::iterator it = base::find(key);
+		if (it != base::end())
+		{
+			erase(it);
+			return 1;
+		}
+		else
+			return 0;
+	}
+};
+
+template<class key_t, class value_t, class pred = less<key_t>, class A = __gc_allocator > 
+class multimap : public rb_tree<key_t, value_t, pred, A>
+{
+public:
+	CTOR multimap(const pred& comp = pred(), const A& al = A()) : rb_tree<key_t, value_t, pred, A>(comp, al, true)
+	{
+	}
+
+	typedef rb_tree<key_t, value_t, pred, A> base;
+
+	TYPENAME base::iterator insert(const TYPENAME base::value_type& x)
+	{
+		TYPENAME base::Nodeptr result = base::rb_insert(x);
+	//	result.first->item.second = x.second;
+
+		return TYPENAME base::iterator(result);
+	}
+};
+
+}	// System
+
+#ifdef OLD_NEW
+#define new _new
+#undef OLD_NEW
+#endif
+
+#if 0
+template<class key_t, class value_t> class red_black_nodetest2 : public System::Object //: public red_black_node_base
+{
+public:
+
+	/*
+	CTOR red_black_node2(const pair<key_t, value_t> & keyval) : item(keyval)
+	{
+		left = NULL;
+		right = NULL;
+	}
+	*/
+};
+#endif

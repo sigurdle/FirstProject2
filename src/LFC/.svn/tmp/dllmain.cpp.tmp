@@ -1,0 +1,140 @@
+#include "stdafx.h"
+#include "LFC.h"
+
+#if WIN32
+
+#include <Psapi.h>
+
+#pragma comment(lib, "psapi.lib")
+#pragma comment(lib, "imagehlp.lib")
+
+#pragma comment(lib, "Rpcrt4.lib")
+
+#endif
+
+namespace System
+{
+
+Module _Module;
+
+//void _AddPersistentLiveRoot(void** pp);
+
+volatile bool loadTypes = true;
+//LFCEXT bool loadTypes = true;
+
+void init_gc();
+
+extern "C"
+{
+
+class type_info
+{
+public:
+	virtual ~type_info()
+	{
+	}
+
+	void*_m_data;
+	char _m_d_name[1];
+};
+
+BOOL WINAPI RawDllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID)
+{
+	if (ul_reason_for_call == DLL_PROCESS_ATTACH)
+	{
+#ifdef _DEBUG
+#if 1
+		MessageBoxW(NULL, L"You can now attach a debugger", L"LFC", MB_OK);
+#endif
+#endif
+
+		init_gc();
+
+		ASSERT(TypeDatabase::pD == NULL);
+		TypeDatabase::pD = new TypeDatabase;
+	//	_AddPersistentLiveRoot((void**)&pD);
+
+		TypeDatabase::pD->m_debugInfo = new CVR;
+		TypeDatabase::pD->m_typestuff = new TypeStuff;
+		TypeDatabase::pD->m_globalNamespace = new Namespace;
+
+		PrimitiveType::Static_Init();
+
+		// TODO: Hack
+
+		((type_info*)&typeid(void))->_m_data = &Types::type_void;
+		((type_info*)&typeid(bool))->_m_data = &Types::type_bool;
+
+		((type_info*)&typeid(char))->_m_data = &Types::type_char;
+		((type_info*)&typeid(signed char))->_m_data = &Types::type_signed_char;
+		((type_info*)&typeid(unsigned char))->_m_data = &Types::type_unsigned_char;
+
+		((type_info*)&typeid(wchar_t))->_m_data = &Types::type_wchar;
+
+		((type_info*)&typeid(short))->_m_data = &Types::type_short;
+		((type_info*)&typeid(unsigned short))->_m_data = &Types::type_unsigned_short;
+
+		((type_info*)&typeid(int))->_m_data = &Types::type_int;
+		((type_info*)&typeid(unsigned int))->_m_data = &Types::type_unsigned_int;
+
+		((type_info*)&typeid(long))->_m_data = &Types::type_long;
+		((type_info*)&typeid(unsigned long))->_m_data = &Types::type_unsigned_long;
+
+		((type_info*)&typeid(long long))->_m_data = &Types::type_long_long;
+		((type_info*)&typeid(unsigned long long))->_m_data = &Types::type_unsigned_long_long;
+
+		((type_info*)&typeid(float))->_m_data = &Types::type_float;
+		((type_info*)&typeid(double))->_m_data = &Types::type_double;
+		((type_info*)&typeid(long double))->_m_data = &Types::type_long_double;
+
+		if (loadTypes)
+		{
+			try
+			{
+				_Module.Init(hModule);
+			}
+			_catch (Exception, e)
+			{
+				MessageBox(NULL, CStringw(e.get_Reason()), L"LFC", MB_OK | MB_ICONWARNING);
+			// NOTE: Fall through, returning TRUE
+			}
+		}
+	}
+
+	return TRUE;
+}
+
+BOOL (WINAPI *_pRawDllMain)(HINSTANCE, DWORD, LPVOID) = RawDllMain;
+
+BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
+{
+	switch (ul_reason_for_call)
+	{
+	case DLL_PROCESS_ATTACH:
+		{
+			_Module.SetHandle(hModule);
+		}
+		break;
+
+	case DLL_PROCESS_DETACH:
+		{
+			_Module.Term();
+		}
+		break;
+
+	case DLL_THREAD_ATTACH:
+		{
+		}
+		break;
+
+	case DLL_THREAD_DETACH:
+		{
+		}
+		break;
+	}
+
+	return TRUE;
+}
+
+}	// extern "C"
+}	// System

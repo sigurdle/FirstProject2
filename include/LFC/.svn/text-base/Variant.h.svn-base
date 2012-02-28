@@ -1,0 +1,606 @@
+#ifndef System_Variant_h
+#define System_Variant_h
+
+namespace System
+{
+
+interface anyinterface
+{
+private:
+	virtual void dummy() abstract;
+};
+
+enum VariantKind
+{
+	VARKIND_UNDEFINED = 0,
+	VARKIND_NULL = 1,
+	VARKIND_BOOL = 2,
+	VARKIND_INT8,
+	VARKIND_UINT8,
+	VARKIND_INT16,
+	VARKIND_UINT16,
+	VARKIND_INT32,
+	VARKIND_UINT32,
+	VARKIND_INT64,
+	VARKIND_UINT64,
+//	VARKIND_LONG,
+//	VARKIND_ULONG,
+	VARKIND_FLOAT32,
+	VARKIND_FLOAT64,
+//	VARKIND_STRINGA,
+//	VARKIND_STRINGW,
+	VARKIND_OBJECT,
+	VARKIND_ANYINTERFACE,
+	VARKIND_STRUCT,
+
+	VARKIND_HANDLE,
+	VARKIND_HMODULE,
+	VARKIND_HWND,
+	VARKIND_HDC,
+	VARKIND_HICON,
+	VARKIND_HCURSOR,
+	VARKIND_HBITMAP,
+};
+
+class LFCEXT Variant
+{
+public:
+	CTOR Variant() :
+		kind(VARKIND_UNDEFINED),
+		m_pObject(NULL),
+		m_pType(typeid(void))
+	{
+	}
+
+	CTOR Variant(VariantKind _kind);
+
+	CTOR Variant(const Variant& other);
+#ifndef __LERSTAD__
+	CTOR Variant(Variant&& other);
+#endif
+
+//	CTOR Variant(VariantKind _kind, int32 lValue);
+
+	CTOR Variant(VariantKind _kind, void* pAnyInterface);
+
+//	CTOR Variant(VariantKind _kind, int64 llValue);
+
+	CTOR Variant(bool value);
+	CTOR Variant(bool value, Type* pType) : m_pType(pType), kind(VARKIND_BOOL), m_pObject(NULL)
+	{
+		ASSERT(pType);
+		u.bool_val = value;
+	}
+
+	CTOR Variant(signed char value);
+	CTOR Variant(signed char value, Type* pType) : m_pType(pType), kind(VARKIND_INT8), m_pObject(NULL)
+	{
+		ASSERT(pType);
+		u.schar_val = value;
+	}
+
+	CTOR Variant(unsigned char value);
+	CTOR Variant(unsigned char value, Type* pType) : m_pType(pType), kind(VARKIND_UINT8), m_pObject(NULL)
+	{
+		ASSERT(pType);
+		u.uint8_val = value;
+	}
+
+	CTOR Variant(short value);
+	CTOR Variant(short value, Type* pType) : m_pType(pType), kind(VARKIND_INT16), m_pObject(NULL)
+	{
+		ASSERT(pType);
+		u.short_val = value;
+	}
+	CTOR Variant(unsigned short value);
+	CTOR Variant(unsigned short value, Type* pType) : m_pType(pType), kind(VARKIND_UINT16), m_pObject(NULL)
+	{
+		ASSERT(pType);
+		u.ushort_val = value;
+	}
+
+	CTOR Variant(int Value);
+	CTOR Variant(int value, Type* pType) : m_pType(pType), kind(VARKIND_INT32), m_pObject(NULL)
+	{
+		ASSERT(pType);
+		u.int_val = value;
+	}
+
+	CTOR Variant(unsigned int value);
+	CTOR Variant(unsigned int value, Type* pType) : m_pType(pType), kind(VARKIND_UINT32), m_pObject(NULL)
+	{
+		ASSERT(pType);
+		u.uint_val = value;
+	}
+
+	CTOR Variant(long value)
+	{
+		m_pType = typeid(value);
+		u.long_val = value;
+	}
+
+	CTOR Variant(long value, Type* pType) : m_pType(pType), kind(VARKIND_INT32), m_pObject(NULL)
+	{
+		ASSERT(pType);
+		u.long_val = value;
+	}
+
+	CTOR Variant(unsigned long value)
+	{
+		m_pType = typeid(value);
+		u.ulong_val = value;
+	}
+
+	CTOR Variant(unsigned long value, Type* pType) : m_pType(pType), kind(VARKIND_UINT32), m_pObject(NULL)
+	{
+		ASSERT(pType);
+		u.ulong_val = value;
+	}
+
+	CTOR Variant(long long value);
+	CTOR Variant(long long value, Type* pType) : m_pType(pType), kind(VARKIND_INT64), m_pObject(NULL)
+	{
+		ASSERT(pType);
+		u.longlong_val = value;
+	}
+
+	CTOR Variant(unsigned long long value);
+	CTOR Variant(unsigned long long value, Type* pType) : m_pType(pType), kind(VARKIND_UINT64), m_pObject(NULL)
+	{
+		ASSERT(pType);
+		u.ulonglong_val = value;
+	}
+
+	CTOR Variant(float fValue);
+	CTOR Variant(float value, Type* pType) : m_pType(pType), kind(VARKIND_FLOAT32), m_pObject(NULL)
+	{
+		ASSERT(pType);
+		u.float_val = value;
+	}
+
+	CTOR Variant(double fValue);
+	CTOR Variant(double value, Type* pType) : m_pType(pType), kind(VARKIND_FLOAT64), m_pObject(NULL)
+	{
+		ASSERT(pType);
+		u.double_val = value;
+	}
+
+	CTOR Variant(const void* src, Type* pType);
+	CTOR Variant(bool, void* src, Type* pType);
+
+	CTOR Variant(const String& str);
+#ifndef __LERSTAD__
+	CTOR Variant(String&& str);
+#endif
+	CTOR Variant(StringIn str);
+	CTOR Variant(const StringBuilderBase& str);
+	CTOR Variant(const char* str, size_t len = ~0);
+	CTOR Variant(const wchar_t* str, size_t len = ~0);
+	CTOR Variant(Object* pObject);
+
+	CTOR Variant(const VARIANT& v);
+
+	~Variant();
+
+	Type* GetType() const throw ()
+	{
+		return m_pType;
+	}
+
+	Type* GetPtrType() const throw ();
+	ClassType* GetObjectType() const throw ();
+
+	bool IsNull() const throw ()
+	{
+		if (m_pType == NULL) return true;
+		if (m_pType->GetStripped()->get_Kind() == type_null) return true;
+		return kind == VARKIND_NULL;
+	}
+
+	bool IsUndefined() const throw ()
+	{
+		if (m_pType) return m_pType->GetStripped() == typeid(void);
+		return kind == VARKIND_UNDEFINED;
+	}
+
+	bool IsBool() const throw ()
+	{
+		ASSERT(m_pType);
+		return m_pType->GetStripped() == typeid(bool);
+	}
+
+	bool IsInt() const throw ()
+	{
+		ASSERT(m_pType);
+		return m_pType->GetStripped() == typeid(int);
+	}
+
+	bool IsUInt() const throw ()
+	{
+		ASSERT(m_pType);
+		return m_pType->GetStripped() == typeid(unsigned int);
+	}
+
+	bool IsInt64() const throw ()
+	{
+		ASSERT(m_pType);
+		return m_pType->GetStripped() == typeid(long long);
+	}
+
+	bool IsUInt64() const throw ()
+	{
+		ASSERT(m_pType);
+		return m_pType->GetStripped() == typeid(unsigned long long);
+	}
+
+	bool IsLongInteger() const throw ()
+	{
+		ASSERT(m_pType);
+		return m_pType->GetStripped() == typeid(long long) ||
+			m_pType->GetStripped() == typeid(unsigned long long);
+	}
+
+	bool IsFloat() const throw ()
+	{
+		ASSERT(m_pType);
+		return m_pType->GetStripped() == typeid(float);
+	}
+
+	bool IsDouble() const throw ()
+	{
+		ASSERT(m_pType);
+		return m_pType->GetStripped() == typeid(double);
+	}
+
+	bool IsNumberOrEnum() const throw ()
+	{
+		ASSERT(m_pType);
+		return System::IsNumberOrEnum(m_pType->GetStripped()->get_Kind());
+	}
+
+	bool IsString() const throw ()
+	{
+		ASSERT(m_pType);
+		return m_pType->GetStripped() == typeid(String);
+	}
+
+	bool IsPointer() const throw ()
+	{
+		if (m_pType == NULL) return false;	// TODO remove
+
+		ASSERT(m_pType);
+		return m_pType->GetPointerTo() != NULL;
+	}
+
+	bool IsFunction() const throw ()
+	{
+		ASSERT(m_pType);
+		return m_pType->GetFunction() != NULL;
+	}
+
+	bool IsObject() const throw ();
+
+	bool operator == (bool value) const;
+	bool operator == (char value) const;
+	bool operator == (wchar_t value) const;
+	bool operator == (signed char value) const;
+	bool operator == (unsigned char value) const;
+	bool operator == (short value) const;
+	bool operator == (unsigned short value) const;
+	bool operator == (int value) const;
+	bool operator == (unsigned int value) const;
+	bool operator == (long value) const;
+	bool operator == (unsigned long value) const;
+	bool operator == (long long value) const;
+	bool operator == (unsigned long long value) const;
+	bool operator == (StringIn str) const;
+
+	bool operator != (bool value) const
+	{
+		return !(*this == value);
+	}
+
+	bool operator != (signed char value) const
+	{
+		return !(*this == value);
+	}
+
+	bool operator != (unsigned char value) const
+	{
+		return !(*this == value);
+	}
+
+	bool operator != (short value) const
+	{
+		return !(*this == value);
+	}
+
+	bool operator != (unsigned short value) const
+	{
+		return !(*this == value);
+	}
+
+	bool operator != (int value) const
+	{
+		return !(*this == value);
+	}
+
+	bool operator != (unsigned int value) const
+	{
+		return !(*this == value);
+	}
+
+	bool operator != (long value) const
+	{
+		return !(*this == value);
+	}
+
+	bool operator != (unsigned long value) const
+	{
+		return !(*this == value);
+	}
+
+	bool operator != (long long value) const
+	{
+		return !(*this == value);
+	}
+
+	bool operator != (unsigned long long value) const
+	{
+		return !(*this == value);
+	}
+
+	bool operator < (bool value) const;
+	bool operator < (char value) const;
+	bool operator < (wchar_t value) const;
+	bool operator < (signed char value) const;
+	bool operator < (unsigned char value) const;
+	bool operator < (short value) const;
+	bool operator < (unsigned short value) const;
+	bool operator < (int value) const;
+	bool operator < (unsigned int value) const;
+	bool operator < (long value) const;
+	bool operator < (unsigned long value) const;
+	bool operator < (long long value) const;
+	bool operator < (unsigned long long value) const;
+	bool operator < (StringIn str) const;
+
+	bool operator <= (bool value) const;
+	bool operator <= (char value) const;
+	bool operator <= (wchar_t value) const;
+	bool operator <= (signed char value) const;
+	bool operator <= (unsigned char value) const;
+	bool operator <= (short value) const;
+	bool operator <= (unsigned short value) const;
+	bool operator <= (int value) const;
+	bool operator <= (unsigned int value) const;
+	bool operator <= (long value) const;
+	bool operator <= (unsigned long value) const;
+	bool operator <= (long long value) const;
+	bool operator <= (unsigned long long value) const;
+
+	bool operator == (const Variant& other) const;
+	bool operator != (const Variant& other) const;
+	bool operator ! () const;
+	Variant operator ~ () const;
+	Variant operator + (const Variant& other) const;
+	Variant operator - (const Variant& other) const;
+	Variant operator * (const Variant& other) const;
+	Variant operator / (const Variant& other) const;
+	Variant operator % (const Variant& other) const;
+	Variant operator | (const Variant& other) const;
+	Variant operator & (const Variant& other) const;
+	Variant operator ^ (const Variant& other) const;
+	Variant operator << (const Variant& other) const;
+	Variant operator >> (const Variant& other) const;
+
+#ifndef __LERSTAD__
+	Variant& operator = (Variant&& other);
+#endif
+	Variant& operator = (const Variant& other);
+	Variant& operator += (const Variant& other);
+	Variant& operator -= (const Variant& other);
+	Variant& operator *= (const Variant& other);
+	Variant& operator /= (const Variant& other);
+	Variant& operator %= (const Variant& other);
+	Variant& operator |= (const Variant& other);
+	Variant& operator &= (const Variant& other);
+	Variant& operator ^= (const Variant& other);
+	Variant& operator <<= (const Variant& other);
+	Variant& operator >>= (const Variant& other);
+	Variant& operator ++ ();
+	Variant& operator -- ();
+	Variant operator ++ (int);
+	Variant operator -- (int);
+
+	Object* operator -> () const;
+
+	Variant& operator [] (size_t index);
+	const Variant& operator [] (size_t index) const;
+
+	void operator () () const
+	{
+		ASSERT(m_pType->get_Kind() == type_function);
+	}
+
+	template<class arg0_type>
+	void operator () (arg0_type arg0)
+	{
+		ASSERT(m_pType->get_Kind() == type_function);
+	}
+
+	void* GetPtr() const;
+	Object* GetObject() const;
+
+#ifndef __LERSTAD__
+
+	template<class T> class convert
+	{
+	public:
+		static T get(const Variant& v)
+		{
+			if (v.m_pType->GetClass())
+			{
+				T t;
+				if (sizeof(T) <= sizeof(void*))
+				{
+					memcpy(&t, &v.m_structptr, sizeof(T));
+				}
+				else
+				{
+				// TODO
+					memcpy(&t, v.m_structptr, sizeof(T));
+				}
+				return t;
+			}
+
+			raise(Exception("cannot convert"));
+		}
+	};
+
+	template<class T> class convert<T*>
+	{
+	public:
+		static T* get(const Variant& v)
+		{
+			Type* p = v.m_pType->GetPointerTo();
+			if (p)
+			{
+				ClassType* pClass = p->GetClass();
+				if (pClass)
+				{
+					if (pClass->IsPolymorphic())
+					{
+						return dynamic_cast<T*>(v.m_pObject);
+					}
+					else
+					{
+						return NULL;
+					//	raise(Exception("cannot convert - class not polymorphic"));
+					}
+				}
+				else
+				{
+					return NULL;
+				//	raise(Exception("cannot convert - not pointer to a class"));
+				}
+			}
+
+			return NULL;
+		}
+	};
+
+	template<class T> operator T () const
+	{
+		return convert<T>::get(*this);
+	}
+
+	// TODO remove??
+	template<class T> T cast() const
+	{
+	//	Type* p2Type = typeid(T);
+		if (Type* p = m_pType->GetPointerTo())
+		{
+			if (std::is_pointer<T>::value)
+			{
+				ClassType* pClass = p->GetClass();
+				if (pClass)
+				{
+					if (pClass->IsPolymorphic())
+					{
+						return dynamic_cast<T>(m_pObject);
+					}
+				}
+
+				return NULL;
+			}
+		}
+		raise(Exception("cannot convert"));
+	}
+#endif
+
+	operator bool () const;
+	operator int () const;
+	operator unsigned int () const;
+	operator long () const;
+	operator unsigned long () const;
+	operator long long () const;
+	operator unsigned long long () const;
+	operator float () const;
+	operator double () const;
+	operator String () const;
+
+	bool CanConvertTo(Type* pType) const throw ();
+
+	template<class T> bool CanConvertTo() const throw ();
+#ifndef __LERSTAD__
+	template<> bool CanConvertTo<int>() const throw ();
+#endif
+	bool ToBool() const;
+	int ToInt() const;
+	unsigned int ToUInt() const;
+	long ToLong() const;
+	unsigned long ToULong() const;
+	int64 ToInt64() const;
+	uint64 ToUInt64() const;
+	float ToFloat() const;
+	double ToDouble() const;
+	String ToString() const;
+
+public:
+
+	Type* m_pType;	// sizeof=ptr
+
+	union
+	{
+		Object* m_pObject;
+		anyinterface* m_pAnyInterface;
+		void* m_structptr;
+	};	// sizeof=ptr
+
+	union
+	{
+		bool bool_val;
+		char char_val;
+		wchar_t wchar_val;
+
+		signed char schar_val;
+		unsigned char uchar_val;
+		short short_val;
+		unsigned short ushort_val;
+		int int_val;
+		unsigned int uint_val;
+		long long_val;
+		unsigned long ulong_val;
+		long long longlong_val;
+		unsigned long long ulonglong_val;
+
+		int8 int8_val;
+		uint8 uint8_val;
+		int16 int16_val;
+		uint16 uint16_val;
+		int32 int32_val;
+		uint32 uint32_val;
+		int64 int64_val;
+		uint64 uint64_val;
+
+		float float_val;
+		double double_val;
+		float float32_val;
+		double float64_val;
+
+		HANDLE whandle;	// not garbage collected
+	}
+	u;	// sizeof=8
+
+	uint16 kind;	// TODO: Try to remove
+};
+
+// 32 bit: sizeof=16
+// 64 bit: sizeof=24
+
+LFCEXT IO::TextWriter& WriteToStream(IO::TextWriter& writer, const Variant& v);
+
+}	// System
+
+#endif // System_Variant_h

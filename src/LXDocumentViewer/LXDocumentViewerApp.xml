@@ -1,0 +1,35 @@
+<addinlayout>
+
+	<toolbarstab>
+
+		<labels>
+			<label label="Standard Buttons" />
+			<label label="Address Bar" />
+		</labels>
+
+		<content>
+		  <page id="id_standardbuttons_bar">
+				<gripper/>
+				<menubar>
+					<winbutton id="id_go_back" style="width: 60px">Back</winbutton>
+					<winbutton id="id_go_forward" style="width: 60px">Forward</winbutton>
+				</menubar>
+			</page>
+
+			<page id="id_addressbar">
+				<gripper/>
+				<menubar>
+					<p>Address</p>
+					<wincombobox id="id_address" style="width: 220px">
+						<winitem value="c:\test1.html" />
+						<winitem value="c:\test2.html" />
+						<winitem value="c:\test3.html" />
+					</wincombobox>
+					<winbutton id="id_go" style="width: 50px">Go</winbutton>
+				</menubar>
+			</page>
+		</content>
+
+	</toolbarstab>
+
+</addinlayout>

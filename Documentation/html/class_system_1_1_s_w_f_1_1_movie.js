@@ -1,0 +1,26 @@
+var class_system_1_1_s_w_f_1_1_movie =
+[
+    [ "Movie", "class_system_1_1_s_w_f_1_1_movie.html#aace074d1d92beceeace26ebe8f2c1b70", null ],
+    [ "CreateShape", "class_system_1_1_s_w_f_1_1_movie.html#a53140a00f488f8b23707745bc1a8e988", null ],
+    [ "DefineBitsLossless", "class_system_1_1_s_w_f_1_1_movie.html#a63debed832ce6140b7efd73d69135a79", null ],
+    [ "DefineShape", "class_system_1_1_s_w_f_1_1_movie.html#acd832e0bca3538cb5d78a0903dd8a8b8", null ],
+    [ "GetBackgroundColor", "class_system_1_1_s_w_f_1_1_movie.html#ae81c3d03072e54a183b619f6dde4f853", null ],
+    [ "GetCharacter", "class_system_1_1_s_w_f_1_1_movie.html#a6d9cc66a6338dabe2f8221fde144f8f2", null ],
+    [ "GetFrameCount", "class_system_1_1_s_w_f_1_1_movie.html#a5ff37e6e16369118865f68a742b71dfb", null ],
+    [ "GetFrameRate", "class_system_1_1_s_w_f_1_1_movie.html#abed3a70ca97de7f2720984807a8b3566", null ],
+    [ "GetFrameSize", "class_system_1_1_s_w_f_1_1_movie.html#a11f3e5aab7ba57045f5d33f636b3baa0", null ],
+    [ "HasBackgroundColor", "class_system_1_1_s_w_f_1_1_movie.html#a1715ed9595bed7baaf68ea0e532476bd", null ],
+    [ "SetBackgroundColor", "class_system_1_1_s_w_f_1_1_movie.html#a18184b78e3f72bb95e912cc56a78d06c", null ],
+    [ "SetFrameCount", "class_system_1_1_s_w_f_1_1_movie.html#a2e25d46a0c70fee802ca00a98b61617b", null ],
+    [ "SetFrameRate", "class_system_1_1_s_w_f_1_1_movie.html#ac0d8c896a70224b5a3b0f9830b34f48f", null ],
+    [ "SetFrameSize", "class_system_1_1_s_w_f_1_1_movie.html#a11e68b30b5680b76018031141e056742", null ],
+    [ "m_BackgroundColor", "class_system_1_1_s_w_f_1_1_movie.html#a06fce6d31f6c0ad0e9d379e140d4b39d", null ],
+    [ "m_bBackground", "class_system_1_1_s_w_f_1_1_movie.html#a6ef6915c19a0623d59e52f26e131825d", null ],
+    [ "m_character", "class_system_1_1_s_w_f_1_1_movie.html#af787f84e3196a65ee0e72a208c423e03", null ],
+    [ "m_FrameRate", "class_system_1_1_s_w_f_1_1_movie.html#ae5603e698995e026fa52da44d48eeb95", null ],
+    [ "m_FrameSize", "class_system_1_1_s_w_f_1_1_movie.html#a143448d7196b76d74bce125d4231eeb5", null ],
+    [ "m_lastDefinitionID", "class_system_1_1_s_w_f_1_1_movie.html#a7c14f0945b87893aa30d9fcc8fbc2bbd", null ],
+    [ "m_scriptBreakpoint", "class_system_1_1_s_w_f_1_1_movie.html#ae5e5057bb5d002b9a9406089f009fa22", null ],
+    [ "m_scriptFlags", "class_system_1_1_s_w_f_1_1_movie.html#a28f0eb45e4034b5023290997d4c26491", null ],
+    [ "m_scriptUserObject", "class_system_1_1_s_w_f_1_1_movie.html#ad1ab0feb8e5c5b89ec4e01cde60f27b6", null ]
+];

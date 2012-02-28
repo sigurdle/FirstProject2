@@ -1,0 +1,156 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+DependencyClass::Map_t* DependencyClass::s_classes;
+
+DependencyClass* DependencyClass::GetClass(ClassType* pClassType)
+{
+	DependencyClass* depClass = (DependencyClass*)pClassType->GetUserData(L"System::Gui::DependencyClass");
+	/*
+	if (depClass == NULL)
+	{
+		if (pClassType == typeid(DependencyObject).GetType())
+		{
+			depClass = new DependencyClass(pClassType, NULL);
+			pClassType->SetUserData(L"System::Gui::DependencyClass", depClass);
+
+			return depClass;
+		}
+		else
+		{
+			ASSERT(pClassType->m_bases.size() > 0);
+			depClass = new DependencyClass(pClassType, GetClass(pClassType->m_bases[0]->m_pClass->GetClass()));
+			pClassType->SetUserData(L"System::Gui::DependencyClass", depClass);
+		}
+	}
+	*/
+
+	return depClass;
+}
+
+DependencyClass::DependencyClass(const Type_Info& classType, DependencyClass* baseClass) :
+	m_classType(classType),
+/*	m_baseClass(baseClass),*/
+	m_localCount(0)
+{
+	ClassType* pClassType = classType.GetType()->GetClass();
+	ASSERT(pClassType);
+
+	ASSERT(pClassType->GetUserData(L"System::Gui::DependencyClass") == NULL);
+	pClassType->SetUserData(L"System::Gui::DependencyClass", this);
+
+//	VERIFY(baseClass != this);
+
+	m_registered = Register();
+}
+
+DependencyClass::~DependencyClass()
+{
+	Unregister(m_registered);
+}
+
+DependencyClass::Map_t::iterator DependencyClass::Register()
+{
+	if (s_classes == NULL)
+	{
+		s_classes = new map<String, DependencyClass*>;
+	}
+	return (*s_classes).insert(Map_t::value_type(m_classType.GetType()->GetClass()->get_Name(), this)).first;
+//	return (*s_classes).insert(Map_t::value_type(get_Name(), this)).first;
+}
+
+void DependencyClass::Unregister(Map_t::iterator it)
+{
+	// TODO
+}
+
+unsigned int DependencyClass::GetLocalPropertiesCount() const
+{
+	return m_localCount;
+}
+
+unsigned int DependencyClass::GetComputedPropertiesCount() const
+{
+	return m_computedCount;
+}
+
+DependencyProperty* DependencyClass::GetLocalProperty(unsigned int index)
+{
+	if (index < m_localProperties.size())
+		return m_localProperties[index];
+	else
+	{
+		ASSERT(0);
+		throw new ArgumentOutOfRangeException();
+	}
+}
+
+DependencyProperty* DependencyClass::GetLocalProperty(StringIn name)
+{
+	for (uint i = 0; i < m_localProperties.size(); i++)
+	{
+		if (m_localProperties[i]->get_Name() == name)
+		{
+			return m_localProperties[i];
+		}
+	}
+
+	DependencyClass* baseClass = GetBaseClass();
+	if (baseClass)
+	{
+		return baseClass->GetLocalProperty(name);
+	}
+
+	return NULL;
+}
+
+ClassType* DependencyClass::GetClassType() const throw()
+{
+	return m_classType.GetType()->GetClass();
+}
+
+DependencyClass* DependencyClass::GetBaseClass() const throw()
+{
+	return (DependencyClass*)GetClassType()->m_bases[0]->m_pClass->GetClass()->GetUserData(L"System::Gui::DependencyClass");
+}
+
+int DependencyClass::RegisterProperty(DependencyProperty* dp)
+{
+	if (dp == NULL) throw new ArgumentNullException();
+	int index = m_localCount;
+	m_localProperties.push_back(dp);
+	++m_localCount;
+
+	if (s_properties == NULL)
+	{
+		s_properties = new map<String, DependencyProperty*>;
+	}
+
+	(*s_properties)[dp->get_Name()] = dp;
+
+	return index;
+}
+
+map<String, DependencyProperty*>* DependencyClass::s_properties;
+
+// static
+DependencyClass* DependencyClass::FindClass(StringIn name) throw()
+{
+	return (*s_classes).find(name)->second;
+}
+
+//static
+DependencyProperty* DependencyClass::FindGlobalProperty(StringIn name) throw()
+{
+	return (*s_properties).find(name)->second;
+}
+
+//object _this(new ThisExpression);
+
+}	// Gui
+}	// System

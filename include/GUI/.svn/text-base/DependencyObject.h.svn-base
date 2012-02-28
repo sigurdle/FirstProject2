@@ -1,0 +1,110 @@
+namespace System
+{
+namespace Gui
+{
+
+class GUIEXT DependencyObject : public DispatcherObject
+{
+protected:
+
+	CTOR DependencyObject(DependencyClass* depClass);
+
+public:
+
+	Object* GetComputedObjectValue(DependencyProperty* dp);
+
+	virtual bool HasComputedPropertyValue(DependencyProperty* dp);
+	virtual Object* GetComputedPropertyObjectValue2(DependencyProperty* dp);
+
+	virtual bool HasLocalPropertyValue(PropertyValue* pPropertyVal);
+	virtual Object* GetLocalPropertyValue(PropertyValue* pPropertyVal);
+	virtual void ClearLocalPropertyValue(PropertyValue* pPropertyVal);
+
+	virtual void OnComputedPropertyValueChanged(PropertyValue* pPropertyVal, bool handled);
+	virtual void OnComputedPropertyValueChanging(PropertyValue* pPropertyVal, Object* oldValue, Object* newValue, bool handled);
+
+	virtual PropertyValue* GetProperty(DependencyProperty* dp);
+
+	Object* GetPropertyValue(DependencyProperty* dp);
+	bool GetPropertyValueBool(DependencyProperty* dp);
+	unsigned char GetPropertyValueUByte(DependencyProperty* dp);
+	int GetPropertyValueInt(DependencyProperty* dp);
+	float GetPropertyValueFloat(DependencyProperty* dp);
+	double GetPropertyValueDouble(DependencyProperty* dp);
+
+	template<class T>
+	T GetPropertyValueT(DependencyProperty* dp)
+	{
+		return unbox_cast<T>(GetPropertyValue(dp));
+	}
+
+	template<class T>
+	void SetPropertyValue(DependencyProperty* dp, T* value)
+	{
+		SetPropertyValue(dp, dynamic_cast<Object*>(value));
+	}
+
+	void SetPropertyValue(DependencyProperty* dp, String value);
+	void SetPropertyValue(DependencyProperty* dp, Object* value);
+	void SetPropertyValue(DependencyProperty* dp, bool value);
+	void SetPropertyValue(DependencyProperty* dp, unsigned char value);
+	void SetPropertyValue(DependencyProperty* dp, int value);
+	void SetPropertyValue(DependencyProperty* dp, unsigned int value);
+	void SetPropertyValue(DependencyProperty* dp, int64 value);
+	void SetPropertyValue(DependencyProperty* dp, float value);
+	void SetPropertyValue(DependencyProperty* dp, double value);
+
+	void UpdatePropertyObjectValue(DependencyProperty* dp, Object* value);
+
+	void SetPropertyBinding(DependencyProperty* dp, IBinding* binding)
+	{
+		GetProperty(dp)->SetInputBinding(binding);
+	}
+
+	template<class T> void UpdatePropertyValue(DependencyProperty* dp, T value)
+	{
+		UpdatePropertyObjectValue(dp, box_cast(value));
+	}
+
+	virtual String ToString() override;
+	String ToMLString();
+	virtual IO::TextWriter& WriteMLString(IO::TextWriter& stream, map<Object*,int>& defs);
+
+	void AddNotify(IObjectChangedNotify* callback);
+
+	DependencyClass* GetClass();
+
+	array<PropertyValue*> m_localProperties;
+//	vector<PropertyValue*> m_properties;
+
+	list<IObjectChangedNotify*> m_notifyList;
+
+	static DependencyClass* get_Class();
+
+private:
+
+	void CreateProperties(DependencyClass* depClass);
+};
+
+class GUIEXT _DependencyObject : public Expressive::_Object
+{
+public:
+	CTOR _DependencyObject(const Expressive::expression& exp) : Expressive::_Object(exp)
+	{
+	}
+
+	Expressive::expression getProperty(DependencyProperty* dp) const
+	{
+		return new GetDPByDPExpression(m_p, dp);
+	}
+
+#ifndef __LERSTAD__
+	template<class T> Expressive::typed_expression<T> getProperty(TypedDependencyProperty<T>* dp) const
+	{
+		return new GetDPByDPExpression(m_p, dp);
+	}
+#endif
+};
+
+}	// Gui
+}	// System

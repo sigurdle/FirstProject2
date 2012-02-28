@@ -1,0 +1,162 @@
+****** (25.11.2010)
+
+LFC - StringBuilder (String operator + )
+
+****** (26.11.2010)
+
+cpp compiler - evaluate sizeof
+
+****** (21.12.2010)
+
+LFC - Improved Stream (endianess/mode etc.)
+LFC - Move Socket and Http into Networking
+
+****** (26.12.2010)
+
+LFC - Garbage collection - nextfree is integer/not pointer
++Many small things not documented
+
+****** (14.01.2011)
+
+cpp compiler - enum : basetype (only basic types work)
++Many small things not documented
+
+****** (25.03.2011)
+
+JSVM - Call javascript function as an x86 function
++Many small things not documented
+
+****** (26.03.2011)
+
+LFC - Event -> js function
++Many small things not documented
+
+****** (22.04.2011)
+
+ParseMap - other way around
+
+****** (24.04.2011)
+
+ImageEdit - works
+
+****** (18.05.2011)
+
+Use DX11 instead of DX10 (requires Vista sp2)
+
+****** (19.05.2011)
+
+LFC - Fast determine if an address is within managed module
+
+****** (25.10.2011)
+
+GUI - Improved rendercontext stack
+
+****** (15.11.2011)
+
+cpp compiler - nullptr
+cpp compiler - decltype
+
+****** (16.11.2011)
+
+LFC - constant System::String with #define S(x)
+
+****** (7.12.2011)
+
+LFC - removed kind from Variant
+
+** TODO **
+
+****** (02.01.2012)
+
+(IMP) documentation from c++ source
+
+(IMP) cpp compiler - && reference
+(IMP) cpp compiler - static_assert
+
+(IMP) cpp compiler - auto
+(IMP) cpp compiler - auto generate default ctor/dtor/copy
+(IMP) cpp compiler - cpp_preprocessor separate (two threads)
+
+(IMP) GUI - NextSibling/FirstChild etc.
+
+(IMP) GUI - DockPanel
+(IMP) GUI - StackPanel
+
+(IMP) GUI - FlowDirection
+(IMP) GUI - Tooltip
+
+(IMP) GUI - Button click
+(IMP) GUI - Popup
+(IMP) GUI - Menu / MenuItem
+
+(IMP) GUI - Commands
+
+(IMP) GUI - UI Automation
+
+***** Release *****
+
+(IMP) ed.Tool = Show(Tools).SelectedItem;
+
+(IMP) ImageEdit - Paintbrush blending modes
+(IMP) ImageEdit - Pencil - union
+(IMP) ImageEdit - Tablet
+
+(IMP) JS - for (;;)
+(IMP) JS - while ()
+(IMP) DShowPlayer events
+(IMP) JS - Write "" around strings in output
+(IMP) JSVM - String operator =
+(IMP) Setup - Separate for 32/64
+(IMP) WebGL - works
+(IMP) SVG - works again
+(IMP) X3D - MovieTexture (with DShow)
+(IMP) XML - SAX document loading works again
+(IMP) X3D - Trackball
+(IMP) XSLT
+
+Try NVidia FX..
+Try Matlab
+
+(IMP) 3D - Extract/View  Depth bitmap
+
+Filmstrip
+
+(IMP) > Current object, e.g directory
+
+(IMP) PCX bitmap loader
+(IMP) String/StringVariant works as stl containers
+
+(IMP) ? Have Type/Module etc. in Reflection namespace
+
+Assembly is a collection of modules
+
+(IMP) cpp compiler - constexpr
+(IMP) cpp compiler - typename_kw also works in template spec
+(IMP) cpp compiler - fix bug in templates
+
+(IMP) gc works in MakeTypes.exe
+
+(IMP) GUI - Computed properties from file
+(IMP) XSLT - Transform classes works again
+
+(IMP) Windows Search
+(IMP) DDE
+
+(IMP) LFC - Faster loading of typeinfo
+(IMP) LFC - Call functions with arguments on x64
+(IMP) LFC - thrown Exceptions * or &
+(IMP) LFC - Text file encoding / unicode etc.
+
+(IMP) GUI - Window alpha window
+(IMP) GUI - Template x.Key
+(IMP) GUI - There's something I forgot in properties
+
+(IMP) RDF - Class for model, not global
+
+********************************
+****** (01.02.2012)
+
+Release
+
+SVG Viewer
+X3D Viewer

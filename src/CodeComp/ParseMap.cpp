@@ -1,0 +1,541 @@
+#include "stdafx.h"
+
+#include "LFC/VCMapFileParser.h"
+#include "LFC/VCMangler.h"
+
+#include <cstdlib>
+
+namespace System
+{
+
+class CodeCompExt MapReceiver : public IMapFileDataReceiver
+{
+public:
+
+	virtual bool OnLoadAddress(DWORD address) override
+	{
+		m_load_address = address;
+		return true;
+	}
+
+	virtual bool OnGroup(uint section, DWORD section_offset, DWORD length, const char* name, const char* classname) override
+	{
+		return true;
+	}
+
+	virtual bool OnSymbol(uint section, DWORD section_offset, DWORD flat_address, const char* symbolname, const char* objfilename) override
+	{
+		m_symbols.insert(map<String, DWORD>::value_type(symbolname, flat_address));
+		return true;
+	}
+
+	DWORD m_load_address;
+	map<String, DWORD> m_symbols;
+};
+
+/*
+namespace System
+{
+LFCEXT String MangleNameVC(ClassType* pClass, CDeclarator* decl, Stream& strbuilder = StringStream());
+LFCEXT String MangleNameVC(Scope* pScope, CDeclarator* decl, Stream& strbuilder = StringStream());
+}
+*/
+
+void Write(MapReceiver& mapfile, FILE* fp, Declarator* decl)
+{
+	ASSERT(decl->m_pType->get_Kind() == type_function);
+
+	/*
+	if (decl->m_name == "test_callme")
+	{
+		MessageBeep(-1);
+	}
+	*/
+
+	String name = VCMangler::MangleNameVC(decl->m_pOwnerScope, decl);
+
+	/*
+		if (strstr(CString(name).c_str(), "proj"))
+		{
+			MessageBeep(-1);
+		}
+		*/
+//m_data = {m_pData=0x10c27cc0 "?CreateBitmap@ImageEdit@System@@YAPAVBitmap@LDraw@2@IIW4DXGI_FORMAT@@@Z" m_nSize=71 }
+//m_data = {m_pData=0x11e98270 "?CreateBitmap@ImageEdit@System@@YAPAVBitmap@LDraw@2@IIW4DXGI_FORMAT@__unknown@@@Z" m_nSize=81 m_nMaxSize=128 ...}
+		/*
+		if (strstr(CString(name).c_str(), "String") &&
+			strstr(CString(name).c_str(), "test2"))
+		{
+			MessageBeep(-1);
+		}
+
+	if (strstr(CString(name).c_str(), "NamedType") &&
+		strstr(CString(name).c_str(), "get_Name"))
+	{
+		MessageBeep(-1);
+	}
+	*/
+
+		//String name = strbuilder->str();
+
+	auto it = mapfile.m_symbols.find(name);
+	if (it != mapfile.m_symbols.end())
+	{
+		DWORD typedesc_address = (*it).second - mapfile.m_load_address;
+
+		fwrite(&typedesc_address, 1, sizeof(DWORD), fp);
+	}
+	else
+	{
+	//	Console::get_Out() << "Couldn't find " << name << " in map file" << "\n";
+
+		DWORD typedesc_address = 0;
+		fwrite(&typedesc_address, 1, sizeof(DWORD), fp);
+	}
+}
+
+void Write(MapReceiver& mapfile, FILE* fp, ClassType* pClass)
+{
+	for (size_t i = 0; i < pClass->m_pScope->m_orderedDecls.size(); ++i)
+	{
+		Declarator* decl = pClass->m_pScope->m_orderedDecls[i];
+
+	// write non-virtual function addresses and static member addresses
+		if (!decl->m_typedef)
+		{
+			if (decl->m_static ||
+				(decl->m_pType->get_Kind() == type_function && decl->m_offset == ~0))
+			{
+
+// "??0Window@Gui@System@@QAE@ABV012@@Z" m_nSize=0x00000023 }	array<char const >
+
+				/*
+				if (pClass->m_pInstantiatedFromClass)
+				{
+					if (pClass->m_name == "vector3")
+					{
+						MessageBeep(-1);
+					}
+				}
+				*/
+
+				/*
+				if (pClass->m_name == "vector2" &&
+					pClass->m_pInstantiatedFromClass &&
+				strstr(CString(decl->m_name).c_str(), "vector2"))
+			{
+				MessageBeep(-1);
+			}
+			*/
+
+				String name = VCMangler::MangleNameVC(pClass, decl);
+
+				/*
+				//StringBuilder strbuilder;
+// m_data = {m_pData=0x10d4af28 "?get_Access@CDeclarator@System@@QBEW4AccessSpec@2@XZ5" m_nSize=52 m_nMaxSize=64 ...}
+				if (strstr(CString(name).c_str(), "Event") &&
+					strstr(CString(name).c_str(), "get_target"))
+				{
+				String name2 = VCMangler::MangleNameVC(pClass, decl);
+					MessageBeep(-1);
+				}
+				*/
+				
+				/*
+
+				if (strstr(CString(name).c_str(), "String") &&
+					strstr(CString(name).c_str(), "test2"))
+				{
+					MessageBeep(-1);
+				}
+			*/
+
+		// ??0?$vector3@M@LDraw@System@@QAE@MMM@Z
+
+				/*
+				if (pClass->m_name == "vector3" &&
+					strstr(CString(name).c_str(), "vector3") &&
+					strstr(CString(name).c_str(), "LDraw"))
+				{
+					MessageBeep(-1);
+				}
+				*/
+
+				//String name = strbuilder->str();
+
+//		m_data	{m_pData=0x11462630 "?get_Current@Clipboard@Gui@System@@KEPAV123@XZ5" m_nSize=0x0000002e m_nMaxSize=0x00000040 ...}	vector<char,System::__gc_allocator>
+
+//			  m_pData	0x10993188  "?get_Current@Clipboard@Gui@System@@SAPAV123@XZ"	const char *
+// "??_G?$ValueBinding@N@Gui@System@@QAE@Z5" m_nSize=0x00000026 m_nMaxSize=0x00000040 ...}
+//  ??_G?$ValueBinding@_N@Gui@System@@UAEPAXI@Z
+				auto it = mapfile.m_symbols.find(name);
+				if (it != mapfile.m_symbols.end())
+				{
+					DWORD typedesc_address = it->second - mapfile.m_load_address;
+
+					fwrite(&i, 1, 4, fp);
+					fwrite(&typedesc_address, 1, sizeof(DWORD), fp);
+				}
+				else
+				{
+				//	Console::get_Out() << "Couldn't find " << name << " in map file" << "\n";
+				}
+			}
+		}
+	}
+
+	uint32 end = ~0;
+	fwrite(&end, 1, 4, fp);
+}
+
+CodeCompExt int ParseMap(StringIn mapfilename, StringIn typeinfofilename, StringIn adfname)
+{
+	Console::get_Out() << "ParseMap..." << endl;
+
+	VCMangler::m_x64 = mapfilename.Find("x64") != -1;
+
+	MapReceiver mapreceiver;
+
+	VCMapFileParser parser;
+	if (parser.Parse(mapfilename, &mapreceiver) < 0)
+	{
+		Console::get_Out() << "map file '" << mapfilename << "' not found" << endl;
+		return -1;
+	}
+
+	IO::FileStream arfile(typeinfofilename, IO::FileMode_Open, IO::FileAccess_Read);
+	if (!arfile.IsHandleValid())
+	{
+		Console::get_Out() << "typeinfo file not found: " << "'" << typeinfofilename << "'" << endl;
+		return -1;
+	}
+
+	TypeArchive ar(TypeArchive::Mode_Load, &arfile, typeinfofilename);
+	ar.m_bSortedDecls = true;
+	ar.m_pGlobalNamespace = new Namespace;
+
+	TypeStuff* typestuff = new TypeStuff;
+	ar.m_typestuff = typestuff;
+
+	TypeLib* typelib = new TypeLib;
+	ar.m_typelib = typelib;
+
+	DWORD sig;
+
+	try
+	{
+		ar.ReadHeader();
+
+		sig = ar.m_typelib->m_id;
+
+		ar.MapObject(typelib);
+		typelib->Load(ar);
+	}
+	catch (std::exception& e)
+	{
+		Console::get_Out() << "Error" << endl;
+		Console::get_Out() << e.what();
+		return -1;
+	}
+	catch (Exception* e)
+	{
+		Console::get_Out() << "Error" << endl;
+		Console::get_Out() << e->get_Reason();
+		return -1;
+	}
+
+	for (auto it = mapreceiver.m_symbols.begin(); it != mapreceiver.m_symbols.end(); ++it)
+	{
+// "?getLocation@PointLight@x3d@System@@QAEV?$vector3@M@LDraw@3@XZ5"
+// "?getLocation@PointLight@x3d@System@@QAE?AV?$vector3@M@LDraw@3@XZ" m_nSize=64 }
+		/*
+		if (strstr(CString(name).c_str(), "getLocation") &&
+			strstr(CString(name).c_str(), "PointLight"))
+		{
+			MessageBeep(-1);
+		}
+		*/
+
+		/*
+			if (strstr(CString(name).c_str(), "TypedMultiMapCollection") &&
+				strstr(CString(name).c_str(), "NamedType") &&
+				strstr(CString(name).c_str(), "Enumerator") &&
+				strstr(CString(name).c_str(), "??_R0"))
+			{
+				MessageBeep(-1);
+			}
+
+			if (strstr(CString(name).c_str(), "vector3") &&
+				strstr(CString(name).c_str(), "LDraw"))
+			{
+				MessageBeep(-1);
+			}
+			*/
+
+// {m_pData=0x10cf9898 "?get_Name@NamedType@System@@QBEVString@2@XZ5" m_nSize=43 m_nMaxSize=64 ...}
+
+// {m_pData=0x108f0f80 "?get_Name@NamedType@System@@QBE?AVString@2@XZ" m_nSize=45 }	// This is what I want
+		/*
+		if (strstr(CString(name).c_str(), "Window") &&
+			strstr(CString(name).c_str(), "?0"))
+		{
+			MessageBeep(-1);
+		}
+		*/
+// m_data = {m_pData=0x108da198 "?get_Access@CDeclarator@System@@QBE?AW4AccessSpec@2@XZ" m_nSize=54 }
+		/*
+		if (strstr(CString(name).c_str(), "CreateBitmap"))
+		{
+			MessageBeep(-1);
+		}
+		*/
+
+//		m_pData	0x110000e8 "?get_currentTarget@Event@w3c@System@@QBEPAVEventTarget@23@XZ"	const char *
+
+// 0x1088ab78 "?get_Name@CDeclarator@System@@QAE?AVString@2@XZ"
+
+		/*
+		if (strstr(name->c_str(), "??_R0?A") &&
+			strstr(name->c_str(), "stub1") &&
+			strstr(name->c_str(), "Object"))
+		{
+			MessageBeep(-1);
+		}
+		*/
+
+
+		// This is what I want
+// ".?AV?$stub1@V?$binder1st@V?$mem_fun1_t@HVDependencyObject@UI@System@@PAVObject@3@@std@@@std@@XPAVObject@System@@@System@@"	char [1]
+
+
+
+//+	m_pData	0x147ae138 "??0?$Vector@PAVColumnDefinition@Grid@UI@System@@V?$vector@PAVColumnDefinition@Grid@UI@System@@V__gc_allocator@4@@4@@System@@QAE@XZ"
+
+		// This is what it should be
+// +	m_pData	0x102c0050 "??0?$Vector@PAVColumnDefinition@Grid@UI@System@@V?$vector@PAVColumnDefinition@Grid@UI@System@@V__gc_allocator@4@@@@System@@QAE@XZ"
+
+		// This is what I have
+		// +	m_pData	0x144788e8 "?set_ColumnDefinitions@Grid@UI@System@@QAEXPAVColumnDefinitionCollection@123@@Z"
+		// This is what it should be
+		// +	m_pData	0x1054fc58 "?set_ColumnDefinitions@Grid@UI@System@@QAEXPAV?$Vector@PAVColumnDefinition@Grid@UI@System@@V?$vector@PAVColumnDefinition@Grid@UI@System@@V__gc_allocator@4@@@@3@@Z"
+
+// "?s_registeredEvents@EventManager@UI@System@@0PAVRegisteredEvents@123@A" m_nSize=70 }	array<char const >
+// "?s_registeredEvents@EventManager@UI@System@@2PAVRegisteredEvents@123@A" m_nSize=70 }	array<char const >
+
+		/*
+		if (strstr(name->c_str(), "s_registeredEvents"))
+		{
+			MessageBeep(-1);
+		}
+		*/
+			
+
+#if 0
+		if (strstr(name->c_str(), "??_R0?A") && strstr(name->c_str(), "CXMLAttr2T") && strstr(name->c_str(), "CValueTypeWrapper") && strstr(name->c_str(), "CreateInstanceT") && strstr(name->c_str(), "SVGStringListCommaSeparated"))
+		{
+			MessageBeep(-1);
+		}
+#endif
+	}
+
+//	"??_R0?AV?$CXMLAttr2T@V?$CreateInstanceT@V?$CValueTypeWrapper@V?$CreateInstanceT@VSVGStringListCommaSeparated@Web@System@@@@@Web@System@@@@@Web@System@@@8"
+
+	// This is the one I'm after
+ // class System::Web::CXMLAttr2T<class CreateInstanceT<class System::Web::CValueTypeWrapper<class CreateInstanceT<class System::Web::SVGStringListCommaSeparated> > > > `RTTI Type Descriptor'
+
+	Console::Out << IO::Path::GetFullPath(adfname) << endl;
+
+	FILE* fp;
+	errno_t err = fopen_s(&fp, CString(adfname), "wb");
+	if (fp)
+	{
+		fwrite("AD00", 4, 1, fp);
+		fwrite(&sig, 4, 1, fp);
+
+		for (auto it = typestuff->m_typelibs.begin(); it != typestuff->m_typelibs.end(); ++it)
+		{
+			TypeLib* typelib = it->second;
+
+			char name[256] = {0};
+			strcpy_s(name, CString(typelib->m_typeinfo_filename));
+			fwrite(name, 1, 256, fp);
+
+			fwrite(&typelib->m_id, 4, 1, fp);
+
+			for (uint n = 0; n < typelib->m_types.size(); ++n)
+			{
+				NamedType* pType = typelib->m_types[n];
+
+// ".?AV?$stub1@V?$binder1st@V?$mem_fun1_t@HVDependencyObject@UI@System@@PAVObject@3@@std@@@std@@XPAVObject@System@@@System@@"	char [1]
+
+// "??_R0?AV?$stub1@P6AXPAVObject@System@@@ZXPAV12@@System@@@8" m_nSize=58 }	array<char const >
+
+				/*
+				if (pType->m_name == "SystemParameter")
+				{
+					MessageBeep(-1);
+				}
+				*/
+
+				/*
+				if (strstr(pType->m_qname->c_str(), "System::Web::CXMLAttr2T<CreateInstanceT"))//<System::Web::CValueTypeWrapper<class CreateInstanceT<System::Web::SVGStringListCommaSeparated>>>>")
+				{
+					MessageBeep(-1);
+				}
+
+				if (*pType->m_qname == "System::Web::CXMLAttr2T<CreateInstanceT<System::Web::CValueTypeWrapper<CreateInstanceT<System::Web::SVGStringListCommaSeparated>>>>")
+				{
+					MessageBeep(-1);
+				}
+				*/
+
+				IO::StringWriter strbuilder;
+				strbuilder << "??_R0?A";	// `RTTI Type Descriptor'
+				
+				VCMangler mangler;
+				mangler.m_n++;
+
+				mangler.MangleType(pType, strbuilder);
+				strbuilder << "@8";
+
+				String name = strbuilder.str();
+
+//".?AV?$Map@VString@System@@PAVCppSourceFile@2@AAV?$map@VString@System@@PAVCppSourceFile@2@V?$less@VString@System@@@2@V__gc_allocator@2@@2@@System@@"
+
+// "??_R0?AVEnumerator@?$TypedMultiMapCollection@VString@System@@PAVNamedType@2@AAV?$multimap@VString@System@@PAVNamedType@2@V?$less@VString@System@@@2@V__gc_allocator@2@@2@@System@@@85" m_nSize=180 m_nMaxSize=256 ...}
+
+// ??0?$pair@PAV?$red_black_node@PBXI@System@@_N@System@@QAE@ABQAV?$red_black_node@PBXI@1@AB_N@Z
+
+// ??_R0?AV?$pair@PAV?$red_black_node@PBVDeclarator@System@@I@System@@_N@System@@@8" m_nSize=80 m_nMaxSize=128 ...}
+
+				/*
+				if (strstr(CString(pType->m_qname).c_str(), "Declarator") &&
+					strstr(CString(pType->m_qname).c_str(), "red_black_node"))
+				{
+					MessageBeep(-1);
+				}
+
+				if (strstr(CString(pType->m_qname).c_str(), "red_black_node_base"))
+				{
+					MessageBeep(-1);
+				}
+				*/
+
+// ??_R0?AV?$red_black_node@VString@System@@PAVNamedType@2@@System@@@8"
+
+// ??_R0?AV?$red_black_node@VString@System@@PEAVNamedType@2@@System@@@8
+
+				auto it = mapreceiver.m_symbols.find(name);
+				if (it != mapreceiver.m_symbols.end())
+				{
+
+				//	?get_Name@CDeclarator@System@@QAE?AVString@2@XZ
+
+					/*
+					if (strstr(pType->m_qname->c_str(), "System::Web::CXMLAttr2T<CreateInstanceT"))//<System::Web::CValueTypeWrapper<class CreateInstanceT<System::Web::SVGStringListCommaSeparated>>>>")
+					{
+						MessageBeep(-1);
+					}
+					if (strstr(pType->m_qname->c_str(), "get_currentTarget"))//<System::Web::CValueTypeWrapper<class CreateInstanceT<System::Web::SVGStringListCommaSeparated>>>>")
+					{
+						MessageBeep(-1);
+					}
+					*/
+
+					DWORD typedesc_address = it->second - mapreceiver.m_load_address;
+
+					fwrite(&n, 1, 4, fp);
+					fwrite(&typedesc_address, 1, sizeof(DWORD), fp);
+				}
+				else
+				{
+				//	Console::get_Out() << "Couldn't find " << name << " in map file" << "\n";
+				}
+			}
+
+			uint32 end = ~0;
+			fwrite(&end, 1, 4, fp);
+		}
+
+		char name[256] = {0};
+		fwrite(name, 1, 256, fp);
+
+		for (auto it = mapreceiver.m_symbols.begin(); it != mapreceiver.m_symbols.end(); ++it)
+		{
+			String name = it->first;
+			DWORD address = it->second - mapreceiver.m_load_address;
+
+			if (name.BeginsWith("??_R0"))
+			{
+				const char* cstr = name.c_str();
+				Type* pType = DemangleNameVC(ar.m_pGlobalNamespace, VCMangler::m_x64 == 1, cstr + 5);
+
+				if (pType)
+				{
+					Console::get_Out() << cstr + 5 << "; " << pType->ToString() << endl;
+
+					fwrite(&address, 4, 1, fp);
+					fprintf(fp, "%s\n", cstr + 5);
+				}
+			}
+		}
+		{
+			DWORD address = 0;
+			fwrite(&address, 4, 1, fp);
+		}
+
+		for (uint n = 0; n < ar.m_typelib->m_types.size(); ++n)
+		{
+			NamedType* pType = ar.m_typelib->m_types[n];
+			ClassType* pClass = pType->AsClass();
+			if (pClass)
+			{
+				Write(mapreceiver, fp, pClass);
+			}
+		}
+
+		for (auto it = ar.m_typelib->m_globals.begin(); it != ar.m_typelib->m_globals.end(); ++it)
+		{
+			Declarator* decl = *it;
+			if (decl->m_pType->get_Kind() == type_function)
+			{
+				Write(mapreceiver, fp, decl);
+			}
+		}
+
+#if 0
+		for (auto it = mapreceiver.m_symbols.begin(); it != mapreceiver.m_symbols.end(); ++it)
+		{
+			String name = it->first;
+			DWORD address = it->second - mapreceiver.m_load_address;
+
+			if (name.BeginsWith("??_R4"))	// `RTTI Complete Object Locator'
+			{
+			//	const char* cstr = name.c_str();
+			//	Type* pType = DemangleNameVC(ar.m_pGlobalNamespace, VCMangler::m_x64 == 1, cstr + 5);
+
+			//	if (pType)
+				{
+					fwrite(&address, 4, 1, fp);
+				//	fprintf(fp, "%s\n", cstr + 5);
+				}
+			}
+		}
+		{
+			DWORD address = 0;
+			fwrite(&address, 4, 1, fp);
+		}
+#endif
+
+		fclose(fp);
+	}
+	else
+	{
+		Console::get_Out() << "Failed to create file " << adfname << "\n";
+		return -1;
+	}
+
+	return 0;
+}
+
+}	// System

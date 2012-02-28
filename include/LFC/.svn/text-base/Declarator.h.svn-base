@@ -1,0 +1,413 @@
+namespace System
+{
+
+class LFCEXT Declarator : public Object
+{
+public:
+	CTOR Declarator();
+	CTOR Declarator(Type* pType, StringIn name);
+
+	uint get_bitOffset() const;
+	uint get_bitSize() const;
+
+#if 0
+	union
+	{
+	//	CExpression* m_pInitializerExpr;
+	//	_FunctionBody* m_pBody;
+		T_Declarator* m_pBody;
+		//CToken* m_stringtok;
+		struct
+		{
+			char* data;
+			int len;
+		}
+		m_string;
+	};
+#endif
+//	std::vector<CTStatement*> m_statementList;
+//	T_stmList_ *m_statementList;
+
+	String get_QName() const;
+
+	String get_Name() const
+	{
+		return m_name;
+	}
+
+	Type* get_Type() const
+	{
+		return m_pType;
+	}
+
+	AccessSpec get_Access() const
+	{
+		return m_access;
+	}
+
+	void set_Access(AccessSpec access)
+	{
+		ASSERT(access != AccessSpec_Unspecified);
+		m_access = access;
+	}
+
+	bool get_IsTypedef() const
+	{
+		return m_typedef;
+	}
+
+	bool get_IsStatic() const
+	{
+		return m_static;
+	}
+
+	NamespaceType* GetClass()
+	{
+		return m_pOwnerScope->m_pNamespace;
+	}
+// 
+	String MangleName();
+	bool Equals(const Declarator& other) const;
+	String ToString() override;
+
+	IO::TextWriter& Write(IO::TextWriter& stream) const;
+	IO::TextWriter& WriteFunctionIdentity(IO::TextWriter& stream) const;
+
+	void Load(bool bMember, TypeArchive& ar);
+	void Store(bool bMember, TypeArchive& ar) const;
+
+	void void_invoke_function(const void* args, size_t sz) const;
+	void* pointer_invoke_function(const void* args, size_t sz) const;
+	int32 int32_invoke_function(const void* args, size_t sz) const;
+	int64 int64_invoke_function(const void* args, size_t sz) const;
+	float float_invoke_function(const void* args, size_t sz) const;
+	double double_invoke_function(const void* args, size_t sz) const;
+	void struct_invoke_function(const void* args, size_t sz, void* retaddress) const;
+
+	void void_invoke_function(const array<Variant>& args) const;
+	void void_invoke_method(void* thisptr, const array<Variant>& args) const;
+
+	void void_invoke_method(void* thisptr) const;
+
+	void VerifyImplemented() const throw (SystemException*);
+
+	Type* get_ReturnType()
+	{
+		FunctionType* pFunType = m_pType->GetFunction();
+		if (pFunType == NULL)
+		{
+			raise(SystemException("not a function"));
+		}
+
+		return pFunType->get_ReturnType();
+	}
+
+#ifndef __LERSTAD__
+
+	template<class arg0_t>
+	void void_invoke_method(void* thisptr, arg0_t arg0) const throw (SystemException*)
+	{
+		FunctionType* pFunType = m_pType->GetFunction();
+
+		if (pFunType)
+		{
+			VerifyImplemented();
+
+	#ifdef _M_IX86
+
+			void_invoke_method32(GetAddress(), thisptr, &arg0, sizeof(arg0));
+
+	#elif _M_X64
+
+			int64 args_stack[4];
+			int64* p = args_stack;
+			*p++ = (ULONG_PTR)thisptr;
+			*p++ = (ULONG_PTR)arg0;
+			size_t nargs = 4;	// always at least 4
+
+			(void)int64_invoke_function_fastcall64(GetAddress(), args_stack, nargs);
+	#else
+		#error "Unknown OS"
+	#endif
+		}
+		else
+		{
+			raise(SystemException("declarator not a function"));
+		}
+	}
+
+	template<class arg0_t, class arg1_t>
+	void void_invoke_method(void* thisptr, arg0_t arg0, arg1_t arg1) const throw (SystemException*)
+	{
+		FunctionType* pFunType = m_pType->GetFunction();
+
+		if (pFunType)
+		{
+			VerifyImplemented();
+
+	#ifdef _M_IX86
+
+			// TODO
+			ASSERT(0);
+
+			void_invoke_method32(GetAddress(), thisptr, &arg0, sizeof(arg0));
+
+	#elif _M_X64
+
+			int64 args_stack[4];
+			int64* p = args_stack;
+			*p++ = (ULONG_PTR)thisptr;
+			*p++ = (ULONG_PTR)arg0;
+			*p++ = (ULONG_PTR)arg1;
+			size_t nargs = 4;	// always at least 4
+
+			(void)int64_invoke_function_fastcall64(GetAddress(), args_stack, nargs);
+	#else
+		#error "Unknown OS"
+	#endif
+		}
+		else
+		{
+			raise(SystemException("declarator not a function"));
+		}
+	}
+
+	/*
+	template<> inline void invoke_method<void>(const void* args, uint32 sz)
+	{
+		void_invoke_function(args, sz);
+	}
+
+	template<> inline void* invoke_method<void*>(const void* args, uint32 sz)
+	{
+		return pointer_invoke_function(args, sz);
+	}
+
+	template<> inline bool invoke_method<bool>(const void* args, uint32 sz)
+	{
+		ubyte val = (ubyte)int32_invoke_function(args, sz);
+		ASSERT((val & ~1) == 0);
+		return val & 1;
+	}
+	*/
+
+private:
+	// helper class
+	template<class T> class getter
+	{
+	public:
+		static T get(const Declarator* decl, const void* args, size_t sz)
+		{
+			T value;
+			decl->struct_invoke_function(args, sz, &value);
+			return value;
+		}
+	};
+
+	template<class T> class getter<T*>
+	{
+	public:
+		static T* get(const Declarator* decl, const void* args, size_t sz)
+		{
+			return (T*)decl->pointer_invoke_function(args, sz);
+		}
+	};
+
+	template<class T> class getter<T&>
+	{
+	public:
+		static T& get(const Declarator* decl, const void* args, size_t sz)
+		{
+			return *(T*)decl->pointer_invoke_function(this, args, sz);
+		}
+	};
+
+public:
+	template<class T> T invoke_function(const void* args, size_t sz) const
+	{
+		return getter<T>::get(this, args, sz);
+	}
+
+	template<> inline void invoke_function<void>(const void* args, size_t sz) const
+	{
+		void_invoke_function(args, sz);
+	}
+
+	template<> inline bool invoke_function<bool>(const void* args, size_t sz) const
+	{
+		ubyte val = (ubyte)int32_invoke_function(args, sz);
+		ASSERT((val & ~1) == 0);
+		return val & 1;
+	}
+
+	template<> inline char invoke_function<char>(const void* args, size_t sz) const
+	{
+		return (char)int32_invoke_function(args, sz);
+	}
+
+	template<> inline wchar_t invoke_function<wchar_t>(const void* args, size_t sz) const
+	{
+		return (wchar_t)int32_invoke_function(args, sz);
+	}
+
+	template<> inline signed char invoke_function<signed char>(const void* args, size_t sz) const
+	{
+		return (signed char)int32_invoke_function(args, sz);
+	}
+
+	template<> inline unsigned char invoke_function<unsigned char>(const void* args, size_t sz) const
+	{
+		return (unsigned char)int32_invoke_function(args, sz);
+	}
+
+	template<> inline short invoke_function<short>(const void* args, size_t sz) const
+	{
+		return (short)int32_invoke_function(args, sz);
+	}
+
+	template<> inline unsigned short invoke_function<unsigned short>(const void* args, size_t sz) const
+	{
+		return (unsigned short)int32_invoke_function(args, sz);
+	}
+
+	template<> inline int invoke_function<int>(const void* args, size_t sz) const
+	{
+		return int32_invoke_function(args, sz);
+	}
+
+	template<> inline unsigned int invoke_function<unsigned int>(const void* args, size_t sz) const
+	{
+		return (unsigned int)int32_invoke_function(args, sz);
+	}
+
+#if ULONG_MAX == 0xffffffffUL
+
+	template<> inline long invoke_function<long>(const void* args, size_t sz) const
+	{
+		return int32_invoke_function(args, sz);
+	}
+
+	template<> inline unsigned long invoke_function<unsigned long>(const void* args, size_t sz) const
+	{
+		return (unsigned long)int32_invoke_function(args, sz);
+	}
+
+#else
+
+	template<> inline long invoke_function<long>(const void* args, size_t sz) const
+	{
+		return int64_invoke_function(args, sz);
+	}
+
+	template<> inline unsigned long invoke_function<unsigned long>(const void* args, size_t sz) const
+	{
+		return (unsigned long)int64_invoke_function(args, sz);
+	}
+
+#endif
+
+	template<> inline long long invoke_function<long long>(const void* args, size_t sz) const
+	{
+		return int64_invoke_function(args, sz);
+	}
+
+	template<> inline unsigned long long invoke_function<unsigned long long>(const void* args, size_t sz) const
+	{
+		return (uint64)int64_invoke_function(args, sz);
+	}
+
+	template<> inline float invoke_function<float>(const void* args, size_t sz) const
+	{
+		return float_invoke_function(args, sz);
+	}
+
+	template<> inline double invoke_function<double>(const void* args, size_t sz) const
+	{
+		return double_invoke_function(args, sz);
+	}
+
+	template<> inline long double invoke_function<long double>(const void* args, size_t sz) const
+	{
+		return double_invoke_function(args, sz);
+	}
+
+#endif
+
+	ULONG_PTR GetAddress() const
+	{
+		if (m_address == ~0) return ~0;
+		ASSERT(m_pModule);
+		return (ULONG_PTR)m_pModule->GetModuleInstance() + m_address;
+	}
+
+	bool IsImplemented() const
+	{
+		if (m_address == ~0) return false;
+		ASSERT(m_pModule);
+		return true;
+	}
+
+public:
+
+	CppSourceFile* m_sourcefile;
+	list<Declarator*>::iterator m_sourcefile_it;
+	int m_sourceline;
+	int m_sourcecolumn;
+	int m_charoffset_start;	// TODO ??
+	int m_charoffset_end;	// TODO ??
+
+	String m_name;
+	Scope* m_pOwnerScope;	// pointer back to scope that owns this declaration
+	Type* m_pType;
+	Module* m_pModule;
+	SExp* m_initVal;	// static const member
+
+	int m_alignment;	// member variable
+	uint8 m_bitoffset;	// member variable
+	uint8 m_bitlength;	// member variable
+
+	uint32 m_offset;	// offset if this is a member of a struct/class
+	uint32 m_address;	// relative to m_pModule
+
+	AccessSpec m_access : 2;	// 0=private, 1=protected, 2=public
+	uint8 m_localVar : 2;	// 0=false, 1=true, 2=enum
+	uint8 m_kind : 2;	// 0=method,1=propertyget,2=propertyset // function
+	uint8 m_pad : 2;
+
+	bool m_referenced : 1;
+	bool m_defined : 1;
+	bool m_typedef : 1;
+	bool m_static : 1;
+	bool m_fwd : 1;
+	bool m_virtual : 1;	// only-function
+	bool m_cpp_linkage : 1;	// only-function
+	bool m_abstract : 1;	// only-function
+
+	//non-virtual=0
+	//virtual-introduce=1
+	//virtual-introduce-abstract=2
+	//virtual-override=3
+
+//	int m_reg;
+
+#if 0
+// libcall
+	class libcall
+	{
+	public:
+		inline libcall()
+		{
+			m_reg = -1;
+		}
+		int m_reg;
+	}
+	m_libcall;
+#endif
+};
+
+inline bool decl_offset_less_than(Declarator* x, Declarator* y)
+{
+	return x->m_offset < y->m_offset;
+}
+
+}	// System

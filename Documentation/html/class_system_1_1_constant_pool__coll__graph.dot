@@ -1,0 +1,46 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::ConstantPool",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node4 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_constantPool" ,fontname="Helvetica"];
+  Node4 [label="System::vector\< Variant \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1vector.html"];
+  Node5 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_allocator" ,fontname="Helvetica"];
+  Node5 [label="System::__gc_allocator",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__allocator.html"];
+  Node6 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pData" ,fontname="Helvetica"];
+  Node6 [label="System::Variant",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_variant.html"];
+  Node7 -> Node6 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pType" ,fontname="Helvetica"];
+  Node7 [label="System::Type",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_type.html"];
+  Node8 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="System::TypeSerializable",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_type_serializable.html"];
+  Node2 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 -> Node7 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pointerToThis" ,fontname="Helvetica"];
+  Node9 [label="System::PointerType",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_pointer_type.html"];
+  Node7 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 -> Node9 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pPointerTo" ,fontname="Helvetica"];
+  Node10 -> Node7 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_referenceToThis" ,fontname="Helvetica"];
+  Node10 [label="System::ReferenceType",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_reference_type.html"];
+  Node7 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 -> Node10 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pPointerTo" ,fontname="Helvetica"];
+  Node11 -> Node7 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_rvalueReferenceToThis" ,fontname="Helvetica"];
+  Node11 [label="System::RValueReferenceType",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_r_value_reference_type.html"];
+  Node7 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 -> Node11 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pPointerTo" ,fontname="Helvetica"];
+  Node12 -> Node7 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_volatileToThis\nm_constToThis" ,fontname="Helvetica"];
+  Node12 [label="System::ModifierType",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_modifier_type.html"];
+  Node13 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="System::_CVType",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1___c_v_type.html"];
+  Node7 -> Node13 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 -> Node12 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pPointerTo" ,fontname="Helvetica"];
+  Node2 -> Node7 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_javaType\nm_xsType" ,fontname="Helvetica"];
+  Node14 -> Node6 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" u" ,fontname="Helvetica"];
+  Node14 [label="System::VariantValue",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$union_system_1_1_variant_value.html"];
+  Node15 -> Node14 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" punk_val" ,fontname="Helvetica"];
+  Node15 [label="IUnknown",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$struct_i_unknown.html"];
+  Node2 -> Node14 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" pObject" ,fontname="Helvetica"];
+}

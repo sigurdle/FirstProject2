@@ -1,0 +1,6 @@
+// PrefsTabsDlg.cpp : Implementation of CPrefsTabsDlg
+#include "stdafx.h"
+#include "PrefsTabsDlg.h"
+
+/////////////////////////////////////////////////////////////////////////////
+// CPrefsTabsDlg

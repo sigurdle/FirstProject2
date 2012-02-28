@@ -1,0 +1,29 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::Web::GenericDocument",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Web::Document",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_document.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Web::ChildNode",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_child_node.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::Web::Node",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_node.html"];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node6 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node7 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="System::Web::EventTarget",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_event_target.html"];
+  Node8 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="System::Web::CLDOMEventTargetImpl",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_c_l_d_o_m_event_target_impl.html"];
+  Node9 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="System::Web::DocumentEvent",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_document_event.html"];
+  Node10 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="System::Web::DocumentRangeImpl\< GenericDocument \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_document_range_impl.html"];
+  Node11 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="System::Web::DocumentRangeImplImpl",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_document_range_impl_impl.html"];
+  Node12 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="System::XPath::XPathEvaluator",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_x_path_1_1_x_path_evaluator.html"];
+}

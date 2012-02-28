@@ -1,0 +1,102 @@
+#include "stdafx.h"
+#include "LFC.h"
+#include "Type.h"
+#include "BitStream.h"
+
+namespace System
+{
+
+// static
+uint PointerType::default_sizeofptr = sizeof(void*);
+
+PointerType::PointerType() : m_pPointerTo(nullptr)
+{
+}
+
+PointerType::PointerType(Type* pPointerTo) : m_pPointerTo(pPointerTo)
+{
+}
+
+bool PointerType::IsConst() const
+{
+	return false;
+}
+
+bool PointerType::IsVolatile() const
+{
+	return false;
+}
+
+
+uint PointerType::get_sizeof(uint sizeofptr) const
+{
+	if (sizeofptr == 0)
+		return default_sizeofptr;
+	else
+		return sizeofptr;
+}
+
+bool PointerType::Equals(const PointerType& other) const
+{
+	return GetPointerTo()->Equals(*(Type*)other.GetPointerTo());
+}
+
+void PointerType::Load(TypeArchive& ar)
+{
+	ar >> m_pPointerTo;
+}
+
+void PointerType::Store(TypeArchive& ar) const
+{
+	ar << (Type*)m_pPointerTo;
+}
+
+Type* PointerType::Clone() const
+{
+	PointerType* pType = new PointerType(m_pPointerTo);
+	return pType;
+}
+
+IO::TextWriter& PointerType::Write(IO::TextWriter& stream) const
+{
+	Type* pType = m_pPointerTo;
+	while (pType && pType->get_Kind() == type_typedef)
+	{
+		pType = ((Typedef*)pType)->m_pType;
+	}
+
+	if (pType == NULL)
+	{
+		stream << "(null) *";
+	}
+	else
+	{
+		if (pType->get_Kind() == type_function)
+		{
+			pType->AsFunction()->m_pReturnType->Write(stream);
+			stream << "(*)";
+			pType->AsFunction()->m_parameters.Write(stream);
+		}
+		else
+		{
+			pType->Write(stream);
+			stream << " *";
+		}
+	}
+
+	return stream;
+}
+
+String PointerType::ToString()
+{
+	IO::StringWriter strbuilder;
+	Write(strbuilder);
+	return strbuilder.str();
+}
+
+TypeSerializable::Class_Type PointerType::GetSerializableType() const
+{
+	return Class_PointerType;
+}
+
+}	// System

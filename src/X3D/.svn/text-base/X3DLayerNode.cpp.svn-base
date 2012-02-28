@@ -1,0 +1,103 @@
+#include "stdafx.h"
+#include "X3D2.h"
+#include "NavigationInfo.h"
+#include "Fog.h"
+#include "Viewpoint.h"
+
+namespace System
+{
+namespace x3d
+{
+
+IMP_X3DFIELD1(X3DLayerNode, SFBool, isPickable, inputOutput, true)
+
+NodeType* X3DLayerNode::GetNodeType()
+{
+	static X3DFieldDefinition* fields[] =
+	{
+		get_isPickableFieldDef(),
+	};
+
+	static NodeType nodeType(NULL, typeid(X3DLayerNode), fields, _countof(fields), baseClass::GetNodeType());
+	return &nodeType;
+}
+
+X3DLayerNode::X3DLayerNode(NodeType* nodeType) : X3DNode(nodeType),
+	m_isPickable(new SFBool(get_isPickableFieldDef(), this))
+{
+}
+
+void X3DLayerNode::InitStacks()
+{
+	for (uint i = 0; i < m_scene->m_nodes.GetSize(); ++i)
+	{
+		X3DNode* node = m_scene->m_nodes[i];
+
+		if (X3DViewpointNode* viewpoint = dynamic_cast<X3DViewpointNode*>(node))
+		{
+			if (m_viewpointStack.size() == 0)
+			{
+				X3DViewpointNode* pViewpoint = viewpoint;
+				pViewpoint->m_set_bind->m_value = true;
+				pViewpoint->Change(pViewpoint->m_set_bind);
+
+				//m_scene->m_viewpointStack.Add(viewpoint.Detach());
+			}
+		}
+		else if (NavigationInfo* navigationinfo = dynamic_cast<NavigationInfo*>(node))
+		{
+			if (m_navigationinfoStack.size() == 0)
+			{
+				navigationinfo->m_set_bind->m_value = true;
+				m_navigationinfoStack.push(navigationinfo);
+			}
+		}
+		else if (Fog* fog = dynamic_cast<Fog*>(node))
+		{
+			if (m_fogStack.size() == 0)
+			{
+				fog->m_set_bind->m_value = true;
+				m_fogStack.push(fog);
+			}
+		}
+		else if (X3DBackgroundNode* bg = dynamic_cast<X3DBackgroundNode*>(node))
+		{
+			if (m_backgroundStack.size() == 0)
+			{
+				bg->m_set_bind->m_value = true;
+				m_backgroundStack.push(bg);
+			}
+		}
+	}
+
+	if (m_viewpointStack.size() == 0)
+	{
+		// Create a default viewpoint with default parameters
+		Viewpoint* pViewpoint = dynamic_cast<Viewpoint*>(m_scene->createNode(WSTR("Viewpoint")));
+
+		pViewpoint->m_set_bind->m_value = true;
+		pViewpoint->Change(pViewpoint->m_set_bind);
+
+	//	m_viewpointStack.Add(viewpoint.Detach());
+	}
+
+	{
+		X3DViewpointNode* pViewpoint = m_viewpointStack.top();
+		/*
+	// Initialize these
+		m_newPosition = pViewpoint->m_position->m_value;
+		m_newOrientation = pViewpoint->m_orientation->m_value;
+		*/
+	}
+
+	if (m_navigationinfoStack.size() == 0)
+	{
+		// Create a default NavigationInfo with default parameters
+		NavigationInfo* navigationinfo = dynamic_cast<NavigationInfo*>(m_scene->createNode(WSTR("NavigationInfo")));
+
+		m_navigationinfoStack.push(navigationinfo);
+	}
+}
+
+}
+}

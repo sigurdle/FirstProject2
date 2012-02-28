@@ -1,0 +1,262 @@
+namespace System
+{
+namespace gm
+{
+
+template<class TYPE> class BBox
+{
+public:
+	inline CTOR BBox()
+	{
+		left = 0;
+		top = 0;
+		right = 0;
+		bottom = 0;
+	}
+
+	/*
+	inline CTOR BBox(const BBox<TYPE>& other)
+	{
+		left = other.left;
+		top = other.top;
+		right = other.right;
+		bottom = other.bottom;
+	}
+	*/
+
+	inline CTOR BBox(TYPE _left, TYPE _top, TYPE _right, TYPE _bottom)
+	{
+		left = _left;
+		top = _top;
+		right = _right;
+		bottom = _bottom;
+	}
+
+	inline CTOR BBox(const Point<TYPE>& topleft, const Point<TYPE>& bottomright)
+	{
+		left = topleft.X;
+		top = topleft.Y;
+		right = bottomright.X;
+		bottom = bottomright.Y;
+	}
+
+	inline CTOR BBox(const Rect<TYPE>& rect)
+	{
+		left = rect.GetLeft();
+		top = rect.GetTop();
+		right = rect.GetRight();
+		bottom = rect.GetBottom();
+	}
+
+	inline operator Rect<TYPE> () const
+	{
+		return Rect<TYPE>(left, top, right-left, bottom-top);
+	}
+
+	static void Intersect(BBox<TYPE>& c,
+		const BBox<TYPE>& a,
+		const BBox<TYPE>& b)
+	{
+		c.right = MIN(a.right, b.right);
+		c.bottom = MIN(a.bottom, b.bottom);
+		c.left = MAX(a.left, b.left);
+		c.top = MAX(a.top, b.top);
+	}
+
+	static void Union(BBox<TYPE>& c,
+		const BBox<TYPE>& a,
+		const BBox<TYPE>& b)
+	{
+		c.right = MAX(a.right, b.right);
+		c.bottom = MAX(a.bottom, b.bottom);
+		c.left = MIN(a.left, b.left);
+		c.top = MIN(a.top, b.top);
+	}
+
+	/*
+	inline TYPE Width() const
+	{
+		return right-left;
+	}
+	*/
+
+	inline TYPE GetWidth() const
+	{
+		return right-left;
+	}
+
+	/*
+	inline TYPE Height() const
+	{
+		return bottom-top;
+	}
+	*/
+
+	inline TYPE GetHeight() const
+	{
+		return bottom-top;
+	}
+
+	inline Size<TYPE> GetSize() const
+	{
+		return Size<TYPE>(right-left, bottom-top);
+	}
+
+	inline Point<TYPE> GetTopLeft() const
+	{
+		return Point<TYPE>(left, top);
+	}
+
+	inline Point<TYPE> GetBottomRight() const
+	{
+		return Point<TYPE>(right, bottom);
+	}
+
+	void Normalize()
+	{
+		if (right < left)
+		{
+			TYPE t = left;
+			left = right;
+			right = t;
+		}
+
+		if (bottom < top)
+		{
+			TYPE t = top;
+			top = bottom;
+			bottom = t;
+		}
+	}
+
+	bool Contains(TYPE x, TYPE y) const
+	{
+		return x >= left && y >= top && x < right && y < bottom;
+	}
+
+	bool Contains(const Point<TYPE>& pt) const
+	{
+		return pt.X >= left && pt.Y >= top && pt.X < right && pt.Y < bottom;
+	}
+
+	bool IntersectsWith(const BBox<TYPE>& rect) const
+	{
+		return (left < rect.right &&
+			top < rect.bottom &&
+			right > rect.left &&
+			bottom > rect.top);
+	}
+
+	inline void SetEmpty()
+	{
+		left = 0;
+		top = 0;
+		right = 0;
+		bottom = 0;
+	}
+
+	inline void SetBBox(TYPE l, TYPE t, TYPE r, TYPE b)
+	{
+		left = l;
+		top = t;
+		right = r;
+		bottom = b;
+	}
+
+	inline void Inflate(TYPE dx, TYPE dy)
+	{
+		left -= dx;
+		right += dx;
+		top -= dy;
+		bottom += dy;
+	}
+
+	inline void Inflate(TYPE l, TYPE t, TYPE r, TYPE b)
+	{
+		left -= l;
+		right += r;
+		top -= t;
+		bottom += b;
+	}
+
+	/*
+	inline void Offset(TYPE dx, TYPE dy)
+	{
+		left += dx;
+		top += dy;
+		right += dx;
+		bottom += dy;
+	}
+
+	inline void Offset(const Point<TYPE> pt)
+	{
+		left += pt.X;
+		top += pt.Y;
+		right += pt.X;
+		bottom += pt.Y;
+	}
+	*/
+
+	inline void Translate(TYPE dx, TYPE dy)
+	{
+		left += dx;
+		top += dy;
+		right += dx;
+		bottom += dy;
+	}
+
+	inline void Translate(const Point<TYPE>& pt)
+	{
+		left += pt.X;
+		top += pt.Y;
+		right += pt.X;
+		bottom += pt.Y;
+	}
+
+	inline bool IsEmptyArea() const
+	{
+		return (right <= left) || (bottom <= top);
+	}
+
+	bool Union(const BBox<TYPE> *lprcSrc1, const BBox<TYPE> *lprcSrc2);
+
+	bool Equals(const BBox<TYPE>& other) const
+	{
+		return
+			left == other.left &&
+			top == other.top &&
+			right == other.right &&
+			bottom == other.bottom;
+	}
+
+	BBox<TYPE>& operator = (const Rect<TYPE>& rect)
+	{
+		left = rect.X;
+		top = rect.Y;
+		right = rect.GetRight();
+		bottom = rect.GetBottom();
+
+		return *this;
+	}
+
+	inline bool operator == (const BBox<TYPE>& other) const
+	{
+		return Equals(other);
+	}
+
+	inline bool operator != (const BBox<TYPE>& other) const
+	{
+		return !Equals(other);
+	}
+
+	TYPE left, top, right, bottom;
+};
+
+typedef BBox<int> BBoxi;
+typedef BBox<float> BBoxF;
+typedef BBox<float> BBoxf;
+typedef BBox<double> BBoxD;
+typedef BBox<double> BBoxd;
+
+}
+}

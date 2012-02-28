@@ -1,0 +1,195 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "winres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""winres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "1 TYPELIB ""UICustomizeMod.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "UICustomizeMod Module\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "UICustomizeMod\0"
+            VALUE "LegalCopyright", "Copyright 2002\0"
+            VALUE "OriginalFilename", "UICustomizeMod.DLL\0"
+            VALUE "ProductName", "UICustomizeMod Module\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "OLESelfRegister", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_PROJNAME            "UICustomizeMod"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Norwegian (Bokmal) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NOR)
+#ifdef _WIN32
+LANGUAGE LANG_NORWEGIAN, SUBLANG_NORWEGIAN_BOKMAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// REGISTRY
+//
+
+IDR_UICUSTOMIZE         REGISTRY DISCARDABLE    "UICustomize.rgs"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_TOOLBARSDLG DIALOG DISCARDABLE  0, 0, 204, 134
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Toolbars"
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "New...",IDC_NEWTOOLBAR,137,6,58,14
+    LISTBOX         IDC_TOOLBARS,9,7,117,118,LBS_SORT | LBS_OWNERDRAWFIXED | 
+                    LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_TABSTOP
+END
+
+IDD_COMMANDSDLG DIALOG DISCARDABLE  0, 0, 204, 134
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Commands"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Categories",IDC_STATIC,9,4,64,10
+    LTEXT           "Commands",IDC_STATIC,92,4,70,10
+    LISTBOX         IDC_COMMANDS_CATEGORIES,6,19,75,100,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_COMMANDS_COMMANDS,87,19,109,100,LBS_OWNERDRAWFIXED | 
+                    LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_TABSTOP
+END
+
+IDD_NEWTOOLBARDLG DIALOG DISCARDABLE  0, 0, 156, 54
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "New Toolbar"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_TOOLBARNAME,28,7,116,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",1,40,34,50,14
+    PUSHBUTTON      "Cancel",2,96,34,50,14
+    LTEXT           "Name",IDC_STATIC,4,8,23,11
+END
+
+IDD_KEYBOARDDLG DIALOG DISCARDABLE  0, 0, 204, 134
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Keyboard"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_KEYBOARD_CATEGORIES,6,14,81,67,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_KEYBOARD_COMMANDS,94,14,102,72,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_KEYBOARD_CURRENTSHORTCUTS,96,96,100,25,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "HotKey1",IDC_KEYBOARD_SHORTCUT,"msctls_hotkey32",
+                    WS_BORDER | WS_TABSTOP,12,97,70,14
+    LTEXT           "Categories:",IDC_STATIC,9,3,59,10
+    LTEXT           "Commands:",IDC_STATIC,93,1,52,10
+END
+
+#endif    // Norwegian (Bokmal) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "UICustomizeMod.tlb"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

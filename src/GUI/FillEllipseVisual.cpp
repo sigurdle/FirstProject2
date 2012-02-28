@@ -1,0 +1,57 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+IMP_DEPENDENCY_PROPERTY(float, FillEllipseVisual, Cx, 0.0f)
+IMP_DEPENDENCY_PROPERTY(float, FillEllipseVisual, Cy, 0.0f)
+IMP_DEPENDENCY_PROPERTY(float, FillEllipseVisual, Rx, 0.0f)
+IMP_DEPENDENCY_PROPERTY(float, FillEllipseVisual, Ry, 0.0f)
+IMP_DEPENDENCY_PROPERTY(Brush*, FillEllipseVisual, Brush, new SolidColorBrush(0,0,0))
+
+DependencyClass* FillEllipseVisual::get_Class()
+{
+	static DependencyClass depclass(typeid(thisClass), baseClass::get_Class());
+
+	static DependencyProperty* properties[] =
+	{
+		get_CxProperty(),
+		get_CyProperty(),
+		get_RxProperty(),
+		get_RyProperty(),
+		get_BrushProperty(),
+	};
+
+	return &depclass;
+}
+
+DependencyClass* FillEllipseVisual::pClass(get_Class());
+
+FillEllipseVisual::FillEllipseVisual() : Visual(get_Class())
+{
+}
+
+FillEllipseVisual::FillEllipseVisual(
+		typed<float> cx,
+		typed<float> cy,
+		typed<float> rx,
+		typed<float> ry,
+		typed<Brush*> brush) : Visual(get_Class())
+{
+	SetBinding(this, get_CxProperty(), cx);
+	SetBinding(this, get_CyProperty(), cy);
+	SetBinding(this, get_RxProperty(), rx);
+	SetBinding(this, get_RyProperty(), ry);
+	SetBinding(this, get_BrushProperty(), brush);
+}
+
+void FillEllipseVisual::Render(ManagedRenderContext renderContext)
+{
+	renderContext.FillEllipse(get_Cx(), get_Cy(), get_Rx(), get_Ry(), get_Brush());
+}
+
+}
+}

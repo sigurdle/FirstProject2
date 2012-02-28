@@ -1,0 +1,25 @@
+namespace System
+{
+namespace Gui
+{
+namespace Media3D
+{
+
+class GUIEXT Transform3D : public GeneralTransform3D
+{
+protected:
+	CTOR Transform3D(DependencyClass* depClass);
+
+public:
+
+	virtual D3DXMATRIX GetMatrix() abstract;
+	virtual D3DXVECTOR4 Transform(D3DXVECTOR3 v) override;
+
+	DEPENDENCY_CLASS_ABSTRACT(Transform3D, GeneralTransform3D)
+//	static DependencyClass* get_Class();
+//	typedef GeneralTransform3D baseClass;
+};
+
+}	// Media3D
+}	// Gui
+}	// System

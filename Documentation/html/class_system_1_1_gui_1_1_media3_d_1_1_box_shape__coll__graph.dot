@@ -1,0 +1,21 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::Gui::Media3D::BoxShape",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Gui::PrimitiveShape",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_primitive_shape.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node5 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_indexBuffer" ,fontname="Helvetica"];
+  Node5 [label="System::Graphics::IndexBuffer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_graphics_1_1_index_buffer.html"];
+  Node6 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_vertexDeclaration" ,fontname="Helvetica"];
+  Node6 [label="System::Graphics::VertexDeclaration",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_graphics_1_1_vertex_declaration.html"];
+  Node7 -> Node6 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" gl" ,fontname="Helvetica"];
+  Node7 [label="System::Graphics::VertexDeclarationGL",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_graphics_1_1_vertex_declaration_g_l.html"];
+  Node8 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_vertexBuffer" ,fontname="Helvetica"];
+  Node8 [label="System::Graphics::VertexBuffer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_graphics_1_1_vertex_buffer.html"];
+}

@@ -1,0 +1,388 @@
+#include "stdafx.h"
+#include "LFC.h"
+#include "parsenumber.h"
+
+namespace System
+{
+
+//Strip any leading, trailing, or intervening white space characters. 
+LFCEXT String stripspaces(StringIn s)
+{
+	ASSERT(0);
+	return nullptr;
+#if 0
+	int len = s.GetLength();
+	const WCHAR* p = s->c_str();
+
+	int i;
+	for (i = 0; i < len; i++)
+	{
+		if (iswspace(*p))
+			break;
+		p++;
+	}
+	if (i == len)
+	{
+		return s;
+	}
+
+	BufferImp<WCHAR> buffer;
+	StringBuilderW strbuilder(&buffer);
+
+	p = s->c_str();
+	while (len--)
+	{
+		if (!iswspace(*p))
+		{
+			strbuilder << *p;
+		}
+		p++;
+	}
+
+	return buffer.DetachToString();
+#endif
+}
+
+size_t GetSemicolonOrSpaceSepNumberArray(const WCHAR* str, vector<double>& values)
+{
+//	int len = str.GetLength();
+	const WCHAR* p = str;
+	int i = 0;
+
+	while (p[i])
+	{
+		while (p[i] && iswspace(p[i])) ++i;	// Skip spaces
+
+		WCHAR str_value[256];
+		int j = 0;
+
+		while (p[i] && (p[i] != ';') && !iswspace(p[i]))
+		{
+			if (j > 255) break;
+			str_value[j++] = p[i++];
+		}
+		str_value[j] = 0;	// null-terminate
+
+		while (p[i] && iswspace(p[i])) ++i;	// Skip spaces
+
+		if (p[i] == ';') ++i;
+
+		//str_value.TrimLeft();
+		//str_value.TrimRight();
+
+		ASSERT(0);
+#if 0
+		double value = atof(StringW(str_value));	// TODO, use getfnumber
+		values.Add(value);
+#endif
+	}
+
+	return values.GetSize();
+}
+
+LFCEXT size_t GetCommaOrSpaceSepNumberArray(StringIn str, vector<double>& values)
+{
+	if (str == nullptr) return 0;
+
+	CStringw cstr(str);
+	const WCHAR* p = cstr.c_str();
+	int i = 0;
+
+	while (p[i] && iswspace(p[i])) ++i;	// Skip spaces
+
+	while (p[i])
+	{
+		WCHAR str_value[256];
+		int j = 0;
+
+		while (p[i] && (p[i] != L',') && !iswspace(p[i]))
+		{
+			if (j == 255) break;
+			str_value[j++] = p[i++];
+		}
+		str_value[j] = 0;	// null-terminate
+
+		while (p[i] && iswspace(p[i])) ++i;	// Skip spaces
+
+		if (p[i] == ',') ++i;
+
+		double value = getfnumber(str_value);
+		values.Add(value);
+	}
+
+	return values.GetSize();
+}
+
+size_t GetCommaSepNumberArray(const OLECHAR* str, vector<double>& values)
+{
+	ASSERT(str);
+	const OLECHAR* p = str;
+
+	while (iswspace(*p)) ++p;	// Skip spaces
+
+	while (*p)
+	{
+		int j = 0;
+
+		double fval = getfnumber(&p);
+		if (p == nullptr) break;
+
+		values.Add(fval);
+
+		while (iswspace(*p)) ++p;
+
+		if (*p != L',') break;
+		++p;
+
+		while (iswspace(*p)) ++p;	// Skip spaces
+	}
+
+	return values.GetSize();
+}
+
+template<class ARR_TYPE> LFCEXT size_t GetSpaceSepStringArray(StringIn str, ARR_TYPE& values)
+{
+	if (str == nullptr) return 0;
+
+	size_t len = str.GetLength();
+	const WCHAR* p = str.GetData16();
+	size_t i = 0;
+
+	while (i < len && iswspace(p[i]))
+		++i;	// Skip spaces
+
+	//StringW str_value;	// putting it outside reuses the memory
+
+	while (i < len)
+	{
+		size_t start = i;
+
+		while (i < len && !iswspace(p[i]))
+		{
+			++i;
+		}
+
+		try
+		{
+
+			ASSERT(0);
+			String str_value;// = new StringW(string_copy(&p[start], i-start));
+
+			while (i < len && iswspace(p[i])) i++;	// Skip spaces
+
+			values.Add(str_value);
+		}
+		catch(int)
+		{
+			return -1;
+		}
+	}
+
+	return values.GetSize();
+}
+
+template LFCEXT size_t GetSpaceSepStringArray(StringIn, vector<String, std_allocator>&);
+template LFCEXT size_t GetSpaceSepStringArray(StringIn, vector<String, __gc_allocator>&);
+template LFCEXT size_t GetSpaceSepStringArray(StringIn, vector<String, grow_allocator>&);
+
+LFCEXT size_t GetCommaOrSpaceSepStringArray(StringIn str, vector<String>& values)
+{
+	const WCHAR* p = str.GetData16();
+	size_t i = 0;
+
+	size_t len = str.GetLength();
+
+	while (i < len && iswspace(p[i])) ++i;	// Skip spaces
+
+	//StringW str_value;	// putting it outside reuses the memory
+
+	while (i < len)
+	{
+		String str_value;// = new StringW();//SYSSTR("");
+// TODO
+		while (i < len && !iswspace(p[i]))
+		{
+			str_value += p[i];
+			++i;
+		}
+
+		while (i < len && iswspace(p[i])) ++i;	// Skip spaces
+
+		values.Add(str_value);
+	}
+
+	return values.GetSize();
+}
+
+LFCEXT size_t GetSemicolonSepStringArray(StringIn str, vector<String>& values)
+{
+	const WCHAR* p = str.GetData16();
+	size_t i = 0;
+	size_t len = str.GetLength();
+
+	while (i < len && iswspace(p[i])) ++i;	// Skip spaces
+
+	//StringW str_value;	// putting it outside reuses the memory
+
+	while (i < len)
+	{
+		size_t start = i;
+
+		while (i < len && (p[i] != L';')/* && !iswspace(p[i])*/)
+		{
+			++i;
+		}
+
+		ASSERT(0);
+		String str_value;// = new StringW(string_copy(&p[start], i-start));
+
+	//	str_value->TrimRight();
+
+		values.push_back(str_value);
+
+		if (i == len) break;
+		if (p[i] != L';') break;	// Error
+
+		++i;	// skip ';'
+
+		while (i < len && iswspace(p[i])) ++i;	// Skip spaces
+	}
+
+	return values.GetSize();
+}
+
+#if 0
+int GetSemicolonSepStringArray(const OLECHAR* str, CArray<CAdapt<CComBSTR>,CAdapt<CComBSTR> >& values)
+{
+	const OLECHAR* p = str;
+	int i = 0;
+
+	while (iswspace(p[i])) i++;	// Skip spaces
+
+	StringW str_value;	// putting it outside reuses the memory
+
+	while (p[i])
+	{
+		str_value = SYSSTR("");
+
+		while (p[i] && (p[i] != L';') && (p[i] != L' '))
+		{
+			str_value += p[i];
+			i++;
+		}
+
+		while (p[i] == L' ') i++;	// Skip spaces
+
+		if (p[i] == ';') i++;
+
+		while (p[i] == L' ') i++;	// Skip spaces
+
+		values.Add(CComBSTR(str_value));
+	}
+
+	return values.GetSize();
+}
+#endif
+
+LFCEXT size_t GetCommaSepStringArray(StringIn str, vector<String>& values)
+{
+	if (str == nullptr) return 0;
+
+	const WCHAR* p = str.GetData16();
+	size_t i = 0;
+
+	while (p[i] == L' ') ++i;	// Skip spaces
+
+	while (p[i])
+	{
+		String str_value;// = new StringW();
+		while (p[i] && (p[i] != ',') && (p[i] != L' '))
+		{
+			ASSERT(0);
+#if 0
+			*str_value += p[i];
+#endif
+			++i;
+		}
+
+		while (p[i] == L' ') ++i;	// Skip spaces
+
+		if (p[i] == ',') ++i;
+
+		while (p[i] == L' ') ++i;	// Skip spaces
+
+		values.Add(str_value);
+	}
+
+	return values.GetSize();
+}
+
+#if 0
+int GetSpaceSepStringArray(const OLECHAR* str, CArray<CAdapt<CComBSTR>,CAdapt<CComBSTR> >& values)
+{
+	const OLECHAR* p = str;
+	int i = 0;
+
+	while (iswspace(p[i])) i++;	// Skip spaces
+
+	StringW str_value;	// putting it outside reuses the memory
+
+	while (p[i])
+	{
+		str_value = OLESTR("");
+
+		while (p[i] && !iswspace(p[i]))
+		{
+			str_value += p[i];
+			i++;
+		}
+
+		while (iswspace(p[i])) i++;	// Skip spaces
+
+		values.Add(str_value);
+	}
+
+	return values.GetSize();
+}
+
+int GetCommaSepStringArray(const OLECHAR* str, CArray<CAdapt<CComBSTR>,CAdapt<CComBSTR> >& values)
+{
+	const OLECHAR* p = str;
+	int i = 0;
+
+	while (p[i] == L' ') i++;	// Skip spaces
+
+	while (p[i])
+	{
+		StringW str_value;
+		while (p[i] && (p[i] != ',') && (p[i] != L' '))
+		{
+			str_value += p[i];
+			i++;
+		}
+
+		while (p[i] == L' ') i++;	// Skip spaces
+
+		if (p[i] == ',') i++;
+
+		while (p[i] == L' ') i++;	// Skip spaces
+
+		values.Add(CComBSTR(str_value));
+	}
+
+	return values.GetSize();
+}
+
+extern "C"
+{
+
+int strnicmp(const char*, const char*, int)
+{
+	ASSERT(0);
+}
+
+}
+
+#endif
+
+}	// System

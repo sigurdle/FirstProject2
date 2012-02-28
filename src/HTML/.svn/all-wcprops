@@ -1,0 +1,527 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML
+END
+PHTMLSelectElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/PHTMLSelectElement.cpp
+END
+HTMLParamElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLParamElement.cpp
+END
+SMILTopLayoutElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SMILTopLayoutElement.cpp
+END
+PSMILRootLayoutElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/PSMILRootLayoutElement.cpp
+END
+PHTMLImageElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/PHTMLImageElement.cpp
+END
+HTMLDocument.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLDocument.cpp
+END
+HTMLObjectElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLObjectElement.cpp
+END
+SVGPathSegCurvetoCubicSmoothAbs.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegCurvetoCubicSmoothAbs.cpp
+END
+SVGPathSegCurvetoQuadraticSmoothRel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegCurvetoQuadraticSmoothRel.cpp
+END
+HTMLMediaElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/HTMLMediaElement.cpp
+END
+HTMLElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLElement.cpp
+END
+SVGPathSegCurvetoCubicAbs.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegCurvetoCubicAbs.cpp
+END
+NewsMLElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/NewsMLElement.cpp
+END
+dllmain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/dllmain.cpp
+END
+SMILRegionElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SMILRegionElement.cpp
+END
+PHTMLIFrameElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/PHTMLIFrameElement.cpp
+END
+SVGPathSegCurvetoQuadraticRel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegCurvetoQuadraticRel.cpp
+END
+HTML2.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/HTML2.cpp
+END
+SVGPathSegLinetoHorizontalRel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegLinetoHorizontalRel.cpp
+END
+NewsMLDocument.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/NewsMLDocument.cpp
+END
+SVGPathSegArcRel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegArcRel.cpp
+END
+SVGPathSegLinetoVerticalAbs.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegLinetoVerticalAbs.cpp
+END
+PathSegListUtils.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/PathSegListUtils.cpp
+END
+SVGPathSegMovetoRel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegMovetoRel.cpp
+END
+PHTMLFrameElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/PHTMLFrameElement.cpp
+END
+ASXMLSchemaGlobalElementDefinition.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/ASXMLSchemaGlobalElementDefinition.cpp
+END
+SVGPathSegLinetoAbs.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegLinetoAbs.cpp
+END
+HTMLSelectElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLSelectElement.cpp
+END
+SMILRootLayoutElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SMILRootLayoutElement.cpp
+END
+PHTMLFrameSetBaseElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/PHTMLFrameSetBaseElement.cpp
+END
+HTMLImageElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/HTMLImageElement.cpp
+END
+SMILParElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SMILParElement.cpp
+END
+SVGStringList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGStringList.cpp
+END
+ASXDRSchemaModel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/ASXDRSchemaModel.cpp
+END
+PHTMLFrameSetElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/PHTMLFrameSetElement.cpp
+END
+SVGPathSegCurvetoCubicSmoothRel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegCurvetoCubicSmoothRel.cpp
+END
+PrefsConnectionDlg.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/PrefsConnectionDlg.cpp
+END
+SMILSeqElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SMILSeqElement.cpp
+END
+SVGPathSegCurvetoCubicRel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegCurvetoCubicRel.cpp
+END
+PSMILElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/PSMILElement.cpp
+END
+SVGLength.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGLength.cpp
+END
+HTMLIFrameElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLIFrameElement.cpp
+END
+SMILAnimateMotionElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SMILAnimateMotionElement.cpp
+END
+SVGPathSegListValue.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegListValue.cpp
+END
+HTML.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/HTML.cpp
+END
+SMILFitValue.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SMILFitValue.cpp
+END
+SVGPathSegList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/SVGPathSegList.cpp
+END
+SMILAnimateElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SMILAnimateElement.cpp
+END
+HTMLScriptSite.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLScriptSite.cpp
+END
+ASXMLAttributeDeclaration.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/ASXMLAttributeDeclaration.cpp
+END
+PSMILTopLayoutElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/PSMILTopLayoutElement.cpp
+END
+SVGPathSegLinetoVerticalRel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegLinetoVerticalRel.cpp
+END
+PHTMLObjectElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/PHTMLObjectElement.cpp
+END
+stdafx.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/stdafx.cpp
+END
+SVGPathSegLinetoRel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegLinetoRel.cpp
+END
+HTMLFrameElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLFrameElement.cpp
+END
+SMILTransitionElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SMILTransitionElement.cpp
+END
+SVGAnimatedString.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGAnimatedString.cpp
+END
+HTMLLinkElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLLinkElement.cpp
+END
+HTMLBodyElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLBodyElement.cpp
+END
+PHTMLElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/PHTMLElement.cpp
+END
+NITFDocument.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/NITFDocument.cpp
+END
+HTMLStyleElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLStyleElement.cpp
+END
+MediaSource.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/MediaSource.cpp
+END
+SVGPathSegCurvetoQuadraticSmoothAbs.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegCurvetoQuadraticSmoothAbs.cpp
+END
+PSMILRegionElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/PSMILRegionElement.cpp
+END
+HTMLFormElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLFormElement.cpp
+END
+SMILDocument.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SMILDocument.cpp
+END
+HTMLScreen.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLScreen.cpp
+END
+HTMLFrameSetElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/HTMLFrameSetElement.cpp
+END
+SVGPathSegCurvetoQuadraticAbs.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegCurvetoQuadraticAbs.cpp
+END
+HTMLAnchorElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLAnchorElement.cpp
+END
+PrefsLanguageDlg.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/PrefsLanguageDlg.cpp
+END
+HTMLCanvasElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/HTMLCanvasElement.cpp
+END
+HTMLGenericElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLGenericElement.cpp
+END
+SMILAnimateColorElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SMILAnimateColorElement.cpp
+END
+SMILMediaElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/HTML/SMILMediaElement.cpp
+END
+PHTMLInputElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/PHTMLInputElement.cpp
+END
+SVGPathSegClosePath.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegClosePath.cpp
+END
+HTMLTableElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/HTMLTableElement.cpp
+END
+SVGPathSegLinetoHorizontalAbs.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegLinetoHorizontalAbs.cpp
+END
+SVGPathSegArcAbs.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegArcAbs.cpp
+END
+ASXMLSchemaComplexContentType.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/ASXMLSchemaComplexContentType.cpp
+END
+SVGPathSegMovetoAbs.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/SVGPathSegMovetoAbs.cpp
+END
+PSMILLayoutElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/PSMILLayoutElement.cpp
+END
+PHTMLTextAreaElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/PHTMLTextAreaElement.cpp
+END
+tag_Span.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/76/FirstProject2/trunk/src/HTML/tag_Span.cpp
+END

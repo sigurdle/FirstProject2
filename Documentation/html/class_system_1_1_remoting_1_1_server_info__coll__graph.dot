@@ -1,0 +1,40 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::Remoting::ServerInfo",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_stream" ,fontname="Helvetica"];
+  Node2 [label="System::Remoting::Stream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_remoting_1_1_stream.html"];
+  Node3 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_objectmapLoad" ,fontname="Helvetica"];
+  Node3 [label="System::map\< uint32, void * \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1map.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::rb_tree\< uint32, void *, less\< uint32 \>, __gc_allocator \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1rb__tree.html"];
+  Node5 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_allocator" ,fontname="Helvetica"];
+  Node5 [label="System::__gc_allocator",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__allocator.html"];
+  Node6 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_key_compare" ,fontname="Helvetica"];
+  Node6 [label="System::less\< uint32 \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1less.html"];
+  Node7 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="System::binary_function\< uint32, uint32, bool \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1binary__function.html"];
+  Node8 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_head" ,fontname="Helvetica"];
+  Node8 [label="System::red_black_node\< key_t, value_t \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1red__black__node.html"];
+  Node9 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node10 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node8 -> Node8 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" right\nleft\nparent" ,fontname="Helvetica"];
+  Node11 -> Node8 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" item" ,fontname="Helvetica"];
+  Node11 [label="System::pair\< key_t, value_t \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1pair.html"];
+  Node12 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_objectmapSave" ,fontname="Helvetica"];
+  Node12 [label="System::map\< const void *, uint32 \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1map.html"];
+  Node13 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="System::rb_tree\< const void *, uint32, less\< const void * \>, __gc_allocator \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1rb__tree.html"];
+  Node14 -> Node13 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_key_compare" ,fontname="Helvetica"];
+  Node14 [label="System::less\< const void * \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1less.html"];
+  Node15 -> Node14 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node15 [label="System::binary_function\< const void *, const void *, bool \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1binary__function.html"];
+  Node5 -> Node13 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_allocator" ,fontname="Helvetica"];
+  Node8 -> Node13 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_head" ,fontname="Helvetica"];
+  Node16 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_socket" ,fontname="Helvetica"];
+  Node16 [label="System::Remoting::WindowClientSocket",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_remoting_1_1_window_client_socket.html"];
+}

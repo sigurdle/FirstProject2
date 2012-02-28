@@ -1,0 +1,320 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "atlres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""atlres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "1 TYPELIB ""LXFramework.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "LXFramework Module\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "LXFramework\0"
+            VALUE "LegalCopyright", "Copyright 2003\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OLESelfRegister", "\0"
+            VALUE "OriginalFilename", "LXFramework.EXE\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "LXFramework Module\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// 24
+//
+
+MANIFEST_RESOURCE_ID    24      MOVEABLE PURE   "LXFramework.manifest"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// REGISTRY
+//
+
+IDR_LXFRAMEWORK         REGISTRY MOVEABLE PURE  "LXFramework.rgs"
+IDR_LXFRAMEWORKAPP      REGISTRY DISCARDABLE    "LXFrameworkApp.rgs"
+IDR_XMILFILESCONTROL    REGISTRY DISCARDABLE    "XMiLFilesControl.rgs"
+IDR_POINTLIGHTUI        REGISTRY DISCARDABLE    "PointLightUI.rgs"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
+IDB_XMILFILESCONTROL    BITMAP  DISCARDABLE     "res\\xmilfile.bmp"
+IDB_POINTLIGHTUI        BITMAP  DISCARDABLE     "res\\pointlig.bmp"
+IDB_FILEICONS           BITMAP  DISCARDABLE     "res\\fileicon.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_FILETYPESDLG DIALOG DISCARDABLE  0, 0, 298, 157
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "File Types"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_FILETYPES,3,6,70,137,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO1,168,41,74,43,CBS_SIMPLE | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Add",IDC_FILETYPES_ADDEXTENSION,244,42,35,11
+    GROUPBOX        "Windows Explorer Settings",IDC_STATIC,79,3,210,121
+    LTEXT           "Description",IDC_STATIC,83,14,37,10
+    EDITTEXT        IDC_FILETYPES_DESCRIPTION,127,14,155,12,ES_AUTOHSCROLL
+    LTEXT           "Content Type",IDC_STATIC,135,88,45,10
+    EDITTEXT        IDC_CONTENTTYPE,181,87,98,12,ES_AUTOHSCROLL
+    GROUPBOX        "File Extensions",IDC_STATIC,129,31,156,72
+    CONTROL         "Open files of this type in XframeWork",
+                    IDC_FILETYPE_REGISTERED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,87,108,149,12
+END
+
+IDD_ABOUTDLG DIALOG DISCARDABLE  0, 0, 298, 137
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",1,124,118,50,14
+    CTEXT           "Copyright (c) 2003 Sigurd Lerstad. All rights reserved.",
+                    IDC_STATIC,2,88,293,15
+END
+
+IDD_REGISTEREDSNAPINSDLG DIALOG DISCARDABLE  0, 0, 209, 151
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Available Add-ins"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Add",1,99,133,50,14
+    PUSHBUTTON      "Close",2,152,133,50,14
+    CONTROL         "List1",IDC_SNAPINS_LIST,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | LVS_SORTASCENDING | WS_BORDER | 
+                    WS_TABSTOP,5,5,199,122
+END
+
+IDD_ADDINSDLG DIALOG DISCARDABLE  0, 0, 279, 158
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add-ins"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Close",1,222,140,50,14
+    CONTROL         "List1",IDC_ADDINS_LIST,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | LVS_SORTASCENDING | WS_BORDER | 
+                    WS_TABSTOP,5,5,199,122
+    PUSHBUTTON      "Add...",IDC_ADDINS_ADD,9,131,43,14
+    PUSHBUTTON      "Customize...",IDC_ADDIN_CUSTOMIZE,212,11,59,14
+    PUSHBUTTON      "Remove",IDC_ADDINS_REMOVE,56,131,42,14
+END
+
+IDD_FRAMEWORKOPTIONSDLG DIALOG DISCARDABLE  0, 0, 210, 114
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Framework"
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Change Icon",IDC_CHANGE_ICON,133,10,59,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "Add-ins...",                  ID_FILE_ADDSNAPIN
+        MENUITEM "Open...",                     ID_FILE_OPEN
+        MENUITEM "Save As...",                  ID_FILE_SAVEAS
+        MENUITEM "Options...",                  ID_FILE_OPTIONS
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Options...",                  ID_EDIT_OPTIONS
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "About LXFramework...",        ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_FRAMEWORKOPTIONSDLG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 186
+        BOTTOMMARGIN, 95
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR DISCARDABLE  17, 17
+BEGIN
+    BUTTON      ID_FILE_NEW
+    BUTTON      ID_FILE_OPEN
+    BUTTON      ID_FILE_SAVE
+    BUTTON      ID_FILE_PRINT
+    BUTTON      ID_EDIT_UNDO
+    BUTTON      ID_EDIT_REDO
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    BUTTON      ID_APP_ABOUT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS DISCARDABLE 
+BEGIN
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
+    "U",            ID_EDIT_ADVANCED_MAKESELECTIONLOWERCASE, VIRTKEY, 
+                                                    CONTROL, NOINVERT
+    "U",            ID_EDIT_ADVANCED_MAKESELECTIONUPPERCASE, VIRTKEY, SHIFT, 
+                                                    CONTROL, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "Y",            ID_EDIT_REDO,           VIRTKEY, CONTROL, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\icon1.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_PROJNAME            "LXFramework"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDR_MAINFRAME           "LXFramework"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "LXFramework.tlb"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

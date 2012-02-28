@@ -1,0 +1,9 @@
+<filter name="OGL Scene Renderer">
+ <inputpin name="Input" minOccurs="1" maxOccurs="1">
+   <mediatypes>
+	 <mediatype majortype="Scene">
+	 </mediatype>
+ 	</mediatypes>
+ </inputpin>
+
+</filter>

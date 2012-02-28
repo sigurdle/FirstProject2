@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/NVUT
+END
+NVUTVertexShader.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/NVUT/NVUTVertexShader.cpp
+END
+NVUTPixelShader.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/NVUT/NVUTPixelShader.cpp
+END
+nvutcamera.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/NVUT/nvutcamera.cpp
+END
+nvutskybox.fx
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/NVUT/nvutskybox.fx
+END
+nvutmesh.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/NVUT/nvutmesh.cpp
+END
+nvutmedia.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/NVUT/nvutmedia.cpp
+END
+nvutskybox.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/NVUT/nvutskybox.cpp
+END

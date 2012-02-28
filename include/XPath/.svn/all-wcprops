@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/firstproject2/!svn/ver/66/FirstProject2/trunk/include/XPath
+END
+XPathSetSnapshot.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/66/FirstProject2/trunk/include/XPath/XPathSetSnapshot.h
+END
+XPathResult.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/59/FirstProject2/trunk/include/XPath/XPathResult.h
+END
+xpath_parse.tab.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/66/FirstProject2/trunk/include/XPath/xpath_parse.tab.h
+END
+XPath.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/59/FirstProject2/trunk/include/XPath/XPath.h
+END
+XPathExpression.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/59/FirstProject2/trunk/include/XPath/XPathExpression.h
+END
+XPathEvaluator.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/59/FirstProject2/trunk/include/XPath/XPathEvaluator.h
+END
+XPathNSResolver.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/66/FirstProject2/trunk/include/XPath/XPathNSResolver.h
+END

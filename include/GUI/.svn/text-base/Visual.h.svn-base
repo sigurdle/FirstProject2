@@ -1,0 +1,152 @@
+namespace System
+{
+namespace Gui
+{
+
+class GUIEXT Visual : public Element
+{
+protected:
+
+	CTOR Visual(DependencyClass* depClass);
+
+public:
+
+	void Render_(ManagedRenderContext renderContext);
+	UIElement* HitTest_(gm::PointF point);
+
+	virtual Visual* FindElement(StringIn id);
+
+	bool IsDescendantOf(Visual* pVisual);
+	bool IsAscendantOf(Visual* pVisual);
+
+	virtual void RenderRetained(ManagedRetainedRenderContext renderContext);
+
+	virtual Graphics::Bitmap* GetBitmap(Graphics::RenderTarget* rt, int scaledWidth, int scaledHeight, float scaleX, float scaleY);
+	void RenderToTarget(Graphics::RenderTarget* rt, ID3D10Texture2D* tempTexture, ID3D10RenderTargetView* tempRenderTargetView, int scaledWidth, int scaledHeight, float scaleX, float scaleY);
+
+	virtual void OnComputedPropertyValueChanged(PropertyValue* pPropertyVal, bool handled) override;
+
+	virtual void DoLayout()	// TODO
+	{
+	}
+
+	virtual Geometry* GetHitGeometry()
+	{
+		return NULL;
+	}
+
+	HICON CreateHIcon();
+	HCURSOR CreateHCursor(float hotspotX, float hotspotY);
+
+	Point WindowToElement(float windowX, float windowY);
+
+	virtual size_t GetChildrenCount();
+	virtual Visual* GetChild(size_t index);
+
+	virtual void AddChild(Visual* child);
+	virtual void RemoveChild(Visual* child);
+
+	D2D1_MATRIX_3X2_F get_TransformMatrix();
+	D2D1_MATRIX_3X2_F get_TransformToWindowMatrix();
+	D2D1_MATRIX_3X2_F get_TransformToVisualMatrix(Visual* visual);
+
+	DEPENDENCY_PROPERTY(bool, IsVisible)
+	DEPENDENCY_PROPERTY(float, Opacity)
+	DEPENDENCY_PROPERTY(UIElement*, Parent)
+	DEPENDENCY_PROPERTY(UIElement*, LogicalParent)
+	DEPENDENCY_PROPERTY(UIElement*, NextSibling)
+	DEPENDENCY_PROPERTY(UIElement*, PreviousSibling)
+	DEPENDENCY_PROPERTY(Window*, ParentWindow)
+	DEPENDENCY_PROPERTY(Transform*, Transform)
+	DEPENDENCY_PROPERTY(Geometry*, VisibleGeometry)
+	DEPENDENCY_PROPERTY(Geometry*, HitGeometry)
+	DEPENDENCY_PROPERTY(Brush*, OpacityMask)
+	DEPENDENCY_PROPERTY(Geometry*, Clip)
+	DEPENDENCY_PROPERTY(bool, Antialias)
+	DEPENDENCY_PROPERTY(int, ChildPosition)
+
+	DEPENDENCY_PROPERTY(UIElement*, TemplatedOwner)
+
+	DEFINE_THIS(_Visual)
+
+	DEPENDENCY_CLASS_ABSTRACT(Visual, Element)
+
+// TODO
+//	DEPENDENCY_PROPERTY(DependencyProperty*, InheritProperty)
+
+	void InvalidateVisual();
+
+	virtual bool NeedOffscreenBitmap()
+	{
+		return false;
+	}
+
+	virtual bool IsFullyOpaque()
+	{
+		return false;
+	}
+
+	virtual geometry MakeVisibleGeometry(geometry clip);
+
+	D2D1_MATRIX_3X2_F m_transformMatrix;
+	D2D1_MATRIX_3X2_F m_transformToWindowMatrix;
+	gm::BBoxf m_bounds;
+
+	bool m_transformMatrixValid;
+	bool m_transformToWindowMatrixValid;
+
+	GroupVisual* m_visuals;	// The default visual
+	Visual* m_visual;
+	bool m_visualValid;
+
+protected:
+
+	virtual UIElement* HitTest(gm::PointF point)
+	{
+		return NULL;
+	}
+
+	virtual void Render(ManagedRenderContext renderContext) abstract;
+	virtual void OnSetParent(Visual* parent);
+
+private:
+
+	Visual* m_parent;
+
+public:
+
+	Effect* m_effect;
+	bool m_visibleGeometryValid;
+};
+
+class GUIEXT _Visual : public _DependencyObject
+{
+public:
+	CTOR _Visual(const Expressive::expression& exp) : _DependencyObject(exp)
+	{
+	}
+
+	Expressive::typed_expression<float> getOpacity() const
+	{
+		return getProperty(Visual::get_OpacityProperty());
+	}
+};
+
+class GUIEXT VisualTreeController : public ITreeViewController
+{
+public:
+	CTOR VisualTreeController(Visual* visual);
+
+	virtual float GetItemHeight(TreeItem item) override;
+	virtual int GetItemState(TreeItem item) override;
+	virtual void RenderItem(TreeItem item, ManagedRenderContext renderContext, gm::RectF bounds) override;
+	virtual int ClickItem(TreeItem item, gm::RectF bounds, gm::PointF pos) override;
+	virtual size_t GetChildrenCount(TreeItem item) override;
+	virtual TreeItem GetChild(TreeItem item, size_t index) override;
+	virtual TreeItem GetRoot() override;
+
+	Visual* m_root;
+};
+
+}	// Gui
+}	// System

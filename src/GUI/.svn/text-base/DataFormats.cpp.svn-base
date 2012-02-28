@@ -1,0 +1,60 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+// static
+DataFormat DataFormats::GetDataFormat(StringIn name)
+{
+	UINT nFormat;
+
+	if (name == "Bitmap") nFormat = CF_BITMAP;
+	else if (name == "Text") nFormat = CF_TEXT;
+	else if (name == "UnicodeText") nFormat = CF_UNICODETEXT;
+	else if (name == "FileDrop") nFormat = CF_HDROP;
+	else if (name == "Locale") nFormat = CF_LOCALE;
+	else nFormat = RegisterClipboardFormat(name.c_strw());
+
+	return DataFormat(nFormat, name);
+}
+
+// static
+String DataFormats::GetDataFormatString(UINT nFormat)
+{
+	static ImmutableString<char> predefinedFormat[] =
+	{
+		"Text",
+		"Bitmap",
+		"METAFILEPICT",
+		"SymbolicLink",
+		"DataInterchangeFormat",
+		"TaggedImageFileFormat",
+		"OEMText",
+		"DeviceIndependentBitmap",
+		"Palette",
+		"PenData",
+		"RiffAudio",
+		"WaveAudio",
+		"UnicodeText",
+		"EnhancedMetafile",
+		"FileDrop",
+		"Locale",
+		"DIBV5"
+	};
+
+	if (nFormat >= 1 && nFormat < CF_MAX)
+	{
+		return &predefinedFormat[nFormat-1];
+	}
+
+	WCHAR name[512];
+	int n = GetClipboardFormatName(nFormat, name, _countof(name)-1);
+	if (n == 0) return NULL;
+	return name;
+}
+
+}	// Gui
+}	// System

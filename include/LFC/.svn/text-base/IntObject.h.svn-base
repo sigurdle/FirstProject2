@@ -1,0 +1,33 @@
+namespace System
+{
+
+class LFCEXT IntObject : public Object
+{
+public:
+
+	String ToString() override;
+
+	inline int GetValue() const
+	{
+		return m_value;
+	}
+
+	inline operator int () const
+	{
+		return m_value;
+	}
+
+	static IntObject* GetObject(int value);
+
+private:
+
+	inline CTOR IntObject(int value) : m_value(value)
+	{
+	}
+
+	int m_value;
+
+	static IntObject s_values[257];	// -1 .. 255
+};
+
+}	// System

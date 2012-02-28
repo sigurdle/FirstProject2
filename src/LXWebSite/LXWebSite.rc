@@ -1,0 +1,505 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "atlres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""atlres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "1 TYPELIB ""LXWebSite.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "LXWebSite Module\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "LXWebSite\0"
+            VALUE "LegalCopyright", "Copyright 2003\0"
+            VALUE "OriginalFilename", "LXWebSite.DLL\0"
+            VALUE "ProductName", "LXWebSite Module\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "OLESelfRegister", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// REGISTRY
+//
+
+IDR_LXWEBSITEAPP        REGISTRY DISCARDABLE    "LXWebSiteApp.rgs"
+IDR_LXLOCALWEBSITE      REGISTRY DISCARDABLE    "LXLocalWebSite.rgs"
+IDR_WEBSITE             REGISTRY DISCARDABLE    "WebSite.rgs"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PROGRESSDLG DIALOG DISCARDABLE  0, 0, 186, 42
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Cancel",2,68,24,50,14
+END
+
+IDD_NEWSITEBEGINDLG DIALOG DISCARDABLE  0, 0, 277, 119
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Welcome to the New Site Wizard.",IDC_TITLE,116,8,151,33
+    LTEXT           "This Wizard lets you create a new website.",IDC_STATIC,
+                    116,50,158,20
+    LTEXT           "To Continue, click Next.",IDC_STATIC,116,72,83,11
+END
+
+IDD_NEWSITEFINISHDLG DIALOG DISCARDABLE  0, 0, 323, 143
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Click Finish to complete this Wizard",IDC_STATIC,127,29,
+                    147,33
+END
+
+IDD_NEWSITEFTPDLG DIALOG DISCARDABLE  0, 0, 331, 177
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "FTP Server"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT1,140,41,114,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,140,69,112,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FTP_PASSWORD,141,87,83,12,ES_PASSWORD | 
+                    ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT4,143,55,101,13,ES_AUTOHSCROLL
+    LTEXT           "Server",IDC_STATIC,108,43,30,9
+    LTEXT           "Directory",IDC_STATIC,104,59,36,10
+    LTEXT           "Username",IDC_STATIC,108,71,31,11
+    LTEXT           "Password",IDC_STATIC,105,89,35,11
+    PUSHBUTTON      "...",IDC_FTP_DIRBROWSE,248,55,16,11
+    CONTROL         224,IDC_STATIC,"Static",SS_BITMAP,0,0,100,177
+END
+
+IDD_NEWSITELOCALNAMEDLG DIALOG DISCARDABLE  0, 0, 241, 151
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_LOCALNAME_NAME,60,49,151,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Browse...",IDC_LOCALNAME_BROWSE,171,104,41,12
+    LTEXT           "Click Browse to select the location:",IDC_STATIC,24,70,
+                    115,10
+    EDITTEXT        IDC_LOCALNAME_LOCATION,24,81,188,20,ES_MULTILINE | 
+                    ES_AUTOVSCROLL | ES_READONLY
+    LTEXT           "Site name",IDC_STATIC,22,50,32,10,SS_CENTERIMAGE
+END
+
+IDD_NEWSITELOCALSITEOPTIONSDLG DIALOG DISCARDABLE  0, 0, 290, 103
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Local Site Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Blank Site",IDC_LOCALSITE_BLANKSITE,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,17,30,50,10
+    CONTROL         "Import From Server",IDC_LOCALSITE_FROMSERVER,"Button",
+                    BS_AUTORADIOBUTTON,17,44,74,11
+    LTEXT           "Create a site based on files copied from an FTP or HTTP server.",
+                    IDC_STATIC,95,46,119,18
+END
+
+IDD_NEWSITESINGLEWORKGROUPDLG DIALOG DISCARDABLE  0, 0, 186, 95
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Single User",IDC_NEWSITE_SINGLE,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,22,23,69,11
+    CONTROL         "Workgroup",IDC_NEWSITE_WORKGROUP,"Button",
+                    BS_AUTORADIOBUTTON,22,36,78,11
+END
+
+IDD_NEWSITEWORKGROUPLOGONDLG DIALOG DISCARDABLE  0, 0, 240, 125
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_LOGON_SERVER,53,18,130,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_LOGON_USERNAME,53,38,100,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_LOGON_PASSWORD,53,57,100,12,ES_PASSWORD | 
+                    ES_AUTOHSCROLL
+    RTEXT           "Server",IDC_STATIC,10,20,38,10,SS_CENTERIMAGE
+    RTEXT           "Username",IDC_STATIC,10,39,38,10,SS_CENTERIMAGE
+    RTEXT           "Password",IDC_STATIC,10,58,38,10,SS_CENTERIMAGE
+END
+
+IDD_NEWSITEWORKGROUPOPTIONSDLG DIALOG DISCARDABLE  0, 0, 212, 121
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Blank Site",IDC_WORKGROUP_BLANK,"Button",
+                    BS_AUTORADIOBUTTON,29,27,86,13
+END
+
+IDD_FTPBROWSERDLG DIALOG DISCARDABLE  0, 0, 231, 175
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "FTP Browser"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,118,154,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,174,154,50,14
+    CONTROL         "",IDC_FTPBROWSER,"{6107A6C8-CC8F-431D-A6B8-8B487710652C}",
+                    WS_TABSTOP,7,7,217,141
+END
+
+IDD_LOGONSERVERDLG DIALOG DISCARDABLE  0, 0, 250, 113
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",1,193,4,50,14
+    PUSHBUTTON      "Cancel",2,193,22,50,14
+    EDITTEXT        IDC_LOGON_SERVER,53,18,130,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_LOGON_USERNAME,53,38,100,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_LOGON_PASSWORD,53,57,100,12,ES_PASSWORD | 
+                    ES_AUTOHSCROLL
+    RTEXT           "Server",IDC_STATIC,10,20,38,10,SS_CENTERIMAGE
+    RTEXT           "Username",IDC_STATIC,10,39,38,10,SS_CENTERIMAGE
+    RTEXT           "Password",IDC_STATIC,10,58,38,10,SS_CENTERIMAGE
+END
+
+IDD_SERVERSDLG DIALOG DISCARDABLE  0, 0, 266, 169
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Servers"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,148,150,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,202,150,50,14
+    EDITTEXT        IDC_SERVERS_NAME,59,67,131,12,ES_AUTOHSCROLL
+    LTEXT           "Name",IDC_STATIC,18,68,34,10,SS_CENTERIMAGE
+    EDITTEXT        IDC_SERVERS_SERVERNAME,60,82,131,12,ES_AUTOHSCROLL
+    LTEXT           "Server",IDC_STATIC,18,83,36,10,SS_CENTERIMAGE
+    EDITTEXT        IDC_SERVERS_DIRECTORY,59,96,134,12,ES_AUTOHSCROLL
+    LTEXT           "Directory",IDC_STATIC,18,97,32,10,SS_CENTERIMAGE
+    EDITTEXT        IDC_SERVERS_USERNAME,59,111,126,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SERVERS_PASSWORD,59,125,126,12,ES_PASSWORD | 
+                    ES_AUTOHSCROLL
+    LTEXT           "Username",IDC_STATIC,12,112,42,10,SS_CENTERIMAGE
+    LTEXT           "Password",IDC_STATIC,12,126,42,10,SS_CENTERIMAGE
+    CONTROL         "List1",IDC_SERVERS_LIST,"SysListView32",LVS_LIST | 
+                    LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | 
+                    WS_TABSTOP,7,7,202,58
+    PUSHBUTTON      "New",IDC_SERVERS_NEW,215,7,48,14
+    PUSHBUTTON      "Delete",IDC_SERVERS_DELETE,215,25,48,14
+END
+
+IDD_SETTINGSFILENAMECONSTRAINTSDLG DIALOG DISCARDABLE  0, 0, 264, 140
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Filename Constraints"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Maximal Length",IDC_STATIC,11,40,78,10
+    EDITTEXT        IDC_FILENAME_MAXLENGTH,98,40,46,14,ES_AUTOHSCROLL
+    LTEXT           "Extension Length",IDC_STATIC,9,58,62,12
+    EDITTEXT        IDC_FILENAME_EXTLENGTH,81,58,50,13,ES_AUTOHSCROLL
+END
+
+IDD_SETTINGSSERVERSDLG DIALOG DISCARDABLE  0, 0, 293, 129
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "FTP && WebDAV"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "FTP",IDC_STATIC,10,8,220,30
+    GROUPBOX        "WebDAV",IDC_STATIC,10,50,220,30
+    COMBOBOX        IDC_SITESERVERS_FTP,16,18,180,62,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_SITESERVERS_WEBDAV,16,62,180,62,CBS_DROPDOWN | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_FILEINSPECTORDLG DIALOG DISCARDABLE  0, 0, 93, 95
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Publish",IDC_STATIC,2,60,24,10
+    COMBOBOX        IDC_FILE_PUBLISH,28,59,64,66,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Created",IDC_STATIC,3,20,27,10
+    LTEXT           "Modified",IDC_STATIC,3,32,28,10
+    LTEXT           "Size",IDC_STATIC,4,44,29,10
+    EDITTEXT        IDC_FILE_CREATED,34,20,58,10,ES_AUTOHSCROLL | 
+                    ES_READONLY | NOT WS_BORDER
+    EDITTEXT        IDC_FILE_MODIFIED,34,32,58,10,ES_AUTOHSCROLL | 
+                    ES_READONLY | NOT WS_BORDER
+    EDITTEXT        IDC_FILE_SIZE,34,44,58,10,ES_AUTOHSCROLL | ES_READONLY | 
+                    NOT WS_BORDER
+    LTEXT           "-",IDC_FILE_NAME,3,4,90,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "New WebSite...",              ID_FILE_NEWSITE
+        MENUITEM "Open WebSite...",             ID_FILE_OPENSITE
+        MENUITEM "Mount Workgroup Site...",     ID_FILE_MOUNTWORKGROUPSITE
+        MENUITEM SEPARATOR
+        MENUITEM "FTP Browser",                 ID_FILE_FTPBROWSER
+        MENUITEM "WebDAV Browser",              ID_FILE_WEBDAVBROWSER
+        MENUITEM "Servers...",                  ID_FILE_SERVERS
+        MENUITEM "WebSite Settings...",         ID_FILE_SITESETTINGS
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "About LXWebSite...",          ID_APP_ABOUT
+    END
+END
+
+IDR_SITEFILES MENU DISCARDABLE 
+BEGIN
+    POPUP "SiteFiles"
+    BEGIN
+        MENUITEM "Delete",                      ID_EDIT_CLEAR
+    END
+END
+
+IDR_WORKGROUPFILESVIEW MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "New",                         ID_FILE_NEW
+        MENUITEM "Open...",                     ID_FILE_OPEN
+        MENUITEM "Open WebSite...",             ID_FILE_OPENSITE
+        MENUITEM "New WebSite",                 ID_FILE_NEWSITE
+        MENUITEM SEPARATOR
+        MENUITEM "Properties...",               ID_FILE_PROPERTIES
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Customize...",                ID_FILE_CUSTOMIZE
+        MENUITEM "Options...",                  ID_EDIT_OPTIONS
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "About LXFramework...",        ID_APP_ABOUT
+    END
+END
+
+IDR_FTPVIEW MENU DISCARDABLE 
+BEGIN
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Refresh",                     ID_VIEW_REFRESH
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Customize...",                ID_FILE_CUSTOMIZE
+        MENUITEM "Options...",                  ID_EDIT_OPTIONS
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "About LXFramework...",        ID_APP_ABOUT
+    END
+END
+
+IDR_WEBDAVVIEW MENU DISCARDABLE 
+BEGIN
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Refresh",                     ID_VIEW_REFRESH
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Customize...",                ID_FILE_CUSTOMIZE
+        MENUITEM "Options...",                  ID_EDIT_OPTIONS
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "About LXFramework...",        ID_APP_ABOUT
+    END
+END
+
+IDR_SITEFILESVIEW MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "WebSite Settings...",         ID_FILE_SITESETTINGS
+    END
+END
+
+IDR_SITELINKSVIEW MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "WebSite Settings...",         ID_FILE_SITESETTINGS
+    END
+END
+
+IDR_SITEFTPVIEW MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "WebSite Settings...",         ID_FILE_SITESETTINGS
+    END
+    POPUP "FTP Server"
+    BEGIN
+        MENUITEM "Connect",                     ID_FTPSERVER_CONNECT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_FTPBROWSERDLG DLGINIT
+BEGIN
+    IDC_FTPBROWSER, 0x376, 46, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x21b1, 0x0000, 0x17ab, 0x0000, 0x0013, 
+0xcdcd, 0xcdcd, 0x0009, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0003, 0x0000, 0x0000, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_FTPBROWSERDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 224
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 168
+    END
+
+    IDD_SERVERSDLG, DIALOG
+    BEGIN
+        TOPMARGIN, 7
+    END
+
+    IDD_SETTINGSSERVERSDLG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 186
+        BOTTOMMARGIN, 95
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_NEWSITE_WATERMARK   BITMAP  DISCARDABLE     "res\\newsite_.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_PROJNAME            "LXWebSite"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "LXWebSite.tlb"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

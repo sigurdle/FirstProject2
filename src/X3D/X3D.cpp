@@ -1,0 +1,382 @@
+#include "stdafx.h"
+#include "X3D.h"
+
+#pragma comment(lib, "LFC")
+#pragma comment(lib, "XML")
+#pragma comment(lib, "ZLIBDeflate")
+#pragma comment(lib, "Networking")
+#pragma comment(lib, "Imaging")
+#pragma comment(lib, "LMedia")
+#pragma comment(lib, "Graphics")
+#pragma comment(lib, "DShowPlayer")
+#pragma comment(lib, "GUI")
+
+//
+
+#pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "glu32.lib")
+
+#pragma comment(lib, "cg.lib")
+#pragma comment(lib, "cgGL.lib")
+#pragma comment(lib, "cgD3D9.lib")
+
+#pragma comment(lib, "D3dx9.lib")
+
+//#pragma comment(lib, "D3D10")
+//#pragma comment(lib, "d3dx10.lib")
+
+#pragma comment(lib, "d3d11")
+#ifdef _DEBUG
+#pragma comment(lib, "d3dx11d")
+#else
+#pragma comment(lib, "d3dx11")
+#endif
+
+#pragma comment(lib, "D3dcompiler")
+
+#pragma comment(lib, "Dxguid")
+
+//#if defined(PX_PHYSICS_NXPHYSICS_API)
+#ifdef _M_IX86
+#ifdef _DEBUG
+#pragma comment(lib, "PhysX3_x86")
+#pragma comment(lib, "PhysX3CommonDEBUG_x86")
+#pragma comment(lib, "PhysX3Extensions")
+#else
+#pragma comment(lib, "PhysX3_x86")
+#pragma comment(lib, "PhysX3Common_x86")
+#pragma comment(lib, "PhysX3Extensions")
+
+#endif
+#else
+#pragma comment(lib, "PhysX3_x64")
+#pragma comment(lib, "PhysX3Common_x64")
+#endif
+//#endif
+
+
+namespace System
+{
+namespace x3d
+{
+
+class X3DEXT NodeInfo
+{
+public:
+	NodeType* nodeType;
+};
+
+struct ComponentAndLevel
+{
+	ComponentInfo* component;
+	int level;
+};
+
+class ComponentLevel
+{
+public:
+	NodeInfo* nodes;
+
+	ComponentAndLevel* prerequisites;
+};
+
+ComponentInfo Core;
+ComponentInfo Shape;
+
+ComponentAndLevel LightingPrerequisites[] =
+{
+	&Core,1,
+	&Shape,1,
+	nullptr
+};
+
+NodeInfo LightingNodes1[] =
+{
+	X3DLightNode::GetNodeType(),
+	DirectionalLight::GetNodeType(),
+	nullptr
+};
+
+NodeInfo LightingNodes2[] =
+{
+	PointLight::GetNodeType(),
+	SpotLight::GetNodeType(),
+	nullptr
+};
+
+NodeInfo LightingNodes3[] =
+{
+	nullptr
+};
+
+ComponentLevel Lighting1 =
+{
+	LightingNodes1,
+	LightingPrerequisites
+};
+
+ComponentLevel Lighting2 =
+{
+	LightingNodes2,
+	LightingPrerequisites
+};
+
+ComponentLevel Lighting3 =
+{
+	LightingNodes3,
+	LightingPrerequisites
+};
+
+//ComponentInfo ComponentInfo::Core
+//ComponentInfo ComponentInfo::Lighting
+
+}	// x3d
+}	// System
+
+#if 0
+/////////////////////////////////////////////////////////////////////////////
+// Used to determine whether the DLL can be unloaded by OLE
+
+STDAPI DllCanUnloadNow(void)
+{
+    return (_Module.GetLockCount()==0) ? S_OK : S_FALSE;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Returns a class factory to create an object of the requested type
+
+STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv)
+{
+    return _Module.GetClassObject(rclsid, riid, ppv);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// DllRegisterServer - Adds entries to the system registry
+
+STDAPI DllRegisterServer(void)
+{
+	USES_CONVERSION;
+
+	HRESULT hr = 0;
+
+#if 0
+    // registers object, typelib and all interfaces in typelib
+	hr = _Module.RegisterServer(TRUE);
+	if (FAILED(hr)) return hr;
+
+	CComPtr<ILFilterMapper2> filterMapper;
+	hr = filterMapper.CoCreateInstance(CLSID_LFilterMapper);
+	if (FAILED(hr)) return hr;
+
+	hr = filterMapper->RegisterFilter(CLSID_OGLSceneRenderer, L"OGL Scene Renderer", _Module.m_hInstResource, IDF_LOGLSCENERENDERER);
+	if (FAILED(hr)) return hr;
+
+#if 0
+	{
+		LPOLESTR clsidString;
+		StringFromCLSID(CLSID_LX3DViewer, &clsidString);
+
+		TCHAR filename[MAX_PATH];
+
+		if (TRUE)
+		{
+			{
+				CRegKey key;
+				key.Open(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\IEXPLORE.EXE");
+
+				DWORD dwCount = sizeof(filename);
+				key.QueryValue(filename, NULL, &dwCount);
+			}
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, "lx3dfile\\CLSID");
+			key.SetValue(W2A(clsidString));
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, "lx3dfile\\DefaultIcon");
+			key.SetValue("%SystemRoot%\\system32\\url.dll,0");
+		}
+
+		if (TRUE)
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, "lx3dfile\\shell\\open\\command");
+
+			TCHAR value[512];
+			sprintf(value, "%s -nohome %%1", filename);
+			key.SetValue(value);
+		}
+
+		// File extension associations
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, ".mp4");
+			key.SetValue("lx3dfile");
+			//key.SetValue("image/svg+xml", "Content Type");
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, ".mpg");
+			key.SetValue("lx3dfile");
+			//key.SetValue("image/svg+xml", "Content Type");
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, ".x3d");
+			key.SetValue("lx3dfile");
+			//key.SetValue("image/svg+xml", "Content Type");
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, ".wrl");
+			key.SetValue("lx3dfile");
+			//key.SetValue("image/svg+xml", "Content Type");
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, ".iob");
+			key.SetValue("lx3dfile");
+			//key.SetValue("image/svg+xml", "Content Type");
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, ".c4d");
+			key.SetValue("lx3dfile");
+			//key.SetValue("image/svg+xml", "Content Type");
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, ".lwo");
+			key.SetValue("lx3dfile");
+			//key.SetValue("image/svg+xml", "Content Type");
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, ".lw");
+			key.SetValue("lx3dfile");
+			//key.SetValue("image/svg+xml", "Content Type");
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, ".mov");
+			key.SetValue("lx3dfile");
+			//key.SetValue("image/svg+xml", "Content Type");
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, ".qt");
+			key.SetValue("lx3dfile");
+			//key.SetValue("image/svg+xml", "Content Type");
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, ".asf");
+			key.SetValue("lx3dfile");
+			//key.SetValue("image/svg+xml", "Content Type");
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, ".voc");
+			key.SetValue("lx3dfile");
+			//key.SetValue("image/svg+xml", "Content Type");
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, ".pcx");
+			key.SetValue("lx3dfile");
+			//key.SetValue("image/svg+xml", "Content Type");
+		}
+
+		{
+			CRegKey key;
+			key.Create(HKEY_CLASSES_ROOT, ".au");
+			key.SetValue("lx3dfile");
+			//key.SetValue("image/svg+xml", "Content Type");
+		}
+
+	// Mime associations
+		/*
+		if (TRUE)
+		{
+			{
+				CRegKey key;
+				key.Create(HKEY_CLASSES_ROOT, "mime\\Database\\Content Type\\video/mp4");
+				key.SetValue(".mp4", "Extension");
+				key.SetValue(W2A(clsidString), "CLSID");
+			}
+
+			{
+				CRegKey key;
+				key.Create(HKEY_CLASSES_ROOT, "mime\\Database\\Content Type\\video/quicktime");
+				key.SetValue(".mov", "Extension");
+				key.SetValue(W2A(clsidString), "CLSID");
+			}
+
+	// TODO, what is the mime type?
+			{
+				CRegKey key;
+				key.Create(HKEY_CLASSES_ROOT, "mime\\Database\\Content Type\\model/vrml");
+				key.SetValue(".x3d", "Extension");
+				key.SetValue(W2A(clsidString), "CLSID");
+			}
+
+			{
+				CRegKey key;
+				key.Create(HKEY_CLASSES_ROOT, "mime\\Database\\Content Type\\model/x3d");
+				key.SetValue(".x3d", "Extension");
+				key.SetValue(W2A(clsidString), "CLSID");
+			}
+
+			{
+				CRegKey key;
+				key.Create(HKEY_CLASSES_ROOT, "mime\\Database\\Content Type\\model/x3d+xml");
+				key.SetValue(".x3d", "Extension");
+				key.SetValue(W2A(clsidString), "CLSID");
+			}
+
+			{
+				CRegKey key;
+				key.Create(HKEY_CLASSES_ROOT, "mime\\Database\\Content Type\\model/x3d-vrml");
+				key.SetValue(".x3d", "Extension");
+				key.SetValue(W2A(clsidString), "CLSID");
+			}
+		}
+		*/
+
+	///////////
+		CoTaskMemFree(clsidString);
+
+		SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);
+	}
+#endif
+#endif
+
+	return hr;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// DllUnregisterServer - Removes entries from the system registry
+
+STDAPI DllUnregisterServer(void)
+{
+    return 0;//_Module.UnregisterServer(TRUE);
+}
+
+#endif

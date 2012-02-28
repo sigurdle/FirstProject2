@@ -1,0 +1,165 @@
+namespace System
+{
+
+class LFCEXT CompoundMemoryAddressRange
+{
+public:
+	// TODO
+};
+
+class LFCEXT MemoryAddressRange
+{
+public:
+	CTOR MemoryAddressRange(ULONG_PTR _start, ULONG_PTR _end) : start(_start), end(_end)
+	{
+	}
+
+//	CompoundMemoryAddressRange operator | ()
+
+	ULONG_PTR start;
+	ULONG_PTR end;
+};
+
+class LFCEXT Module : public Object
+{
+public:
+	CTOR Module();
+	CTOR Module(HMODULE hModule);
+	~Module();
+
+	void Init(HMODULE hModule);
+
+	String GetFullPath();
+	String get_Name();
+	String get_Path();
+
+	MemoryAddressRange get_Address() const
+	{
+		return MemoryAddressRange((ULONG_PTR)m_hModule, (ULONG_PTR)m_hModule + m_sizeOfImage);
+	}
+
+	virtual String ToString() override;
+
+#if _WIN32
+
+	virtual BOOL DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved = NULL);
+
+	BOOL DisableThreadLibraryCalls()
+	{
+		return ::DisableThreadLibraryCalls(m_hModule);
+	}
+
+	FARPROC GetProcAddress(__in LPCSTR lpProcName)
+	{
+		return ::GetProcAddress(m_hModule, lpProcName);
+	}
+
+	HMODULE GetHandle() const
+	{
+		return m_hModule;
+	}
+
+//	HMODULE GetHandle() const;
+	void SetHandle(HMODULE hModule);
+
+	bool operator == (HMODULE hModule) const;
+	bool operator != (HMODULE hModule) const;
+
+	bool operator == (const Module& other) const;
+	bool operator != (const Module& other) const;
+
+	bool operator > (const Module& other) const;
+	bool operator >= (const Module& other) const;
+	bool operator < (const Module& other) const;
+	bool operator <= (const Module& other) const;
+
+	HINSTANCE GetModuleInstance() const
+	{
+		return GetHandle();
+	}
+
+	void SetInstance(HINSTANCE hInstance)
+	{
+		SetHandle(hInstance);
+	}
+
+	static Module* FromHandle(HMODULE hModule);
+
+#endif
+
+	virtual BOOL ProcessAttach();
+	virtual BOOL Term();
+
+	typedef void (*proctype)();
+
+	void AddProc(StringIn name, proctype);
+	proctype GetProc(StringIn name);
+
+	bool Contains(ULONG_PTR address) const
+	{
+		return address >= (ULONG_PTR)m_hModule && address < (ULONG_PTR)m_hModule+m_sizeOfImage;
+	}
+
+	static bool WithinManaged(ULONG_PTR address);
+//	static void BuildRanges();
+
+	uint64 get_LoadTypesTime() const
+	{
+		return m_loadTypesTime;
+	}
+
+	static Module* FromAddress(const void* address);
+	static Module* FindModule(StringIn name);
+	static Module* Load(StringIn filename);
+	static List<Module*>* get_Loaded();
+	static List<String>* get_All();
+
+	struct Data
+	{
+		vector<Declarator*> m_allfunctions;
+	}
+	*_p;
+
+private:
+
+	CTOR Module(const Module& other);	// copy constructor
+	Module& operator = (const Module& other);	// assignment
+	Module& operator = (HMODULE hModule);	// assignment
+
+	void LoadTypes(HMODULE hModule);
+
+	/*
+	class PrivateData
+	{
+	public:
+		map<String, proctype> m_procs;
+	};
+	*/
+#ifdef _WIN32
+	HMODULE m_hModule;
+#else
+	void* m_hModule;
+#endif
+
+	ULONG_PTR m_sizeOfImage;
+
+	void* m_user;
+
+	TypeLib* m_typelib;
+
+	String m_fullpath;
+	String m_name;
+	map<String, proctype> m_procs;
+//	PrivateData* m_private;
+
+	uint64 m_loadTypesTime;
+
+	static map<String, Module*>* s_Modules;
+	static map<HMODULE, Module*>* s_HModules;
+	static List<Module*>* s_modules;
+
+//	static vector<MemoryAddressRange> s_ranges;
+//	static bool m_managedfirst;
+};
+
+}	// System

@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{dc94c7a4-534d-40c4-8ad8-f2c68402e0da}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Cos">
+      <UniqueIdentifier>{6b58efde-bfd9-4ddb-894a-e7be26c92372}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\PD">
+      <UniqueIdentifier>{f87271c4-8eca-4475-9360-d13e2b0dc854}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\PDE">
+      <UniqueIdentifier>{a05f4f99-9f39-4612-90c2-f3cf7b785dd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{55320f0d-fe87-4e12-9249-75226d864b67}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{2697c37c-12d8-4d1f-bde6-35c5e5fc90e9}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\LPDF\LPDF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFCosArray.cpp">
+      <Filter>Source Files\Cos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFCosBoolean.cpp">
+      <Filter>Source Files\Cos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFCosDict.cpp">
+      <Filter>Source Files\Cos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFCosDoc.cpp">
+      <Filter>Source Files\Cos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFCosInteger.cpp">
+      <Filter>Source Files\Cos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFCosName.cpp">
+      <Filter>Source Files\Cos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFCosObj.cpp">
+      <Filter>Source Files\Cos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFCosReal.cpp">
+      <Filter>Source Files\Cos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFCosStream.cpp">
+      <Filter>Source Files\Cos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFCosString.cpp">
+      <Filter>Source Files\Cos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFPDDoc.cpp">
+      <Filter>Source Files\PD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFPDPage.cpp">
+      <Filter>Source Files\PD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFEColorSpace.cpp">
+      <Filter>Source Files\PDE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFEContent.cpp">
+      <Filter>Source Files\PDE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFEElement.cpp">
+      <Filter>Source Files\PDE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFEExtGState.cpp">
+      <Filter>Source Files\PDE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFEGraphicState.cpp">
+      <Filter>Source Files\PDE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFEImage.cpp">
+      <Filter>Source Files\PDE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFEMatrix.cpp">
+      <Filter>Source Files\PDE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFEPath.cpp">
+      <Filter>Source Files\PDE</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LPDF\PDFEText.cpp">
+      <Filter>Source Files\PDE</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LPDF.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="PDFCosDoc.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="PDFEColorSpace.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="PDFEContent.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="PDFEExtGState.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="PDFEGraphicState.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="PDFEImage.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="PDFEMatrix.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="PDFEPath.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="PDFEText.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="PDFPDDoc.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="PDFPDPage.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\LPDF\LPDF.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFCosArray.h">
+      <Filter>Source Files\Cos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFCosBoolean.h">
+      <Filter>Source Files\Cos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFCosDict.h">
+      <Filter>Source Files\Cos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFCosDoc.h">
+      <Filter>Source Files\Cos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFCosInteger.h">
+      <Filter>Source Files\Cos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFCosName.h">
+      <Filter>Source Files\Cos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFCosObj.h">
+      <Filter>Source Files\Cos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFCosReal.h">
+      <Filter>Source Files\Cos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFCosStream.h">
+      <Filter>Source Files\Cos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFCosString.h">
+      <Filter>Source Files\Cos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFPDDoc.h">
+      <Filter>Source Files\PD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFPDPage.h">
+      <Filter>Source Files\PD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFEColorSpace.h">
+      <Filter>Source Files\PDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFEContent.h">
+      <Filter>Source Files\PDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFEElement.h">
+      <Filter>Source Files\PDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFEExtGState.h">
+      <Filter>Source Files\PDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFEGraphicState.h">
+      <Filter>Source Files\PDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFEImage.h">
+      <Filter>Source Files\PDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFEMatrix.h">
+      <Filter>Source Files\PDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFEPath.h">
+      <Filter>Source Files\PDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFEText.h">
+      <Filter>Source Files\PDE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\PDFObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LPDF\StdAfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LPDF.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

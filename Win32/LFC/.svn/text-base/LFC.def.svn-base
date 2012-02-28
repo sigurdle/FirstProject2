@@ -1,0 +1,23 @@
+LIBRARY	"LFC"
+
+EXPORTS
+
+void_invoke_function_stdcall
+void_invoke_function_cdecl
+int32_invoke_function_stdcall
+pointer_invoke_function_stdcall
+pointer_invoke_function_cdecl
+int32_invoke_function_cdecl
+float_invoke_function_cdecl
+float_invoke_function_stdcall
+double_invoke_function_cdecl
+double_invoke_function_stdcall
+pointer_invoke_function_cdecl
+struct_invoke_function_cdecl
+struct_invoke_function_stdcall
+struct_invoke_method32
+void_invoke_method32
+int32_invoke_method32
+int64_invoke_method32
+float_invoke_method32
+double_invoke_method32

@@ -1,0 +1,1230 @@
+#include "stdafx.h"
+#include "LFC.h"
+
+namespace System
+{
+
+template<class T>
+class Div
+{
+public:
+	Div(short attributes, const T& content) : m_attributes(attributes), m_content(content)
+	{
+	}
+
+	T m_content;
+	short m_attributes;
+};
+
+template<class T> Div<T> div(short attributes, T content)
+{
+	return Div<T>(attributes, content);
+}
+
+template<class T>
+class Span
+{
+public:
+	Span(short attributes, const T& content) : m_attributes(attributes), m_content(content)
+	{
+	}
+
+	T m_content;
+	short m_attributes;
+};
+
+template<class T> Span<T> span(short attributes, T content)
+{
+	return Span<T>(attributes, content);
+}
+
+template<class T>
+IO::TextWriter& WriteToStream(IO::TextWriter& stream, const Div<T>& div)
+{
+	IO::FileStreamObject* fs = dynamic_cast<IO::FileStreamObject*>(stream.m_streamObject);
+	CONSOLE_SCREEN_BUFFER_INFO info;
+	if (fs)
+	{
+		ASSERT(fs);
+
+		GetConsoleScreenBufferInfo(fs->GetFileHandle(), &info);
+		SetConsoleTextAttribute(fs->GetFileHandle(), div.m_attributes);
+	}
+
+	stream << div.m_content;
+
+	if (fs)
+	{
+		SetConsoleTextAttribute(fs->GetFileHandle(), info.wAttributes);
+	}
+
+	return stream;
+}
+
+template<class T>
+IO::TextWriter& WriteToStream(IO::TextWriter& stream, const Span<T>& span)
+{
+	/*
+	IO::FileStreamObject* fs = dynamic_cast<IO::FileStreamObject*>(stream.m_baseStream);
+	CONSOLE_SCREEN_BUFFER_INFO info;
+	if (fs)
+	{
+		ASSERT(fs);
+
+		GetConsoleScreenBufferInfo(fs->GetFileHandle(), &info);
+		SetConsoleTextAttribute(fs->GetFileHandle(), span.m_attributes);
+	}
+	*/
+
+	stream << span.m_content;
+
+	/*
+	if (fs)
+	{
+		SetConsoleTextAttribute(fs->GetFileHandle(), info.wAttributes);
+	}
+	*/
+
+	return stream;
+}
+
+template<class T>
+class DivFormatter : public TypedFormatter<Div<T> >
+{
+public:
+
+	virtual void Write(IO::TextWriter& stream, const Div<T>& div)
+	{
+		/*
+		FileStreamObject* fs = dynamic_cast<FileStreamObject*>(stream.m_streamObject);
+		ASSERT(fs);
+
+		CONSOLE_SCREEN_BUFFER_INFO info;
+		GetConsoleScreenBufferInfo(fs->GetFileHandle(), &info);
+		SetConsoleTextAttribute(fs->GetFileHandle(), div.m_attributes);
+		*/
+
+		stream << div.m_content;
+
+		/*
+		SetConsoleTextAttribute(fs->GetFileHandle(), info.wAttributes);
+		*/
+	}
+};
+
+template<class T>
+class MyArrayFormatter : public TypedArrayFormatter<T>
+{
+public:
+
+	virtual void Write(IO::TextWriter& stream, const T* items, size_t count)
+	{
+		for (size_t i = 0; i < count; ++i)
+		{
+			if (i > 0) stream << ", ";
+			stream << items[i];
+		}
+	}
+};
+
+class CppKeyword
+{
+public:
+	CTOR CppKeyword(const char* str) : m_span(attributes, str)
+	{
+	}
+
+	CTOR CppKeyword(const String& str) : m_span(attributes, str)
+	{
+	}
+
+	Span<String> m_span;
+
+	static CppKeyword Typedef;
+	static CppKeyword Enum;
+	static CppKeyword Template;
+	static CppKeyword Typename;
+	static CppKeyword Class;
+	static CppKeyword If;
+	static CppKeyword Else;
+	static CppKeyword For;
+	static CppKeyword Do;
+	static CppKeyword While;
+	static CppKeyword Const;
+	static CppKeyword Volatile;
+	static CppKeyword Virtual;
+	static CppKeyword Static;
+	static CppKeyword Namespace;
+
+	static uint16 attributes;
+};
+
+class CppAccessSpecifier
+{
+public:
+
+	CTOR CppAccessSpecifier(const char* str) : m_span(attributes, str)
+	{
+	}
+
+	CTOR CppAccessSpecifier(const String& str) : m_span(attributes, str)
+	{
+	}
+
+	Span<String> m_span;
+
+	static CppAccessSpecifier Private;
+	static CppAccessSpecifier Protected;
+	static CppAccessSpecifier Public;
+
+	static uint16 attributes;
+};
+
+CppKeyword CppKeyword::Typedef("typedef");
+CppKeyword CppKeyword::Enum("enum");
+CppKeyword CppKeyword::Template("template");
+CppKeyword CppKeyword::Typename("typename");
+CppKeyword CppKeyword::Class("class");
+CppKeyword CppKeyword::If("if");
+CppKeyword CppKeyword::Else("else");
+CppKeyword CppKeyword::For("for");
+CppKeyword CppKeyword::Do("do");
+CppKeyword CppKeyword::While("while");
+CppKeyword CppKeyword::Const("const");
+CppKeyword CppKeyword::Volatile("volatile");
+CppKeyword CppKeyword::Virtual("virtual");
+CppKeyword CppKeyword::Static("static");
+CppKeyword CppKeyword::Namespace("namespace");
+
+uint16 CppKeyword::attributes = FOREGROUND_BLUE | FOREGROUND_GREEN;
+
+CppAccessSpecifier CppAccessSpecifier::Private("private");
+CppAccessSpecifier CppAccessSpecifier::Protected("protected");
+CppAccessSpecifier CppAccessSpecifier::Public("public");
+
+uint16 CppAccessSpecifier::attributes = FOREGROUND_RED | FOREGROUND_INTENSITY;
+
+class CppSymbol
+{
+public:
+	CTOR CppSymbol(const char* str) : m_span(attributes, str)
+	{
+	}
+
+	CTOR CppSymbol(const String& str) : m_span(attributes, str)
+	{
+	}
+
+	Span<String> m_span;
+
+	static uint16 attributes;
+};
+
+uint16 CppSymbol::attributes = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+
+IO::TextWriter& WriteToStream(IO::TextWriter& stream, const CppKeyword& keyword)
+{
+	stream << keyword.m_span;
+	return stream;
+}
+
+IO::TextWriter& WriteToStream(IO::TextWriter& stream, const CppAccessSpecifier& keyword)
+{
+	stream << keyword.m_span;
+	return stream;
+}
+
+IO::TextWriter& WriteToStream(IO::TextWriter& stream, const CppSymbol& keyword)
+{
+	stream << keyword.m_span;
+	return stream;
+}
+
+//LFCEXT Stream& print(Stream& fp, Type* pType);
+//void print(ClassType* pClass);
+//LFCEXT Stream& print(Stream& fp, _TemplateArgType* pType);
+//LFCEXT Stream& print(Stream& fp, CDeclarator* pDeclarator, FunctionType* pType);
+//LFCEXT Stream& printClass(Stream& fp, ClassType* pClass, int levels);
+
+LFCEXT IO::TextWriter& WriteToStream(IO::TextWriter& fp, Type* pType, NamespaceType* pNamespaceType);
+
+LFCEXT IO::TextWriter& printArg(IO::TextWriter& fp, TemplatedClassArg* p, NamespaceType* pNamespaceType)
+{
+	if (p->m_pType)
+	{
+		Type* pType2 = p->m_pType;
+		while (pType2->get_Kind() == type_typedef)
+		{
+			Typedef* typdef = dynamic_cast<Typedef*>(pType2);
+			ASSERT(typdef);
+
+			pType2 = typdef->m_pType;
+		}
+
+		WriteToStream(fp, pType2, pNamespaceType);
+	}
+	else
+	{
+		fp << p->m_value;
+	}
+
+	return fp;
+}
+
+LFCEXT IO::TextWriter& printlevels(IO::TextWriter& fp, int levels)
+{
+	while (levels--)
+	{
+		fp << "\t";
+	}
+
+	return fp;
+}
+
+LFCEXT IO::TextWriter& print(IO::TextWriter& fp, Declarator* pDeclarator, int level, NamespaceType* pNamespaceType)
+{
+	if (pDeclarator->m_pType->get_Kind() == type_function)
+	{
+		printlevels(fp, level);
+		if (pDeclarator->m_virtual)
+		{
+			fp << CppKeyword::Virtual << " ";
+		}
+		else if (pDeclarator->get_IsStatic())
+		{
+			fp << CppKeyword::Static << " ";
+		}
+
+		FunctionType* pFun = pDeclarator->m_pType->AsFunction();
+
+		print(fp, pDeclarator, pFun, pNamespaceType);
+
+		if (pDeclarator->m_abstract)
+		{
+			fp << " = 0";
+		}
+
+		if (pFun->m_body)
+		{
+			fp << "\n";
+			printlevels(fp, level);
+			fp << "{\n";
+			printlevels(fp, level);
+
+			fp << pFun->m_body;
+
+			fp << "\n";
+			fp << "}";
+			printlevels(fp, level);
+		}
+		else
+		{
+			fp << CppSymbol(";");
+		}
+	}
+	else
+	{
+		if (pDeclarator->m_fwd)
+		{
+			ClassType* pClass = static_cast<ClassType*>(pDeclarator->m_pType);
+
+			printlevels(fp, level);
+			fp << ClassKeyName(pDeclarator->m_pType->AsClass()->GetClassKey());
+			fp << pClass;
+			fp << CppSymbol(";");
+		}
+		else if (pDeclarator->m_typedef)
+		{
+			if (pDeclarator->m_pType->get_Kind() == type_class)
+			{
+				printClass(fp, pDeclarator->m_pType->AsClass(), level);
+			}
+			else if (pDeclarator->m_pType->get_Kind() == type_enum)
+			{
+				printlevels(fp, level);
+				fp << static_cast<EnumType*>(pDeclarator->m_pType);
+			}
+			else if (pDeclarator->m_pType->get_Kind() == type_typedef)
+			{
+				printlevels(fp, level);
+				fp << CppKeyword::Typedef << " ";
+				fp << static_cast<Typedef*>(pDeclarator->m_pType)->m_pType;
+				fp << pDeclarator->m_name << CppSymbol(";");
+			}
+			else
+				ASSERT(0);
+		}
+		else
+		{
+			printlevels(fp, level);
+
+			if (pDeclarator->get_IsStatic())
+			{
+				fp << CppKeyword::Static << " ";
+			}
+
+			WriteToStream(fp, pDeclarator->m_pType, pNamespaceType);
+
+			fp << ' ';
+			fp << pDeclarator->m_name;
+
+			if (pDeclarator->m_initVal)
+			{
+				fp << " = ";
+
+				switch (pDeclarator->m_initVal->GetKind())
+				{
+				case SExp::SEXP_INT:
+					fp << static_cast<SValExp*>(pDeclarator->m_initVal)->m_val;
+					break;
+
+				case SExp::SEXP_DOUBLE:
+					fp << static_cast<SDoubleExp*>(pDeclarator->m_initVal)->m_val;
+					break;
+
+				default:
+					VERIFY(0);
+				}
+			}
+
+			fp << CppSymbol(";");
+		}
+	}
+
+	return fp;
+}
+
+LFCEXT IO::TextWriter& WriteToStream(IO::TextWriter& writer, const EnumDef& def)
+{
+	writer << def.m_name << "=" << def.m_value;
+	return writer;
+}
+
+LFCEXT IO::TextWriter& WriteToStream(IO::TextWriter& stream, EnumType* pType)
+{
+	stream << CppKeyword::Enum;
+	if (pType->m_baseType)
+	{
+		stream << ":";
+		stream << pType->m_baseType;
+	}
+
+	stream << CppSymbol("{") << "\n";
+	for (uint i = 0; i < pType->m_deflist.size(); ++i)
+	{
+		stream << pType->m_deflist[i];
+		stream << CppSymbol(";") << "\n";
+	}
+
+	stream << CppSymbol("};");
+	return stream;
+}
+
+LFCEXT IO::TextWriter& WriteToStream(IO::TextWriter& stream, NamespaceType* pType)
+{
+	stream << "TODO";
+	/*
+	stream << CppKeyword::Enum << CppSymbol("{") << "\n";
+	for (uint i = 0; i < pType->m_deflist.size(); ++i)
+	{
+		stream << pType->m_deflist[i];
+		stream << CppSymbol(";") << "\n";
+	}
+
+	stream << CppSymbol("};");
+	*/
+	return stream;
+}
+
+LFCEXT IO::TextWriter& WriteToStream(IO::TextWriter& fp, Type* pType, NamespaceType* pNamespaceType)
+{
+	if (pType == NULL)
+	{
+		fp << "(nulltype)";
+		return fp;
+	}
+
+	switch (pType->get_Kind())
+	{
+	case type_cv:
+		{
+			ModifierType* p = dynamic_cast<ModifierType*>(pType);
+			ASSERT(p);
+
+			if (p->m_bConst) fp << CppKeyword::Const << " ";
+			if (p->m_bVolatile) fp << CppKeyword::Volatile << " ";
+
+			WriteToStream(fp, p->m_pPointerTo, pNamespaceType);
+		}
+		break;
+
+	case type_pointer:
+		{
+			PointerType* p = dynamic_cast<PointerType*>(pType);
+			ASSERT(p);
+
+			if (p->GetPointerTo()->get_Kind() == type_function)
+			{
+				fp << "TODO: function\n";
+			}
+			else
+			{
+				WriteToStream(fp, p->GetPointerTo(), pNamespaceType);
+				fp << CppSymbol("*");
+			}
+		}
+		break;
+
+	case type_reference:
+		{
+			ReferenceType* r = dynamic_cast<ReferenceType*>(pType);
+			ASSERT(r);
+
+			WriteToStream(fp, r->m_pPointerTo, pNamespaceType);
+			fp << CppSymbol("&");
+		}
+		break;
+
+	case type_rvalue_reference:
+		{
+			RValueReferenceType* r = dynamic_cast<RValueReferenceType*>(pType);
+			ASSERT(r);
+
+			WriteToStream(fp, r->m_pPointerTo, pNamespaceType);
+			fp << CppSymbol("&&");
+		}
+		break;
+
+	case type_typedef:
+		{
+			Typedef* pTypedef = dynamic_cast<Typedef*>(pType);
+			ASSERT(pTypedef);
+
+			if (pTypedef->m_ownerScope && pTypedef->m_ownerScope->m_pNamespace->m_name &&
+				pTypedef->m_ownerScope->m_pNamespace != pNamespaceType)
+			{
+				WriteToStream(fp, pTypedef->m_ownerScope->m_pNamespace, pNamespaceType);
+				fp << CppSymbol("::");
+			}
+
+			fp << pTypedef->m_name;
+		}
+		break;
+
+	case type_namespace:
+		{
+			Namespace* pClass = dynamic_cast<Namespace*>(pType);
+			if (pClass == NULL)
+			{
+				pType->get_Kind();
+			}
+			ASSERT(pClass);
+
+			if (pClass->m_ownerScope && pClass->m_ownerScope->m_pNamespace->m_name &&
+				pClass->m_ownerScope->m_pNamespace != pNamespaceType)
+			{
+				WriteToStream(fp, pClass->m_ownerScope->m_pNamespace, pNamespaceType);
+				fp << CppSymbol("::");
+			}
+
+			fp << pClass->m_name;
+		}
+		break;
+
+	case type_class:
+		{
+			ClassType* pClass = dynamic_cast<ClassType*>(pType);
+			ASSERT(pClass);
+
+			if (pClass->m_ownerScope && pClass->m_ownerScope->m_pNamespace->m_name &&
+				pClass->m_ownerScope->m_pNamespace != pNamespaceType)
+			{
+				WriteToStream(fp, pClass->m_ownerScope->m_pNamespace, pNamespaceType);
+				fp << CppSymbol("::");
+			}
+
+			if (pClass->m_pInstantiatedFromArgs)
+			{
+				fp << pClass->m_pInstantiatedFromClass->m_name;
+				fp << CppSymbol("<");
+				for (unsigned int i = 0; i < pClass->m_pInstantiatedFromArgs->m_items.size(); i++)
+				{
+					if (i > 0) fp << CppSymbol(", ");
+
+					printArg(fp, pClass->m_pInstantiatedFromArgs->m_items[i], pNamespaceType);
+				}
+				fp << CppSymbol(">");
+			}
+			else
+			{
+		//	fprintf(fp, "%s(0x%x)", pClass->m_name->c_str(), pClass);
+				fp << pClass->m_name;
+			}
+
+		//	print((ClassType*)pType, recurseClass);
+		}
+		break;
+
+	case type_enum:
+		{
+			EnumType* pEnum = dynamic_cast<EnumType*>(pType);
+			ASSERT(pEnum);
+
+			// TODO namespace
+
+			fp << pEnum->m_name;
+		}
+		break;
+
+	case type_templatearg:
+		{
+			_TemplateArgType* p = dynamic_cast<_TemplateArgType*>(pType);
+			ASSERT(p);
+
+			print(fp, p);
+		}
+		break;
+
+	case type_array:
+		{
+			ArrayType* pArrayType = dynamic_cast<ArrayType*>(pType);
+			ASSERT(pArrayType);
+
+			WriteToStream(fp, pArrayType->m_pElemType, pNamespaceType);
+			fp << CppSymbol("[");
+			fp << CppSymbol("]");
+		}
+		break;
+
+	case type_function:
+		{
+			FunctionType* p = dynamic_cast<FunctionType*>(pType);
+
+			print(fp, NULL, p, pNamespaceType);
+		}
+		break;
+
+	case type_pm:
+		{
+			PointerMemberType* p = dynamic_cast<PointerMemberType*>(pType);
+
+			WriteToStream(fp, p->m_pClass);
+			fp << "::*";
+			WriteToStream(fp, p->m_pPointerTo);
+		}
+		break;
+
+	case type_null:
+		{
+			fp << "decltype(nullptr)";
+		}
+		break;
+
+	default:
+		{
+			PrimitiveType* p = dynamic_cast<PrimitiveType*>(pType);
+			ASSERT(p);
+
+			switch (p->get_Kind())
+			{
+			case type_void:						fp << CppKeyword("void"); break;
+			case type_bool:						fp << CppKeyword("bool"); break;
+
+			case type_char:						fp << CppKeyword("char"); break;
+			case type_wchar_t:					fp << CppKeyword("wchar_t"); break;
+
+			case type_uchar16:					fp << CppKeyword("char16_t"); break;
+			case type_uchar32:					fp << CppKeyword("char32_t"); break;
+
+			case type_signed_char:				fp << CppKeyword("signed char"); break;
+			case type_unsigned_char:				fp << CppKeyword("unsigned char"); break;
+			case type_short:						fp << CppKeyword("short"); break;
+			case type_unsigned_short:			fp << CppKeyword("unsigned short"); break;
+			case type_int:						fp << CppKeyword("int"); break;
+			case type_unsigned_int:				fp << CppKeyword("unsigned int"); break;
+			case type_long:						fp << CppKeyword("long"); break;
+			case type_unsigned_long:				fp << CppKeyword("unsigned long"); break;
+			case type_long_long:					fp << CppKeyword("long long"); break;
+			case type_unsigned_long_long:		fp << CppKeyword("unsigned long long"); break;
+			case type_float:						fp << CppKeyword("float");	break;
+			case type_double:					fp << CppKeyword("double");	break;
+			case type_long_double:				fp << CppKeyword("long double");	break;
+			case type_int128:					fp << CppKeyword("__int128");	break;
+			case type_unsigned_int128:			fp << CppKeyword("unsigned __int128");	break;
+			case type_float128:					fp << CppKeyword("float128");	break;
+
+			default:
+				ASSERT(0);
+			}
+		}
+		break;
+	}
+
+	return fp;
+}
+
+LFCEXT IO::TextWriter& WriteToStream(IO::TextWriter& fp, Type* pType)
+{
+	return WriteToStream(fp, pType, NULL);
+}
+
+IO::TextWriter& print(IO::TextWriter& fp, TemplateParameter* p)
+{
+	print(fp, p->u.m_pType);
+	//printf("%s", p->m_name->c_str());
+	return fp;
+}
+
+IO::TextWriter& print(IO::TextWriter& fp, _TemplateArgType* pType)
+{
+	fp << pType->m_name;
+	if (pType->m_defaultArg)
+	{
+		fp << CppSymbol("=");
+		if (pType->m_defaultArg->m_pType)
+			fp << pType->m_defaultArg->m_pType;
+		else
+			fp << pType->m_defaultArg->m_value;
+	}
+	return fp;
+}
+
+IO::TextWriter& print(IO::TextWriter& fp, Declarator* pDeclarator, FunctionType* pType, NamespaceType* pNamespaceType)
+{
+	if (pType->m_pTemplateParams)
+	{
+		fp << CppKeyword::Template << CppSymbol("<");
+		for (unsigned int i = 0; i < pType->m_pTemplateParams->m_items.size(); ++i)
+		{
+			if (i > 0) fp << CppSymbol(",");
+			print(fp, pType->m_pTemplateParams->m_items[i]);
+		}
+
+		fp << CppSymbol("> ");
+	}
+
+	if (pType->m_pReturnType)
+	{
+		WriteToStream(fp, pType->m_pReturnType, pNamespaceType);
+		fp << " ";
+	}
+
+	if (pDeclarator)
+	{
+		fp << pDeclarator->m_name;
+	}
+
+	fp << CppSymbol("(");
+	for (unsigned int i = 0; i < pType->m_parameters.m_parameters.size(); ++i)
+	{
+		if (i > 0) fp << CppSymbol(",");
+		WriteToStream(fp, pType->m_parameters.m_parameters[i].m_pType, pNamespaceType);
+		if (pType->m_parameters.m_parameters[i].m_name)
+		{
+			fp << " " << pType->m_parameters.m_parameters[i].m_name;
+		}
+	}
+
+	if (pType->m_parameters.m_bVarArg)
+		fp << CppSymbol(", ...");
+
+	fp << CppSymbol(")");
+
+	if (pType->m_bConst)
+		fp << " " << CppKeyword::Const;
+
+	if (pType->m_bVolatile)
+		fp << " " << CppKeyword::Volatile;
+
+	//printf("%s", pType->m_name->c_str());
+	return fp;
+}
+
+/*
+template<class T, int n> class Formatter
+{
+public:
+
+	CTOR Formatter(const T& item) : m_item(item)
+	{
+	}
+
+	friend Stream& operator << (Stream& stream, const Formatter<T, n>& formatter);
+
+	const T& m_item;
+};
+*/
+
+/*
+class MyCppKeywordFormatter : public TypedFormatter<CppKeyword>
+{
+public:
+
+	virtual void Write(Stream& stream, const CppKeyword& word)
+	{
+		stream << word.m_str;
+	}
+};
+*/
+
+/*
+template<class T, int n>
+Stream& operator << (Stream& stream, const TypedFormatter<T>& formatter)
+{
+	return stream;
+}
+*/
+
+/*
+template<>
+Stream& operator << (Stream& stream, const TypedFormatter<CppKeyword>& formatter)
+{
+	return stream;
+}
+*/
+
+/*
+Stream& operator << (Stream& stream, const CppKeyword& word)
+{
+	stream << word.m_str;
+	return stream;
+}
+*/
+
+IO::TextWriter& WriteToStream(IO::TextWriter& stream, ClassType* pClass, NamespaceType* pNamespaceType)
+{
+	ASSERT(pClass);
+
+	if (pClass->m_ownerScope && pClass->m_ownerScope->m_pNamespace->m_name)
+	{
+		stream << pClass->m_ownerScope->m_pNamespace;
+		stream << CppSymbol("::");
+	}
+
+	if (pClass->m_pInstantiatedFromArgs)
+	{
+		stream << pClass->m_pInstantiatedFromClass->m_name;
+		stream << CppSymbol("<");
+		for (unsigned int i = 0; i < pClass->m_pInstantiatedFromArgs->m_items.size(); ++i)
+		{
+			if (i > 0) stream << CppSymbol(", ");
+
+			printArg(stream, pClass->m_pInstantiatedFromArgs->m_items[i], pNamespaceType);
+		}
+		stream << CppSymbol(">");
+	}
+	else
+	{
+//	fprintf(fp, "%s(0x%x)", pClass->m_name->c_str(), pClass);
+		stream << pClass->m_name;
+	}
+/*
+
+	if (pClass->m_pTemplateParams)
+	{
+		stream << CppKeyword::Template << CppSymbol("<");
+		for (unsigned int i = 0; i < pClass->m_pTemplateParams->m_items.size(); i++)
+		{
+			if (i > 0) stream << CppSymbol(",");
+		//	print(fp, pClass->m_pTemplateParams->m_items[i]);
+		}
+
+		stream << CppSymbol("> ");
+	}
+
+	stream << CppKeyword::Class << " ";
+	//print(stream, pClass);
+*/
+	return stream;
+}
+
+LFCEXT String toString(AccessSpec access)
+{
+	static ImmutableString<char> s[] =
+	{
+		"unspecified",
+		"private",
+		"proteted",
+		"public",
+	};
+
+	return &s[(int)access];
+}
+
+LFCEXT IO::TextWriter& WriteToStream(IO::TextWriter& stream, AccessSpec access)
+{
+	switch (access)
+	{
+	case AccessSpec_Private:
+		stream << CppAccessSpecifier::Private;
+		break;
+
+	case AccessSpec_Protected:
+		stream << CppAccessSpecifier::Protected;
+		break;
+
+	case AccessSpec_Public:
+		stream << CppAccessSpecifier::Public;
+		break;
+	}
+
+	return stream;
+}
+
+void WriteNamespaces(IO::TextWriter& fp, NamespaceType* pType, NamespaceType* pNamespaceType)
+{
+	if (pType != pNamespaceType && pType->m_name)
+	{
+		if (pType->m_ownerScope && pType->m_ownerScope->m_pNamespace)
+		{
+			WriteNamespaces(fp, pType->m_ownerScope->m_pNamespace, pNamespaceType);
+		}
+
+		fp << CppKeyword::Namespace << pType->m_name << "\n" << "{" << endl;
+	}
+}
+
+IO::TextWriter& printClass(IO::TextWriter& fp, ClassType* pClass, int level, NamespaceType* pNamespaceType)
+{
+	if (pClass == NULL)
+	{
+		raise(ArgumentNullException());
+	}
+
+	WriteNamespaces(fp, pClass->m_ownerScope->m_pNamespace, pNamespaceType);
+	pNamespaceType = pClass->m_ownerScope->m_pNamespace;
+
+	printlevels(fp, level);
+
+	if (pClass->m_pTemplateParams)
+	{
+		fp << CppKeyword::Template << CppSymbol("<");
+		for (unsigned int i = 0; i < pClass->m_pTemplateParams->m_items.size(); ++i)
+		{
+			if (i > 0) fp << CppSymbol(",");
+			print(fp, pClass->m_pTemplateParams->m_items[i]);
+		}
+
+		fp << CppSymbol("> ");
+	}
+
+	fp << CppKeyword::Class << " ";
+	fp << pClass->m_name;
+
+	/*
+	BufferImp<char> buffer;
+	StringBuilder<char> strbuilder(&buffer);
+	pClass->Write(strbuilder);
+	StringA* str = buffer.DetachToString();
+
+//	printf("class %s at 0x%x ", str->c_str(), pClass);
+//	printf("class %s ", str->c_str());
+*/
+
+	//if (recurseClass)
+	{
+		if (pClass->m_bases.size())
+		{
+			fp << CppSymbol(" : ");
+
+			for (unsigned int i = 0; i < pClass->m_bases.size(); ++i)
+			{
+				if (i > 0) fp << CppSymbol(", ");
+				fp << CppAccessSpecifier::Public << " ";
+				WriteToStream(fp, pClass->m_bases[i]->m_pClass, pNamespaceType);
+			}
+		}
+
+		fp << endl;
+		printlevels(fp, level);
+		fp << CppSymbol("{") << endl;
+
+		AccessSpec access;
+		if (pClass->GetClassKey() == ClassKey_class)
+			access = AccessSpec_Protected;
+		else
+			access = AccessSpec_Public;
+
+		for (auto it = pClass->m_pScope->m_orderedDecls.begin(); it != pClass->m_pScope->m_orderedDecls.end(); ++it)
+		{
+			Declarator* pMember = *it;
+
+			if (pMember->get_Access() != access)
+			{
+				access = pMember->get_Access();
+
+				printlevels(fp, level);
+				fp << access;
+				fp << CppSymbol(":") << endl;
+			}
+
+			print(fp, pMember, level+1, pNamespaceType);
+			/*
+			if (pMember->m_fwd)
+			{
+				print(pMember, false);
+			}
+			else if (pMember->m_typedef && pMember->m_pType->get_Kind() == type_class)
+			{
+				print(pMember);
+			}
+			else
+			{
+				print(pMember, false);
+			}
+			*/
+
+			/*
+			print(pMember->m_pType);
+			printf(" ");
+			printf("%s;", pMember->m_name->c_str());
+			*/
+			fp << endl;
+		}
+
+		printlevels(fp, level);
+		fp << CppSymbol("};") << endl;
+	}
+
+	while (pNamespaceType && pNamespaceType->m_name)
+	{
+		fp << "}	// " << pNamespaceType->m_name << endl;
+		pNamespaceType = pNamespaceType->m_ownerScope? pNamespaceType->m_ownerScope->m_pNamespace: NULL;
+	}
+
+	return fp;
+}
+
+void print(ClassType* pClass)
+{
+	printClass(Std::get_Out(), pClass, 0);
+}
+
+void print(EnumType* pEnum)
+{
+	WriteToStream(Std::get_Out(), pEnum);
+}
+
+Variant GetPropertyValue(/*ClassType* pClass,*/ Property* pProperty)
+{
+	Type* pReturnType = pProperty->get_GetMethod()->get_ReturnType();
+
+	switch (pReturnType->GetBaseType()->get_Kind())
+	{
+	case type_bool:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<bool>(nullptr, 0), pReturnType);
+
+	case type_char:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<char>(nullptr, 0), pReturnType);
+
+	case type_wchar_t:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<wchar_t>(nullptr, 0), pReturnType);
+
+	case type_signed_char:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<signed char>(nullptr, 0), pReturnType);
+
+	case type_unsigned_char:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<unsigned char>(nullptr, 0), pReturnType);
+
+	case type_short:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<short>(nullptr, 0), pReturnType);
+
+	case type_unsigned_short:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<unsigned short>(nullptr, 0), pReturnType);
+
+	case type_int:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<int>(nullptr, 0), pReturnType);
+
+	case type_unsigned_int:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<unsigned int>(nullptr, 0), pReturnType);
+
+	case type_long:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<long>(nullptr, 0), pReturnType);
+
+	case type_unsigned_long:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<unsigned long>(nullptr, 0), pReturnType);
+
+	case type_long_long:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<long long>(nullptr, 0), pReturnType);
+
+	case type_unsigned_long_long:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<unsigned long long>(nullptr, 0), pReturnType);
+
+	case type_float:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<float>(nullptr, 0), pReturnType);
+
+	case type_double:
+	case type_long_double:
+		return Variant(pProperty->get_GetMethod()->invoke_functionA<double>(nullptr, 0), pReturnType);
+
+	case type_class:
+		{
+			// TODO IMPROVE
+
+			byte* p = new byte[pReturnType->get_sizeof()];
+			pProperty->get_GetMethod()->struct_invoke_function(nullptr, 0, p);
+			return Variant(p, pReturnType);
+		}
+		break;
+
+	case type_pointer:
+	case type_reference:
+		return Variant(true, pProperty->get_GetMethod()->invoke_functionA<void*>(nullptr, 0), pReturnType);
+
+	default:
+		raise(Exception("unsupported type"));
+	}
+}
+
+Variant GetPropertyValue(Dispatch* dispatch, void* obj, Property* pProperty)
+{
+	Type* pReturnType = pProperty->get_GetMethod()->get_ReturnType();
+
+	switch (pReturnType->GetBaseType()->get_Kind())
+	{
+	case type_bool:
+		return Variant(dispatch->Invoke<bool>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_char:
+		return Variant(dispatch->Invoke<char>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_wchar_t:
+		return Variant(dispatch->Invoke<wchar_t>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_signed_char:
+		return Variant(dispatch->Invoke<signed char>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_unsigned_char:
+		return Variant(dispatch->Invoke<unsigned char>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_short:
+		return Variant(dispatch->Invoke<short>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_unsigned_short:
+		return Variant(dispatch->Invoke<unsigned short>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_int:
+		return Variant(dispatch->Invoke<int>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_unsigned_int:
+		return Variant(dispatch->Invoke<unsigned int>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_long:
+		return Variant(dispatch->Invoke<long>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_unsigned_long:
+		return Variant(dispatch->Invoke<unsigned long>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_long_long:
+		return Variant(dispatch->Invoke<long long>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_unsigned_long_long:
+		return Variant(dispatch->Invoke<unsigned long long>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_float:
+		return Variant(dispatch->Invoke<float>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_double:
+	case type_long_double:
+		return Variant(dispatch->Invoke<double>(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+
+	case type_class:
+		{
+			// TODO IMPROVE
+
+			byte* p = new byte[pReturnType->get_sizeof()];
+			dispatch->struct_Invoke(obj, pProperty->get_GetMethod(), nullptr, 0, p);
+		//	pProperty->get_GetMethod()->struct_invoke_function(NULL, 0, p);
+			return Variant(p, pReturnType);
+		}
+		break;
+
+	case type_pointer:
+	case type_reference:
+		return Variant(true, dispatch->pointer_Invoke(obj, pProperty->get_GetMethod(), nullptr, 0), pReturnType);
+	//	return Variant(true, pProperty->get_GetMethod()->invoke_function<void*>(NULL, 0), pReturnType);
+
+	default:
+		raise(Exception("unsupported type"));
+	}
+}
+
+String escape(StringIn str)
+{
+	IO::StringWriter stream;
+
+	for (size_t i = 0; i < str.GetLength(); ++i)
+	{
+		wchar_t c = str[i];
+
+		if (c == '\n')
+		{
+			stream << "\\n";
+		}
+		else if (c == '\r')
+		{
+			stream << "\\r";
+		}
+		else if (c == '\t')
+		{
+			stream << "\\t";
+		}
+		else
+			stream << c;
+	}
+
+	return stream.str();
+}
+
+LFCEXT void printProperties(ClassType* pClass)
+{
+	Dispatch* pDispatch = GetDispatch(pClass);
+
+	for (auto it = pDispatch->GetProperties().begin(); it != pDispatch->GetProperties().end(); ++it)
+	{
+		Property* pProperty = it->second;
+
+		if (pProperty->get_GetMethod() && pProperty->get_GetMethod()->get_IsStatic())
+		{
+			Variant v = GetPropertyValue(pProperty);
+
+			Std::get_Out() << pProperty->get_PropertyName() << '=';
+
+			if (v.IsString())
+			{
+				Std::get_Out() << '"' << escape(v.ToString()) << '"' << endl;
+			}
+			else
+			{
+				Std::get_Out() << v << endl;
+			}
+		}
+	}
+}
+
+LFCEXT void printProperties(Object* pObj)
+{
+	Dispatch* pDispatch = GetDispatch(pObj->GetType());
+
+	for (auto it = pDispatch->GetProperties().begin(); it != pDispatch->GetProperties().end(); ++it)
+	{
+		Property* pProperty = it->second;
+		if (pProperty->get_GetMethod() && !pProperty->get_GetMethod()->get_IsStatic())
+		{
+			Variant v = GetPropertyValue(pDispatch, pObj, pProperty);
+
+			Std::get_Out() << pProperty->get_PropertyName() << '=';
+
+			if (v.IsString())
+			{
+				Std::get_Out() << '"' << escape(v.ToString()) << '"' << endl;
+			}
+			else
+			{
+				Std::get_Out() << v << endl;
+			}
+		}
+	}
+}
+
+}	// System

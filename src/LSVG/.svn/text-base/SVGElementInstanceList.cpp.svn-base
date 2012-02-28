@@ -1,0 +1,24 @@
+#include "stdafx.h"
+#include "LSVG2.h"
+#include "SVGElementInstanceList.h"
+
+namespace System
+{
+namespace Web
+{
+
+unsigned int SVGElementInstanceList::get_length() const
+{
+	return m_items.GetSize();
+}
+
+SVGElementInstance* SVGElementInstanceList::item(unsigned int index)
+{
+	if (index < m_items.GetSize())
+		return m_items[index];
+	else
+		return NULL;
+}
+
+}	// w3c
+}

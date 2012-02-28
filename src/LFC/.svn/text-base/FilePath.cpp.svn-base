@@ -1,0 +1,231 @@
+#include "stdafx.h"
+#include "LFC.h"
+
+namespace System
+{
+
+/*
+FilePath::FilePath(String filepath) : m_filepath(filepath)
+{
+	WCHAR drive[3];
+	WCHAR dir[512];
+	WCHAR filename[512];
+	WCHAR ext[512];
+
+	_wsplitpath_s(CStringw(filepath), drive, dir, filename, ext);
+
+	m_drive = string_copy(drive);
+	m_dir = string_copy(dir);
+	m_filename = string_copy(filename);
+	m_ext = string_copy(ext);
+}
+*/
+
+Filename::Filename()
+{
+}
+
+Filename::Filename(StringIn filename) : m_filename(filename)
+{
+	auto offset = filename.find('.');
+	if (offset != String::npos)
+	{
+		m_name = filename.LeftOf(offset);
+		m_ext = filename.RightOf(offset+1);
+	}
+	else
+	{
+		m_name = filename;
+	}
+}
+
+Filename::Filename(StringIn name, StringIn ext) : m_name(name), m_ext(ext)
+{
+	IO::StringWriter str;
+	str << name;
+	if (ext.LeftOf(1) == ".")
+		str << ext;
+	else if (ext.GetLength())
+		str << "." << ext;
+
+	m_filename = str.str();
+}
+
+Filename::Filename(const Filename& other) : m_name(other.get_Name()), m_ext(other.get_Ext()), m_filename(other.m_filename)
+{
+}
+
+FilePath::FilePath()
+{
+}
+
+FilePath::FilePath(const FilePath& other) :
+	m_filepath(other.m_filepath),
+	m_drive(other.get_Drive()),
+	m_dir(other.get_Dir()),
+	m_name(other.get_Name()),
+	m_ext(other.get_Ext())
+{
+}
+
+FilePath::FilePath(StringIn filepath) : m_filepath(filepath)
+{
+	if (filepath.GetCharSize() == 1)
+	{
+		char drive[3];
+		char dir[512];
+		char name[512];
+		char ext[512];
+
+		// TODO
+
+		_splitpath_s(CString(filepath), drive, dir, name, ext);
+
+		m_drive = String(string_copy(drive));
+		m_dir = String(string_copy(dir));
+		m_name = String(string_copy(name));
+		m_ext = String(string_copy(ext));
+	}
+	else
+	{
+		wchar_t drive[3];
+		wchar_t dir[512];
+		wchar_t name[512];
+		wchar_t ext[512];
+
+		// TODO
+
+		_wsplitpath_s(CStringw(filepath), drive, dir, name, ext);
+
+		m_drive = String(string_copy(drive));
+		m_dir = String(string_copy(dir));
+		m_name = String(string_copy(name));
+		m_ext = String(string_copy(ext));
+	}
+}
+
+FilePath::FilePath(StringIn drive, StringIn pathname) :
+	m_drive(drive)
+{
+}
+
+FilePath::FilePath(StringIn drive, StringIn dir, StringIn filenameext) :
+	m_drive(drive),
+	m_dir(dir)
+{
+	auto offset = filenameext.find('.');
+	if (offset != String::npos)
+	{
+		m_name = filenameext.LeftOf(offset);
+		m_ext = filenameext.RightOf(offset+1);
+	}
+	else
+	{
+		m_name = filenameext;
+	}
+}
+
+FilePath::FilePath(StringIn drive, StringIn dir, StringIn name, StringIn ext) :
+	m_drive(drive),
+	m_dir(dir),
+	m_name(name),
+	m_ext(ext)
+{
+}
+
+FilePath::operator StringVariant ()
+{
+	return get_FullPath();
+}
+
+FilePath FilePath::operator + (const Filename& fname) const
+{
+	String s = get_Dir() + get_NameExt().ToString();
+	if (s.RightOf(1) != "\\")
+	{
+		s += "\\";
+	}
+
+	return FilePath(get_Drive(), s, fname.m_filename);
+}
+
+FilePath& FilePath::operator += (const Filename& fname)
+{
+	String s = get_Dir() + get_NameExt().ToString();
+	if (s.RightOf(1) != "\\")
+	{
+		s += "\\";
+	}
+
+	m_dir = s;
+	set_NameExt(Filename(fname.m_filename));
+
+	return *this;
+}
+
+String FilePath::get_Name() const
+{
+	return m_name;
+}
+
+String FilePath::get_Ext() const
+{
+	return m_ext;
+}
+
+Filename FilePath::get_NameExt() const
+{
+	return Filename(m_name, m_ext);
+}
+
+void FilePath::set_NameExt(Filename filename)
+{
+	m_name = filename.get_Name();
+	m_ext = filename.get_Ext();
+	m_filepath = NULL;
+
+	/*
+	WCHAR fullpath[1024];
+	_wmakepath_s(fullpath, _countof(fullpath), CStringw(m_drive).c_str(), CStringw(m_dir).c_str(), CStringw(m_filename).c_str(), CStringw(m_ext).c_str());
+	m_filepath = string_copy(fullpath);
+	*/
+}
+
+String FilePath::get_FullPath()
+{
+	if (m_filepath == NULL)
+	{
+		IO::StringWriter str;
+		str << get_Drive() << get_Dir() << get_NameExt();
+
+		m_filepath = str.str();
+	}
+
+	return m_filepath;
+}
+
+String FilePath::get_FullPath() const
+{
+	if (m_filepath != NULL)
+	{
+		return m_filepath;
+	}
+	IO::StringWriter str;
+	str << get_Drive() << get_Dir() << get_NameExt();
+
+	return str.str();
+}
+
+LFCEXT IO::TextWriter& WriteToStream(IO::TextWriter& stream, FilePath& filepath)
+{
+	stream << filepath.get_FullPath();
+	return stream;
+}
+
+LFCEXT IO::TextWriter& WriteToStream(IO::TextWriter& stream, const FilePath& filepath)
+{
+	stream << filepath.get_FullPath();
+	return stream;
+}
+
+}	// System

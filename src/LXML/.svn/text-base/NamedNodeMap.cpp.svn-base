@@ -1,0 +1,299 @@
+#include "stdafx.h"
+#include "LXML2.h"
+#include "NamedNodeMap.h"
+
+namespace System
+{
+namespace Web
+{
+
+NamedNodeMap::NamedNodeMap()
+{
+	//m_bXML = VARIANT_TRUE;
+	m_pListener = NULL;
+}
+
+NamedNodeMap::~NamedNodeMap()
+{
+	ASSERT(m_pListener == NULL);
+//		ASSERT(m_items.size() == 0);
+}
+
+/*
+void NamedNodeMap::FinalRelease()
+{
+	for (int i = 0; i < m_items.GetSize(); i++)
+	{
+		int refcount = m_items[i]->Release();
+	}
+
+	m_items.RemoveAll();
+}
+*/
+
+unsigned int NamedNodeMap::get_length() const
+{
+	return m_items.GetSize();
+}
+
+Node* NamedNodeMap::item(unsigned int index) const
+{
+	if (index < m_items.GetSize())
+	{
+		return m_items[index];
+	}
+	else
+		return NULL;
+}
+
+Node* NamedNodeMap::setNamedItem(Node* arg)
+{
+	/*
+// TODO, check if already exists
+	if (arg == NULL) return E_POINTER;
+
+	arg->AddRef();
+	m_items.Add(arg);
+
+	if (m_pListener)
+	{
+		m_pListener->OnAddedNode(this, arg);
+	}
+
+	if (pVal)
+	{
+		*pVal = arg;
+		(*pVal)->AddRef();
+	}
+	*/
+	return setNamedItemNS(arg);
+//	return S_OK;
+}
+
+Node* NamedNodeMap::setNamedItemNS(Node* arg)
+{
+	ASSERT(arg);
+	if (arg == NULL) THROW(-1);
+
+	Attr* argattr = dynamic_cast<Attr*>(arg);
+	if (argattr == NULL)
+	{
+		ASSERT(0);
+		THROW(-1);
+	}
+
+	if (argattr->get_ownerElement() != NULL)
+	{
+		ASSERT(0);
+		THROW(-1);		
+	// INUSE_ATTRIBUTE_ERR
+	}
+
+	String name = arg->get_localName();
+	if (name == NULL)//->Length() == 0)
+	{
+		name = arg->get_nodeName();
+	}
+
+	String namespaceURI = arg->get_namespaceURI();
+
+	for (uint i = 0; i < m_items.GetSize(); i++)
+	{
+		if (arg == m_items[i])	// The same node already exists
+		{
+			return arg;
+		}
+
+		String name2;
+		name2 = m_items[i]->get_localName();
+		if (name2 == NULL)//->Length() == 0)
+		{
+			name2 = m_items[i]->get_nodeName();
+		}
+
+		if (name == name2)
+		{
+			String namespaceURI2 = m_items[i]->get_namespaceURI();
+
+			if (namespaceURI == namespaceURI2)
+			{
+				Node* pOld = m_items[i];	// Return the replaced node
+				m_items[i] = arg;
+
+				arg->m_ppAttr = pOld->m_ppAttr;
+				if (arg->m_ppAttr)
+				{
+					*arg->m_ppAttr = argattr;
+				}
+
+				// TODO: maybe have OnReplacedNode ?
+
+				if (m_pListener)
+				{
+					m_pListener->OnRemoveNode(this, pOld);
+				}
+
+				if (m_pListener)
+				{
+					m_pListener->OnAddedNode(this, arg);
+				}
+
+				return pOld;
+			}
+		}
+	}
+
+	m_items.Add(arg);
+
+	if (m_pListener)
+	{
+		m_pListener->OnAddedNode(this, arg);
+	}
+
+	return NULL;
+}
+
+Node* NamedNodeMap::removeNamedItem(StringIn name)
+{
+	return removeNamedItemNS(NULL, name);
+}
+
+Node* NamedNodeMap::removeNamedItemNS(StringIn namespaceURI, StringIn localName)
+{
+	ASSERT(0);
+	return NULL;
+#if 0
+	ASSERT(localName);
+	if (localName == NULL) return E_INVALIDARG;
+
+	int length = m_items.GetSize();
+
+	for (int i = 0; i < length; i++)
+	{
+		Node* pNode = m_items[i];
+
+		sysstring name2;
+		pNode->get_localName(&name2);
+		if (name2.Length() == 0)
+		{
+			name2.Empty();
+			pNode->get_nodeName(&name2);
+		}
+
+		if (!wcscmp(localName, name2))
+		{
+			CComBSTR namespaceURI2;
+			pNode->get_namespaceURI(&namespaceURI2);
+
+			if (!cmpbstr(namespaceURI, namespaceURI2))
+			{
+				*pVal = pNode;
+				m_items.RemoveAt(i);
+
+				if (m_pListener)
+				{
+					m_pListener->OnRemoveNode(this, pNode);
+				}
+
+				return S_OK;
+			}
+		}
+	}
+
+	*pVal = NULL;
+	return S_OK;
+#endif
+}
+
+Node* NamedNodeMap::getNamedItem(StringIn name) const
+{
+	for (int i = 0; i < m_items.size(); i++)
+	{
+		// TODO, have old, but for now
+		//CLDOMAttr* pAttr = static_cast<CLDOMAttr*>(m_items[i]);
+		//BSTR nodeName = pAttr->m_nodeName;
+		String nodeName = m_items[i]->get_nodeName();
+
+		if (nodeName == name)
+		{
+			return m_items[i];
+		}
+	}
+
+	return NULL;
+}
+
+// Is this tested?
+Node* NamedNodeMap::getNamedItemNS(StringIn namespaceURI, StringIn localName) const
+{
+//	UINT namespaceLen = (namespaceURI == NULL)? 0: wcslen(namespaceURI);
+
+	for (int i = 0; i < m_items.size(); i++)
+	{
+		String itemNamespaceURI = m_items[i]->get_namespaceURI();
+		String itemLocalName = m_items[i]->get_localName();
+		/*
+		if (itemLocalName->Length() == 0)
+		{
+			itemLocalName = m_items[i]->get_nodeName();
+		}
+		*/
+
+		if ((itemNamespaceURI == namespaceURI) && (itemLocalName == localName))
+		{
+			return m_items[i];
+		}
+	}
+
+	return NULL;
+}
+
+/*
+Node* NamedNodeMap::getNamedItem(const WCHAR* name) const
+{
+	for (int i = 0; i < m_items.size(); i++)
+	{
+		// TODO, have old, but for now
+		//CLDOMAttr* pAttr = static_cast<CLDOMAttr*>(m_items[i]);
+		//BSTR nodeName = pAttr->m_nodeName;
+		String nodeName = m_items[i]->get_nodeName();
+
+		if (nodeName == name)
+		{
+			return m_items[i];
+		}
+	}
+
+	return NULL;
+}
+*/
+
+#if 0
+// Is this tested?
+Node* NamedNodeMap::getNamedItemNS(const WCHAR* namespaceURI, const WCHAR* localName) const
+{
+//	UINT namespaceLen = (namespaceURI == NULL)? 0: wcslen(namespaceURI);
+
+	for (int i = 0; i < m_items.size(); i++)
+	{
+		StringW* itemNamespaceURI = m_items[i]->get_namespaceURI();
+		StringW* itemLocalName = m_items[i]->get_localName();
+		/*
+		if (itemLocalName->Length() == 0)
+		{
+			itemLocalName = m_items[i]->get_nodeName();
+		}
+		*/
+
+		if ((*itemNamespaceURI == namespaceURI) && (*itemLocalName == localName))
+		{
+			return m_items[i];
+		}
+	}
+
+	return NULL;
+}
+#endif
+
+}	// Web
+}

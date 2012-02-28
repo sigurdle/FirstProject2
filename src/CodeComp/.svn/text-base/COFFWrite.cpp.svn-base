@@ -1,0 +1,1097 @@
+#include "stdafx.h"
+#include "Comp2.h"
+#include "LFC/VCMangler.h"
+#include "LFC/disasm.h"
+#include "coff.h"
+#include "COFFWrite.h"
+#include "codegen.h"
+#include "ir.h"
+#include "m68kassem.h"
+#include "ppcassem.h"
+#include "x86assem.h"
+#include "microsoft/cvinfo.h"
+
+#include "cpp_compile.h"	// TODO remove
+
+namespace System
+{
+using namespace std;
+using namespace CodeView;
+
+void assem(x86instr* assem, CFunctionCode* pFun, FILE* fileout);
+void assem(m68kinstr* assem, CFunctionCode* pFun, FILE* fileout);
+void assem(ppcinstr* assem, /*CFunctionCode* pFun,*/ FILE* fileout);
+
+class TypType
+{
+public:
+	ULONG fpos;
+};
+
+void descend(TypType* typ, FILE* file)
+{
+	typ->fpos = ftell(file);
+	fseek(file, 2, SEEK_CUR);
+}
+
+uint16 ascend(TypType typ, FILE* file)
+{
+	long fpos = ftell(file);
+	uint16 len = fpos - typ.fpos;
+	uint16 typlen = (len+3) & ~3;	// align on dword
+	while (len < typlen)
+	{
+		fputc(0, file);
+		len++;
+	}
+	fpos = typ.fpos + typlen;
+
+	fseek(file, typ.fpos, SEEK_SET);
+	typlen -= 2;
+	fwrite(&typlen, 1, 2, file);
+
+	fseek(file, fpos, SEEK_SET);
+
+	return typlen;
+}
+
+ULONG descend(SYMTYPE* symtyp, FILE* file)
+{
+	symtyp->reclen = 0;
+
+	ULONG start = ftell(file);
+//	fseek(file, 4, SEEK_CUR);
+	return start;
+}
+
+void ascend(ULONG start, SYMTYPE* symtyp, FILE* file)
+{
+	long fpos = ftell(file);
+	int len = fpos - start;
+	symtyp->reclen = (len+3) & ~3;	// align on dword
+	while (len < symtyp->reclen)
+	{
+		fputc(0, file);
+		len++;
+	}
+	fpos = start + symtyp->reclen;
+
+	fseek(file, start, SEEK_SET);
+	symtyp->reclen -= 2;
+	fwrite(&symtyp->reclen, 1, 2, file);
+
+	fseek(file, fpos, SEEK_SET);
+}
+
+void fw(FILE* file, short v)
+{
+	fwrite(&v, 1, 2, file);
+}
+
+void fl(FILE* file, long v)
+{
+	fwrite(&v, 1, 4, file);
+}
+
+void Write32(FILE* fp, uint32 filepointer, long value)
+{
+	long oldpos = ftell(fp);
+	fseek(fp, filepointer, SEEK_SET);
+	fwrite(&value, 1, 4, fp);
+	fseek(fp, oldpos, SEEK_SET);
+}
+
+//#include <winnt.h>
+
+using namespace System;
+
+//namespace cpp
+//{
+
+//int numberOfRelocations;
+//IMAGE_RELOCATION ImageRelocation[10];
+
+CCOFFObjectFile::CCOFFObjectFile()
+{
+	m_SizeOfStringTable = 0;
+	m_StringTableBytes = 0;
+	m_StringTable = NULL;
+}
+
+CCOFFObjectFile::~CCOFFObjectFile()
+{
+	if (m_StringTable)
+	{
+		delete m_StringTable;
+		m_StringTable = NULL;
+	}
+}
+
+int CCOFFObjectFile::AddSymbol(const char* symbolName, IMAGE_SYMBOL** ppSymbol)
+{
+	int len = strlen(symbolName);
+
+	IMAGE_SYMBOL sym;
+
+	if (len <= 7)	// must also have room for 0-termination
+	{
+		strcpy_s((char*)sym.N.ShortName, 8, symbolName);
+	}
+	else
+	{
+		if (m_SizeOfStringTable+len+1 >= m_StringTableBytes)
+		{
+			while (m_SizeOfStringTable+len+1 >= m_StringTableBytes)
+			{
+				m_StringTableBytes += 256;
+			}
+
+			ASSERT(0);
+		//	m_StringTable = (char*)realloc(m_StringTable, m_StringTableBytes);
+			if (m_StringTable == NULL)
+			{
+				return -1;
+			}
+		}
+		sym.N.Name.Short = 0;
+		sym.N.Name.Long = m_SizeOfStringTable+4;
+		memcpy(m_StringTable + m_SizeOfStringTable, symbolName, len+1);
+		m_SizeOfStringTable += len+1;
+	}
+
+	m_symbols.Add(sym);
+
+	*ppSymbol = &m_symbols[m_symbols.GetSize()-1];
+
+	return m_symbols.GetSize();
+}
+
+int CCOFFObjectFile::AddSymbol(const char* symbolName, FSymbol** ppSymbol)
+{
+
+	ASSERT(0);
+#if 0
+	FSymbol* pSymbol = new FSymbol;
+	memset(pSymbol, 0, sizeof(FSymbol));
+
+	pSymbol->N.Name = strdup(symbolName);
+
+	int len = strlen(symbolName);
+
+//	ASSERT(0);
+
+#if 0
+	if (len <= 7)	// must also have room for 0-termination
+	{
+		strcpy((char*)pSymbol->N.ShortName, symbolName);
+	}
+	else
+	{
+		if (m_SizeOfStringTable+len+1 >= m_StringTableBytes)
+		{
+			while (m_SizeOfStringTable+len+1 >= m_StringTableBytes)
+			{
+				m_StringTableBytes += 256;
+			}
+
+			m_StringTable = (char*)realloc(m_StringTable, m_StringTableBytes);
+			if (m_StringTable == NULL)
+			{
+				return -1;
+			}
+		}
+		pSymbol->N.Name.Long = m_SizeOfStringTable+4;
+		memcpy(m_StringTable + m_SizeOfStringTable, symbolName, len+1);
+		m_SizeOfStringTable += len+1;
+	}
+#endif
+	*ppSymbol = pSymbol;
+
+	m_symbols.Add(pSymbol);
+
+	return m_symbols.GetSize();
+#endif
+	return 0;
+}
+
+#if 0
+int CCOFFObjectFile::GetTypeInd(Type* pType)
+{
+	switch (pType->GetKind())
+	{
+	case type_pointer:
+		{
+			int typind = GetTypeInd(pType->GetPointerTo());
+			if (typind)
+			{
+				return typind | 0x400;
+			}
+		}
+		break;
+		
+	case type_void:
+		return T_VOID;
+		
+	case type_bool:
+		return T_BOOL08;
+		
+	case type_char:
+		//	return T_RCHAR;	// treat it as really a char instead of a byte
+		return T_CHAR;
+		
+	case type_signed_char:
+		return T_CHAR;
+		
+	case type_unsigned_char:
+		return T_UCHAR;
+		
+	case type_wchar:
+		return T_WCHAR;
+		
+	case type_int:
+		return T_INT4;
+		
+	case type_unsigned_int:
+		return T_UINT4;
+		
+	case type_short_int:
+		return T_INT2;
+		
+	case type_unsigned_short_int:
+		return T_UINT2;
+		
+	case type_long_int:
+		return T_LONG;
+		
+	case type_unsigned_long_int:
+		return T_ULONG;
+		
+	case type_long_long:
+		return T_QUAD;
+		
+	case type_unsigned_long_long:
+		return T_UQUAD;
+		
+	case type_float:
+		return T_REAL32;
+		
+	case type_double:
+		return T_REAL64;
+
+	case type_class:
+		{
+			map<Type*,int>::iterator it = m_types.find(pType);
+			if (it != m_types.end())
+			{
+				return (*it).second;
+			}
+			else
+			{
+				return m_types.insert(map<Type*,int>::value_type(pType, m_types.size())).second;
+			}
+		}
+		break;
+
+	default:
+		ASSERT(0);
+	}
+	return 0;
+}
+#endif
+
+int CCOFFObjectFile::Create(FILE* fileout, cpp::CGlobal* pGlobal, Scope* pGlobalScope, const vector<T_Declarator*>& globals, CFunctionCode* pFunctionCode, int cpu_id)
+{
+#if 1
+	fseek(fileout, sizeof(IMAGE_FILE_HEADER), SEEK_CUR);	// Make room for header
+
+	IMAGE_FILE_HEADER Header;
+	ASSERT(sizeof(IMAGE_FILE_HEADER) == IMAGE_SIZEOF_FILE_HEADER);
+
+	memset(&Header, 0, sizeof(Header));
+	Header.Machine = IMAGE_FILE_MACHINE_I386;
+	// One section for each function
+
+	Header.NumberOfSections = 0;
+
+//	std::vector<CDeclarator*> globals;
+
+#if 0
+	{
+		for (int i = 0; i < pGlobal->m_pNamespace->m_pScope->m_orderedDecls.size(); i++)
+		{
+			CDeclaratorReference* pDeclarator = pGlobal->m_pNamespace->m_pScope->m_orderedDecls[i];
+
+			ASSERT(0);
+			if (pDeclarator->m_pFunction && pDeclarator->m_pFunction->m_pBody)
+			{
+				if (pDeclarator->m_pFunction->m_funcspec != 23/*inline*/)
+				{
+					globals.push_back(pDeclarator);
+				}
+			}
+		}
+	}
+#endif
+
+//	Header.NumberOfSections = globals.size();
+//	Header.NumberOfSymbols = globals.size();
+	Header.SizeOfOptionalHeader = 0;
+	Header.TimeDateStamp = 0;
+	Header.Characteristics = 0;
+//	fwrite(&Header, 1, sizeof(IMAGE_FILE_HEADER), fileout);
+
+// Make room for section headers
+	long PointerToSections = ftell(fileout);
+
+// Make room for section headers
+
+	Header.NumberOfSections = globals.size()+2;// + pGlobal->m_strings.size();
+
+	fseek(fileout, sizeof(IMAGE_SECTION_HEADER)*Header.NumberOfSections, SEEK_CUR);
+
+//	IMAGE_SECTION_HEADER* SectionHeader = new IMAGE_SECTION_HEADER[Header.NumberOfSections];
+//	int nPointerToLinenumber;
+
+	vector<IMAGE_LINENUMBER> linenumbers;
+
+// Write section data
+
+	if (true)	// .debug$S
+	{
+		vector<IMAGE_RELOCATION> relocations;
+
+		IMAGE_SECTION_HEADER* pSectionHeader = new IMAGE_SECTION_HEADER;
+		memset(pSectionHeader, 0, sizeof(IMAGE_SECTION_HEADER));
+
+		m_sectionHeaders.push_back(pSectionHeader);
+
+		strncpy_s((char*)pSectionHeader->Name, 8, ".debug$S", 8);
+		pSectionHeader->Characteristics = IMAGE_SCN_MEM_DISCARDABLE | IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ;
+
+		pSectionHeader->PointerToRawData = ftell(fileout);
+
+		if (false)
+		{
+			uint8 data[2000];
+
+			FILE* fp = fopen("C:/debugS", "rb");
+			fseek(fp, 0, SEEK_END);
+			int size = ftell(fp);
+			rewind(fp);
+			fread(data, 1, size, fp);
+			fwrite(data, size, 1, fileout);
+			fclose(fp);
+		}
+		else
+		{
+			long startsym = ftell(fileout);
+			ULONG pParent = 0;
+
+			uint32 sig = 2;
+			fwrite(&sig, 1, 4, fileout);
+
+			{
+				char* objname = "C:\\test_compile.obj";
+
+				OBJNAMESYM sym;
+				sym.rectyp = S_OBJNAME;
+
+				ULONG start = descend((SYMTYPE*)&sym, fileout);
+				sym.signature = 0;
+				sym.name[0] = strlen(objname);
+				fwrite(&sym, 1, sizeof(sym), fileout);
+				fwrite(objname, 1, sym.name[0], fileout);
+
+				ascend(start, (SYMTYPE*)&sym, fileout);
+			}
+
+			{
+				char name[256];
+				strcpy_s(name, "test_2");
+
+				PROCSYM_32 sym = {0};
+				ULONG start = descend((SYMTYPE*)&sym, fileout);
+				{
+					sym.rectyp = S_GPROC_32;
+					sym.pParent = pParent;
+					sym.pEnd = 0;	// Update later
+					sym.pNext = 0;
+					sym.seg = 0;//1;
+					sym.off = 0;//pScope2->m_startAddress;
+					sym.len = 73;//pScope2->m_endAddress - pScope2->m_startAddress;
+					sym.DbgStart = 0;	// TODO
+					sym.DbgEnd = sym.len;	// TODO
+		//				sym.typind = 0x1000 + 0;
+					sym.flags.bAll = 1;
+					sym.flags.f.CV_PFLAG_FPO = 1;
+					sym.name[0] = strlen(name);
+
+					int typind = 1;
+
+					sym.typind = typind + 0x1000;
+
+					IMAGE_RELOCATION reloc;
+
+					reloc.Type = IMAGE_REL_I386_SECREL;
+					reloc.VirtualAddress = ftell(fileout) - startsym + offsetof(PROCSYM_32, off);
+					reloc.SymbolTableIndex = 3;	// TODO
+					relocations.push_back(reloc);
+
+					reloc.Type = IMAGE_REL_I386_SECTION;
+					reloc.VirtualAddress = ftell(fileout) - startsym + offsetof(PROCSYM_32, seg);
+					reloc.SymbolTableIndex = 3;	// TODO
+					relocations.push_back(reloc);
+
+				//	fwrite(&sym, 1, sizeof(sym));
+				//	fwrite(sym
+
+					fwrite(&sym, 1, sizeof(PROCSYM_32), fileout);
+					fwrite(name, 1, sym.name[0], fileout);
+
+					ascend(start, (SYMTYPE*)&sym, fileout);
+				}
+
+
+				{
+					AS_instrList* il = pFunctionCode->instrList;
+
+					while (il)
+					{
+						AS_instr* instr = il->head;
+
+						if (instr->kind == AS_instr::I_LBRAC)
+						{
+						}
+						else if (instr->kind == AS_instr::I_RBRAC)
+						{
+						}
+						else if (instr->kind == AS_instr::I_LSYM)
+						{
+							BPRELSYM32 sym = {0};
+
+							ULONG start = descend((SYMTYPE*)&sym, fileout);
+
+							sym.rectyp = S_BPREL_32;
+							sym.off = instr->fun->m_pDeclarator->m_offset;
+							sym.typind = T_INT4;//GetTypeInd(instr->fun->m_pDeclarator->m_pType);
+
+							sym.name[0] = instr->fun->m_pDeclarator->m_name.GetLength();
+
+							fwrite(&sym, 1, sizeof(BPRELSYM32), fileout);
+							fwrite(instr->fun->m_pDeclarator->m_name.GetData8(), 1, sym.name[0], fileout);
+
+							ascend(start, (SYMTYPE*)&sym, fileout);
+						}
+
+						il = il->tail;
+					}
+				}
+
+				{
+					SYMTYPE endsym;
+					endsym.rectyp = S_END;
+					ULONG start = descend((SYMTYPE*)&endsym, fileout);
+	#if 0
+					sym.pEnd = start - startsym;
+	#endif
+					fwrite(&endsym, 1, sizeof(SYMTYPE), fileout);
+					ascend(start, (SYMTYPE*)&endsym, fileout);
+				}
+
+				// Update pEnd field og procsym
+				Write32(fileout, start+offsetof(PROCSYM_32, pEnd), sym.pEnd);
+			}
+
+		}
+		/*
+		{
+			AS_instr* instr = NULL;//il2->head;
+
+			if (instr->kind == AS_instr::I_LSYM)
+			{
+			}
+		}
+		*/
+
+		pSectionHeader->SizeOfRawData = ftell(fileout) - pSectionHeader->PointerToRawData;
+
+		pSectionHeader->PointerToRelocations = ftell(fileout);
+		pSectionHeader->NumberOfRelocations = relocations.size();
+		fwrite(relocations.begin(), 1, sizeof(IMAGE_RELOCATION) * relocations.size(), fileout);
+	}
+
+	{
+		int n = 1;
+
+		// Create a .text section for each global function
+		for (int i = 0; i < globals.size(); i++)
+		{
+			T_Declarator* pDeclarator = globals[i];
+
+			IMAGE_SECTION_HEADER* pSectionHeader = new IMAGE_SECTION_HEADER;
+			memset(pSectionHeader, 0, sizeof(IMAGE_SECTION_HEADER));
+
+			m_sectionHeaders.push_back(pSectionHeader);
+
+			strncpy((char*)pSectionHeader->Name, ".text", 8);
+			pSectionHeader->Characteristics = IMAGE_SCN_CNT_CODE | IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_MEM_READ;
+
+			pSectionHeader->PointerToRawData = ftell(fileout);
+
+			/*
+			CFunctionCode* pFunctionCode = new CFunctionCode;
+			if (pFunctionCode == NULL)
+			{
+				return -1;
+			}
+			*/
+
+			/*
+			char symbolName[256];
+			sprintf(symbolName, "_%s", pDeclarator->m_pDeclarator->m_name->c_str());
+
+			IMAGE_SYMBOL* pSymbol;
+			pDeclarator->m_tempLabel->m_symbolIndex = AddSymbol(symbolName, &pSymbol);
+			pSymbol->Value = 0;
+			pSymbol->Type = 0x20;	// function
+			pSymbol->SectionNumber = n+1;	// index into the .text section that declares this symbol
+			pSymbol->StorageClass = IMAGE_SYM_CLASS_EXTERNAL;
+			pSymbol->NumberOfAuxSymbols = 0;
+		*/
+
+		//	pFunctionCode->m_ofile = this;
+		//	ASSERT(0);
+#if 0
+			pFunctionCode->m_pFunc = pDeclarator->m_pFunction;
+#endif
+
+			int nFunSymbol;
+
+			{
+				AS_instrList* il = pFunctionCode->instrList;
+
+				while (il)
+				{
+					AS_instr* instr = il->head;
+
+					if (instr->kind == AS_instr::I_LBRAC)
+					{
+					}
+					else if (instr->kind == AS_instr::I_RBRAC)
+					{
+						/*
+						FSymbol* pSymbol;
+						AddSymbol(NULL, &pSymbol);
+						pSymbol->Value = ftell(fileout) - TextOffset;
+						pSymbol->Type = N_RBRAC;
+						*/
+					}
+					else if (instr->kind == AS_instr::I_FUN)
+					{
+						/*
+						{
+							IMAGE_SYMBOL symbol = {0};
+							strncpy((char*)symbol.N.ShortName, ".debug$S", 8);
+							symbol.SectionNumber = 1;
+							symbol.StorageClass = IMAGE_SYM_CLASS_STATIC;
+							symbol.Value = 0;
+							symbol.NumberOfAuxSymbols = 1;
+							m_symbols.push_back(symbol);
+
+							IMAGE_AUX_SYMBOL_SECTION auxsection = {0};
+							auxsection.Length = pSectionHeader->SizeOfRawData;
+
+							m_symbols.push_back(*(IMAGE_SYMBOL*)&auxsection);
+						}
+						*/
+
+						nFunSymbol = m_symbols.size();
+
+						char symbolName[256];
+						if (instr->fun->m_linkage == 1)	// C++
+						{
+							System::VCMangler mangler;
+							ASSERT(0);
+							//mangler.MangleNameName(instr->fun->m_pDeclarator, StringBuffer(symbolName, 255)) << '\0';
+
+						//	strncpy(symbolName, buffer.m_str, buffer.m_len);
+						//	symbolName[buffer.m_len] = 0;
+						}
+						else	// C
+						{
+							ASSERT(0);
+						//	StringBuffer(symbolName, 255) << '_' << instr->fun->m_pDeclarator->m_name << '\0';
+
+						//	sprintf(symbolName, "_%s", instr->fun->m_pDeclarator->m_name->c_str());
+						}
+
+						IMAGE_SYMBOL* pSymbol;
+						instr->fun->m_tempLabel->m_symbolIndex = AddSymbol(symbolName, &pSymbol);
+						pSymbol->Value = 0;
+						pSymbol->Type = 0x20;	// function
+						pSymbol->SectionNumber = n+1;	// index into the .text section that declares this symbol
+						pSymbol->StorageClass = IMAGE_SYM_CLASS_EXTERNAL;
+						pSymbol->NumberOfAuxSymbols = 1;
+
+						IMAGE_LINENUMBER linenumber;
+						linenumber.Type.SymbolTableIndex = m_symbols.size()-1;
+						linenumber.Linenumber = 0;
+						linenumbers.push_back(linenumber);
+
+						m_symbols.push_back(IMAGE_SYMBOL());
+						IMAGE_AUX_SYMBOL_FUNCTION* aux = (IMAGE_AUX_SYMBOL_FUNCTION*)(m_symbols.end()-1);
+						aux->TagIndex = m_symbols.size();	// corresponding .bf
+						//aux->TotalSize = 10;	// TODO, size of function
+						aux->PointerToLinenumber = 0;
+						aux->PointerToNextFunction = 0;
+						aux->Unused = 0;
+
+						//nPointerToLinenumber = m_symbols.size()-1;//&aux->PointerToLinenumber;
+
+						{
+							IMAGE_SYMBOL bfsym = {0};
+							strcpy_s((char*)bfsym.N.ShortName, 8, ".bf");
+							// bfsym.Value unused
+							bfsym.StorageClass = IMAGE_SYM_CLASS_FUNCTION;
+							bfsym.NumberOfAuxSymbols = 1;
+							bfsym.SectionNumber = n+1;
+							m_symbols.push_back(bfsym);
+
+							m_symbols.push_back(IMAGE_SYMBOL());
+							IMAGE_AUX_SYMBOL_FUNCTION2* aux = (IMAGE_AUX_SYMBOL_FUNCTION2*)(m_symbols.end()-1);
+							aux->Linenumber = instr->fun->m_first_line+1;
+							aux->PointerToNextFunction = 0;
+						}
+
+						{
+							IMAGE_SYMBOL lfsym = {0};
+							strcpy_s((char*)lfsym.N.ShortName, 8, ".lf");
+							lfsym.Value = 0;	// Number of lines in the function (set later)
+							lfsym.StorageClass = IMAGE_SYM_CLASS_FUNCTION;
+							lfsym.SectionNumber = n+1;
+							m_symbols.push_back(lfsym);
+						}
+
+						{
+							IMAGE_SYMBOL efsym = {0};
+							strcpy_s((char*)efsym.N.ShortName, 8, ".ef");
+							efsym.Value = 0;	// size of function (set later)
+							efsym.StorageClass = IMAGE_SYM_CLASS_FUNCTION;
+							efsym.NumberOfAuxSymbols = 1;
+							efsym.SectionNumber = n+1;
+							m_symbols.push_back(efsym);
+
+							m_symbols.push_back(IMAGE_SYMBOL());
+							IMAGE_AUX_SYMBOL_FUNCTION2* aux = (IMAGE_AUX_SYMBOL_FUNCTION2*)(m_symbols.end()-1);
+							aux->Linenumber = 8;	// set later
+						}
+
+						/*
+						const Type* pType = instr->declarator->m_pType->Normalized();
+
+						//__live_object_ptr<StringA> str;
+						BufferImp<char> buffer;
+						StringBuilderA strbuilder(&buffer);
+
+						strbuilder << *instr->declarator->m_name;
+						strbuilder << ":";
+						strbuilder << "f";
+						stab_type(pType->GetFunction()->m_pReturnType->Normalized(), ntype, strbuilder);
+
+						FSymbol* pSymbol;
+						AddSymbol(buffer.DetachToString()->c_str(), &pSymbol);
+						pSymbol->Value = ftell(fileout) - TextOffset;
+						pSymbol->Type = N_FUN;
+						*/
+					}
+					else if (instr->kind == AS_instr::I_LINE)
+					{
+						if (instr->LINE.num > pDeclarator->m_first_line)
+						{
+							IMAGE_LINENUMBER linenumber;
+							linenumber.Type.VirtualAddress = ftell(fileout) - pSectionHeader->PointerToRawData;
+							linenumber.Linenumber = (instr->LINE.num - pDeclarator->m_first_line);
+
+							linenumbers.push_back(linenumber);
+							/*
+							FSymbol* pSymbol;
+							AddSymbol(NULL, &pSymbol);
+							pSymbol->Value = ftell(fileout) - TextOffset;
+
+							pSymbol->Type = N_SLINE;
+							pSymbol->Desc = instr->LINE.num;
+							*/
+						}
+					}
+					else if (instr->kind == AS_instr::I_LSYM)
+					{
+					}
+					else if (instr->kind == AS_instr::I_SO)
+					{
+						IMAGE_SYMBOL symbol = {0};
+						strcpy((char*)symbol.N.ShortName, ".file");
+						symbol.NumberOfAuxSymbols = (strlen(instr->filename) + IMAGE_SIZEOF_SYMBOL-1) / IMAGE_SIZEOF_SYMBOL;
+						symbol.Type = 0;
+						symbol.Value = 0;
+						symbol.StorageClass = IMAGE_SYM_CLASS_FILE;
+						symbol.SectionNumber = -2;
+						m_symbols.push_back(symbol);
+
+						IMAGE_SYMBOL aux[32] = {0};
+						strcpy_s((char*)aux, 8, instr->filename);
+
+						for (uint i = 0; i < symbol.NumberOfAuxSymbols; ++i)
+						{
+							m_symbols.push_back(aux[i]);
+						}
+
+					//	pSymbol->Value = ftell(fileout) - TextOffset;
+					//	pSymbol->Type = N_SO;
+					}
+					else if (instr->kind == AS_instr::I_LABEL)
+					{
+						ASSERT(instr->LABEL.label->m_spOffset == -1);
+						instr->LABEL.label->m_spOffset = ftell(fileout) - pSectionHeader->PointerToRawData;
+						printf("label at: 0x%x %d\n", instr->LABEL.label, instr->LABEL.label->m_spOffset);
+					}
+					else if (instr->kind == AS_instr::I_DATA)
+					{
+						fwrite(instr->DATA.buffer, instr->DATA.size, 1, fileout);
+						//MessageBeep(-1);
+					}
+					else
+					{
+						if (cpu_id == CPU_IX86)
+						;//	assem((x86instr*)instr->assem, pFunctionCode, fileout);
+						else if (cpu_id == CPU_M68K)
+							assem((m68kinstr*)instr->assem, pFunctionCode, fileout);
+						else if (cpu_id == CPU_PPC)
+						;//	assem((ppcinstr*)instr->assem, /*pFunctionCode,*/ fileout);
+					}
+
+					/*
+					if (instr->getsize())
+					{
+						fwrite(instr->buffer, 1, instr->getsize(), fileout);
+					}
+					*/
+
+					il = il->tail;
+				}
+			}
+
+		//	pCodeGen->Function(fileout, pFunctionCode);
+
+			{
+				long fpos = ftell(fileout);
+
+				for (uint i = 0; i < pFunctionCode->m_labels.size(); ++i)
+				{
+					RelativeLabel& label = pFunctionCode->m_labels[i];
+
+					printf("0x%x\n", label.m_label);
+
+					long address = label.m_address - pSectionHeader->PointerToRawData;
+					fseek(fileout, label.m_address, SEEK_SET);
+					long value = (long)label.m_label->m_spOffset - (address+4);
+					fwrite(&value, 1, 4, fileout);
+				}
+
+				fseek(fileout, fpos, SEEK_SET);
+			}
+
+			pSectionHeader->SizeOfRawData = ftell(fileout) - pSectionHeader->PointerToRawData;
+
+			/*
+			{
+				IMAGE_SYMBOL symbol = {0};
+				strncpy((char*)symbol.N.ShortName, ".text", 8);
+				symbol.SectionNumber = n+1;
+				symbol.StorageClass = IMAGE_SYM_CLASS_STATIC;
+				symbol.Value = 0;
+				symbol.NumberOfAuxSymbols = 1;
+				m_symbols.push_back(symbol);
+
+				IMAGE_AUX_SYMBOL_SECTION auxsection = {0};
+				auxsection.Length = pSectionHeader->SizeOfRawData;
+
+				m_symbols.push_back(*(IMAGE_SYMBOL*)&auxsection);
+			}
+			*/
+
+			/*
+			{
+				IMAGE_LINENUMBER linenumber;
+				linenumber.Type.VirtualAddress = pSectionHeader->SizeOfRawData;
+				linenumber.Linenumber = 1;
+				linenumbers.push_back(linenumber);
+			}
+			*/
+
+			((IMAGE_AUX_SYMBOL_FUNCTION*)&m_symbols[nFunSymbol+1])->TotalSize = pSectionHeader->SizeOfRawData;
+			m_symbols[nFunSymbol+4].Value = linenumbers.size();	// lf
+			m_symbols[nFunSymbol+5].Value = pSectionHeader->SizeOfRawData;	// ef
+
+			//((IMAGE_AUX_SYMBOL_FUNCTION2*)&m_symbols[nFunSymbol+3])->Linenumber = 
+
+			pSectionHeader->NumberOfRelocations = pFunctionCode->m_ImageRelocation.size();
+
+		// Write section relocations
+			pSectionHeader->PointerToRelocations = ftell(fileout);
+			for (int r = 0; r < pSectionHeader->NumberOfRelocations; r++)
+			{
+				IMAGE_RELOCATION ImageRelocation;
+
+				ImageRelocation.VirtualAddress = pFunctionCode->m_ImageRelocation[r]->VirtualAddress - pSectionHeader->PointerToRawData;
+				ImageRelocation.Type = pFunctionCode->m_ImageRelocation[r]->Type;
+				ImageRelocation.SymbolTableIndex = pFunctionCode->m_ImageRelocation[r]->tempLabel->m_symbolIndex;//SymbolTableIndex;
+
+				fwrite(&ImageRelocation, 1, sizeof(IMAGE_RELOCATION), fileout);
+			}
+
+			delete pFunctionCode;
+
+			n++;
+		}
+
+		// Line numbers
+		{
+			IMAGE_SECTION_HEADER* pSectionHeader = m_sectionHeaders[1];
+
+			pSectionHeader->PointerToLinenumbers = ftell(fileout);
+			pSectionHeader->NumberOfLinenumbers = linenumbers.size();
+
+			for (int i = 0; i < linenumbers.size(); i++)
+			{
+				IMAGE_LINENUMBER & linenumber = linenumbers[i];
+				if (linenumber.Linenumber == 0)
+				{
+					((IMAGE_AUX_SYMBOL_FUNCTION*)&m_symbols[linenumber.Type.SymbolTableIndex+1])->PointerToLinenumber = ftell(fileout);
+				}
+
+				/*
+			((IMAGE_AUX_SYMBOL_FUNCTION*)&m_symbols[nPointerToLinenumber])->PointerToLinenumber = pSectionHeader->PointerToLinenumbers;
+
+			IMAGE_LINENUMBER linenumber;
+
+			linenumber.Type.SymbolTableIndex = 3;	// function symbol
+			linenumber.Linenumber = 0;
+			*/
+				fwrite(&linenumber, 1, sizeof(IMAGE_LINENUMBER), fileout);
+
+				/*
+				linenumber.Type.VirtualAddress = 0;
+				linenumber.Linenumber = 1;
+				fwrite(&linenumber, 1, sizeof(IMAGE_LINENUMBER), fileout);
+
+				linenumber.Type.VirtualAddress = 30;
+				linenumber.Linenumber = 2;
+				fwrite(&linenumber, 1, sizeof(IMAGE_LINENUMBER), fileout);
+			*/
+			}
+		}
+
+		// .debug$T
+		if (true)
+		{
+			IMAGE_SECTION_HEADER* pSectionHeader = new IMAGE_SECTION_HEADER;
+			memset(pSectionHeader, 0, sizeof(IMAGE_SECTION_HEADER));
+
+			m_sectionHeaders.push_back(pSectionHeader);
+
+			strncpy_s((char*)pSectionHeader->Name, 8, ".debug$T", 8);
+			pSectionHeader->Characteristics = IMAGE_SCN_MEM_DISCARDABLE | IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ;
+
+			pSectionHeader->PointerToRawData = ftell(fileout);
+
+			if (false)
+			{
+				uint8 data[2000];
+
+				FILE* fp = fopen("C:/debugT", "rb");
+				fseek(fp, 0, SEEK_END);
+				int size = ftell(fp);
+				rewind(fp);
+				fread(data, 1, size, fp);
+				fwrite(data, size, 1, fileout);
+				fclose(fp);
+			}
+			else
+			{
+				uint32 sig = 2;
+				fwrite(&sig, 1, 4, fileout);
+
+#if 0
+				map<Type*,int>::iterator it = m_types.begin();
+
+				while (it != 
+#endif
+
+				{
+					TypType start;
+					descend(&start, fileout);
+
+					lfArgList_32 typ;
+					typ.leaf = LF_ARGLIST_32;
+					typ.count = 0;
+					typ.pad = 0;
+					fwrite(&typ, 1, sizeof(typ), fileout);
+
+					ascend(start, fileout);
+				}
+
+				{
+					TypType start;
+					descend(&start, fileout);
+
+					lfProc typ;
+					typ.leaf = LF_PROCEDURE_32;
+					typ.rvtype = T_INT4;
+					typ.calltype = CV_CALL_NEAR_C;
+					typ.reserved = 0;
+					typ.parmcount = 0;
+					typ.arglist = 0x1000;
+					fwrite(&typ, 1, sizeof(typ), fileout);
+
+					ascend(start, fileout);
+				}
+			}
+
+			pSectionHeader->SizeOfRawData = ftell(fileout) - pSectionHeader->PointerToRawData;
+
+			/*
+			IMAGE_SYMBOL symbol = {0};
+			strncpy((char*)symbol.N.ShortName, ".debug$T", 8);
+			symbol.SectionNumber = m_sectionHeaders.size();
+			symbol.StorageClass = IMAGE_SYM_CLASS_STATIC;
+			symbol.Value = 0;
+			symbol.NumberOfAuxSymbols = 1;
+			m_symbols.push_back(symbol);
+
+			IMAGE_AUX_SYMBOL_SECTION auxsection = {0};
+			auxsection.Length = pSectionHeader->SizeOfRawData;
+
+			m_symbols.push_back(*(IMAGE_SYMBOL*)&auxsection);
+			*/
+		}
+
+		// Create a .rdata section for each string constant
+		for (uint i = 0; i < pGlobal->m_strings.size(); i++)
+		{
+			ASSERT(0);
+#if 0
+			CTExpression* pExpr = pGlobal->m_strings[i];
+
+			IMAGE_SECTION_HEADER* pSectionHeader = new IMAGE_SECTION_HEADER;
+			memset(pSectionHeader, 0, sizeof(IMAGE_SECTION_HEADER));
+
+			m_sectionHeaders.push_back(pSectionHeader);
+
+			strncpy((char*)pSectionHeader->Name, ".rdata", 8);
+			pSectionHeader->Characteristics = /*IMAGE_SCN_CNT_CODE | IMAGE_SCN_MEM_EXECUTE |*/ IMAGE_SCN_MEM_READ;
+
+			pSectionHeader->PointerToRawData = ftell(fileout);
+
+			ASSERT(0);
+#if 0
+			fwrite(pExpr->tok.string, 1, pExpr->tok.stringlen+1, fileout);
+#endif
+			/*
+			CFunctionCode* pFunctionCode = new CFunctionCode;
+			if (pFunctionCode == NULL)
+			{
+				return -1;
+			}
+			*/
+
+			char symbolName[256];
+			sprintf(symbolName, "some_text");
+
+			FSymbol* pSymbol;
+			/*pDeclarator->m_*/int symbolIndex = AddSymbol(symbolName, &pSymbol);
+			pSymbol->Type = 0x0;	// not a function
+			pSymbol->SectionNumber = n+1;	// index into the .rdata section that declares this symbol
+			pSymbol->StorageClass = IMAGE_SYM_CLASS_EXTERNAL;
+
+			/*
+			pFunctionCode->m_ofile = this;
+			pFunctionCode->m_pFunc = pDeclarator->m_pFunction;
+
+			pGenCode->Function(pFunctionCode);
+			*/
+
+			pSectionHeader->SizeOfRawData = ftell(fileout) - pSectionHeader->PointerToRawData;
+
+			n++;
+#endif
+		}
+	}
+	Header.PointerToSymbolTable = ftell(fileout);
+
+	/*
+	{
+		for (int i = 0; i < Header.NumberOfSections; i++)
+		{
+		}
+	}
+	*/
+
+// Write Symbols
+	{
+		Header.NumberOfSymbols = m_symbols.size();
+		fseek(fileout, Header.PointerToSymbolTable, SEEK_SET);
+
+		for (uint i = 0; i < Header.NumberOfSymbols; i++)
+		{
+			IMAGE_SYMBOL* pSymbol = &m_symbols[i];
+
+			ASSERT(sizeof(IMAGE_SYMBOL) == IMAGE_SIZEOF_SYMBOL);
+
+			/*
+			IMAGE_SYMBOL image_symbol;
+			image_symbol.N.Name.Short = 0;
+			image_symbol.N.Name.Long = 0;	// TODO
+			//memcpy(image_symbol.N.ShortName, pSymbol->N.ShortName, 8);
+			image_symbol.Value = 0;//pSymbol->Value;	// TODO
+			image_symbol.SectionNumber = pSymbol->SectionNumber;
+			image_symbol.Type = pSymbol->Type;
+			image_symbol.StorageClass = pSymbol->StorageClass;
+			image_symbol.NumberOfAuxSymbols = 0;
+			*/
+
+			fwrite(pSymbol, 1, sizeof(IMAGE_SYMBOL), fileout);
+		}
+	}
+
+// Write Strings
+	{
+		long v = m_SizeOfStringTable + 4;
+		fwrite(&v, 1, 4, fileout);
+		fwrite(m_StringTable, 1, m_SizeOfStringTable, fileout);
+	}
+
+// Update Header
+
+	ASSERT(Header.NumberOfSections == m_sectionHeaders.size());
+
+	fseek(fileout, 0, SEEK_SET);
+	fwrite(&Header, 1, sizeof(IMAGE_FILE_HEADER), fileout);
+
+// Update section headers
+	{
+		fseek(fileout, PointerToSections, SEEK_SET);
+
+		for (int i = 0; i < Header.NumberOfSections; i++)
+		{
+			IMAGE_SECTION_HEADER* pSectionHeader = m_sectionHeaders[i];
+			fwrite(pSectionHeader, 1, sizeof(IMAGE_SECTION_HEADER), fileout);
+		}
+	}
+
+#endif
+	return 0;
+}
+
+//}	// cpp
+
+}

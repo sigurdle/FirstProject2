@@ -1,0 +1,31 @@
+namespace System
+{
+namespace Gui
+{
+
+class GUIEXT Transform : public GeneralTransform
+{
+public:
+
+	CTOR Transform(DependencyClass* depClass);
+
+	virtual gm::PointF TransformPoint(gm::PointF point);
+	virtual void TransformPoints(gm::PointF* destPoints, const gm::PointF* points, unsigned int count);
+
+	virtual gm::PointF InverseTransformPoint(gm::PointF point);
+	virtual void InverseTransformPoints(gm::PointF* destPoints, const gm::PointF* points, unsigned int count);
+
+	virtual gm::matrix3f get_Matrix() abstract;
+	virtual gm::matrix3f get_InverseMatrix();
+
+	static DependencyClass* get_Class();
+	typedef GeneralTransform baseClass;
+};
+
+class GUIEXT _Transform : public _GeneralTransform
+{
+public:
+};
+
+}	// Gui
+}	// System

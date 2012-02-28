@@ -1,0 +1,35 @@
+namespace System
+{
+namespace Gui
+{
+
+class GUIEXT LineToPathSegment : public PathSegment
+{
+public:
+
+	CTOR LineToPathSegment();
+	CTOR LineToPathSegment(gm::PointF point);
+
+	virtual PathSegmentType get_Type() const override
+	{
+		return PathSegmentType_LineTo;
+	}
+
+	virtual void Sink(ID2D1GeometrySink* pGeometrySink) override;
+
+	gm::PointF get_Point()
+	{
+		return gm::PointF(get_X(), get_Y());
+	}
+
+	DEPENDENCY_CLASS(LineToPathSegment, PathSegment)
+
+//	static DependencyClass* get_Class();
+//	static DependencyClass* pClass;
+
+	DEPENDENCY_PROPERTY(float, X)
+	DEPENDENCY_PROPERTY(float, Y)
+};
+
+}	// Gui
+}	// System

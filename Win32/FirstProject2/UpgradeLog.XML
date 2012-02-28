@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="FirstProject2">
+</Property><Property Name="Solution File" Value="D:\Users\Sigurd\Documents\VSProjects\FirstProject2\Win32\FirstProject2\FirstProject2.sln">
+</Property><Property Name="Date" Value="18. april 2011">
+</Property><Property Name="Time" Value="19:00:05">
+</Property></Properties><Event ErrorLevel="0" Project="TIFF" Source="..\TIFF\TIFF.vcproj" Description="Converting project file 'D:\Users\Sigurd\Documents\VSProjects\FirstProject2\Win32\TIFF\TIFF.vcproj'.">
+</Event><Event ErrorLevel="1" Project="TIFF" Source="..\TIFF\TIFF.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="1" Project="TIFF" Source="..\TIFF\TIFF.vcproj" Description="MSB8012: $(TargetPath) ('D:\Users\Sigurd\Documents\VSProjects\FirstProject2\Win32\TIFF\.\Debug\TIFF.dll') does not match the Linker's OutputFile property value '../bin/Debug/TIFF.dll' ('D:\Users\Sigurd\Documents\VSProjects\FirstProject2\Win32\FirstProject2\../bin/Debug/TIFF.dll') in project configuration 'Debug|Win32'. This may cause your project to build incorrectly. To correct this, please make sure that $(TargetPath) property value matches the value specified in %(Link.OutputFile).">
+</Event><Event ErrorLevel="1" Project="TIFF" Source="..\TIFF\TIFF.vcproj" Description="MSB8012: $(TargetPath) ('D:\Users\Sigurd\Documents\VSProjects\FirstProject2\Win32\TIFF\.\Release\TIFF.dll') does not match the Linker's OutputFile property value '../bin/Release/TIFF.dll' ('D:\Users\Sigurd\Documents\VSProjects\FirstProject2\Win32\FirstProject2\../bin/Release/TIFF.dll') in project configuration 'Release|Win32'. This may cause your project to build incorrectly. To correct this, please make sure that $(TargetPath) property value matches the value specified in %(Link.OutputFile).">
+</Event><Event ErrorLevel="0" Project="TIFF" Source="..\TIFF\TIFF.vcproj" Description="Done converting to new project file 'D:\Users\Sigurd\Documents\VSProjects\FirstProject2\Win32\TIFF\TIFF.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="TIFF" Source="..\TIFF\TIFF.vcproj" Description="Converted">
+</Event></UpgradeLog>

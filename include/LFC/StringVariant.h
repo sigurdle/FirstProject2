@@ -1,0 +1,976 @@
+namespace System
+{
+
+//class StringVariant_const_iterator_base;
+
+/*
+template<class T>
+class CheckableValue
+{
+public:
+
+	CTOR CheckableValue(T value, bool valid = true) : m_value(value), m_valid(valid)
+	{
+	}
+
+	operator T () const
+	{
+		if (!m_valid) raise(Exception(L"Not a valid value"));
+		return m_value;
+	}
+
+	T value() const { return m_value; }
+	bool valid() const { return m_valid; }
+
+protected:
+
+	T m_value;
+	bool m_valid;
+};
+*/
+
+class LFCEXT StringVariant
+{
+public:
+
+	typedef size_t size_type;
+
+	static const size_type npos = (size_type)(-1);
+
+	struct _s
+	{
+		CTOR _s(const StringVariant& other) : m_stringObject(other.m_stringObject), m_cstr(other.m_cstr), m_cstrw(other.m_cstrw)
+		{
+		}
+
+		CTOR _s(const _s& other) : m_stringObject(other.m_stringObject), m_cstr(other.m_cstr), m_cstrw(other.m_cstrw)
+		{
+		}
+
+		bool IsEmpty() const
+		{
+			return m_stringObject == nullptr && m_cstr == nullptr && m_cstrw == nullptr;
+		}
+
+		bool operator == (const _s& other) const
+		{
+			if (m_stringObject == other.m_stringObject) return true;
+			if (m_cstr == other.m_cstr) return true;
+			if (m_cstrw == other.m_cstrw) return true;
+			return false;
+		}
+
+		size_t GetLength() const
+		{
+			if (m_stringObject)
+				return m_stringObject->GetLength();
+			else if (m_cstr)
+				return cstrlen(m_cstr);
+			else if (m_cstrw)
+				return cstrlen(m_cstrw);
+			else
+				return 0;
+		}
+
+		StringObject* m_stringObject;
+		const char* m_cstr;
+		const wchar_t* m_cstrw;
+		size_t m_len;
+	};
+
+	class LFCEXT const_iterator_base
+	{
+	public:
+
+		CTOR const_iterator_base(const StringVariant& other, ptrdiff_t offset = 0) : m(other), m_offset(offset)
+		{
+		}
+
+		CTOR const_iterator_base(const _s& other, ptrdiff_t offset = 0) : m(other), m_offset(offset)
+		{
+		}
+
+		// pointer arithmetic
+
+	#ifndef __LERSTAD__
+		const_iterator_base operator + (ptrdiff_t offset) const
+		{
+			return const_iterator_base(m, m_offset + offset);
+		}
+
+		const_iterator_base operator - (ptrdiff_t offset) const
+		{
+			return const_iterator_base(m, m_offset - offset);
+		}
+
+		const_iterator_base& operator ++ ()	// preincrement
+		{
+			m_offset += 1;
+			return *this;
+		}
+
+		const_iterator_base& operator -- ()	// predecrement
+		{
+			m_offset -= 1;
+			return *this;
+		}
+
+		const_iterator_base operator ++ (int)	// postincrement
+		{
+			const_iterator_base it(*this);
+			++m_offset;
+			return it;
+		}
+
+		const_iterator_base operator -- (int)	// postdecrement
+		{
+			const_iterator_base it(*this);
+			--m_offset;
+			return it;
+		}
+
+		const_iterator_base& operator += (ptrdiff_t offset)
+		{
+			m_offset += offset;
+			return *this;
+		}
+
+		const_iterator_base& operator -= (ptrdiff_t offset)
+		{
+			m_offset -= offset;
+			return *this;
+		}
+
+		bool operator == (const const_iterator_base& it) const
+		{
+			return m == it.m && m_offset == it.m_offset;
+		}
+
+		ptrdiff_t operator - (const const_iterator_base& it) const;
+
+		bool operator != (const const_iterator_base& it) const;
+
+		// pointer comparison
+		bool operator > (const const_iterator_base& it) const;
+
+		bool operator < (const const_iterator_base& it) const;
+
+		bool operator >= (const const_iterator_base& it) const;
+
+		bool operator <= (const const_iterator_base& it) const;
+
+		bool atend() const;
+	#endif
+
+		_s m;
+		ptrdiff_t m_offset;
+	};
+
+//	typedef StringVariant_const_iterator_base const_iterator_base;
+
+	class LFCEXT _SubString
+	{
+	public:
+
+		CTOR _SubString(StringObject* stringObject, const char* cstr, const wchar_t* cstrw, ptrdiff_t offset, size_t len) : m_stringObject(stringObject), m_cstr(cstr), m_cstrw(cstrw), m_offset(offset), m_len(len)
+		{
+			if (stringObject)
+			{
+				stringObject->IncRef();
+			}
+		}
+
+		~_SubString()
+		{
+			if (m_stringObject)
+			{
+				m_stringObject->DecRef();
+			}
+		}
+
+		size_t GetLength() const throw()
+		{
+			return m_len;
+		}
+
+		uint32 GetLength32() const throw (SystemException*);
+
+		// conversion
+
+		operator String () const
+		{
+			if (m_stringObject) return m_stringObject->SubString(m_offset, m_len);
+			else if (m_cstr) return new ImmutableString<char>(string_copy(m_cstr + m_offset, m_len));
+			else if (m_cstrw) return new ImmutableString<wchar_t>(string_copy(m_cstrw + m_offset, m_len));
+			else return nullptr;
+		}
+
+		bool operator == (const char* cstr) const
+		{
+			return Equals(cstr);
+		}
+
+		bool operator != (const char* cstr) const
+		{
+			return !Equals(cstr);
+		}
+
+		bool operator == (const WCHAR* cstr) const
+		{
+			return Equals(cstr);
+		}
+
+		bool operator != (const WCHAR* cstr) const
+		{
+			return !Equals(cstr);
+		}
+
+		bool Equals(const char8* cstr) const;
+		bool Equals(const char16* cstr) const;
+		int Compare(const char8* cstr) const;
+		int Compare(const char16* cstr) const;
+
+		StringBuilderTwo operator + (StringVariant str) const;
+		StringBuilderTwo operator + (const char* cstr) const;
+
+	private:
+
+		StringObject* m_stringObject;
+		const char* m_cstr;
+		const wchar_t* m_cstrw;
+		ptrdiff_t m_offset;
+		size_t m_len;
+	};
+
+	// constructors
+
+	CTOR StringVariant() : m_stringObject(nullptr), m_cstr(nullptr), m_cstrw(nullptr), m_len(0)
+	{
+	}
+
+	CTOR StringVariant(decltype(nullptr)) : m_stringObject(nullptr), m_cstr(nullptr), m_cstrw(nullptr), m_len(0)
+	{
+	}
+
+	CTOR StringVariant(const StringVariant& string) :
+		m_stringObject(string.m_stringObject),
+		m_cstr(string.m_cstr),
+		m_cstrw(string.m_cstrw),
+		m_len(string.m_len)
+	{
+		if (m_stringObject) m_stringObject->IncRef();
+	}
+
+	CTOR StringVariant(StringVariant&& other) :
+		m_stringObject(other.m_stringObject),
+		m_cstr(other.m_cstr),
+		m_cstrw(other.m_cstrw),
+		m_len(other.m_len)
+	{
+		// reset other
+		other.m_stringObject = nullptr;
+		other.m_cstr = nullptr;
+		other.m_cstrw = nullptr;
+	}
+
+	CTOR StringVariant(String&& other) :
+		m_stringObject(other.m_stringObject),
+		m_cstr(nullptr),
+		m_cstrw(nullptr)
+	{
+		if (m_stringObject)
+			m_len = m_stringObject->GetLength();
+		else
+			m_len = 0;
+
+		// reset other
+		other.m_stringObject = nullptr;
+	}
+
+	CTOR StringVariant(const String& string);
+	CTOR StringVariant(StringObject* stringObject);
+	CTOR StringVariant(const StringBuilderBase& strbuilder);
+
+	CTOR StringVariant(const char* cstr) : m_stringObject(nullptr), m_cstr(cstr), m_cstrw(nullptr)
+	{
+		m_len = strlen(m_cstr);
+	}
+
+	CTOR StringVariant(const wchar_t* cstrw) : m_stringObject(nullptr), m_cstr(nullptr), m_cstrw(cstrw)
+	{
+		m_len = wcslen(m_cstrw);
+	}
+
+	CTOR StringVariant(const String::_SubString& s) : m_cstr(nullptr), m_cstrw(nullptr)
+	{
+		m_stringObject = s.m_stringObject->SubString(s.m_offset, s.m_len);
+		m_len = s.m_len;
+	}
+
+	~StringVariant()
+	{
+		if (m_stringObject)
+		{
+			m_stringObject->DecRef();
+			m_stringObject = nullptr;
+		}
+
+		m_cstr = nullptr;
+		m_cstrw = nullptr;
+		/*
+		if ((byte*)m_cstr >= data && (byte*)m_cstr <= enddata)
+		{
+			free_buffer((void*)m_cstr);
+		}
+
+		if ((byte*)m_cstrw >= data && (byte*)m_cstrw <= enddata)
+		{
+			free_buffer((void*)m_cstrw);
+		}
+		*/
+	}
+
+	const_iterator_base begin() const;
+	const_iterator_base end() const;
+	const_iterator_base cbegin() const;
+	const_iterator_base cend() const;
+
+	size_t GetLength() const
+	{
+		if (m_stringObject) return m_stringObject->GetLength();
+		else if (m_cstr) return cstrlen(m_cstr);
+		else if (m_cstrw) return cstrlen(m_cstrw);
+		else return 0;
+	}
+
+	int GetLength31() const
+	{
+		if (m_stringObject) 	return m_stringObject->GetLength32();
+		else if (m_cstr) return (int)cstrlen(m_cstr);
+		else if (m_cstrw) return (int)cstrlen(m_cstrw);
+		else return 0;
+	}
+
+	uint32 GetLength32() const
+	{
+		if (m_stringObject)
+			return m_stringObject->GetLength32();
+		else if (m_cstr)
+			return (uint32)cstrlen(m_cstr);
+		else if (m_cstrw)
+			return (uint32)cstrlen(m_cstrw);
+		else
+			return 0;
+	}
+
+	const char16* GetData16() const
+	{
+		if (m_stringObject)
+		{
+			ASSERT(m_stringObject->GetCharSize() == 2);
+			return (char16*)m_stringObject->GetData();
+		}
+		else if (m_cstrw)
+		{
+			return m_cstrw;
+		}
+		else if (m_cstr)
+		{
+			ASSERT(0);
+		}
+
+		return nullptr;
+	}
+
+	const char* GetData8() const
+	{
+		if (m_stringObject)
+		{
+			ASSERT(m_stringObject->GetCharSize() == 1);
+			return (char*)m_stringObject->GetData();
+		}
+		if (m_cstr) return m_cstr;
+		if (m_cstrw)
+		{
+			ASSERT(0);
+		}
+
+		return nullptr;
+	}
+
+	bool RefEquals(const StringVariant& other) const
+	{
+		if (m_stringObject != other.m_stringObject) return false;
+		if (m_cstr != other.m_cstr) return false;
+		if (m_cstrw != other.m_cstrw) return false;
+
+		return true;
+	}
+
+	// Comparison
+
+	bool operator ! () const throw()
+	{
+		return m_stringObject == nullptr && m_cstr == nullptr && m_cstrw == nullptr;
+	}
+
+	bool operator == (decltype(nullptr)) const throw()
+	{
+		return m_stringObject == nullptr && m_cstr == nullptr && m_cstrw == nullptr;
+	}
+
+	bool operator != (decltype(nullptr)) const throw()
+	{
+		return !operator==(nullptr);
+	}
+
+	bool IsNull() const throw()
+	{
+		return operator==(nullptr);
+	}
+
+	bool IsEmpty() const throw()
+	{
+		if (m_stringObject) return m_stringObject->GetLength() == 0;
+		if (m_cstr) return *m_cstr == '\0';
+		if (m_cstrw) return *m_cstrw == '\0';
+
+		return true;		// All are NULL
+	}
+
+	bool operator == (const wchar_t* cstr) const;
+
+	bool operator != (const wchar_t* cstr) const
+	{
+		return !(*this == cstr);
+	}
+
+	inline bool operator == (const String& str) const
+	{
+		return Equals(str);
+	}
+
+	bool operator == (const StringBuilderBase& str) const;
+
+	bool operator < (const String& str) const;
+	bool operator < (const StringBuilderBase& str) const;
+
+	bool Equals(const String& str) const;
+
+	int Compare(const char8* cstr) const;
+	int Compare(const char16* str) const;
+	int Compare(const String& str) const;
+
+	int CompareNoCase(const char8* cstr) const;
+	int CompareNoCase(const char16* cstr) const;
+	int CompareNoCase(StringObject* str) const;
+
+	inline StringObject* _stringObject() const throw()
+	{
+		return m_stringObject;
+	}
+
+	unsigned int GetCharSize() const throw()
+	{
+		if (m_stringObject)		return m_stringObject->GetCharSize();
+		else if (m_cstrw)		return 2;
+		else if (m_cstr)			return 1;
+		else						return 0;
+	}
+
+	// conversion
+	operator String ();
+	operator String () const;
+	const char* c_str();
+	const wchar_t* c_strw();
+
+	std::string ToStdString() const;
+	std::wstring ToStdWString() const;
+
+	// assignment
+	StringVariant& operator = (const StringVariant& other);
+
+#ifndef __LERSTAD__
+	StringVariant& operator = (StringVariant&& other)	 
+	{
+		if (m_stringObject) m_stringObject->DecRef();
+
+		m_stringObject = other.m_stringObject;
+		m_cstr = other.m_cstr;
+		m_cstrw = other.m_cstrw;
+		m_len = other.m_len;
+
+		other.m_stringObject = nullptr;
+		other.m_cstr = nullptr;
+		other.m_cstrw = nullptr;
+
+		return *this;
+	}
+#endif
+
+	StringVariant& operator += (const StringVariant& other);
+
+	// concatenation
+
+	StringBuilderTwo operator + (const StringVariant& other) const;
+	StringBuilderTwo operator + (char ch) const;
+	StringBuilderTwo operator + (wchar_t ch) const;
+
+//	StringBuilderTwo operator + (const char* cstr);
+//	StringBuilderTwo operator + (const wchar_t* cstr);
+
+	// access
+
+	Utf32Char operator [] (ptrdiff_t index) const;
+
+	Utf32Char At(ptrdiff_t index) const;
+
+	size_t CopyTo(char* cstr, size_t maxbufferchars, size_t offset = 0) const;
+	size_t CopyTo(wchar_t* cstr, size_t maxbufferchars, size_t offset = 0) const;
+
+	_SubString LeftOf(size_t offset) const;
+	_SubString RightOf(size_t offset) const;
+	_SubString SubString(size_t offset, size_t len) const;
+
+	_SubString substr(size_t offset = 0, size_t len = npos) const
+	{
+		return SubString(offset, len);
+	}
+	
+	_SubString LeftOf(const const_iterator_base& it) const;
+	_SubString RightOf(const const_iterator_base& it) const;
+	_SubString SubString(const const_iterator_base& start_it, const const_iterator_base& end_it) const;
+
+	ptrdiff_t Find(char* cstr, size_t startoffset = 0) const;
+	ptrdiff_t Find(wchar_t* cstr, size_t startoffset = 0) const;
+
+	const_iterator_base Find(uint32 ch) const;
+	const_iterator_base Find(uint32 ch, const const_iterator_base& start) const;
+
+	size_t find(uint32 ch, size_t offset = 0) const;
+
+	size_t rfind(uint32 ch, size_t startoffset = npos) const;
+
+	bool Contains(int ch) const
+	{
+		return find(ch) != npos;
+	}
+
+	int ToInt(bool* ok = nullptr, int base = 10) const;
+	unsigned int ToUInt(bool* ok = nullptr, int base = 10) const;
+	int64 ToInt64(bool* ok = nullptr, int base = 10) const;
+	uint64 ToUInt64(bool* ok = nullptr, int base = 10) const;
+	float ToFloat(bool* ok = nullptr) const;
+	double ToDouble(bool* ok = nullptr) const;
+
+	LFCEXT friend IO::TextWriter& operator << (IO::TextWriter& stream, const StringVariant& str);
+
+	friend class StringVariant_const_iterator_base;
+
+	template<class char_type> class const_iterator : public const_iterator_base
+	{
+	public:
+
+		typedef char_type _type;
+
+		// TODO, had this
+	#if 0
+		CTOR StringVariant_const_iterator(const String::const_iterator<char_type>& other) :
+			m(other.m_p),
+			m_offset(other.m_offset)
+		{
+		}
+
+			/*
+		CTOR StringVariant_const_iterator(const String::const_iterator<char_type>& it)
+		{
+			m_p = it.m_p;
+			if (m_p) m_p->IncRef();
+			m_offset = it.m_offset;
+		}
+		*/
+
+		CTOR StringVariant_const_iterator(const StringVariant_const_iterator& it) :
+			m(it.m), m_offset(it.m_offset)
+		{
+		}
+	#endif
+
+	#if 0
+		CTOR const_iterator(StringObjectT<char_type>* p, ptrdiff_t offset) : m_p(p), m_offset(offset)
+		{
+			if (p) p->IncRef();
+		}
+
+		~const_iterator()
+		{
+	//			if (m_p) m_p->DecRef();
+		}
+
+		const_iterator& operator = (StringObjectT<char_type>* p)
+		{
+			if (p) p->IncRef();
+			if (m_p) m_p->DecRef();
+
+			m_p = p;
+			m_offset = 0;
+
+			return *this;
+		}
+	#endif
+
+
+	#ifndef __LERSTAD__
+		// access
+		char_type operator * () const
+		{
+			if (m.IsEmpty()) ASSERT(0);//throw new Exception(L"referencing null pointer");
+
+			if (m_offset < 0) ASSERT(0);//throw new Exception(L"offset < 0");
+			if (m_offset >= (int)m.GetLength()) ASSERT(0);//throw new Exception(L"offset >= length");
+
+			if (m.m_stringObject)
+				ASSERT(0);//return m.m_stringObject->data()[m_offset];
+			else if (m.m_cstr)
+				return m.m_cstr[m_offset];
+			else if (m.m_cstrw)
+				return m.m_cstrw[m_offset];
+		}
+
+		char_type operator [] (ptrdiff_t index) const
+		{
+			if (m.IsEmpty()) ASSERT(0);//throw new Exception(L"referencing null pointer");
+			int offset = m_offset + index;
+
+			if (offset < 0) ASSERT(0);//throw new Exception(L"offset < 0");
+			if (offset >= (int)m.GetLength()) ASSERT(0);//throw new Exception(L"offset >= length");
+
+			if (m.m_stringObject)
+				return ASSERT(0);//m.m_stringObject->data()[m_offset];
+			else if (m.m_cstr)
+				return m.m_cstr[m_offset];
+			else if (m.m_cstrw)
+				return m.m_cstrw[m_offset];
+		}
+
+		/*
+		_SubString FirstN(unsigned int len) const
+		{
+			return _SubString(m_p, m_offset, len);
+		}
+		*/
+
+	#endif
+	};
+
+public:
+
+	StringObject* m_stringObject;
+	const char* m_cstr;
+	const wchar_t* m_cstrw;
+	size_t m_len;
+};
+
+typedef StringVariant StringIn;
+
+inline StringVariant::const_iterator_base StringVariant::begin() const
+{
+	return const_iterator_base(*this);
+}
+
+inline StringVariant::const_iterator_base StringVariant::end() const
+{
+	return const_iterator_base(*this, GetLength());
+}
+
+inline StringVariant::const_iterator_base StringVariant::cbegin() const
+{
+	return const_iterator_base(*this);
+}
+
+inline StringVariant::const_iterator_base StringVariant::cend() const
+{
+	return const_iterator_base(*this, GetLength());
+}
+
+inline StringVariant::_SubString StringVariant::LeftOf(const const_iterator_base& it) const
+{
+	return _SubString(m_stringObject, m_cstr, m_cstrw, 0, it.m_offset);
+}
+
+inline StringVariant::_SubString StringVariant::RightOf(const const_iterator_base& it) const
+{
+	return RightOf(it.m_offset);
+}
+
+inline StringVariant::_SubString StringVariant::SubString(const const_iterator_base& start_it, const const_iterator_base& end_it) const
+{
+	return SubString(start_it.m_offset, end_it.m_offset - start_it.m_offset);
+}
+
+// String implementation
+
+inline String::_SubString String::LeftOf(size_t offset) const
+{
+	return _SubString(*this, 0, offset);
+}
+
+inline String::_SubString String::RightOf(size_t offset) const
+{
+	return _SubString(*this, offset, m_stringObject->GetLength()-offset);
+}
+
+inline String::_SubString String::SubString(size_t offset, size_t len) const
+{
+	return _SubString(*this, offset, len);
+}
+
+// StringVariant implementation
+inline StringVariant::StringVariant(const String& string) : m_stringObject(string.m_stringObject), m_cstr(nullptr), m_cstrw(nullptr), m_len(0)
+{
+	if (m_stringObject)
+	{
+		m_stringObject->IncRef();
+		m_len = m_stringObject->GetLength();
+	}
+}
+
+}	// System
+
+namespace System
+{
+
+template<class char_type> char_type* cstrdup(const char_type* cstr);
+
+#ifndef __LERSTAD__
+template<> inline char* cstrdup(const char* cstr)
+{
+	return _strdup(cstr);
+}
+
+template<> inline wchar_t* cstrdup(const wchar_t* cstr)
+{
+	return _wcsdup(cstr);
+}
+#endif
+
+template<class char_type>
+class CStringT
+{
+public:
+
+#ifndef __LERSTAD__
+	template<size_t size>
+	CTOR CStringT(char_type buffer[size]) : m_bFree(false)
+	{
+		m_p = buffer;
+		m_bufferlen = size;
+	}
+#endif
+
+#if 0
+	CTOR CStringT(const char_type* p/*, bool bFree = true*/) : m_bFree(true)
+	{
+		ASSERT(p);
+		m_bufferlen = cstrlen(p)+1;
+
+		if (m_bFree)
+		{
+			m_p = cstrdup(p);
+		}
+		else
+		{
+		//	m_p = p;
+		}
+	}
+
+	/*
+	CTOR CStringT(const wchar_t* p) : m_bFree(true)
+	{
+		ASSERT(p);
+		m_bufferlen = cstrlen(p)+1;
+
+		if (m_bFree)
+		{
+			m_p = _wcsdup(p);
+		}
+		else
+		{
+			m_p = p;
+		}
+	}
+	*/
+#endif
+
+	CTOR CStringT(const char* p, size_t len) : m_bFree(true)
+	{
+		if (m_bFree)
+		{
+			m_bufferlen = len+1;
+			m_p = (char*)malloc(m_bufferlen);
+			memcpy(m_p, p, len);
+			m_p[len] = 0;
+		}
+		else
+		{
+			ASSERT(0);
+		//	m_len = len;
+		//	m_p = p;
+		}
+	}
+
+	CTOR CStringT(const wchar_t* p, size_t len/*, bool bFree = true*/) : m_bFree(true)
+	{
+		if (m_bFree)
+		{
+			m_bufferlen = len+1;
+			m_p = (wchar_t*)malloc(m_bufferlen*sizeof(wchar_t));
+			memcpy(m_p, p, len*sizeof(wchar_t));
+			m_p[len] = 0;
+		}
+		else
+		{
+		//	m_len = len;
+		//	m_p = p;
+		}
+	}
+
+	CTOR CStringT(StringObjectT<char_type>* str) : m_bFree(true)
+	{
+		if (str != nullptr)
+		{
+			size_t len = str->GetLength();
+			m_bufferlen = len+1;
+			m_p = (char_type*)malloc((len+1)*sizeof(char_type));
+			m_p[len] = 0;
+			str->CopyTo(m_p, len);
+		}
+		else
+		{
+			m_p = nullptr;
+			m_bufferlen = 0;
+		}
+	}
+
+	CTOR CStringT(const String& str) : m_bFree(true)
+	{
+		if (str != nullptr)
+		{
+			size_t len = str.GetLength();
+			m_bufferlen = len+1;
+			m_p = (char_type*)malloc((len+1)*sizeof(char_type));
+			m_p[str.CopyTo(m_p, len)] = 0;
+		}
+		else
+		{
+			m_bufferlen = 0;
+			m_p = nullptr;
+		}
+	}
+
+	CTOR CStringT(StringIn str) : m_bFree(true)
+	{
+		if (!str.IsNull())
+		{
+			size_t len = str.GetLength();
+			m_bufferlen = len+1;
+			m_p = (char_type*)malloc((len+1)*sizeof(char_type));
+			m_p[str.CopyTo(m_p, len)] = 0;
+		}
+		else
+		{
+			m_bufferlen = 0;
+			m_p = nullptr;
+		}
+	}
+
+	~CStringT()
+	{
+		if (m_bFree)
+		{
+			free(m_p);
+		}
+	}
+
+	CStringT& operator = (const String& str)
+	{
+		m_p[str.CopyTo(m_p, m_bufferlen)] = 0;
+		return *this;
+	}
+
+	CStringT& operator = (const StringIn& str)
+	{
+		m_p[str.CopyTo(m_p, m_bufferlen)] = 0;
+		return *this;
+	}
+
+	StringBuilderTwo operator + (const char* cstr) const;
+	StringBuilderTwo operator + (const wchar_t* cstr) const;
+
+	inline size_t len() const
+	{
+		return cstrlen(m_p);
+	}
+
+	char_type* buffer() const
+	{
+		return m_p;
+	}
+
+	inline size_t bufferlen() const
+	{
+		return m_bufferlen;
+	}
+
+	inline operator const char_type* () const
+	{
+		return m_p;
+	}
+
+	inline const char_type* c_str() const
+	{
+		return m_p;
+	}
+
+	inline char_type* Detach()
+	{
+		char_type* p = m_p;
+		m_p = NULL;
+		return p;
+	}
+
+	char_type* m_p;
+	size_t m_bufferlen;
+	bool m_bFree;
+};
+
+typedef CStringT<char> CString;
+typedef CStringT<wchar_t> CStringw;
+
+/*
+template<class char_type>
+inline CStringT<char_type> cstring(char_type* cstr)
+{
+	return CStringT<char_type>(cstr);
+}
+*/
+
+/*
+template<size_t size>
+inline CStringT<char> cstring(const char cstr[size])
+{
+	return CStringT<char>(cstr);
+}
+
+_makepath_s(
+*/
+
+/*
+template<size_t size>
+inline CStringT<char_type> cstring(const wchar_t cstr[size])
+{
+	return CStringT<wchar_t>(cstr);
+}
+*/
+
+}	// System

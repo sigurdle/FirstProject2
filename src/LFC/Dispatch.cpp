@@ -1,0 +1,901 @@
+#include "stdafx.h"
+#include "LFC.h"
+#include "NameMangler.h"
+
+namespace System
+{
+
+// Property
+
+Property::Property() :
+	m_name(nullptr),
+	get_method(nullptr),
+	set_method(nullptr)
+{
+}
+
+// Dispatch
+
+Dispatch::Dispatch(NamespaceType* pClass)
+{
+	m_pClass = pClass;
+
+	VERIFY(pClass != nullptr);
+	
+	Build(pClass);
+	BuildProperties();
+
+	/*
+	{
+		printf("**************\n");
+
+		multimap<StringA*, Method*, Ref_Less<StringA>, __gc_allocator>::iterator it = m_methodnames.begin();
+		while (it != m_methodnames.end())
+		{
+			printf("%s\n", (*it).first->c_str());
+			++it;
+		}
+		printf("**************\n");
+	}
+	*/
+}
+
+Dispatch::~Dispatch()
+{
+}
+
+Dispatch::propertymap_t& Dispatch::GetProperties()
+{
+	return m_properties;
+}
+
+/*
+Method* Dispatch::GetMethod(Declarator* pdecl)
+{
+	for (auto it = m_methods.begin(); it != m_methods.end(); ++it)
+	{
+		if (it->second->m_decl == pdecl)
+		{
+			return it->second;
+		}
+	}
+
+	return NULL;
+}
+*/
+
+Declarator* Dispatch::GetMethod(StringIn methodName)
+{
+	auto it = m_methodnames.find(methodName);
+	if (it != m_methodnames.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+Property* Dispatch::GetProperty(StringIn name)
+{
+	auto it = m_properties.find(name);
+	if (it != m_properties.end())
+	{
+		return it->second;
+	}
+	else
+		return nullptr;
+}
+
+void Dispatch::Build(NamespaceType* pClass)
+{
+	for (size_t i = 0; i < pClass->m_pScope->m_orderedDecls.size(); ++i)
+	{
+		Declarator* decl = pClass->m_pScope->m_orderedDecls[i];
+
+		/*
+		if (pClass->m_qname == "UI::Thickness")
+		{
+			StringA str = decl->ToString();
+			printf("member: %s\n", str.c_str());
+		}
+		*/
+
+		if (decl->m_pType->get_Kind() == type_function)
+		{
+			IO::StringWriter stream;
+			String fullName = decl->WriteFunctionIdentity(stream).ToString();
+
+			auto it = m_methods.find(fullName);
+
+			if (it == m_methods.end())
+			{
+			//	Method* pMethod = new Method;
+				it = m_methods.insert(map<String, Declarator*>::value_type(fullName, decl)).first;
+				m_methodnames.insert(multimap<String, Declarator*>::value_type(decl->m_name, decl));
+			}
+		}
+	}
+
+	ClassType* pClass2 = pClass->AsClass();
+	if (pClass2)
+	{
+		for (auto it = pClass2->m_bases.begin(); it != pClass2->m_bases.end(); ++it)
+		{
+			BaseClass* base = *it;
+			Build(base->m_pClass->AsClass());
+		}
+	}
+}
+
+void Dispatch::BuildProperties()
+{
+	UINT dispID = 1;
+
+	for (auto it = m_methodnames.begin(); it != m_methodnames.end(); ++it)
+	{
+		Declarator* method = it->second;
+		Declarator* decl = method;
+
+		int propertyPrefix = 0;
+
+		if (decl->m_name.BeginsWith("get_"))
+		{
+			// check for empty argument list
+			if (decl->m_pType->AsFunction()->m_parameters.size() == 0)
+			{
+				propertyPrefix = 1;
+			}
+		}
+		else if (decl->m_name.BeginsWith("set_"))
+		{
+			// check for exactly one argument
+			if (decl->m_pType->AsFunction()->m_parameters.size() == 1)
+			{
+				propertyPrefix = 2;
+			}
+		}
+
+		if (propertyPrefix)
+		{
+			String::_SubString propertyName = decl->m_name.RightOf(4);	// skip "get_" / "set_"
+
+			// TODO, this can be improved, by always calling insert, and checking if it inserted or not
+			auto it = m_properties.find(propertyName);
+			if (it == m_properties.end())
+			{
+				Property* pProperty = new Property;
+				pProperty->m_name = propertyName;
+				it = m_properties.insert(Dispatch::propertymap_t::value_type(propertyName, pProperty)).first;
+
+//				method->m_dispID = dispID++;
+//				dispID++;
+			}
+/*			else
+			{
+				if (propertyPrefix == 1)
+					method->m_dispID = (*it).second->set_method->m_dispID;
+				else
+					method->m_dispID = (*it).second->get_method->m_dispID;
+			}
+*/
+			Property* pProperty = it->second;
+
+			if (propertyPrefix == 1)	// get
+			{
+				method->m_kind = 1;
+			//	method->m_pProperty = pProperty;
+				pProperty->get_method = method;
+			//	ASSERT(method->m_decl);
+			}
+			else	// set
+			{
+				method->m_kind = 2;
+			//	method->m_pProperty = pProperty;
+				pProperty->set_method = method;
+			//	ASSERT(method->m_decl);
+			}
+		}
+		else
+		{
+			//method->m_pProperty = NULL;
+			method->m_kind = 0;
+//			method->m_dispID = dispID++;
+		}
+	}
+
+	{
+		UINT dispID = 1;
+
+		m_dispmembers.Add(NULL);
+		for (auto it = m_methodnames.begin(); it != m_methodnames.end(); ++it)
+		{
+			Declarator* method = it->second;
+
+			if (method->m_kind == 0)
+			{
+			//	m_dispmembersByName.insert(multimap<StringA*, DispMember, Ref_Less<StringA>, __gc_allocator>::value_type(method->get_MethodName(), DispMember(method, dispID++)));
+				m_dispmembers.push_back(m_dispmembersByName.insert(multimap<String, DispMember>::value_type(method->get_Name(), DispMember(method, dispID++))).first);
+					
+			}
+		}
+
+		for (auto it = m_properties.begin(); it != m_properties.end(); ++it)
+		{
+			Property* pProperty = it->second;
+
+			m_dispmembers.push_back(m_dispmembersByName.insert(multimap<String, DispMember>::value_type(pProperty->get_PropertyName(), DispMember(pProperty, dispID++))).first);
+		//	m_dispmembersByName.insert(multimap<StringA*, DispMember, Ref_Less<StringA>, __gc_allocator>::value_type(property->get_PropertyName(), DispMember(property, dispID++)));
+		}
+	}
+}
+
+LFCEXT void* DoConvert(void* _this, Conv* pConv)
+{
+//	("DoConvert this(%p)\n", _this/*, pConv->ArgType->*/);
+
+	VERIFY(_this);
+	VERIFY(pConv);
+
+	if (pConv->pConv)
+	{
+		MessageBoxA(NULL, "TODO", "", MB_OK);
+		ASSERT(0);
+		void* data = DoConvert(_this, pConv->pConv);
+	}
+	else
+	{
+		ULONG_PTR func = pConv->pMethod->GetAddress();
+		
+		size_t size = pConv->ArgType->AsClass()->get_sizeof();
+		uint8* data = new uint8[size*2];
+
+		std::printf("invoking constructor: %p, size: %d\n", data, size);
+
+	//	void* _this = pConv->_this;
+		
+#if WIN32
+		/*
+		__asm
+		{
+			push ecx
+			mov ecx,data
+			push _this
+			call func
+			pop ecx
+		}
+		*/
+		void_invoke_method32(func, data, &_this, 4);
+#else
+		void_invoke_method(func, data, &_this, 4);
+#endif
+		
+//		delete[] _this;
+		
+		/*
+		Type* pCtorType = pConv->pMethod->m_decl->m_pType->m_pFunction->m_parameters[0]->m_pType->GetType();
+		StringA str0 = pType->toString();
+	//StringA str1 = ArgType->m_pPointerTo->m_pClasstoString();
+		StringA str2 = pCtorType->toString();
+		for (int i = 0; i < level; i++)
+			TRACE("\t");
+		TRACE("%s -> %s(%s)\n", str0.c_str(), className.c_str(), str2.c_str());
+		*/
+
+		return data;
+	}
+}
+
+int Dispatch::SetValue(void* _this, Declarator* method, Object* pObject, Type* /*pSourceType*/)
+{
+	ClassType* pSourceType = nullptr;
+	if (pObject) pSourceType = pObject->GetType();
+
+	if (method->m_pType->AsFunction()->m_parameters.size() != 1)
+	{
+		raise(Exception(L"calling method that doesn't take one argument"));
+	}
+
+	Type* ArgType = method->m_pType->AsFunction()->m_parameters.m_parameters[0].m_pType->GetStripped();
+	if (ArgType->get_Kind() == type_class)
+	{
+		// TODO, improve ?
+		if (static_cast<ClassType*>(ArgType)->IsDerivedFrom(static_cast<ClassType*>(typeid(ValueType).GetType())))
+		{
+			if (pSourceType != ArgType)
+			{
+				raise(Exception(L"Not a ValueType"));
+				return -1;
+			}
+
+			void_Invoke(_this, method, pObject, ArgType->get_sizeof());
+			
+			return 0;
+		}
+
+		PointerType* pPointerType = new PointerType(pSourceType);
+
+		Conv* pConv = Convert(pPointerType, ArgType, 0);
+		if (pConv == nullptr)
+		{
+			String sourceTypeString = pSourceType->ToString();
+
+			/*
+			WCHAR buffer[2000];
+			swprintf_s(buffer, L"Couldn't convert from %S to %S\n", sourceTypeString->c_str(), ArgType->GetClass()->m_qname->c_str());
+			throw new Exception(new String(string_copy(buffer)));
+			*/
+			VERIFY(0);
+		}
+		void* newObject = DoConvert(pObject, pConv);
+		//TRACE("\n");
+		if (newObject)
+	//	if (true)
+		{
+			/*
+			if (method->m_decl->m_name == "put_BorderThickness")
+			{
+				printf("cheat\n");
+
+			//	Thickness thickness;
+
+				_Thickness* p = new _Thickness;
+
+				Thickness* th = &thickness;
+				Thickness thickness(p);
+
+				dispatch->Invoke(_this, method, &th, 4);
+			}
+			else
+				*/
+			{
+#if WIN32
+				void_Invoke(_this, method, newObject, ArgType->get_sizeof());
+#else
+				void_Invoke(_this, method, &newObject, 4);
+#endif
+				delete (uint8*)newObject;
+			}
+		}
+		else
+		{
+		//	MessageBoxA(NULL, "Failed to convert", "", MB_OK);
+			return -1;
+		}
+		//printf("done convert\n");
+	}
+	else if (ArgType->get_Kind() == type_pointer)
+	{
+		ArgType = ArgType->GetPointerTo()->GetStripped();
+
+		if (pObject == nullptr)
+		{
+			void_Invoke(_this, method, &pObject, sizeof(void*));
+		}
+		else
+		{
+		//	if (pSourceType
+
+			if (pSourceType->get_Kind() != type_class)
+			{
+				raise(Exception(L"cannot convert from non-class type to class"));
+			}
+
+	//		ASSERT(pSourceType->m_type == type_pointer);
+			if (ArgType->get_Kind() == type_class)
+			{
+				void* properObject;
+				if (pObject)
+				{
+				//	Class* psrc = GetType(pObject);	// debug
+				//	ASSERT(psrc->m_qname == ((Class*)pSourceType)->m_qname);	// debug
+					
+					properObject = DynamicCast(pObject, static_cast<ClassType*>(pSourceType)/*->GetPointerTo()*/, static_cast<ClassType*>(ArgType));
+
+					if (properObject == nullptr)
+					{
+						raise(Exception(L"object not of correct type"));
+					}
+				}
+				else
+				{
+					properObject = nullptr;
+				}
+
+				void_Invoke(_this, method, &properObject, sizeof(void*));
+			}
+			else
+			{
+				ASSERT(0);
+			}
+		}
+	}
+	else if (ArgType->get_Kind() == type_double)
+	{
+		VERIFY(pSourceType == typeid(DoubleObject).GetType());
+
+		double value = ((DoubleObject*)pObject)->GetValue();
+		void_Invoke(_this, method, &value, 8);
+	}
+	else
+	{
+		size_t size = ArgType->get_sizeof();
+
+		// TODO not sure about this ?
+
+		void* arg = (void*)(pObject+1);	// skip virtual table
+
+#if WIN32
+		size = (size + 3) & ~3;	// aligned on 4 bytes
+#else
+		size = (size + 1) & ~1;	// aligned on 2 bytes
+#endif
+		void_Invoke(_this, method, arg, size);
+	}
+#if 0
+		if (ArgType->m_type == type_enum)
+	{
+		dispatch->Invoke(_this, method, pObject, 4);
+	}
+	else if (ArgType->m_type == type_unsigned_char)
+	{
+		dispatch->Invoke(_this, method, pObject, 4);
+	}
+	else if (ArgType->m_type == type_float)
+	{
+		dispatch->Invoke(_this, method, pObject, 4);
+	}
+	else if (ArgType->m_type == type_double)
+	{
+		dispatch->Invoke(_this, method, pObject, 8);
+	}
+	else if (ArgType->m_type == type_bool)
+	{
+		// TODO
+		ASSERT(0);
+		/*
+		IntObject* iobject = dynamic_cast<IntObject*>(pObject);
+		long lval = *iobject;
+
+		dispatch.Invoke(method, &lval, 4);
+		*/
+
+	}
+	else
+		ASSERT(0);
+#endif
+
+	return 0;
+}
+
+void Dispatch::struct_Invoke(void* m_this, Declarator* method, const void* args, size_t sz, void* retval_address)
+{
+	ASSERT(method);
+
+	ASSERT(m_this);
+
+	void *_this = m_this;
+
+	if (method->m_pOverrideClass)
+	{
+		_this = DynamicCast(m_this, m_pClass->AsClass(), method->m_pOverrideClass);
+	}
+	else
+	if (m_pClass->AsClass() && m_pClass->AsClass()->IsPolymorphic())
+	{
+		_this = DynamicCast(m_this, m_pClass->AsClass(), method->GetClass()->AsClass());
+	}
+	if (_this == nullptr)
+	{
+		ASSERT(0);
+	}
+
+	ULONG_PTR func;
+	if (method->m_virtual)	// virtual method
+	{
+		void* vtable = *(void**)_this;
+		func = *(ULONG_PTR*)((ubyte*)vtable + method->m_offset);
+	}
+	else
+	{
+		func = method->GetAddress();
+		if (func == ~0)
+		{
+			raise(Exception(method->m_name + "not implemented"));
+		}
+	}
+
+	struct_invoke_method32(func, _this, args, sz, retval_address);
+}
+
+void Dispatch::void_Invoke(void* m_this, Declarator* method, const void* args, size_t sz)
+{
+	ASSERT(method);
+
+	ASSERT(m_this);
+
+	void *_this = m_this;
+
+	if (method->m_pOverrideClass)
+	{
+		_this = DynamicCast(m_this, m_pClass->AsClass(), method->m_pOverrideClass);
+	}
+	else
+	if (m_pClass->AsClass() && m_pClass->AsClass()->IsPolymorphic())
+	{
+		_this = DynamicCast(m_this, m_pClass->AsClass(), method->GetClass());
+	}
+
+	if (_this == nullptr)
+	{
+		ASSERT(0);
+	}
+
+#if 0
+	void* _this;
+	if (m_pClass->GetClass() && m_pClass->GetClass()->IsPolymorphic())
+		_this = DynamicCast(m_this, m_pClass->GetClass(), method->GetClass()->GetClass());
+	else
+		_this = m_this;
+
+	if (_this == NULL)
+	{
+		ASSERT(0);
+	}
+#endif
+
+	ULONG_PTR func;
+	if (method->m_virtual)	// virtual method
+	{
+		void* vtable = *(void**)_this;
+		func = *(ULONG_PTR*)((ubyte*)vtable + method->m_offset);
+	}
+	else
+	{
+		func = method->GetAddress();
+		if (func == ~0)
+		{
+			raise(Exception(method->get_QName() + " not implemented"));
+		}
+	}
+
+	void_invoke_method32(func, _this, args, sz);
+}
+
+void* Dispatch::pointer_Invoke(void* thisptr, Declarator* method, const void* args, size_t sz)
+{
+	ASSERT(method);
+	ASSERT(thisptr);
+
+	Type* pReturnType = method->get_ReturnType()->GetStripped();
+	switch (pReturnType->get_Kind())
+	{
+	case type_pointer:
+	case type_reference:	// Treat reference like a pointer
+		break;
+
+	default:
+		ASSERT(0);
+	}
+
+	void* thisptr_ = thisptr;
+	if (m_pClass->AsClass()->IsPolymorphic())
+	{
+		thisptr_ = DynamicCast(thisptr, m_pClass->AsClass(), method->GetClass());
+		if (thisptr_ == nullptr)
+		{
+			ASSERT(0);
+		}
+	}
+
+	ULONG_PTR func;
+	if (method->m_virtual)	// virtual method
+	{
+		void* vtable = *(void**)thisptr_;
+		func = *(ULONG_PTR*)((ubyte*)vtable + method->m_offset);
+	}
+	else
+	{
+		func = method->GetAddress();
+		if (func == ~0)
+		{
+			raise(Exception(method->get_QName() + L" is not implemented"));
+		}
+	}
+
+	void* result = (void*)int32_invoke_method32(func, thisptr_, args, sz);
+
+	return result;
+}
+
+Object* Dispatch::Object_Invoke(void* m_this, Declarator* method, const void* args, size_t sz)
+{
+	// TODO, check returntype
+	// if (method->
+
+	return (Object*)pointer_Invoke(m_this, method, args, sz);
+}
+
+bool Dispatch::bool_Invoke(void* m_this, Declarator* method, const void* args, size_t sz)
+{
+	ASSERT(method);
+	Type* pReturnType = method->get_ReturnType()->GetStripped();
+	switch (pReturnType->get_Kind())
+	{
+	case type_bool:
+		break;
+
+	default:
+		raise(Exception("bool_Invoke wrong return type"));
+	}
+
+	ASSERT(m_this);
+
+	void *_this = DynamicCast(m_this, m_pClass->AsClass(), method->GetClass());
+	if (_this == nullptr)
+	{
+		ASSERT(0);
+	}
+
+	ULONG_PTR func;
+	if (method->m_virtual)	// virtual method
+	{
+		void* vtable = *(void**)_this;
+		func = *(ULONG_PTR*)((ubyte*)vtable + method->m_offset);
+	}
+	else
+	{
+		func = method->GetAddress();
+		if (func == ~0)
+		{
+			raise(Exception(method->m_name + "not implemented"));
+		}
+	}
+
+	VERIFY(func);
+
+	bool result = int32_invoke_method32(func, _this, args, sz) & 1;
+
+	return result;
+}
+
+//#include <limits.h>
+
+int32 Dispatch::int32_Invoke(void* m_this, Declarator* method, const void* args, size_t sz)
+{
+	ASSERT(method);
+	ASSERT(m_this);
+
+	Type* pReturnType = method->get_ReturnType()->GetStripped();
+	switch (pReturnType->GetStripped()->get_Kind())
+	{
+	case type_enum:	// TODO
+
+	case type_char:	// TODO
+	case type_signed_char:	// TODO
+	case type_unsigned_char:	// TODO
+	case type_short:	// TODO
+	case type_unsigned_short:	// TODO
+	case type_wchar_t:	// TODO
+
+	case type_int:
+	case type_unsigned_int:
+
+#if ULONG_MAX == 0xffffffffUL
+
+	case type_long:
+	case type_unsigned_long:
+		break;
+#endif
+
+	default:
+		raise(SystemException("wrong return type"));
+	}
+
+	void *_this = m_this;
+	if (m_pClass->AsClass() && m_pClass->AsClass()->IsPolymorphic())
+	{
+		_this = DynamicCast(m_this, m_pClass->AsClass(), method->GetClass()->AsClass());	// TODO, not
+		if (_this == nullptr)
+		{
+			ASSERT(0);
+		}
+	}
+
+	ULONG_PTR func;
+	if (method->m_virtual)	// virtual method
+	{
+		void* vtable = *(void**)_this;
+		func = *(ULONG_PTR*)((uint8*)vtable + method->m_offset);
+	}
+	else
+	{
+		func = method->GetAddress();
+		if (func == ~0)
+		{
+			raise(Exception(method->m_name + "not implemented"));
+		}
+	}
+
+	VERIFY(func != 0);
+
+	int32 result = int32_invoke_method32(func, _this, args, sz);
+
+	return result;
+}
+
+int64 Dispatch::int64_Invoke(void* m_this, Declarator* method, const void* args, size_t sz)
+{
+	ASSERT(method);
+	ASSERT(m_this);
+
+	Type* pReturnType = method->get_ReturnType()->GetStripped();
+	switch (pReturnType->GetStripped()->get_Kind())
+	{
+	case type_int64:
+	case type_unsigned_int64:
+		break;
+
+#if ULONG_MAX > 0xffffffffUL
+
+	case type_long_int:
+	case type_unsigned_long_int:
+		break;
+#endif
+
+	default:
+		ASSERT(0);
+	}
+
+	void *_this = DynamicCast(m_this, m_pClass->AsClass(), method->GetClass()->AsClass());	// TODO, not
+	if (_this == nullptr)
+	{
+		ASSERT(0);
+	}
+
+	ULONG_PTR func;
+	if (method->m_virtual)	// virtual method
+	{
+		void* vtable = *(void**)_this;
+		func = *(ULONG_PTR*)((uint8*)vtable + method->m_offset);
+	}
+	else
+	{
+		func = method->GetAddress();
+		if (func == ~0)
+		{
+			raise(Exception(method->m_name + "not implemented"));
+		}
+	}
+
+	VERIFY(func != 0);
+
+	int64 result = int64_invoke_method32(func, _this, args, sz);
+
+	return result;
+}
+
+float Dispatch::float_Invoke(void* _this, Declarator* method, const void* args, size_t sz)
+{
+	ASSERT(method);
+	ASSERT(_this);
+
+	Type* pReturnType = method->get_ReturnType()->GetStripped();
+	switch (pReturnType->get_Kind())
+	{
+	case type_float:
+		break;
+
+	default:
+		ASSERT(0);
+	}
+
+	if (method->GetClass()->AsClass()->m_bVT)
+	{
+		_this = DynamicCast(_this, m_pClass->AsClass(), method->GetClass()->AsClass());
+		if (_this == nullptr)
+		{
+			raise(Exception("failed to cast"));
+		}
+	}
+
+	ULONG_PTR func;
+	if (method->m_virtual)	// virtual method
+	{
+		void* vtable = *(void**)_this;
+		func = *(ULONG_PTR*)((uint8*)vtable + method->m_offset);
+	}
+	else
+	{
+		func = method->GetAddress();
+		if (func == ~0)
+		{
+			raise(Exception(method->m_name + "not implemented"));
+		}
+	}
+
+	VERIFY(func);
+
+	float result = float_invoke_method32(func, _this, args, sz);
+
+	return result;
+}
+
+double Dispatch::double_Invoke(void* m_this, Declarator* method, const void* args, size_t sz)
+{
+	ASSERT(method);
+
+	Type* pReturnType = method->get_ReturnType()->GetStripped();
+	switch (pReturnType->get_Kind())
+	{
+	case type_double:
+		break;
+
+	default:
+		ASSERT(0);
+	}
+
+	ASSERT(m_this);
+
+	void *_this = DynamicCast(m_this, m_pClass->AsClass(), method->GetClass()->AsClass());
+	if (_this == nullptr)
+	{
+//		printf("newobj: DynamicCast failed, %s to %s\n", m_pClass->m_qname->c_str(), method->m_class->m_qname->c_str());
+		ASSERT(0);
+	}
+
+	ULONG_PTR func;
+//	if (method->m_decl->m_offset != -1)	// virtual method
+	if (method->m_virtual)	// virtual method
+	{
+//		printf("vtable offset = %d\n", method->m_decl->m_offset);
+		void* vtable = *(void**)_this;
+		func = *(ULONG_PTR*)((uint8*)vtable + method->m_offset);
+	}
+	else
+	{
+		func = method->GetAddress();
+
+		if (func == ~0)
+		{
+			raise(Exception(method->m_name + "not implemented"));
+		}
+	}
+
+	VERIFY(func);
+
+	double result = double_invoke_method32(func, _this, args, sz);
+
+	return result;
+}
+
+#if 0
+extern "C" int __cdecl cdecl_method_this(void* _this, Method* method, char* args)
+{
+	ClassType* pType = GetType(_this);
+
+	if (true)
+	{
+		void* serverObject = *(void**)(((uint8*)_this) + pType->get_sizeof());
+		Remoting::ServerInfo* server = *(Remoting::ServerInfo**)(((uint8*)_this) + pType->get_sizeof() + 4);
+
+		server->InvokeMethod_int32(serverObject, 0, NULL, 0);
+	}
+	else
+	{
+		Dispatch* pDispatch = GetDispatch(method->GetClass()->GetClass());
+
+		// TODO
+		int stackSize = 4;//method->m_decl->m_pType->GetFunction()->m_stackSize;
+
+		pDispatch->int32_Invoke(_this, method, args, stackSize);
+
+	//	TRACE("%s::%s", method->GetClass()->get_Name()->c_str(), method->get_MethodName()->c_str());
+	}
+
+	return 0;
+}
+#endif
+
+}	// System

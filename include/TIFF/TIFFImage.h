@@ -1,0 +1,155 @@
+#ifndef __TIFFImage_h__
+#define __TIFFImage_h__
+
+namespace System
+{
+namespace Imaging
+{
+
+enum IFDTYPE : unsigned short
+{
+	IFDTYPE_BYTE	= 1,
+	IFDTYPE_ASCII	= 2,
+	IFDTYPE_SHORT	= 3,
+	IFDTYPE_LONG	= 4,
+	IFDTYPE_RATIONAL = 5,
+
+	IFDTYPE_SBYTE		= 6,	// An 8-bit signed (twos-complement) integer.
+	IFDTYPE_UNDEFINED	= 7,	// An 8-bit byte that may contain anything, depending on the definition of the field.
+	IFDTYPE_SSHORT		= 8,	// A 16-bit (2-byte) signed (twos-complement) integer.
+	IFDTYPE_SLONG		= 9,	// A 32-bit (4-byte) signed (twos-complement) integer.
+	IFDTYPE_SRATIONAL	= 10,	// Two SLONG’s: the first represents the numerator of a fraction, the second the denominator.
+	IFDTYPE_FLOAT		= 11,	// Single precision (4-byte) IEEE format.
+	IFDTYPE_DOUBLE		= 12,	// Double precision (8-byte) IEEE format.
+};
+
+struct IFDEntry
+{
+	uint16 tag;
+	IFDTYPE type;
+	ULONG count;
+	union
+	{
+		ULONG offset;
+		ULONG value;
+	};
+};
+
+#if 0
+#define IFDTYPE_BYTE			1
+#define IFDTYPE_ASCII		2
+#define IFDTYPE_SHORT		3
+#define IFDTYPE_LONG			4
+#define IFDTYPE_RATIONAL	5
+
+#define IFDTYPE_SBYTE		6	// An 8-bit signed (twos-complement) integer.
+#define IFDTYPE_UNDEFINED	7	// An 8-bit byte that may contain anything, depending on the definition of the field.
+#define IFDTYPE_SSHORT		8	// A 16-bit (2-byte) signed (twos-complement) integer.
+#define IFDTYPE_SLONG		9	// A 32-bit (4-byte) signed (twos-complement) integer.
+#define IFDTYPE_SRATIONAL	10	// Two SLONG’s: the first represents the numerator of a fraction, the second the denominator.
+#define IFDTYPE_FLOAT		11	// Single precision (4-byte) IEEE format.
+#define IFDTYPE_DOUBLE		12	// Double precision (8-byte) IEEE format.
+#endif
+
+class CTIFFField
+{
+public:
+	IFDEntry m_entry;
+};
+
+enum PhotoMetricInterpretation : unsigned short
+{
+	PhotoMetricInterpretation_Bilevel = 0,
+	PhotoMetricInterpretation_Grayscale = 1,
+	PhotoMetricInterpretation_RGB = 2,
+	PhotoMetricInterpretation_Paletted = 3,
+};
+
+enum TiffCompression : int
+{
+	TiffCompression_Uncompressed = 1,
+	TiffCompression_LZW = 5,
+};
+
+class TiffExt TIFFImage : public Object
+{
+public:
+	CTOR TIFFImage();
+
+	void GetTIFFFieldCount(uint16 tag, int32* count);
+
+	int GetTypeSize(IFDTYPE type)
+	{
+		switch (type)
+		{
+			case IFDTYPE_BYTE:		return 1;
+			case IFDTYPE_ASCII:		return 0;
+			case IFDTYPE_SHORT:		return 2;
+			case IFDTYPE_LONG:		return 4;
+#if 0
+			case IFDTYPE_RATIONAL	5
+
+			case IFDTYPE_SBYTE		6	// An 8-bit signed (twos-complement) integer.
+			case IFDTYPE_UNDEFINED	7	// An 8-bit byte that may contain anything, depending on the definition of the field.
+			case IFDTYPE_SSHORT		8	// A 16-bit (2-byte) signed (twos-complement) integer.
+			case IFDTYPE_SLONG		9	// A 32-bit (4-byte) signed (twos-complement) integer.
+			case IFDTYPE_SRATIONAL	10	// Two SLONG’s: the first represents the numerator of a fraction, the second the denominator.
+			case IFDTYPE_FLOAT		11	// Single precision (4-byte) IEEE format.
+			case IFDTYPE_DOUBLE		12	// Double precision (8-byte) IEEE format.
+#endif
+		}
+
+		return -1;
+	}
+
+	bool GetTIFFFieldShortValues(uint16 tag, int count, int16* values);
+	bool GetTIFFFieldLongValues(uint16 tag, int count, int32* values);
+
+	bool ReadDirectory();
+
+	int ReadImage(void* data, int rowbytes, int rows, int bitcount);
+
+	int get_Width() const
+	{
+		return m_imageWidth;
+	}
+
+	int get_Height() const
+	{
+		return m_imageHeight;
+	}
+
+	PhotoMetricInterpretation get_PhotoMetricInterpretation() const
+	{
+		return m_photoMetricInterpretation;
+	}
+
+	TiffCompression get_Compression() const
+	{
+		return m_compression;
+	}
+
+	int get_BitsPerSample() const
+	{
+		return m_bitsPerSample;
+	}
+
+	TIFFFile* m_file;
+
+protected:
+
+	vector<CTIFFField*> m_fields;
+
+	int32 m_imageWidth;
+	int32 m_imageHeight;
+	TiffCompression m_compression;
+	int32 m_bitsPerSample;
+	int32 m_colorMapSize;
+	uint16* m_colorMap;
+	PhotoMetricInterpretation m_photoMetricInterpretation;
+};
+
+}	// Imaging
+}	// System
+
+#endif // __TIFFImage_h__

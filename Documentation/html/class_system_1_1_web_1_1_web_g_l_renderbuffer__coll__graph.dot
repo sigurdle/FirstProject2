@@ -1,0 +1,29 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::Web::WebGLRenderbuffer",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Web::WebGLObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_web_g_l_object.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node5 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_context" ,fontname="Helvetica"];
+  Node5 [label="System::Web::WebGLRenderingContext",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_web_g_l_rendering_context.html"];
+  Node3 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="System::Graphics::OpenGLContext",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_graphics_1_1_open_g_l_context.html"];
+  Node7 -> Node6 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_glprocs" ,fontname="Helvetica"];
+  Node7 [label="System::Graphics::GLProcs",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$struct_system_1_1_graphics_1_1_g_l_procs.html"];
+  Node8 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_bitmap" ,fontname="Helvetica"];
+  Node8 [label="System::Graphics::Bitmap",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_graphics_1_1_bitmap.html"];
+  Node9 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="System::Graphics::Image",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_graphics_1_1_image.html"];
+  Node3 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 -> Node8 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pixelFormat" ,fontname="Helvetica"];
+  Node10 [label="System::Graphics::PixelFormat_t",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_graphics_1_1_pixel_format__t.html"];
+  Node11 -> Node8 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_colors" ,fontname="Helvetica"];
+  Node11 [label="tagRGBQUAD",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtag_r_g_b_q_u_a_d.html"];
+}

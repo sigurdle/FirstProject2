@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/DXUT/Optional
+END
+DXUTres.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/DXUT/Optional/DXUTres.cpp
+END
+SDKmesh.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/DXUT/Optional/SDKmesh.cpp
+END
+SDKwavefile.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/DXUT/Optional/SDKwavefile.cpp
+END
+DXUTShapes.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/DXUT/Optional/DXUTShapes.cpp
+END
+DXUTgui.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/DXUT/Optional/DXUTgui.cpp
+END
+SDKsound.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/DXUT/Optional/SDKsound.cpp
+END
+DXUTsettingsdlg.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/DXUT/Optional/DXUTsettingsdlg.cpp
+END
+sdkmesh_old.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/DXUT/Optional/sdkmesh_old.cpp
+END
+DXUTcamera.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/DXUT/Optional/DXUTcamera.cpp
+END
+SDKmisc.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/48/FirstProject2/trunk/src/DXUT/Optional/SDKmisc.cpp
+END

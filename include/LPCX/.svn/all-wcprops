@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/firstproject2/!svn/ver/52/FirstProject2/trunk/include/LPCX
+END
+StdAfx.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/52/FirstProject2/trunk/include/LPCX/StdAfx.h
+END
+pcxfmt.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/52/FirstProject2/trunk/include/LPCX/pcxfmt.h
+END
+LPCX.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/52/FirstProject2/trunk/include/LPCX/LPCX.h
+END
+PCXParser.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/52/FirstProject2/trunk/include/LPCX/PCXParser.h
+END

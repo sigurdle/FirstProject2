@@ -1,0 +1,144 @@
+namespace System
+{
+
+namespace PP
+{
+class CPreprocessor;
+}
+
+namespace cpp
+{
+
+namespace ast
+{
+class A_ClassHead;
+class Expression;
+class DeclarationList;
+
+class Parser : public Object
+{
+public:
+	Expression* parse_expression(StringIn str);
+	DeclarationList* parse_translation_unit(StringIn str);
+};
+
+}
+
+enum m_x86
+{
+//	m_x86_Blend = 600, //(Default. Future compilers will emit a different value to reflect the dominant processor.)
+
+	m_x86_386 = 300,
+	m_x86_486 = 400,
+	m_x86_Pentium = 500,
+	m_x86_Pentium_II = 600,	// Pentium Pro, Pentium II, and Pentium III
+};
+
+class CodeCompExt Options : public Object
+{
+public:
+
+	CTOR Options();
+
+	String m_defines;
+	String m_includeDirs;
+
+	/*
+	enum VerboseLevel
+	{
+		VerboseLevel_None,
+		VerboseLevel_Low,
+		VerboseLevel_Medium,
+		VerboseLevel_High,
+	}
+	*/
+
+	int get_StructMemberAlignment() const;
+
+	int m_exeType;
+	int m_x64;
+	int m_subplatform;
+
+	CallType m_callingConvention;
+
+	int8 m_structMemberAlignment;	// 0,1,2,4,8,16
+	int8 m_verboseLevel : 4;	// 0,1,2,3,
+	int8 m_warningLevel : 4;	// 0,1,2,3,4
+	bool m_defaultCharUnsigned : 1;
+	bool m_treatWarningsAsErrors : 1;
+	bool m_showIncludes : 1;	// Generates a list of include files with compiler output
+	bool m_type_wchar_t : 1;
+};
+
+class CodeCompExt CGlobal : public Object
+{
+public:
+	CTOR CGlobal();
+
+	int Compile(StringIn filepath, StringIn fileoutpath, int exeType);
+
+	/*
+	// TODO, have these in ast::Parser
+	ast::Expression* parse_expression(StringIn str);
+	ast::DeclarationList* parse_translation_unit(StringIn str);
+	*/
+
+	CppSourceFile* AddSourceFile(FilePart* filepart);
+
+	Namespace* m_namespace;	// Global namespace
+
+	vector<System::Declarator*> m_globals;
+	vector<System::Declarator*> m_references;
+	vector<System::Declarator*> m_strings;
+
+	vector<System::NamedType*> m_types;
+	vector<System::NamedType*> m_alltypes;
+
+	stack<int> m_packstack;
+
+	map<System::ArrayOf, System::ArrayType*> m_array_Types;
+
+	map<String,System::NamedType*> m_templateInstances;
+
+	/*
+		sourcefile->m_types.push_back(pType);
+
+		// TODO
+
+		return m_sourceFiles.find(filename);
+
+	}
+	*/
+
+//protected:
+
+	map<String, FilePart*> m_files;
+	map<String, CppSourceFile*> m_sourceFiles;
+
+	int m_errors;
+	int m_warnings;
+
+public:
+
+	PointerTypes m_pointer_Types;
+	ReferenceTypes m_reference_Types;
+	RValueReferenceTypes m_rvalue_reference_Types;
+
+	PP::CPreprocessor* m_PP;
+	Options* m_options;
+
+	TypeStuff* m_typestuff;
+
+	TypeLib* m_typelib;
+
+	unsigned int m_sizeofptr;
+};
+
+//typedef Compiler CGlobal;
+
+CodeCompExt int cpp_compile(CGlobal* pGlobal, StringIn filepath, StringIn fileoutpath, Options* options);
+
+typedef map<ast::A_ClassHead*, Type*> class2type_t;	// TODO, eventually remove
+
+}	// cpp
+}	// System

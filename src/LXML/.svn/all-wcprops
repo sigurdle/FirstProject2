@@ -1,0 +1,707 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/firstproject2/!svn/ver/114/FirstProject2/trunk/src/LXML
+END
+NodeIterator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/NodeIterator.cpp
+END
+TimeEvent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/TimeEvent.cpp
+END
+LDTDElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/LDTDElement.cpp
+END
+CSSStyleSheet.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/CSSStyleSheet.cpp
+END
+ASXMLSchemaModelGroup.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ASXMLSchemaModelGroup.cpp
+END
+PElementBase.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/LXML/PElementBase.cpp
+END
+SVGNumber.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SVGNumber.cpp
+END
+XMLHttpRequest.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/XMLHttpRequest.cpp
+END
+SVGPoint.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SVGPoint.cpp
+END
+RGBColor.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/RGBColor.cpp
+END
+DTDDocument.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/DTDDocument.cpp
+END
+SVGShadowableImpl.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SVGShadowableImpl.cpp
+END
+ASDTDContentModel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ASDTDContentModel.cpp
+END
+MediaList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/MediaList.cpp
+END
+ImageData.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ImageData.cpp
+END
+SVGShadowElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SVGShadowElement.cpp
+END
+DocumentType.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/DocumentType.cpp
+END
+DOMDocumentEvent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/DOMDocumentEvent.cpp
+END
+SVGColorImpl.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SVGColorImpl.cpp
+END
+dllmain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/122/FirstProject2/trunk/src/LXML/dllmain.cpp
+END
+DocumentStyleImpl.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/DocumentStyleImpl.cpp
+END
+SMILTime.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SMILTime.cpp
+END
+ElementEditVALImpl.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ElementEditVALImpl.cpp
+END
+SVGMatrix.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SVGMatrix.cpp
+END
+CSSValue.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/CSSValue.cpp
+END
+ASXMLSchemaElementDefinition.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ASXMLSchemaElementDefinition.cpp
+END
+ProcessingInstructionStylesheet.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ProcessingInstructionStylesheet.cpp
+END
+MouseEvent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/MouseEvent.cpp
+END
+cssproperty.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/cssproperty.cpp
+END
+LXML2.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/LXML2.cpp
+END
+DocumentFragment.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/DocumentFragment.cpp
+END
+DOMLocator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/DOMLocator.cpp
+END
+MutationNameEvent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/MutationNameEvent.cpp
+END
+ElementSet.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ElementSet.cpp
+END
+NamedColors.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/NamedColors.cpp
+END
+SVGColorProfileRule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SVGColorProfileRule.cpp
+END
+PTextNode.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/LXML/PTextNode.cpp
+END
+DOMEventTargetImpl.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/DOMEventTargetImpl.cpp
+END
+cssunits.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/114/FirstProject2/trunk/src/LXML/cssunits.cpp
+END
+SVGICCColor.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SVGICCColor.cpp
+END
+CSSPrimitiveValue.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/CSSPrimitiveValue.cpp
+END
+Document.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/114/FirstProject2/trunk/src/LXML/Document.cpp
+END
+UIEvent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/UIEvent.cpp
+END
+NodeEditVALImpl.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/NodeEditVALImpl.cpp
+END
+ASDTDModel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ASDTDModel.cpp
+END
+NodeList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/NodeList.cpp
+END
+CSSStackingContext.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/CSSStackingContext.cpp
+END
+Event.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/Event.cpp
+END
+PParentBox.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/PParentBox.cpp
+END
+DOMImplementation.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/DOMImplementation.cpp
+END
+TextEvent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/TextEvent.cpp
+END
+DOMBuilder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/DOMBuilder.cpp
+END
+clockvalue.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/clockvalue.cpp
+END
+NamedNodeMap.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/NamedNodeMap.cpp
+END
+CSSCounter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/CSSCounter.cpp
+END
+StyleSheet.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/StyleSheet.cpp
+END
+ScriptSite.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ScriptSite.cpp
+END
+AnimationElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/AnimationElement.cpp
+END
+SVGPaint.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SVGPaint.cpp
+END
+EntityReference.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/EntityReference.cpp
+END
+DOMParser.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/LXML/DOMParser.cpp
+END
+CDATASection.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/CDATASection.cpp
+END
+LDOMDocumentHTMLImpl.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/LDOMDocumentHTMLImpl.cpp
+END
+Comment.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/Comment.cpp
+END
+SVGNumberList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SVGNumberList.cpp
+END
+CanvasRenderingContext2D.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/LXML/CanvasRenderingContext2D.cpp
+END
+PNode.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/LXML/PNode.cpp
+END
+SVGPointList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SVGPointList.cpp
+END
+LXMLDocumentView.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/LXMLDocumentView.cpp
+END
+SVGZoomEvent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SVGZoomEvent.cpp
+END
+ElementTime.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ElementTime.cpp
+END
+PBox.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/PBox.cpp
+END
+parsecolor.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/parsecolor.cpp
+END
+GenericDocument.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/GenericDocument.cpp
+END
+NameList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/NameList.cpp
+END
+LXML.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/LXML.cpp
+END
+Entity.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/Entity.cpp
+END
+SVGRect.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SVGRect.cpp
+END
+XMLParser.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/LXML/XMLParser.cpp
+END
+CSSStyleDeclaration.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/CSSStyleDeclaration.cpp
+END
+SMILTimeList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SMILTimeList.cpp
+END
+EnumerationCalcModeType.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/EnumerationCalcModeType.cpp
+END
+PLineBox.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/114/FirstProject2/trunk/src/LXML/PLineBox.cpp
+END
+CSSValueList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/CSSValueList.cpp
+END
+LXSLProcessor.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/LXSLProcessor.cpp
+END
+Text.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/Text.cpp
+END
+GenericElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/GenericElement.cpp
+END
+AnimationTarget.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/LXML/AnimationTarget.cpp
+END
+DTDParser.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/114/FirstProject2/trunk/src/LXML/DTDParser.cpp
+END
+Element.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/114/FirstProject2/trunk/src/LXML/Element.cpp
+END
+stdafx.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/stdafx.cpp
+END
+ASDTDEntity.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ASDTDEntity.cpp
+END
+DOMRange.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/DOMRange.cpp
+END
+SVGColor.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SVGColor.cpp
+END
+WebGL.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/LXML/WebGL.cpp
+END
+MutationEvent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/MutationEvent.cpp
+END
+CSSRect.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/CSSRect.cpp
+END
+PInlineBox.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/LXML/PInlineBox.cpp
+END
+Window.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/LXML/Window.cpp
+END
+ASDTDElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ASDTDElement.cpp
+END
+Attr.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/Attr.cpp
+END
+LXSLTemplate.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/LXSLTemplate.cpp
+END
+ProcessingInstruction.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ProcessingInstruction.cpp
+END
+SGMLParser.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/SGMLParser.cpp
+END
+PElementBox.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/PElementBox.cpp
+END
+ASDTDAttribute.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ASDTDAttribute.cpp
+END
+PBlockBox.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/PBlockBox.cpp
+END
+Node.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/LXML/Node.cpp
+END
+StyleSheetList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/StyleSheetList.cpp
+END
+ASXMLSchemaModel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ASXMLSchemaModel.cpp
+END
+CharacterData.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/CharacterData.cpp
+END
+ElementAnimate.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ElementAnimate.cpp
+END
+LDOMDocumentRangeImpl.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/LDOMDocumentRangeImpl.cpp
+END
+ASXMLSchemaComplexContentType.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/ASXMLSchemaComplexContentType.cpp
+END
+PWord.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/LXML/PWord.cpp
+END
+XMLAttr.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/XMLAttr.cpp
+END
+HTMContext.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/65/FirstProject2/trunk/src/LXML/HTMContext.cpp
+END

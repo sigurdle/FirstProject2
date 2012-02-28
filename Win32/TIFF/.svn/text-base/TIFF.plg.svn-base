@@ -1,0 +1,39 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: TIFF - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP31FA.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /O1 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /Fp"../../Intermediate/Win32/TIFF/Release/TIFF.pch" /Yu"stdafx.h" /Fo"../../Intermediate/Win32/TIFF/Release/" /Fd"../../Intermediate/Win32/TIFF/Release/" /FD /c 
+"C:\MMStudio\src\TIFF\TIFF.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP31FA.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP31FB.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /incremental:no /pdb:"Release/TIFF.pdb" /map:"../../Intermediate/Win32/TIFF/Release/TIFF.map" /machine:I386 /def:".\TIFF.def" /out:"../bin/Release/TIFF.dll" /implib:"Release/TIFF.lib" 
+\MMStudio\Intermediate\Win32\TIFF\Release\StdAfx.obj
+\MMStudio\Intermediate\Win32\TIFF\Release\TIFF.obj
+\MMStudio\Intermediate\Win32\TIFF\Release\TIFF.res
+\MMStudio\Intermediate\Win32\TIFF\Release\TIFFDecoder.obj
+\MMStudio\Intermediate\Win32\TIFF\Release\TIFFFile.obj
+\MMStudio\Intermediate\Win32\TIFF\Release\TIFFImage.obj
+]
+Creating command line "link.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP31FB.tmp"
+<h3>Output Window</h3>
+Compiling...
+TIFF.cpp
+C:\MMStudio\src\TIFF\TIFF.cpp(50) : warning C4390: ';' : empty controlled statement found; is this the intent?
+Linking...
+   Creating library Release/TIFF.lib and object Release/TIFF.exp
+
+
+
+<h3>Results</h3>
+TIFF.dll - 0 error(s), 1 warning(s)
+</pre>
+</body>
+</html>

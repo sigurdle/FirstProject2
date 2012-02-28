@@ -1,0 +1,237 @@
+#ifndef CSS_h
+#define CSS_h
+
+#ifdef __LERSTAD__
+#import "LFC/LFC.h"
+#else
+#include "LFC/LFC.h"
+#endif
+
+#ifndef CSSEXT
+#define CSSEXT DECLSPEC_DLLIMPORT
+#endif
+
+namespace System
+{
+namespace Style
+{
+
+interface ICSSRule;
+interface ICSSStyleRule;
+interface ICSSStyleDeclaration;
+interface ICSSStyleSheet;
+interface ICSSElementResolver;
+
+class Selector;
+class SimpleSelector;
+class SimpleSelectorSequence;
+class SelectorList;
+class CSSElementMatches;
+
+class CSSStream;
+
+///
+
+class StyleSheet;
+class CSSStyleSheet;
+class StyleSheetList;
+class CSSRule;
+class CSSStyleRule;
+class CSSImportRule;
+
+//class CSSStyleDeclaration;
+//class CDecl;	// hm..
+
+class MediaList;
+class CSSValue;	// ??
+
+enum CSSType
+{
+	UNKNOWN_RULE = 0,
+	STYLE_RULE = 1,
+	CHARSET_RULE = 2,
+	IMPORT_RULE = 3,
+	MEDIA_RULE = 4,
+	FONT_FACE_RULE = 5,
+	PAGE_RULE = 6,
+	COLOR_PROFILE_RULE = 7,
+
+	COMMENT_RULE = 60
+};
+
+interface IStyleDeclaration
+{
+	virtual void SetProperty(StringIn prefix, StringIn name, StringIn strvalue) abstract;
+	virtual Object* GetPropertyValue(Object* pProperty) abstract;
+	virtual bool HasProperty(Object* pProperty) abstract;
+};
+
+interface IStyleSheet
+{
+	virtual IStyleDeclaration* CreateDeclaration() abstract;
+	virtual void AddRules(SelectorList* selectors, IStyleDeclaration* declarator) abstract;
+
+	virtual size_t GetRuleCount() abstract;
+	virtual ICSSRule* GetRule(size_t index) abstract;
+
+//	virtual void MatchElement(CSSElementMatches* matches, ICSSElementResolver* element) abstract;
+//	virtual void GetStyleSheetMatches(CSSElementMatches* matches, ICSSElementResolver* pPElement) abstract;
+};
+
+interface IElementCSSInlineStyle
+{
+};
+
+interface ICSSElementResolver
+{
+	virtual String get_typeName() abstract;
+	virtual String get_namespaceURI() abstract;
+	virtual String get_id() abstract;
+	virtual String get_pseudoElementName() abstract;	// ??
+	virtual String getAttribute(StringIn name) abstract;
+	virtual bool hasAttribute(StringIn name) abstract;
+	virtual ICSSElementResolver* get_rparent() abstract;
+	virtual ICSSElementResolver* get_prevSibling() abstract;
+	virtual ICSSElementResolver* get_nextSibling() abstract;
+	virtual IStyleDeclaration* get_inlineStyle(uint index) abstract;
+
+	virtual bool IsInherited(Object* pProperty) abstract;
+	virtual bool IsValueInherit(Object* value) abstract;
+};
+
+interface IStyleSheetList
+{
+	virtual size_t get_length() abstract;
+	virtual IStyleSheet* item(size_t index) abstract;
+};
+
+interface IDocumentStyle
+{
+	virtual IStyleSheetList* get_styleSheets() abstract;
+};
+
+/*
+interface ISingleSelectorRule
+{
+	virtual Selector* get_selector() = 0;
+	virtual IStyleDeclaration* get_declaration() = 0;
+};
+*/
+
+/*
+class CSSEXT SimpleRule : public Object
+{
+public:
+
+	virtual CSSType get_RuleType() const = 0;
+};
+
+class CSSEXT ImportSimpleRule : public SimpleRule
+{
+public:
+
+	virtual CSSType get_RuleType() const
+	{
+		return IMPORT_RULE;
+	}
+
+	CSSImportRule* m_importRule;
+};
+*/
+
+class CSSEXT SingleSelectorRule : public Object
+{
+public:
+
+	CTOR SingleSelectorRule(Selector* selector, IStyleDeclaration* declaration) :
+		m_selector(selector),
+		m_declaration(declaration)
+	{
+	}
+
+	virtual Selector* get_selector()
+	{
+		return m_selector;
+	}
+
+	virtual IStyleDeclaration* get_declaration()
+	{
+		return m_declaration;
+	}
+
+	virtual uint GetSpecificity();
+
+	Selector* m_selector;
+	IStyleDeclaration* m_declaration;
+};
+
+interface ICSSRule
+{
+//	virtual String get_cssText() = 0;
+//	virtual void set_cssText(StringIn newVal) = 0;
+
+	virtual CSSType get_type() abstract;
+};
+
+interface ICSSStyleRule : public ICSSRule
+{
+	virtual SelectorList* get_selectorList() abstract;
+	virtual IStyleDeclaration* get_declaration() abstract;
+};
+
+interface ICSSImportRule : public ICSSRule
+{
+	virtual IStyleSheet* get_styleSheet() abstract;
+};
+
+interface ICSSRuleList
+{
+	virtual size_t get_length() abstract;
+	virtual ICSSRule* item(size_t index) abstract;
+};
+
+/*
+interface ICSSStyleSheet
+{
+	virtual ICSSRuleList* get_cssRules() = 0;
+};
+*/
+
+/*
+interface ICSSSelector
+{
+	virtual String get_selectorText() = 0;
+	virtual void set_selectorText(StringIn newVal) = 0;
+};
+*/
+
+class CSSEXT StyleSheet : public Object
+{
+public:
+
+	//ICSSRuleList* get_cssRules();
+
+	void Parse(IO::TextReader& stream);
+
+	static void GetStyleSheetMatches(IStyleSheet* styleSheet, CSSElementMatches* matches, ICSSElementResolver* pPElement);
+
+	vector<ICSSRule*> m_ruleList;
+};
+
+}
+}
+
+#include "CSSStream.h"
+#include "CSSSelector.h"
+#include "CSSSelectorList.h"
+
+#include "ViewCSS.h"
+/*
+#include "StyleSheet.h"
+#include "CSSRule.h"
+#include "CSSStyleRule.h"
+#include "CSSStyleSheet.h"
+#include "CSSCharsetRule.h"
+*/
+
+#endif // CSS_h

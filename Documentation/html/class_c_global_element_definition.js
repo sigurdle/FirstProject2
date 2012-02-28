@@ -1,0 +1,27 @@
+var class_c_global_element_definition =
+[
+    [ "CGlobalElementDefinition", "class_c_global_element_definition.html#acaf0cfdd9098ccd391715787008a26b8", null ],
+    [ "addASAttributeDecl", "class_c_global_element_definition.html#a0be0bb1a60a5b69214b78913992ec709", null ],
+    [ "BuildDefs", "class_c_global_element_definition.html#a76f3c0ccb0208ffca4dc82b387955eb1", null ],
+    [ "get_ASAttributeDecls", "class_c_global_element_definition.html#ad4bb75dadc4c76b3bf89f6e3fafe9d83", null ],
+    [ "get_asCM", "class_c_global_element_definition.html#aaad6d34c7c99121c75afeef0140dcfe6", null ],
+    [ "get_asNodeType", "class_c_global_element_definition.html#ae1a364803caccd17b7b5c39950894faf", null ],
+    [ "get_attributesList", "class_c_global_element_definition.html#a74284a1e2c588b6c68cf7eff0d1babc5", null ],
+    [ "get_contentType", "class_c_global_element_definition.html#a679c43630d8c88ecbe5d10a85a0b4e75", null ],
+    [ "get_elementDataType", "class_c_global_element_definition.html#a69497ca8295b88de9cb34f336f1a14c2", null ],
+    [ "get_elementType", "class_c_global_element_definition.html#ac50b88f89db9492bf0039c027f8e2221", null ],
+    [ "get_isPCDataOnly", "class_c_global_element_definition.html#ac71eb7f0587d6e6cf02e91e354e4e51e", null ],
+    [ "get_nodeName", "class_c_global_element_definition.html#a6dcdf58b5bcc4d4d314eb62e0ff81ce1", null ],
+    [ "get_strictMixedContent", "class_c_global_element_definition.html#aa3377cadc6903222c28ba2427e7f3b0e", null ],
+    [ "get_systemId", "class_c_global_element_definition.html#a8b49154fc36d780eb23de6b9fb27db97", null ],
+    [ "GetDefType", "class_c_global_element_definition.html#a6c63549fff797d1dd2728ef1b98e7918", null ],
+    [ "GetElementName", "class_c_global_element_definition.html#ae2b3f2fff5923b29dbf189f4c0d69f50", null ],
+    [ "removeASAttributeDecl", "class_c_global_element_definition.html#a98355be03753b5ac3b3034a02f2f9e72", null ],
+    [ "set_contentType", "class_c_global_element_definition.html#a6b8ecf8e404c4b6ccd804b6602c21c31", null ],
+    [ "set_elementType", "class_c_global_element_definition.html#af076f089600678f8c472e994ee37abf1", null ],
+    [ "set_isPCDataOnly", "class_c_global_element_definition.html#a0b92ce8b3423a2345392fd0570e63ed8", null ],
+    [ "set_strictMixedContent", "class_c_global_element_definition.html#a76941923bbcf3af508673887db10175b", null ],
+    [ "set_systemId", "class_c_global_element_definition.html#a2cb0fa1e4c39fc6cbfe8110cec81377b", null ],
+    [ "m_pAnynomousTypeDef", "class_c_global_element_definition.html#a04e257962bf2af44bd85904e1f586069", null ],
+    [ "m_pParentModelGroup", "class_c_global_element_definition.html#a36c924fd3ffcc9e268d89e1e693139ed", null ]
+];

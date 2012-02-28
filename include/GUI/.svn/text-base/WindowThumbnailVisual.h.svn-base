@@ -1,0 +1,26 @@
+namespace System
+{
+namespace Gui
+{
+
+class GUIEXT WindowThumbnailVisual : public UIElement
+{
+public:
+	CTOR WindowThumbnailVisual();
+
+	HWND m_hWndSource;
+	gm::RectI m_srcRect;
+
+	DEPENDENCY_CLASS(WindowThumbnailVisual, UIElement)
+
+protected:
+
+	virtual void Render(ManagedRenderContext renderContext) override;
+
+private:
+
+	HTHUMBNAIL m_phThumbnailId;
+};
+
+}	// Gui
+}	// System

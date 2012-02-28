@@ -1,0 +1,516 @@
+#ifndef CSSSelector_h
+#define CSSSelector_h
+
+namespace System
+{
+namespace Style
+{
+
+enum SimpleSelectorKind
+{
+	SimpleSelectorKind_unknown = 0,
+	SimpleSelectorKind_type,
+	SimpleSelectorKind_universal,
+	SimpleSelectorKind_attribute,
+	SimpleSelectorKind_id,
+	SimpleSelectorKind_class,
+	SimpleSelectorKind_pseudoclass,
+};
+
+class CSSEXT SimpleSelector : public Object
+{
+public:
+	CTOR SimpleSelector()
+	{
+		m_kind = SimpleSelectorKind_unknown;
+	}
+
+	virtual ~SimpleSelector()
+	{
+	}
+
+	virtual SimpleSelectorKind get_Kind()
+	{
+		return m_kind;
+	}
+
+	virtual bool MatchesElement(ICSSElementResolver* pElement) = 0;
+
+public:
+
+	SimpleSelectorKind m_kind;
+};
+
+class CSSEXT CSimpleSelectorUniversal : public SimpleSelector
+{
+public:
+	CTOR CSimpleSelectorUniversal()
+	{
+		m_kind = SimpleSelectorKind_universal;
+	}
+
+	virtual SimpleSelectorKind get_Kind() override
+	{
+		return SimpleSelectorKind_universal;
+	}
+
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override
+	{
+		return true;
+	}
+};
+
+class CSSEXT CSimpleSelectorType : public SimpleSelector
+{
+public:
+	CTOR CSimpleSelectorType()
+	{
+		m_kind = SimpleSelectorKind_type;
+	}
+
+	virtual SimpleSelectorKind get_Kind() override
+	{
+		return SimpleSelectorKind_type;
+	}
+
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override;
+
+public:
+
+	String m_name;
+	String m_namespaceURI;
+};
+
+class CSSEXT CSimpleSelectorID : public SimpleSelector
+{
+public:
+	CTOR CSimpleSelectorID()
+	{
+		m_kind = SimpleSelectorKind_id;
+	}
+
+	virtual SimpleSelectorKind get_Kind() override
+	{
+		return SimpleSelectorKind_id;
+	}
+
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override
+	{
+		String id =	pElement->get_id();
+
+		if (id == m_id)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+public:
+
+	String m_id;
+};
+
+class CSSEXT CSimpleSelectorClass : public SimpleSelector
+{
+public:
+	CTOR CSimpleSelectorClass()
+	{
+		m_kind = SimpleSelectorKind_class;
+		m_className = nullptr;
+	}
+
+	virtual SimpleSelectorKind get_Kind() override
+	{
+		return SimpleSelectorKind_class;
+	}
+
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override;
+
+public:
+
+	String m_className;
+};
+
+class CSSEXT CSimpleSelectorAttribute : public SimpleSelector
+{
+public:
+	CTOR CSimpleSelectorAttribute()
+	{
+		m_kind = SimpleSelectorKind_attribute;
+	}
+
+	virtual SimpleSelectorKind get_Kind() override
+	{
+		return SimpleSelectorKind_attribute;
+	}
+
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override;
+
+public:
+
+	String m_attrName;
+	String m_attrValue;
+	WCHAR m_attrMatch;
+};
+
+class CSSEXT CSimpleSelectorPseudoClass : public SimpleSelector
+{
+public:
+	CTOR CSimpleSelectorPseudoClass()
+	{
+		m_kind = SimpleSelectorKind_pseudoclass;
+	}
+
+	virtual SimpleSelectorKind get_Kind() override
+	{
+		return SimpleSelectorKind_pseudoclass;
+	}
+
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override
+	{
+		return false;
+	}
+
+public:
+
+	String m_pseudoClassName;
+};
+
+class CPseudoClassLink : public CSimpleSelectorPseudoClass
+{
+public:
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override
+	{
+//		USES_CONVERSION;
+
+		ASSERT(0);
+#if 0
+		CComQIPtr<ILDOMElement> element = pElement->m_pNode;
+
+		DWORD size = sizeof(INTERNET_CACHE_ENTRY_INFO)+1000;
+		INTERNET_CACHE_ENTRY_INFO* pI = (INTERNET_CACHE_ENTRY_INFO*)GlobalAlloc(GMEM_ZEROINIT, size);
+
+		pI->dwStructSize = sizeof(INTERNET_CACHE_ENTRY_INFO);
+
+		CComBSTR href;
+		element->getAttribute(OLESTR(L"href", &href);
+		if (href.Length())
+		{
+			return TRUE;
+
+			CComPtr<ILDOMDocument> ownerDocument;
+			element->get_ownerDocument(&ownerDocument);
+
+			CComBSTR url;
+			ownerDocument->get_url(&url);
+
+			TCHAR result[2048];
+			DWORD resultLen = sizeof(result);
+			InternetCombineUrl(W2A(url), W2A(href), result, &resultLen, 0);
+
+			//TCHAR buf[2048];
+			//sprintf(buf, "visited:%s", result);
+
+			HANDLE h = FindFirstUrlCacheEntry("visited:", pI, &size);
+			if (h != NULL/* && h != INVALID_HANDLE_VALUE*/)
+			{
+				do
+				{
+					size = sizeof(INTERNET_CACHE_ENTRY_INFO)+1000;
+
+					if (strstr(pI->lpszSourceUrlName, result))
+					{
+						FindCloseUrlCache(h);
+						return TRUE;
+					}
+				}
+				while (FindNextUrlCacheEntry(h, pI, &size));
+
+				FindCloseUrlCache(h);
+			}
+
+			return TRUE;
+		}
+#endif
+
+		return false;
+	}
+};
+
+class CPseudoClassVisited : public CSimpleSelectorPseudoClass
+{
+public:
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override
+	{
+		return false;
+
+#if 0
+		CComQIPtr<ILDOMElement> element = pElement->m_pNode;
+
+		DWORD size = sizeof(INTERNET_CACHE_ENTRY_INFO)+1000;
+		INTERNET_CACHE_ENTRY_INFO* pI = (INTERNET_CACHE_ENTRY_INFO*)GlobalAlloc(GMEM_ZEROINIT, size);
+
+		pI->dwStructSize = sizeof(INTERNET_CACHE_ENTRY_INFO);
+
+		CComBSTR href;
+		element->getAttribute(OLESTR(L"href", &href);
+
+		CComPtr<ILDOMDocument> ownerDocument;
+		element->get_ownerDocument(&ownerDocument);
+
+		CComBSTR url;
+		ownerDocument->get_url(&url);
+
+		TCHAR result[2048];
+		DWORD resultLen = sizeof(result);
+		InternetCombineUrl(W2A(url), W2A(href), result, &resultLen, 0);
+
+		//TCHAR buf[2048];
+		//sprintf(buf, "visited:%s", result);
+
+		HANDLE h = FindFirstUrlCacheEntry("visited:", pI, &size);
+		if (h != NULL/* && h != INVALID_HANDLE_VALUE*/)
+		{
+			do
+			{
+				size = sizeof(INTERNET_CACHE_ENTRY_INFO)+1000;
+
+				if (strstr(pI->lpszSourceUrlName, result))
+				{
+					FindCloseUrlCache(h);
+					return TRUE;
+				}
+			}
+			while (FindNextUrlCacheEntry(h, pI, &size));
+
+			FindCloseUrlCache(h);
+		}
+
+		return FALSE;
+#endif
+	}
+};
+
+class CPseudoClassFocus : public CSimpleSelectorPseudoClass
+{
+public:
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override
+	{
+		return false;
+		//return pElement->m_bFocus;
+	}
+};
+
+class CPseudoClassActive : public CSimpleSelectorPseudoClass
+{
+public:
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override
+	{
+		ASSERT(0);
+		// TODO, change this
+		//return dynamic_cast<PElementBase*>(pElement)->m_bActive;
+		return false;
+	}
+};
+
+class CPseudoClassHover : public CSimpleSelectorPseudoClass
+{
+public:
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override
+	{
+		ASSERT(0);
+		// TODO, change this
+		//return dynamic_cast<PElementBase*>(pElement)->m_bHover;
+		return false;
+	}
+};
+
+class CPseudoClassEnabled : public CSimpleSelectorPseudoClass
+{
+public:
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override
+	{
+		return false;
+		//return pElement->m_bEnabled;
+	}
+};
+
+class CPseudoClassDisabled : public CSimpleSelectorPseudoClass
+{
+public:
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override
+	{
+		return false;
+		//return !pElement->m_bEnabled;
+	}
+};
+
+//////////////
+
+class CPseudoClassFirstChild : public CSimpleSelectorPseudoClass
+{
+public:
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override
+	{
+		ASSERT(0);
+#if 0
+		CComQIPtr<ILDOMNode> element = pElement->m_pNode;
+
+		CComPtr<ILDOMNode> parentNode;
+		element->get_parentNode(&parentNode);
+
+		CComPtr<ILDOMNode> firstChild;
+		parentNode->get_firstChild(&firstChild);
+
+		if (element == firstChild)
+		{
+			return true;
+		}
+#endif
+
+		return false;
+	}
+};
+
+class CPseudoClassNthChild : public CSimpleSelectorPseudoClass
+{
+public:
+	int m_a;
+	int m_b;
+
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override
+	{
+		ASSERT(0);
+		return false;
+#if 0
+		int ncount = 0;
+
+		CComPtr<ILDOMNode> node;
+		pElement->m_pNode->get_previousSibling(&node);
+		while (node)
+		{
+			CComQIPtr<ILDOMElement> element = node;
+			if (element)
+			{
+				ncount++;
+			}
+
+			CComPtr<ILDOMNode> previousSibling;
+			node->get_previousSibling(&previousSibling);
+			node = previousSibling;
+		}
+
+		return ((ncount % m_a) == (m_b-1));
+#endif
+	}
+};
+
+class CPseudoClassEmpty : public CSimpleSelectorPseudoClass
+{
+public:
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override
+	{
+		ASSERT(0);
+		return false;
+#if 0
+		CComQIPtr<ILDOMElement> element = pElement->m_pNode;
+
+		bool bHasChildNodes;
+		element->hasChildNodes(&bHasChildNodes);
+
+		if (bHasChildNodes)
+			return false;
+		else
+			return true;
+#endif
+	}
+};
+
+class CPseudoClassNthLastChild : public CSimpleSelectorPseudoClass
+{
+public:
+	virtual bool MatchesElement(ICSSElementResolver* pElement) override
+	{
+		return false;
+	}
+};
+
+///////
+
+class CSSEXT SimpleSelectorSequence : public Object
+{
+public:
+	CTOR SimpleSelectorSequence()
+	{
+		m_ownerSelector = NULL;
+		m_pLeft = NULL;
+	}
+
+	~SimpleSelectorSequence()
+	{
+		for (unsigned int i = 0; i < m_items.GetSize(); i++)
+		{
+			delete m_items[i];
+		}
+		m_items.RemoveAll();
+
+		if (m_pLeft)
+		{
+			delete m_pLeft;
+			m_pLeft = NULL;
+		}
+	}
+
+	bool SimpleSelectorSequenceMatches(ICSSElementResolver* pElement);
+
+public:
+
+	Selector* m_ownerSelector;
+	vector<SimpleSelector*> m_items;
+	WCHAR m_combinator;
+
+	SimpleSelectorSequence* m_pLeft;
+};
+
+/*
+class CPseudoElement
+{
+public:
+	CComBSTR m_name;
+};
+*/
+
+// Parsed selector
+class CSSEXT Selector : public Object
+{
+public:
+	CTOR Selector();
+	~Selector();
+
+	void CalculateSpecificity();
+	bool SelectorMatches(ICSSElementResolver* pElement);
+//	void ParseSingleSelectorSequence(CSSStream& stream, SimpleSelectorSequence* pSimpleSelectorSequence);
+
+	String get_selectorText()
+	{
+	// TODO update
+		return m_selectorText;
+	}
+
+	void set_selectorText(StringIn newVal);
+
+public:
+
+	ICSSStyleRule* m_ownerRule;
+	SimpleSelectorSequence* m_pRight;
+	SingleSelectorRule* m_singleSelectorRule;
+	String m_pseudoElement;
+	String m_selectorText;
+	uint m_specificity;
+};
+
+}	// Style
+}	// System
+
+#endif	// CSSSelector_h

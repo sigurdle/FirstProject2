@@ -1,0 +1,2051 @@
+#ifndef System_Type_h
+#define System_Type_h
+
+namespace System
+{
+
+	/*
+template<class TYPE> class ArrayObject// : public Object
+{
+public:
+
+	ArrayObject()
+	{
+		// TODO
+		m_pData = new TYPE[512];
+		m_nSize = 0;
+	}
+
+	TYPE* m_pData;
+	int m_nSize;
+
+	void push_back(TYPE & arg)
+	{
+		m_pData[m_nSize] = arg;
+		m_nSize++;
+	}
+
+	inline int size() const
+	{
+		return m_nSize;
+	}
+
+	TYPE & operator [] (int index)
+	{
+		return m_pData[index];
+	}
+
+	const TYPE & operator [] (int index) const
+	{
+		return m_pData[index];
+	}
+};
+*/
+
+class TypeArchive;
+class Types;
+
+class Type;
+class PointerType;
+class ReferenceType;
+class RValueReferenceType;
+class ModifierType;
+class FunctionType;
+class PrimitiveType;
+class NamedType;
+class EnumType;
+class NamespaceType;
+class Namespace;
+class ClassType;
+class Scope;
+class Declarator;
+class TypeLib;
+class ActualTemplateArg;
+class _TemplateArgType;
+
+enum Type_type : unsigned char
+{
+	type_null = 0,
+	type_void,	// Also used as 'undefined' in e.g ecmascript
+	type_bool,
+
+	type_typedef,
+
+	// char
+	type_char,// = 4,
+	type_wchar, type_wchar_t = type_wchar,
+	type_uchar16,	// reserved for future use
+	type_uchar32,	// reserved for future use
+
+	// integer	// = 8
+	type_signed_char,	// signed byte
+	type_unsigned_char,	// unsigned byte
+
+	type_short,
+	type_unsigned_short,
+
+	type_int,
+	type_unsigned_int,
+
+	type_long,
+	type_unsigned_long,
+
+	type_long_long,	type_int64 = type_long_long,
+	type_unsigned_long_long, type_unsigned_int64 = type_unsigned_long_long,
+
+	type_int128,
+	type_unsigned_int128,
+
+	// enum (integer)
+	type_enum,	// = 20
+
+	// reals
+	type_float,
+	type_double,
+	type_long_double,
+	type_float80,
+	type_float128,
+
+	//
+	type_class,
+	type_namespace,	// not really a type
+	//
+	type_pointer,
+	type_reference,
+	type_rvalue_reference,
+	type_pm,	// pointer to member
+	type_array,
+	type_function,
+	type_cv,	// const/volatile modifer
+	//
+	type_templatearg,
+	type_bitfield,
+
+	type_last
+};
+
+inline bool IsCharacter(Type_type kind) { return kind >= type_char && kind <= type_uchar32; }
+inline bool IsInteger(Type_type kind) { return kind >= type_signed_char && kind <= type_unsigned_int128; }
+inline bool IsSignedInteger(Type_type kind) { return IsInteger(kind) && ((kind & 1) == 0); }
+inline bool IsUnsignedInteger(Type_type kind) { return IsInteger(kind) && ((kind & 1) == 1); }
+inline bool IsIntegerOrEnum(Type_type kind) { return kind >= type_signed_char && kind <= type_enum; }
+inline bool IsNumber(Type_type kind) { return kind >= type_signed_char && kind <= type_float128 && kind != type_enum; }
+inline bool IsNumberOrEnum(Type_type kind) { return kind >= type_signed_char && kind <= type_float128; }
+inline bool IsReal(Type_type kind) { return kind >= type_float && kind <= type_float128; }
+
+enum ClassKey : unsigned char
+{
+	ClassKey_class,
+	ClassKey_struct,
+	ClassKey_union,
+	ClassKey_interface,	// C++ extension (same as struct)
+};
+
+LFCEXT IO::TextWriter& WriteToStream(IO::TextWriter& writer, ClassKey classKey);
+
+enum AccessSpec : unsigned char
+{
+	AccessSpec_Unspecified,
+	AccessSpec_Private,
+	AccessSpec_Protected,
+	AccessSpec_Public,
+};
+
+LFCEXT IO::TextWriter& WriteToStream(IO::TextWriter& writer, AccessSpec classKey);
+LFCEXT String toString(AccessSpec classKey);
+
+class LFCEXT FilePart : public Object
+{
+public:
+
+	virtual String ToString() override
+	{
+		return m_fullname;
+		/*
+		String str;
+
+		if (m_parent)
+		{
+			str = m_parent->ToString();
+			str += "/";
+		}
+		str += m_name;
+
+		return str;
+		*/
+	}
+
+	String get_Name()
+	{
+		return m_name;
+	}
+
+	String get_FullName()
+	{
+		return m_fullname;
+	}
+
+	FilePart* get_Parent()
+	{
+		return m_parent;
+	}
+
+public:
+
+	List<FilePart*>& get_Files()
+	{
+		return m_children;
+	}
+
+	String m_name;
+	String m_fullname;
+
+	FilePart* m_parent;
+	list<FilePart*>::iterator m_parent_it;
+
+	List<FilePart*> m_children;
+
+	HANDLE m_handle;
+};
+
+// TODO, improve
+class LFCEXT CppSourceFile : public Object
+{
+public:
+
+	CTOR CppSourceFile()
+	{
+	}
+
+	int Generate();
+
+	list<NamedType*>::iterator Add(NamedType* pType)
+	{
+		ASSERT(this);
+		VerifyArgumentNotNull(pType);
+		return m_types.m_list.insert(m_types.m_list.end(), pType);
+	}
+
+	list<Declarator*>::iterator Add(Declarator* decl)
+	{
+		ASSERT(this);
+		VerifyArgumentNotNull(decl);
+		return m_decls.m_list.insert(m_decls.m_list.end(), decl);
+	}
+
+	virtual String get_PathName()
+	{
+		return m_filepart->ToString();
+	}
+
+	virtual String ToString() override
+	{
+		return get_PathName();
+	}
+
+	List<CppSourceFile*>& get_IncludedBy()
+	{
+		return m_includedby;
+	}
+
+	List<Declarator*>& get_Decls()
+	{
+		return m_decls;
+	}
+
+	List<NamedType*>& get_Types()
+	{
+		return m_types;
+	}
+
+	List<CppSourceFile*>& get_Includes()
+	{
+		return m_includes;
+	}
+
+	List<CppSourceFile*> m_includedby;
+
+	List<CppSourceFile*> m_includes;
+	list<CppSourceFile*>::iterator m_includedby_it;
+
+	List<NamedType*> m_types;
+	List<Declarator*> m_decls;
+
+	FilePart* m_filepart;
+	bool m_generated;
+
+	LFCEXT friend IO::TextWriter& WriteToStream(IO::TextWriter& writer, CppSourceFile* sourcefile);
+};
+
+LFCEXT void Store(TypeArchive& ar, CppSourceFile* sourcefile);
+LFCEXT void Load(TypeArchive& ar, CppSourceFile* sourcefile);
+
+/**
+The base class of Type
+*/
+class LFCEXT TypeSerializable : public Object
+{
+public:
+
+	enum Class_Type : unsigned char
+	{
+		Class_PrimitiveType,
+		Class_PointerType,
+		Class_ReferenceType,
+		Class_RValueReferenceType,
+		Class_PointerMemberType,
+		Class_ModifierType,
+		Class_ArrayType,
+		Class_Typedef,
+		Class_Function,
+		Class_Class,
+		Class_EnumType,
+		Class_TemplateArgType,
+		Class_TemplatedClassArg,
+		//Class_TemplatedClassType,
+		Class_Namespace,
+
+		Class_Define,
+		Class_TypeLib,
+	//	Class_TypeLibImport
+	};
+
+	virtual Class_Type GetSerializableType() const = 0;
+	virtual void Load(TypeArchive& ar) = 0;
+	virtual void Store(TypeArchive& ar) const = 0;
+};
+
+/*
+#define InvokePlugin(x, y)
+
+InvokePlugin("MakeIndexedHier", Type);
+*/
+
+//InvokePlugin("Expressive", Type, _Type);
+
+enum Platform
+{
+	Platform_Win32,
+	Platform_x64
+};
+
+/**
+
+Type is the base class of other Type classes.
+
+<h2>Extending the standard type_info class</h2>
+
+type_info
+Visual Studio C++ declares type_info like this:
+
+
+@code
+class type_info
+{
+public:
+
+   ...
+
+   void* _m_data;
+   char _m_d_name[1];
+};
+@endcode
+
+When a dll is loaded. The _m_data member is set to the Type*. LFC.h overrides the declaration of
+type_info with this line before the <typeinfo> header is included
+#define _TYPEINFO_
+
+Three methods are added to the type_info class
+
+@code
+class type_info
+{
+	...
+
+	System::Type* GetType() const
+	{
+		return (System::Type*)_m_data;
+	}
+
+	operator System::Type* () const
+	{
+		return GetType();
+	}
+
+	System::Type* operator -> () const
+	{
+		return GetType();
+	}
+
+	...
+};
+
+@endcode
+
+This means that you can access the Type by doing:
+
+@code
+Type* pType = typeid(int).GetType();
+Type* pType = typeid(int);	// operator Type* () is invoked
+typeid(int)->get_sizeof();	// Type* operator -> () is invoked
+@endcode
+
+<h2>Uniqueness of type information</h2>
+
+Although the type_info is unique within a single module, .dll, .exe. it is not unique across .dlls
+
+@code
+// Dll 1
+const type_info& t1 = typeid(int);
+
+// Dll 2
+const type_info& t2 = typeid(int);
+@endcode
+
+t1 and t2 will be different addresses.
+t1 == t2 will return true, but that is because <code>type_info::operator ==</code> does a string comparison on the
+mangled typename to check for equality. The Type stored in <code>type_info::_m_data</code> on the other hand, is unique within
+a process. Doing t1.GetType() == t2.GetType() is thus faster and only compares two pointers for equality
+
+More examples:
+
+@code
+typeid(const int) == typeid(int)->get_constToThis();	                // returns true
+typeid(int&) == typeid(int)->get_referenceToThis();                    // returns true
+typeid(int*) == typeid(int)->get_pointerToThis();                     // returns true
+typeid(int**) == typeid(int)->get_pointerToThis()->get_pointerToThis();	// returns true
+
+typeid(int) == typeid(int*)->GetStripped();	                // returns true
+
+const char* rname = typeid(int).raw_name();   // using type_info like usual
+@endcode
+
+<h2>More implementation details</h2>
+
+ParseMap is a console application that parses the .map file that the VC linker produces. Among
+other things it finds all the addresses of the type_info instances in the module. It stores these
+addresses in a file.
+
+When the module (.dll or .exe) is loaded. The type_info records are found,
+and the _m_data field is set up to point to the correct Type. This means that there is a performance penalty
+on load.
+
+@code
+
+BOOL WINAPI RawDllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID)
+{
+	if (ul_reason_for_call == DLL_PROCESS_ATTACH)
+	{
+		try
+		{
+			_Module.Init(hModule);
+		}
+		catch (Exception* e)
+		{
+			// ...
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
+BOOL (WINAPI *_pRawDllMain)(HMODULE, DWORD, LPVOID) = RawDllMain;
+
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
+{
+...
+}
+@endcode
+
+RawDllMain is called before DllMain. It is called before global variable initializations.
+This means that the following code is legal. When mytype is initialized. type_info have valid
+_m_data fields.
+
+@code
+// .h file
+class someclass
+{
+   ...
+   static Type* mytype;
+};
+
+// .cpp file
+Type* someclass::mytype = typeid(int);
+@endcode
+
+*/
+
+class LFCEXT Type : public TypeSerializable
+{
+public:
+	virtual Type_type get_Kind() const throw() = 0;
+
+	virtual Type* GetPointerTo() const;
+
+	/**
+	Gets the size in bytes of this type, same as <code>sizeof(type)</code> for a known type.
+	@param sizeofptr Size in bytes of a pointer. If 0 is specified (the default) then
+	PointerType::default_sizeofptr is used. This value defaults to sizeof(void*). Being able
+	to specify the size of a pointer is a parser/compiler can specify either 4 or 8 regardless
+	if the application is a x86 or x64. As a user you will never need to specify anything else than
+	0, and you can omit this parameter.
+	*/
+	virtual uint get_sizeof(uint sizeofptr = 0) const = 0;
+
+	// Shallow copy
+	virtual Type* Clone() const = 0;
+
+	virtual Type* GetStripped();	// removes typedef / const / volatile
+	virtual Type* Normalized();	// removed redundant ModiferType
+	virtual Type* GetBaseType();	// removes all, including enum
+
+	/**
+	@return The classtype, or nullptr. This method is not the same as dynamic_cast<ClassType*> on this object. This
+	method will also strip any typedef, const, volatile modifiers from the Type.
+	*/
+	virtual ClassType* AsClass();
+	virtual FunctionType* AsFunction();
+
+	virtual bool Equals(const Type& other) const;
+	virtual bool IsOfType(Type* pType) const;
+
+	virtual IO::TextWriter& Write(IO::TextWriter& writer) const = 0;
+
+	virtual bool IsConst() const = 0;
+	virtual bool IsVolatile() const = 0;
+
+	PointerType* get_pointerToThis();
+	ReferenceType* get_referenceToThis();
+	RValueReferenceType* get_rvalueReferenceToThis();
+	ModifierType* AddConst();
+	ModifierType* AddVolatile();
+
+	static bool IsInteger(const Type* pType);
+
+public:
+
+	friend inline TypeArchive& operator >> (TypeArchive& ar, Type* & object)
+	{
+		TypeSerializable* p;
+		ar >> p;
+		if (p)
+		{
+			object = dynamic_cast<Type*>(p);
+			if (object == nullptr)
+			{
+				raise(SystemException("error serializing"));
+			}
+		}
+		else
+			object = nullptr;
+
+		return ar;
+	}
+
+	friend inline TypeArchive& operator >> (TypeArchive& ar, Type const* & object)
+	{
+		TypeSerializable* p;
+		ar >> p;
+		if (p)
+		{
+			object = dynamic_cast<const Type*>(p);
+			if (object == nullptr)
+			{
+				raise(SystemException("error serializing"));
+			}
+		}
+		else
+			object = nullptr;
+
+		return ar;
+	}
+
+	//Type_Info* m_pTypeInfo;
+	Object* m_xsType;
+	Object* m_javaType;
+	bool m_readonly;	// TODO remove
+
+protected:
+
+	CTOR Type();
+
+	PointerType* m_pointerToThis;
+	ReferenceType* m_referenceToThis;
+	RValueReferenceType* m_rvalueReferenceToThis;
+	ModifierType* m_constToThis;
+	ModifierType* m_volatileToThis;
+};
+
+class LFCEXT NamedType : public Type
+{
+public:
+	CTOR NamedType();
+	CTOR NamedType(StringIn name);
+
+	String get_Name() const;
+	String get_QName() const;
+
+	void Load(TypeArchive& ar);
+	void Store(TypeArchive& ar) const;
+
+	virtual bool Equals(const Object* other) const;
+
+	virtual bool IsConst() const;
+	virtual bool IsVolatile() const;
+
+	NamespaceType* get_ParentNamespace();
+
+	CppSourceFile* GetSourceFile() const
+	{
+		return m_sourcefile;
+	}
+
+	int GetSourceLine() const
+	{
+		return m_line;
+	}
+
+	String m_name;
+	String m_qname;
+
+	TypeLib* m_typelib;
+	Scope* m_ownerScope;
+	Declarator* m_ownerDecl;
+
+	// TODO remove ?? (use m_ownerDecl instead)
+	CppSourceFile* m_sourcefile;
+	list<NamedType*>::iterator m_sourcefile_it;
+	int m_line;
+
+	//const char* m_pTypeInfoName;	// Really not necessary with VC++ 6.0 typeinfos
+
+	static NamedType* CreateFromArchive(TypeArchive& ar, uint32 id, TypeLib* typelib, StringIn qname);
+
+#if 0
+	PP::CFileLocation m_location;
+#endif
+	//uint32 m_id;
+//	void* m_userdata;
+
+	friend inline TypeArchive& operator >> (TypeArchive& ar, NamedType const* & object)
+	{
+		TypeSerializable* p;
+		ar >> p;
+		if (p)
+		{
+			object = dynamic_cast<const NamedType*>(p);
+			if (object == nullptr)
+			{
+				raise(SystemException("error serializing"));
+			}
+		}
+		else
+			object = nullptr;
+
+		return ar;
+	}
+
+	friend inline TypeArchive& operator >> (TypeArchive& ar, NamedType* & object)
+	{
+		TypeSerializable* p;
+		ar >> p;
+		if (p)
+		{
+			object = dynamic_cast<NamedType*>(p);
+			if (object == nullptr)
+			{
+				raise(SystemException("error serializing"));
+			}
+		}
+		else
+			object = nullptr;
+
+		return ar;
+	}
+};
+
+/*
+template<class parent_list_type, class parent_type, class child_type>
+class Connection
+{
+public:
+
+	void Set(parent_type* parent, child_type* child)
+	{
+	}
+
+	parent_list_type::iterator child_type::*child_it;
+};
+*/
+
+/*
+class NamedTypeTypeInfo : public NamedType
+{
+public:
+};
+*/
+
+class LFCEXT _CVType : public Type
+{
+public:
+	CTOR _CVType();
+	CTOR _CVType(bool bConst, bool bVolatile);
+
+	virtual void Load(TypeArchive& ar) override;
+	virtual void Store(TypeArchive& ar) const override;
+
+	bool		m_bConst : 1,
+			m_bVolatile : 1,
+			m_reserved : 6;
+};
+
+class LFCEXT NullType : public Type
+{
+public:
+
+	virtual Type_type get_Kind() const throw() override
+	{
+		return type_null;
+	}
+
+	virtual String ToString() override;
+	virtual Type* Clone() const override;
+	virtual IO::TextWriter& Write(IO::TextWriter& stream) const override;
+
+	virtual bool IsOfType(Type* pType) const override;
+
+	virtual uint get_sizeof(uint sizeofptr = 0) const override;
+
+	virtual bool IsConst() const override;
+	virtual bool IsVolatile() const override;
+
+	virtual Class_Type GetSerializableType() const override;
+	virtual void Load(TypeArchive& stream);
+	virtual void Store(TypeArchive& stream) const;
+
+	static void Static_Init();
+
+protected:
+
+	friend class Types;
+
+private:
+	CTOR NullType();
+};
+
+class LFCEXT PrimitiveType : public Type
+{
+public:
+
+	virtual Type_type get_Kind() const throw()
+	{
+		return m_type;
+	}
+
+	virtual String ToString() override;
+	virtual Type* Clone() const override;
+	virtual IO::TextWriter& Write(IO::TextWriter& stream) const;
+
+	virtual bool IsOfType(Type* pType) const;
+
+	virtual uint get_sizeof(uint sizeofptr = 0) const override;
+
+	virtual bool IsConst() const override;
+	virtual bool IsVolatile() const override;
+
+	virtual Class_Type GetSerializableType() const override;
+	virtual void Load(TypeArchive& stream) override;
+	virtual void Store(TypeArchive& stream) const override;
+
+	static void Static_Init();
+
+protected:
+	CTOR PrimitiveType(Type_type type);
+
+	static unsigned int GetSizeof(Type_type type);
+
+	friend class Types;
+
+	Type_type m_type;
+	unsigned int m_sizeof;
+};
+
+class LFCEXT CharacterType : public PrimitiveType
+{
+protected:
+	CTOR CharacterType(Type_type kind) : PrimitiveType(kind)
+	{
+	}
+};
+
+class LFCEXT IntegerType : public PrimitiveType
+{
+protected:
+	CTOR IntegerType(Type_type kind) : PrimitiveType(kind)
+	{
+	}
+};
+
+class LFCEXT FloatType : public PrimitiveType
+{
+protected:
+	CTOR FloatType(Type_type kind) : PrimitiveType(kind)
+	{
+	}
+};
+
+class LFCEXT ArrayType : public Type
+{
+public:
+	CTOR ArrayType();
+	CTOR ArrayType(Type* elemType, unsigned int elemCount);
+
+	virtual Type_type get_Kind() const throw() override
+	{
+		return type_array;
+	}
+
+	Type* get_ElemType() const throw()
+	{
+		return m_pElemType;
+	}
+
+	size_t get_ElemCount() const throw()
+	{
+		return m_nElemCount;
+	}
+
+	virtual String ToString() override;
+	virtual IO::TextWriter& Write(IO::TextWriter& stream) const override;
+	virtual Type* Clone() const;
+
+	virtual uint get_sizeof(uint sizeofptr = 0) const override;
+
+	virtual bool IsConst() const override;
+	virtual bool IsVolatile() const override;
+
+	virtual Class_Type GetSerializableType() const override;
+	virtual void Load(TypeArchive& stream) override;
+	virtual void Store(TypeArchive& stream) const override;
+
+public:
+
+	Type* m_pElemType;
+	unsigned int m_nElemCount;
+};
+
+}	// System
+
+#include "PointerType.h"
+#include "ReferenceType.h"
+#include "RValueReferenceType.h"
+
+namespace System
+{
+
+class LFCEXT PointerMemberType : public Type
+{
+public:
+	CTOR PointerMemberType() : m_pPointerTo(nullptr), m_pClass(nullptr), m_sizeof(0)
+	{
+	}
+
+	CTOR PointerMemberType(Type* pPointerTo, NamespaceType* pClass) :
+		m_pPointerTo(pPointerTo),
+		m_pClass(pClass),
+		m_sizeof(0)
+	{
+	}
+
+	virtual Type_type get_Kind() const override
+	{
+		return type_pm;
+	}
+
+	Type* get_Type() const
+	{
+		return m_pPointerTo; 
+	}
+
+	virtual uint get_sizeof(uint sizeofptr = 0) const override;
+
+	virtual String ToString() override;
+	virtual IO::TextWriter& Write(IO::TextWriter& stream) const override;
+	virtual Type* Clone() const override;
+	bool Equals(const ReferenceType& other) const;
+
+	virtual Class_Type GetSerializableType() const override;
+	virtual void Load(TypeArchive& stream) override;
+	virtual void Store(TypeArchive& stream) const override;
+
+	virtual bool IsConst() const override;
+	virtual bool IsVolatile() const override;
+
+	Type* m_pPointerTo;
+	NamespaceType* m_pClass;
+	unsigned int m_sizeof;
+};
+
+}	// System
+
+#include "ModifierType.h"
+
+namespace System
+{
+/*
+class CMember
+{
+public:
+	CMember()
+	{
+		m_offset = -1;
+		m_pDeclarator = NULL;
+	}
+
+	int m_offset;
+	CDeclarator* m_pDeclarator;
+
+	BOOL IsEqual(CMember* pOther);
+};
+*/
+
+class LFCEXT FormalTemplateArg : public Object
+{
+public:
+	CTOR FormalTemplateArg()
+	{
+		u.m_pType = nullptr;
+	//	m_pDeclarator = NULL;
+	}
+
+	enum Kind
+	{
+		Param_Type,
+		Param_Value,
+	};
+
+	bool Equals(const FormalTemplateArg& other) const;
+
+	Kind m_kind;
+
+	union
+	{
+		_TemplateArgType* m_pType;
+		Declarator* m_pDeclarator;
+	}
+	u;
+
+	union
+	{
+		bool boolVal;
+		int32 int32Val;
+		int64 int64Val;
+	}
+	m_defaultArg;
+
+	int m_index;
+};
+
+typedef FormalTemplateArg TemplateParameter;
+
+class LFCEXT FormalTemplateArgs : public Object
+{
+public:
+
+	bool Equals(const FormalTemplateArgs& other) const;
+
+	vector<FormalTemplateArg*> m_items;
+};
+
+typedef FormalTemplateArgs TemplateParams;
+
+class LFCEXT FunctionParameters
+{
+public:
+	CTOR FunctionParameters();
+
+	class Param
+	{
+	public:
+
+		CTOR Param() : m_pType(nullptr)
+		{
+			m_reg = -1;
+		}
+
+		CTOR Param(Type* pType) : m_pType(pType)
+		{
+			m_reg = -1;
+		}
+
+		CTOR Param(Type* pType, StringIn name) : m_pType(pType), m_name(name)
+		{
+			m_reg = -1;
+		}
+
+		bool Equals(const Param& other) const;
+
+	public:
+
+		Type* m_pType;
+		String m_name;//m_pDeclarator;	// In one api, not necessary
+		int m_reg;
+
+		// Only necessary in cpp compiler
+		String m_filepath;
+		int m_line;
+	};
+
+	bool Equals(const FunctionParameters& other) const;
+
+	String ToString() const;
+	IO::TextWriter& Write(IO::TextWriter& stream) const;
+
+	Param& operator [] (size_t index)
+	{
+		if (index >= m_parameters.size())
+		{
+			raise(ArgumentOutOfRangeException());
+		}
+
+		return m_parameters[index];
+	}
+
+	size_t size() const
+	{
+		return m_parameters.size();
+	}
+
+public:
+
+	vector<Param> m_parameters;
+	bool m_bVarArg;
+};
+
+class LFCEXT ParametersCollection : public Object, public IVector<Type*>
+{
+public:
+	CTOR ParametersCollection(FunctionParameters& params) : m_params(params)
+	{
+	}
+
+	virtual const Type_Info& GetItemType() const override
+	{
+		return typeid(Type*);
+	}
+	virtual size_t GetCount() override
+	{
+		return m_params.m_parameters.size();
+	}
+
+	virtual void Clear() override
+	{
+		raise(Exception(L"Read only"));
+	}
+
+	virtual Type* get_Item(size_t index) override
+	{
+		return m_params[index].m_pType;
+	}
+
+	virtual void set_Item(size_t index, Type* element) override
+	{
+		raise(SystemException(L"Read only"));
+//		m_params.m_parameters[index].m_pType = element;
+	}
+
+	virtual Object* get_ObjectItem(size_t index) override
+	{
+		return m_params[index].m_pType;
+	}
+
+	virtual void Add(Type*) override
+	{
+		raise(SystemException(L"Read only"));
+	}
+
+	virtual void AddObject(Object* object) override
+	{
+#ifndef __LERSTAD__
+		Add(unbox_cast<System::Type*>(object));
+#endif
+	}
+
+	FunctionParameters& m_params;
+};
+
+/**
+Function calling convention, only applicable on x86. In a x64 application, there is only one
+calling convention.
+
+*/
+
+enum CallType : unsigned char
+{
+	CallType_cdecl,	///> standard c calling convention. args passed on stack, caller pops the stack*/
+	CallType_stdcall, ///> standard windows API calling convention. args passed on stack, callee pops the stack*/
+	CallType_fastcall, ///> some arguments are passed in registers instead of on stack*/
+	CallType_thiscall	///> method call. 'this' pointer passed in ecx*/
+};
+
+}	// System
+
+#include "FunctionType.h"
+#include "EnumType.h"
+
+namespace System
+{
+
+class LFCEXT BaseClass : public Object
+{
+public:
+
+	CTOR BaseClass() :
+		m_pClass(nullptr),
+		m_access(AccessSpec_Public),
+		m_offset(0)
+	{
+	}
+
+	CTOR BaseClass(NamedType* pClass, AccessSpec access = AccessSpec_Public) :
+		m_pClass(pClass),
+		m_access(access),
+		m_offset(0)
+	{
+	}
+
+	ClassType* get_Class()
+	{
+		return m_pClass->AsClass();
+	}
+
+	unsigned int get_Offset() const
+	{
+		return m_offset;
+	}
+
+	NamedType* m_pClass;
+	unsigned int m_offset;
+	AccessSpec m_access : 2;
+};
+
+class LFCEXT NamespaceType : public NamedType
+{
+public:
+	CTOR NamespaceType();
+	~NamespaceType();
+
+	typedef Vector<Declarator*, vector<Declarator*>& > MembersCollection;
+
+	MembersCollection* get_Members();
+
+	virtual void Load(TypeArchive& ar) override;
+	virtual void Store(TypeArchive& ar) const override;
+
+	virtual IO::TextWriter& Write(IO::TextWriter& stream) const override;
+
+	friend inline TypeArchive& operator >> (TypeArchive& ar, NamespaceType* & object)
+	{
+		TypeSerializable* p;
+		ar >> p;
+		if (p)
+		{
+			object = dynamic_cast<NamespaceType*>(p);
+			if (object == nullptr)
+			{
+				raise(SystemException("ob = NULL : " + ar.m_pathname));
+			}
+		}
+		else
+			object = nullptr;
+
+		return ar;
+	}
+
+public:
+
+	Scope* m_pScope;
+	MembersCollection* m_members;
+	Dispatch* m_pDispatch;
+};
+
+/*
+class LFCEXT TypeList
+{
+public:
+
+	inline TypeList(Type* _head, TypeList* _tail)
+	{
+		head = _head;
+		tail = _tail;
+	}
+
+	Type* head;
+	TypeList* tail;
+};
+*/
+
+class LFCEXT _TemplateArgType : public NamespaceType
+{
+public:
+	CTOR _TemplateArgType();
+
+	virtual Type_type get_Kind() const override
+	{
+		return type_templatearg;
+	}
+
+	virtual uint get_sizeof(uint sizeofptr = 0) const override;
+
+	virtual String ToString() override;
+	virtual IO::TextWriter& Write(IO::TextWriter& stream) const override;
+	virtual Type* Clone() const override;
+
+	virtual Class_Type GetSerializableType() const override;
+	virtual void Load(TypeArchive& ar) override;
+	virtual void Store(TypeArchive& ar) const override;
+
+	friend inline TypeArchive& operator >> (TypeArchive& ar, _TemplateArgType* & object)
+	{
+		TypeSerializable* p;
+		ar >> p;
+		if (p)
+		{
+			object = dynamic_cast<_TemplateArgType*>(p);
+			if (object == NULL)
+			{
+				raise(SystemException("ob = NULL : " + ar.m_pathname));
+			}
+		}
+		else
+			object = NULL;
+
+		return ar;
+	}
+
+public:
+
+	FormalTemplateArgs* m_pClass;
+	ActualTemplateArg* m_defaultArg;
+	int m_index;	// index into formal list
+};
+
+class LFCEXT TemplateArgTypeList
+{
+public:
+
+	inline CTOR TemplateArgTypeList(_TemplateArgType* _head, TemplateArgTypeList* _tail)
+	{
+		head = _head;
+		tail = _tail;
+	}
+
+	_TemplateArgType* head;
+	TemplateArgTypeList* tail;
+};
+
+/*
+	IOByteStream & operator << (IOByteStream & ar)
+	{
+		ar << m_bClass;
+		if (m_bClass)
+			ar << m_pClass;
+		else
+			ar << m_pNamespace;
+
+		return ar;
+	}
+
+	IOByteStream & operator >> (IOByteStream & ar)
+	{
+		ar << m_bClass;
+		if (m_bClass)
+			ar << m_pClass;
+		else
+			ar << m_pNamespace;
+
+		return ar;
+	}
+};
+*/
+
+/*
+class IClassOrNamespace
+{
+public:
+	virtual ~IClassOrNamespace()
+	{
+	}
+};
+*/
+
+class GCMember
+{
+public:
+	unsigned int m_offset_and_kind;
+};
+
+class GCArrayMember
+{
+public:
+	unsigned int m_offset;
+	Type* m_pType;
+};
+
+class LFCEXT ActualTemplateArgs : public Vector<ActualTemplateArg*>
+{
+public:
+
+	void Load(TypeArchive& ar);
+	void Store(TypeArchive& ar) const;
+
+	IO::TextWriter& Write(IO::TextWriter& stream) const;
+};
+
+typedef ActualTemplateArgs TemplatedClassArgs;
+
+}	// System
+
+#include "Namespace.h"
+#include "AttributeDef.h"
+#include "ClassType.h"
+
+namespace System
+{
+
+class LFCEXT SExp : public Object
+{
+public:
+
+	enum Kind : unsigned char
+	{
+		SEXP_NULL,
+
+		SEXP_TYPE,	// special
+
+		SEXP_BOOL,
+		SEXP_CHAR,
+		SEXP_SCHAR,
+		SEXP_UCHAR,
+		SEXP_INT,
+		SEXP_INT64,
+		SEXP_FLOAT,
+		SEXP_DOUBLE,
+		SEXP_STRING,
+		SEXP_ARG,
+		SEXP_UNOP,
+		SEXP_BINOP,
+	};
+
+	CTOR SExp(Type* pType) : m_pType(pType)
+	{
+	}
+
+	virtual Kind GetKind() const abstract;
+	virtual Type* GetExpType()
+	{
+		return m_pType;
+	}
+
+	virtual void Store(TypeArchive& ar) abstract;
+	virtual void Load(TypeArchive& ar) abstract;
+
+	static SExp* FromArchive(TypeArchive& ar, Kind kind);
+
+	static SExp* FromArchive(TypeArchive& ar)
+	{
+		Kind kind;
+		ar >> *(byte*)&kind;
+		return FromArchive(ar, kind);
+	}
+
+	Type* m_pType;
+};
+
+class LFCEXT SValExp : public SExp
+{
+public:
+
+	CTOR SValExp(Type* pType, int val) : SExp(pType), m_val(val)
+	{
+	}
+
+	virtual Kind GetKind() const override
+	{
+		return SEXP_INT;
+	}
+
+	void Store(TypeArchive& ar) override
+	{
+		ar << m_val;
+	}
+
+	void Load(TypeArchive& ar) override
+	{
+		ar >> m_val;
+	}
+
+	int m_val;
+};
+
+class LFCEXT SFloatExp : public SExp
+{
+public:
+
+	CTOR SFloatExp(Type* pType, float val) : SExp(pType), m_val(val)
+	{
+	}
+
+	virtual Kind GetKind() const override
+	{
+		return SEXP_FLOAT;
+	}
+
+	void Store(TypeArchive& ar) override
+	{
+		ar << m_val;
+	}
+
+	void Load(TypeArchive& ar) override
+	{
+		ar >> m_val;
+	}
+
+	float m_val;
+};
+
+class LFCEXT SDoubleExp : public SExp
+{
+public:
+
+	CTOR SDoubleExp(Type* pType, double val) : SExp(pType), m_val(val)
+	{
+	}
+
+	virtual Kind GetKind() const override
+	{
+		return SEXP_DOUBLE;
+	}
+
+	void Store(TypeArchive& ar) override
+	{
+		ar << m_val;
+	}
+
+	void Load(TypeArchive& ar) override
+	{
+		ar >> m_val;
+	}
+
+	double m_val;
+};
+
+class LFCEXT SBinopExp : public SExp
+{
+public:
+
+	CTOR SBinopExp(Type* pType, SExp* left, SExp* right) : SExp(pType),
+		m_left(left), m_right(right)
+	{
+	}
+
+	virtual Kind GetKind() const override
+	{
+		return SEXP_BINOP;
+	}
+
+	void Store(TypeArchive& ar) override
+	{
+		ar << (byte)m_left->GetKind();
+		m_left->Store(ar);
+
+		ar << (byte)m_right->GetKind();
+		m_right->Store(ar);
+	}
+
+	void Load(TypeArchive& ar) override
+	{
+		m_left = FromArchive(ar);
+		m_right = FromArchive(ar);
+	}
+
+	SExp* m_left;
+	SExp* m_right;
+};
+
+class LFCEXT ActualTemplateArg : public TypeSerializable
+{
+public:
+	/*
+	enum
+	{
+		Arg_Type,
+		Arg_Value,
+	}
+	m_kind;
+	*/
+
+	CTOR ActualTemplateArg() :
+		m_pType(NULL),
+		m_value(0),
+		m_exp(NULL)
+	{
+	}
+
+	CTOR ActualTemplateArg(int value) : m_value(value),
+		m_pType(NULL),
+		m_exp(NULL)
+	{
+	}
+
+	Type* get_Type()
+	{
+		return m_pType;
+	}
+
+	int get_Value()
+	{
+		return m_value;
+	}
+
+	virtual Class_Type GetSerializableType() const override;
+	virtual void Load(TypeArchive& ar) override;
+	virtual void Store(TypeArchive& ar) const override;
+
+	friend inline TypeArchive& operator >> (TypeArchive& ar, ActualTemplateArg* & object)
+	{
+		TypeSerializable* p;
+		ar >> p;
+		if (p)
+		{
+			object = dynamic_cast<ActualTemplateArg*>(p);
+			if (object == NULL)
+			{
+				ASSERT(0);
+				raise(SystemException("ob = NULL : " + ar.m_pathname));
+			}
+		}
+		else
+			object = NULL;
+
+		return ar;
+	}
+
+public:
+
+	Type* m_pType;
+	SExp* m_exp;
+	int m_value;
+};
+
+typedef ActualTemplateArg TemplatedClassArg;
+
+}	// System
+
+#include "Typedef.h"
+#include "Scope.h"
+#include "Declarator.h"
+
+namespace System
+{
+
+class LFCEXT TypeLib : public TypeSerializable
+{
+public:
+	CTOR TypeLib();
+
+	virtual Class_Type GetSerializableType() const;
+	virtual void Load(TypeArchive& ar);
+	virtual void Store(TypeArchive& ar) const;
+
+	static TypeLib* CreateFromArchive(TypeArchive& ar, uint32 id);
+
+	friend inline TypeArchive& operator >> (TypeArchive& ar, TypeLib* & object)
+	{
+		TypeSerializable* p;
+		ar >> p;
+		if (p)
+		{
+			object = dynamic_cast<TypeLib*>(p);
+			if (object == NULL)
+			{
+				ASSERT(0);
+				THROW(-1);
+			}
+		}
+		else
+			object = NULL;
+
+		return ar;
+	}
+
+	NamedType* FindNamedType(StringIn qname);
+
+public:
+
+	uint32 m_id;
+	vector<TypeLib*> m_typelibimports;
+	String m_typeinfo_filename;
+	vector<NamedType*> m_types;
+	vector<Namespace*> m_namespaces;
+	map<String, NamedType*> m_typesByName;
+	vector<Declarator*> m_globals;
+
+//	vector<NamedType*, __gc_allocator> m_namedTypes;	// This array should be sorted by qname
+
+};
+
+class LFCEXT SArgExp : public SExp
+{
+public:
+
+	CTOR SArgExp(Declarator* decl) : SExp(decl->m_pType), m_decl(decl)
+	{
+		//m_pType = decl->m_pType;
+	}
+
+	virtual Kind GetKind() const override
+	{
+		return SEXP_ARG;
+	}
+
+	void Store(TypeArchive& ar) override
+	{
+		m_decl->Store(false, ar);
+	}
+
+	void Load(TypeArchive& ar) override
+	{
+		ASSERT(0);
+		m_decl->Load(false, ar);
+	}
+
+	Declarator* m_decl;
+};
+
+}	// System
+
+namespace System
+{
+
+inline const char* ClassKeyName(ClassKey classKey)
+{
+	switch (classKey)
+	{
+	case ClassKey_class: return "class";
+	case ClassKey_struct: return "struct";
+	case ClassKey_union: return "union";
+	default: return "interface";
+	}
+}
+
+class LFCEXT ArrayOf
+{
+public:
+	inline bool operator < (const ArrayOf& other) const
+	{
+		if (m_elemType == other.m_elemType)
+			return m_nSize < other.m_nSize;
+		else
+			return m_elemType < other.m_elemType;
+	}
+
+	Type* m_elemType;
+	int m_nSize;
+};
+
+class LFCEXT CToken : public Object
+{
+public:
+	CTOR CToken()
+	{
+		m_astr = NULL;
+		m_wstr = NULL;
+	}
+
+	~CToken()
+	{
+		/*
+		if (type == tok_ident || type == tok_string || type == tok_ltstring)
+		{
+			if (ident)
+			{
+				free(ident);
+				ident = NULL;
+			}
+		}
+		*/
+	}
+
+#if 0
+	CToken& operator = (const CToken& other)
+	{
+		/*
+		if (type == tok_ident || type == tok_string || type == tok_ltstring)
+		{
+			if (ident)
+			{
+				free(ident);
+				ident = NULL;
+			}
+		}
+		*/
+
+		type = other.type;
+		if (type == tok_ident || type == tok_string || type == tok_ltstring)
+		{
+			ident.len = other.ident.len;
+			ident.ident = strdup(other.ident.ident);
+		}
+		else
+		{
+			symbol = other.symbol;
+		}
+
+		return *this;
+	}
+#endif
+
+	enum
+	{
+		tok_empty,
+		tok_space,
+		tok_ident,
+		tok_symbol,
+		tok_string_literal,
+		tok_char_literal,
+		tok_ltstring,
+		tok_integer,
+		tok_double,
+		tok_char,
+		tok_pragma,
+		tok_import
+	}
+/*	type*/;
+
+	void Load(TypeArchive& ar)
+	{
+	}
+
+	void Store(TypeArchive& ar);
+
+	String toString() const;
+
+	IO::TextWriter& Write(IO::TextWriter& strbuilder) const;
+
+	union
+	{
+		ULONGLONG intval;
+		double double64;
+		int kw;
+		uint32 symbol;
+
+		/*
+		struct
+		{
+			int len;
+			char* ident;
+		}
+		ident;
+		*/
+	};
+
+	StringObjectT<char>* m_astr;
+	StringObjectT<wchar_t>* m_wstr;
+
+	virtual int GetKind() const = 0;
+};
+
+class LFCEXT Identifier : public String
+{
+public:
+
+	friend IO::TextWriter& operator << (IO::TextWriter& stream, const Identifier& ident);
+	friend IO::TextReader& operator >> (IO::TextReader& stream, Identifier& ident);
+};
+
+class LFCEXT SpaceToken : public CToken
+{
+public:
+	virtual int GetKind() const
+	{
+		return tok_space;
+	}
+};
+
+class LFCEXT SymbolToken : public CToken
+{
+public:
+	CTOR SymbolToken()
+	{
+	//	type = tok_symbol;
+	}
+
+	virtual int GetKind() const
+	{
+		return tok_symbol;
+	}
+
+	//uint32 m_symbol;
+};
+
+class LFCEXT IntegerToken : public CToken
+{
+public:
+
+	virtual int GetKind() const
+	{
+		return tok_integer;
+	}
+
+//	long m_int32;
+};
+
+class LFCEXT DoubleToken : public CToken
+{
+public:
+
+	virtual int GetKind() const
+	{
+		return tok_double;
+	}
+
+//	double m_value;
+};
+
+class LFCEXT CharToken : public CToken
+{
+public:
+
+	virtual int GetKind() const
+	{
+		return tok_char;
+	}
+
+//	char m_char;
+};
+
+class LFCEXT IdentToken : public CToken
+{
+public:
+	CTOR IdentToken()
+	{
+//		m_str = NULL;
+	}
+
+	virtual int GetKind() const
+	{
+		return tok_ident;
+	}
+
+//	System::StringA* m_str;
+};
+
+class LFCEXT ImportToken : public CToken
+{
+public:
+	CTOR ImportToken()
+	{
+//		m_str = NULL;
+	}
+
+	virtual int GetKind() const
+	{
+		return tok_import;
+	}
+
+//	System::StringA* m_str;
+};
+
+class LFCEXT StringToken : public CToken
+{
+public:
+	CTOR StringToken()
+	{
+	//	type = tok_string_literal;
+	//	m_str = NULL;
+	}
+
+	virtual int GetKind() const
+	{
+		return tok_string_literal;
+	}
+
+	//System::StringA* m_str;
+};
+
+class LFCEXT CharLiteralToken : public CToken
+{
+public:
+	CTOR CharLiteralToken()
+	{
+	//	type = tok_string_literal;
+	//	m_str = NULL;
+	}
+
+	virtual int GetKind() const
+	{
+		return tok_char_literal;
+	}
+
+	//System::StringA* m_str;
+};
+
+class LFCEXT LowerThanStringToken : public CToken
+{
+public:
+	CTOR LowerThanStringToken()
+	{
+		//m_str = NULL;
+	}
+
+	virtual int GetKind() const
+	{
+		return tok_ltstring;
+	}
+};
+
+class LFCEXT CFileLocation
+{
+public:
+	CTOR CFileLocation()
+	{
+	}
+
+	friend IO::TextWriter& operator << (IO::TextWriter& stream, const CFileLocation& loc);
+
+	String m_filepath;
+	int m_line;
+	int m_column;
+};
+
+inline IO::TextWriter& operator << (IO::TextWriter& stream, const CFileLocation& loc)
+{
+	stream << loc.m_filepath << "(" << loc.m_line << ")";
+	return stream;
+}
+
+class LFCEXT CDefine : public TypeSerializable // System::Object
+{
+public:
+	CTOR CDefine()
+	{
+		m_bFunctionLike = false;
+	}
+
+	virtual Class_Type GetSerializableType() const
+	{
+		return Class_Define;
+	}
+
+	void Load(TypeArchive& ar);
+	void Store(TypeArchive& ar) const;
+
+	bool Equals(CDefine* pOther);
+
+	friend inline TypeArchive& operator >> (TypeArchive& ar, CDefine* & object)
+	{
+		TypeSerializable* p;
+		ar >> p;
+		if (p)
+		{
+			object = dynamic_cast<CDefine*>(p);
+			if (object == NULL)
+			{
+				ASSERT(0);
+				THROW(-1);
+			}
+		}
+		else
+			object = NULL;
+
+		return ar;
+	}
+
+	String m_name;
+
+	bool m_bFunctionLike;	// Even if m_params is empty, the macro could require empty parentheses
+	vector<String> m_argNames;
+
+//	std::string m_replacementString;
+
+	vector<CToken*> m_replacementList;
+
+	CFileLocation m_location;
+};
+
+class LFCEXT Types
+{
+public:
+
+	static NullType* get_nullType();
+	static PrimitiveType* get_void();
+	static PrimitiveType* get_bool();
+	static PrimitiveType* get_char();
+	static PrimitiveType* get_wchar();
+	static PrimitiveType* get_signed_char();
+	static PrimitiveType* get_unsigned_char();
+	static PrimitiveType* get_int();
+	static PrimitiveType* get_unsigned_int();
+	static PrimitiveType* get_short();
+	static PrimitiveType* get_unsigned_short();
+	static PrimitiveType* get_long();
+	static PrimitiveType* get_unsigned_long();
+	static PrimitiveType* get_long_long();
+	static PrimitiveType* get_unsigned_long_long();
+	static PrimitiveType* get_int128();
+	static PrimitiveType* get_float();
+	static PrimitiveType* get_double();
+	static PrimitiveType* get_long_double();
+	static PrimitiveType* get_float128();
+
+// TODO
+//private:
+
+	static NullType type_null;
+	static PrimitiveType type_void;
+	static PrimitiveType type_bool;
+	static PrimitiveType type_char;
+	static PrimitiveType type_wchar;
+	static PrimitiveType type_signed_char;
+	static PrimitiveType type_unsigned_char;
+	static PrimitiveType type_int;
+	static PrimitiveType type_unsigned_int;
+	static PrimitiveType type_short;
+	static PrimitiveType type_unsigned_short;
+	static PrimitiveType type_long;
+	static PrimitiveType type_unsigned_long;
+	static PrimitiveType type_long_long;
+	static PrimitiveType type_unsigned_long_long;
+	static PrimitiveType type_float;
+	static PrimitiveType type_double;
+	static PrimitiveType type_long_double;
+	static PrimitiveType type_float128;
+
+private:
+
+	CTOR Types();
+};
+
+IO::TextWriter& GetQualifiedName(Scope* pScope, IO::TextWriter& str);
+
+// TODO, not like this
+extern LFCEXT ImmutableString<char> operator_gt;
+extern LFCEXT ImmutableString<char> operator_lt;
+extern LFCEXT ImmutableString<char> operator_eq;
+extern LFCEXT ImmutableString<char> operator_neq;
+extern LFCEXT ImmutableString<char> operator_geq;
+extern LFCEXT ImmutableString<char> operator_leq;
+extern LFCEXT ImmutableString<char> operator_plus;
+extern LFCEXT ImmutableString<char> operator_minus;
+extern LFCEXT ImmutableString<char> operator_assign;
+extern LFCEXT ImmutableString<char> operator_plus_assign;
+extern LFCEXT ImmutableString<char> operator_minus_assign;
+extern LFCEXT ImmutableString<char> operator_and_assign;
+extern LFCEXT ImmutableString<char> operator_or_assign;
+extern LFCEXT ImmutableString<char> operator_xor_assign;
+
+}	// System
+
+#endif // System_Type_h

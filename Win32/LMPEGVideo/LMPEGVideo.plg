@@ -1,0 +1,73 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: LMPEGVideo - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x414 /fo"../../Intermediate/Win32/LMPEGVideo/Release/LMPEGVideo.res" /d "NDEBUG" "C:\MMStudio\Win32\LMPEGVideo\LMPEGVideo.rc"" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP143A.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O2 /I "../../include/LMPEGVideo" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_USRDLL" /FR"../../Intermediate/Win32/LMPEGVideo/Release/" /Fp"../../Intermediate/Win32/LMPEGVideo/Release/LMPEGVideo.pch" /Yu"stdafx.h" /Fo"../../Intermediate/Win32/LMPEGVideo/Release/" /Fd"../../Intermediate/Win32/LMPEGVideo/Release/" /FD /c 
+"C:\MMStudio\src\LMPEGVideo\LMPEGVideo.cpp"
+"C:\MMStudio\src\LMPEGVideo\MPEGVideoDecoder.cpp"
+"C:\MMStudio\src\LMPEGVideo\Picture.cpp"
+"C:\MMStudio\src\LMPEGVideo\VideoSequence.cpp"
+"C:\MMStudio\src\LMPEGVideo\vlctables.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP143A.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP143B.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O2 /I "../../include/LMPEGVideo" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_USRDLL" /FR"../../Intermediate/Win32/LMPEGVideo/Release/" /Fp"../../Intermediate/Win32/LMPEGVideo/Release/LMPEGVideo.pch" /Yc"stdafx.h" /Fo"../../Intermediate/Win32/LMPEGVideo/Release/" /Fd"../../Intermediate/Win32/LMPEGVideo/Release/" /FD /c 
+"C:\MMStudio\src\LMPEGVideo\stdafx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP143B.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP143C.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /pdb:none /map:"../../Intermediate/Win32/LMPEGVideo/Release/LMPEGVideo.map" /debug /machine:I386 /def:".\LMPEGVideo.def" /out:"../../bin/Win32/Release/LMPEGVideo.dll" /implib:"Release/LMPEGVideo.lib" 
+\MMStudio\Intermediate\Win32\LMPEGVideo\Release\LMPEGVideo.obj
+\MMStudio\Intermediate\Win32\LMPEGVideo\Release\MPEGVideoDecoder.obj
+\MMStudio\Intermediate\Win32\LMPEGVideo\Release\Picture.obj
+\MMStudio\Intermediate\Win32\LMPEGVideo\Release\stdafx.obj
+\MMStudio\Intermediate\Win32\LMPEGVideo\Release\VideoSequence.obj
+\MMStudio\Intermediate\Win32\LMPEGVideo\Release\vlctables.obj
+\MMStudio\Intermediate\Win32\LMPEGVideo\Release\LMPEGVideo.res
+]
+Creating command line "link.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP143C.tmp"
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP143D.bat" with contents
+[
+@echo off
+ParseMap .\../../Intermediate/Win32/LMPEGVideo/Release/LMPEGVideo.map "../../bin/Win32/Debug/LMPEGVideo.typeinfo" "../../bin/Win32/Release/LMPEGVideo.ad"
+]
+Creating command line "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP143D.bat"
+Compiling resources...
+Compiling...
+stdafx.cpp
+Compiling...
+LMPEGVideo.cpp
+MPEGVideoDecoder.cpp
+C:\MMStudio\src\LMPEGVideo\MPEGVideoDecoder.cpp(81) : warning C4101: 'hr' : unreferenced local variable
+Picture.cpp
+VideoSequence.cpp
+vlctables.cpp
+C:\MMStudio\src\LMPEGVideo\vlctables.cpp(98323) : warning C4049: compiler limit : terminating line number emission
+Generating Code...
+C:\MMStudio\src\LMPEGVideo\VideoSequence.cpp(176) : warning C4715: 'System::MediaShow::compare3' : not all control paths return a value
+Linking...
+   Creating library Release/LMPEGVideo.lib and object Release/LMPEGVideo.exp
+<h3>Output Window</h3>
+Performing Custom Build Step on \MMStudio\bin\Win32\Release\LMPEGVideo.dll
+Heap
+..Heap()
+FileByteStream::Open(../../bin/Win32/Debug/LMPEGVideo.typeinfo)
+FileByteStream::Open(../../bin/Win32/Debug/LFC.typeinfo)
+FileByteStream::Open(../../bin/Win32/Debug/LMedia.typeinfo)
+
+
+
+<h3>Results</h3>
+LMPEGVideo.dll - 0 error(s), 3 warning(s)
+</pre>
+</body>
+</html>

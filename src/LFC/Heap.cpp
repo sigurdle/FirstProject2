@@ -1,0 +1,1688 @@
+#include "stdafx.h"
+#include "LFC.h"
+
+#if 0
+extern "C"
+{
+int printf(const char* format, ...);
+
+typedef unsigned char byte;
+typedef unsigned long dword;
+
+byte data[4096];
+
+byte* p_cur = data;
+
+void* malloc(unsigned int size)
+{
+	printf("malloc(%d)", size);
+	printf(" 0x%X 0x%X\n", data, p_cur);
+
+	unsigned int up_size = (size+7) & ~7;
+
+	if (p_cur + up_size > data + 4096)
+	{
+		printf("No more memory\n");
+		while (1)
+			;
+	}
+
+	byte* p = p_cur;
+	p_cur += up_size;
+
+	return p;
+}
+
+void free(void* p)
+{
+}
+
+void abort()
+{
+	printf("abort\n");
+
+	dword* ebp;
+	asm("mov %%ebp,%0" ::"p" (ebp));
+
+	printf("return_address: 0x%X\n", ebp[1]);
+
+	while (1)
+		;
+}
+
+void _assert(int expression)
+{
+}
+
+void *memset( void *dest, int c, size_t count)
+{
+	unsigned char* pb = (unsigned char*)dest;
+	while (count--)
+	{
+		*pb++ = c;
+	}
+	return dest;
+}
+
+int strcmp(const char* s1, const char* s2)
+{
+	while (*s1)
+	{
+		if (*s2 == 0)
+			return 1;	// s1 > s2
+
+		int diff = *s1 - *s2;
+		if (diff)
+			return diff;
+
+		s1++;
+		s2++;
+	}
+
+	if (*s2 != 0)
+		return -1;	// s1 < s2
+
+	return 0;
+}
+
+}
+
+int TestClass::method()
+{
+	return 0;
+}
+
+void test_base::print()
+{
+	printf("base\n");
+}
+
+void test_derived::print()
+{
+	printf("derived\n");
+}
+
+void test_derived::dprint()
+{
+	throw "derived::dprint() throw";
+	printf("dprint: derived\n");
+}
+#endif
+
+#if 1
+
+#include "vc_typeinfo.h"
+
+/*
+
+	// 32-bit
+
+		forward : 29 ( + implicit 3) (32 bits)
+		kind : 1
+		align : 2
+		align_offset : 6
+		alloc_realloced_at_end : 2
+		alloc_size : 26
+
+		signature : 4 (nice to catch errors)
+
+	// 64-bit
+
+		forward : 31 ( + implicit 3) (34 bits)
+		kind : 1
+		align : 2
+		align_offset : 6
+		alloc_size : 26
+
+*/
+
+namespace System
+{
+
+#define BLOCK_SIZE	8
+#define BLOCK_MASK	7
+
+LFCEXT Heap* heap;
+
+//extern Heap* heap;
+//extern list<Object**, std_allocator>* live;
+list<void**, std_allocator>* live;
+
+void FillMem(uint8* data, size_t size, uint32 value)
+{
+	uint32* p = (uint32*)data;
+	size >>= 2;
+
+	while (size--)
+	{
+		*p++ = value;
+	}
+}
+
+Heap::Heap()
+{
+//	DebugTrace("Heap::Heap()\n");
+
+	m_toggle = 0;
+
+//	m_hEvent_gc = CreateEventA(NULL, false, false, NULL);
+
+	if (false)
+	{
+	#if WIN32
+		m_size = 400 * 1024*1024;
+	#else
+	//	m_size = 16 * 1024*1024;
+		m_size = 96 * 1024*1024;
+	#endif
+		m_data = new uint8[m_size/* *2*/];
+		VERIFY(m_data);
+		FillMem(m_data, m_size/* *2*/, (ULONG)m_data + 21);
+		m_next = m_data;
+	}
+	else
+	{
+	#if WIN32
+	//	m_size = 200 * 1024*1024;
+	//	m_size = 210 * 1024*1024;
+	//	m_size = 200 * 1024*1024;
+	
+	//	m_size = 230 * 1024*1024;
+		m_size = 380 * 1024*1024;
+	#else
+	//	m_size = 96 * 1024*1024;
+		m_size = 86 * 1024*1024;
+	#endif
+
+		for(;;)
+		{
+			try
+			{
+				m_data = new ubyte[m_size *2];
+			}
+			catch (std::bad_alloc& e)
+			{
+				m_size -= 60 * 1024*1024;
+
+				if (m_size < 100 * 1024*1024)
+				{
+					MessageBox(NULL, L"Couldn't allocate heap", L"LFC", MB_OK);
+					exit(0);
+				}
+				continue;
+			}
+			break;
+		}
+
+		VERIFY(m_data);
+		FillMem(m_data, m_size *2, (ULONG)m_data + 21);	// I fill it with this to catch bugs easier (an odd number that points into the heap)
+		m_next = m_data;
+
+	}
+
+//	DebugTrace("..Heap::Heap()\n");
+}
+
+Heap::Heap(ULONG size)
+{
+//	DebugTrace("Heap::Heap()\n");
+
+//	m_hEvent_gc = CreateEventA(NULL, false, false, NULL);
+
+	m_toggle = 0;
+
+	m_size = size;
+	try
+	{
+		m_data = new uint8[2*m_size];
+	}
+	catch (std::bad_alloc& e)
+	{
+		MessageBox(NULL, L"Couldn't allocate heap", L"LFC", MB_OK);
+	}
+
+	VERIFY(m_data);
+	FillMem(m_data, m_size*2, (ULONG)m_data + 21);
+
+	m_next = m_data;
+
+//	DebugTrace("..Heap::Heap()\n");
+}
+
+Heap::~Heap()
+{
+	delete m_data;
+}
+
+#if 0
+
+inline void mark_dfs(Object * object, ClassType* pClass);
+
+void mark_for_each_field(void * object, ClassType* pMostDerivedClass)
+{
+	int nsize = pMostDerivedClass->m_gcMembers.size();
+	GCMember* declrefs = pMostDerivedClass->m_gcMembers.begin();
+
+	while (nsize--)
+	{
+		const GCMember* decl = declrefs;
+
+		Type *pType = decl->m_pType;
+
+		if (decl->m_bArray)
+		{
+			ArrayBaseData* pArray = (ArrayBaseData*)((uint8*)object + decl->m_offset);
+
+			Type* pElemType = pType;//decl->m_pType->GetType();
+
+			ClassType* pClass = (ClassType*)pType;
+
+			for (int i = 0; i < pArray->size(); i++)
+			{
+				void * childpointer = ((void**)pArray->m_pData)[i];
+				if (childpointer)
+				{
+					ClassType* pMostDerivedClass = GetType(childpointer);
+
+#if WIN32
+					Object* childobject = (Object*)__RTDynamicCast(childpointer, 0, (void*)&typeid(childpointer), (void*)&typeid(System::Object), 0);
+#else
+#endif
+					if (childobject)
+					{
+						mark_dfs(childobject, pMostDerivedClass);
+					}
+				}
+			}
+		}
+		else
+		{
+			void * childpointer = *(void**)((uint8*)object + decl->m_offset);
+			if (childpointer)
+			{
+				ClassType* pMostDerivedClass = GetType(childpointer);
+
+				//if (pMostDerivedClass->IsDerivedFrom(m_pObjectClass))
+				{
+		//			Object* childobject = (Object*)DynamicCast(childpointer, pType, m_pObjectClass);
+#if WIN32
+					Object* childobject = (Object*)__RTDynamicCast(childpointer, 0, (void*)&typeid(childpointer), (void*)&typeid(System::Object), 0);
+#else
+#endif
+					if (childobject)
+					{
+						mark_dfs(childobject, pMostDerivedClass);
+					}
+				}
+			}
+		}
+
+		declrefs++;
+	}
+}
+
+inline void mark_dfs(Object * object, ClassType * pMostDerivedClass)
+{
+	if (!object->m_marked)
+	{
+	//	TRACE("type of %s\n", pMostDerivedClass->m_qname->c_str());
+
+		object->m_marked = 1;
+
+		mark_for_each_field(dynamic_cast<void*>(object), pMostDerivedClass);
+	}
+}
+
+void Heap::sweep()
+{
+	list<Object*>::iterator it = m_objects.begin();
+	while (it != m_objects.end())
+	{
+		Object* object = (*it);
+
+		if (object->m_marked)
+		{
+			object->m_marked = 0;
+			++it;
+		}
+		else
+		{
+			ClassType* pType = GetType(object);
+			if (pType)
+			{
+				TRACE("freeing object of type %s\n", pType->m_qname->c_str());
+			}
+
+			myfree(object);
+			it = m_objects.erase(it);
+			heapsize --;
+		}
+	}
+}
+
+// Mark live variables
+void mark_lives()
+{
+	list<Object*>::iterator it = live.begin();
+	while (it != live.end())
+	{
+		Object* object = (*it);
+		HeapRecord* HeapRecord = ((HeapRecord*)object)-1;
+
+		ClassType * pType = GetType(object);
+		if (pType == NULL)
+		{
+			pType = GetType(object);
+			ASSERT(pType);
+		}
+
+		mark_dfs(object, pType);
+
+		++it;
+	}
+}
+
+#endif
+
+HeapRecord* Heap::Forward(HeapRecord* p, ClassType* pDebugType, int debugOffset)
+{
+	if ((uint8*)p >= m_data && (uint8*)p < m_data + m_size*2)	// within gc heap
+	{
+		if ((ULONG)p & BLOCK_MASK)
+		{
+			DebugTraceLn("not a multiple of 8" << pDebugType->m_qname << " - " << debugOffset);
+			ASSERT(0);
+		}
+		ASSERT(((ULONG)p & BLOCK_MASK) == 0);
+
+		if (((uint8*)p >= (m_data + m_size)) == m_toggle)	// points to from-space
+		{
+			ULONG p_f = p->get_f();
+			if (p_f != 0 && (((uint8*)p_f < (m_data + m_size)) == m_toggle))	// points to to-space
+			{
+				ASSERT(((uint8*)p_f >= m_data && (uint8*)p_f < m_data + m_size*2));
+				return (HeapRecord*)p_f;
+			}
+			else
+			{
+				/*
+				if (strcmp(pMostDerivedClass->m_qname->c_str(), "System::ClassType") == 0)
+				{
+					MessageBeep(-1);
+				}
+				*/
+				ULONG size = p->get_size();//*(ULONG*)(p + 1);
+				ASSERT(size < 0x80000);
+				ULONG up_size = (size + BLOCK_MASK) & ~BLOCK_MASK;
+
+			//	printf("Forward, size: %d\n", size);
+
+			//	char buf[6];
+			//	gets(buf);
+
+			//	ASSERT((ULONG)m_next < 0x8000000);
+				p_f = (ULONG)m_next;
+				((HeapRecord*)p_f)->set_f(NULL);
+				((HeapRecord*)p_f)->set_kind(1);
+				((HeapRecord*)p_f)->set_size(size);//set_kind(1);
+				p->set_f(p_f);
+				m_next += sizeof(HeapRecord) + /*4 +*/ up_size;
+
+				std::memcpy((HeapRecord*)p_f+1, p+1, /*4 +*/ up_size);
+
+				return (HeapRecord*)p_f;
+			}
+		}
+	}
+
+	return p;
+}
+
+HeapRecord* Heap::Forward(HeapRecord* p, ClassType* pMostDerivedClass)
+{
+#if 0
+	/*
+	level++;
+	if (sofar <= 37)
+	{
+		if (level < 5)
+		{
+			for (int i = 0; i < level; i++)
+				printf(" ");
+
+			printf("%s\n", pMostDerivedClass->m_qname->c_str());
+
+			MessageBeep(-1);
+		}
+	}
+	*/
+
+	if ((uint8*)p >= m_data && (uint8*)p < m_data + m_size*2)	// within gc heap
+	{
+		if (((uint8*)p >= (m_data + m_size)) == m_toggle)	// points to from-space
+		{
+			if (p->f != NULL && (((uint8*)p->f < (m_data + m_size)) == m_toggle))	// points to to-space
+			{
+				ASSERT(((uint8*)p->f >= m_data && (uint8*)p->f < m_data + m_size*2));
+				//level--;
+				return (HeapRecord*)p->f;
+			}
+			else
+			{
+				//ASSERT((ULONG)m_next < 0x8000000);
+				p->f = (ULONG)m_next;
+				((HeapRecord*)p->f)->f = NULL;
+				((HeapRecord*)p->f)->kind = 0;
+
+				ULONG up_size = (pMostDerivedClass->m_sizeof + BLOCK_MASK) & ~BLOCK_MASK;
+
+				m_next += sizeof(HeapRecord) + up_size;
+
+				memcpy((HeapRecord*)p->f+1, p+1, pMostDerivedClass->m_sizeof);
+
+				ForwardFields((uint8*)((HeapRecord*)p->f+1), pMostDerivedClass);
+
+				//level--;
+				return (HeapRecord*)p->f;
+			}
+		}
+	}
+#endif
+	//level--;
+	return p;
+}
+
+HeapRecord* Heap::ForwardNoRecurse(HeapRecord* p, ClassType* pMostDerivedClass)
+{
+	/*
+	level++;
+	if (sofar <= 37)
+	{
+		if (level < 5)
+		{
+			for (int i = 0; i < level; i++)
+				printf(" ");
+
+			printf("%s\n", pMostDerivedClass->m_qname->c_str());
+
+			MessageBeep(-1);
+		}
+	}
+	*/
+
+	if ((uint8*)p >= m_data && (uint8*)p < m_data + m_size*2)	// within gc heap
+	{
+		ASSERT(((ULONG)p & BLOCK_MASK) == 0);
+
+		if (((uint8*)p >= (m_data + m_size)) == m_toggle)	// points to from-space
+		{
+			ULONG p_f = p->get_f();
+
+			if (p_f != 0 && (((uint8*)p_f < (m_data + m_size)) == m_toggle))	// points to to-space
+			{
+				if (!((((uint8*)p_f >= m_data && (uint8*)p_f < m_data + m_size*2))))
+				{
+					DebugTraceLn(pMostDerivedClass->m_qname);
+					ASSERT(0);
+				}
+				ASSERT(((uint8*)p_f >= m_data && (uint8*)p_f < m_data + m_size*2));
+				//level--;
+				return (HeapRecord*)p_f;
+			}
+			else
+			{
+				//ASSERT((ULONG)m_next < 0x8000000);
+				p_f = (ULONG)m_next;
+#if 0
+				((HeapRecord*)p_f)->set_f(NULL);
+				((HeapRecord*)p_f)->set_kind(0);
+#endif
+			#undef new
+				::new ((HeapRecord*)p_f) HeapRecord(NULL, 0);
+			#define new DEBUG_NEW
+
+				p->set_f(p_f);
+
+				ASSERT(pMostDerivedClass->m_sizeof != -1);
+				ULONG up_size = (pMostDerivedClass->m_sizeof + BLOCK_MASK) & ~BLOCK_MASK;
+
+				m_next += sizeof(HeapRecord) + up_size;
+
+				std::memcpy((HeapRecord*)p_f+1, p+1, pMostDerivedClass->m_sizeof);
+
+			//	ForwardFields((uint8*)((HeapRecord*)p->f+1), pMostDerivedClass);
+
+				//level--;
+				return (HeapRecord*)p_f;
+			}
+		}
+	}
+
+	//level--;
+	return p;
+}
+
+void Heap::ClearGarbage()
+{
+	if (m_toggle == 0)
+		FillMem(m_data + m_size, m_size, (ULONG)m_data + 21);//memset(m_data + m_size, 0, m_size);
+	else
+		FillMem(m_data, m_size, (ULONG)m_data + 21);//memset(m_data, 0, m_size);
+}
+
+void Heap::Copy()
+{
+	if (m_toggle == 0)
+		m_next = m_data + m_size;
+	else
+		m_next = m_data;
+
+	if (true)	// breadth
+	{
+		uint8* scan = m_next;
+
+		int count = 0;
+
+		list<void**, std_allocator>::iterator it = live->begin();
+		while (it != live->end())
+		{
+			void* object = *(*it);
+			if (object)
+			{
+				HeapRecord* record = ((HeapRecord*)object)-1;
+
+				if ((uint8*)record >= m_data && (uint8*)record < m_data + m_size*2)	// within gc heap
+				{
+					ASSERT(((ULONG)record & BLOCK_MASK) == 0);
+
+					if (record->get_kind() == 0)
+					{
+						ClassType* pType = GetType(object);
+
+					/*
+					if (*pType->m_name == "DependencyProperty")
+					{
+						MessageBeep(-1);
+					}
+					else if (*pType->m_name == "RoutedEvent")
+					{
+						MessageBeep(-1);
+					}
+					*/
+
+				//	printf("%s\n", pType->m_qname->c_str());
+
+					/*
+					if (*pType->m_name == "SocketWindow")
+					{
+						MessageBeep(-1);
+					}
+					*/
+
+						*(*it) = (ForwardNoRecurse(record, pType) + 1);
+					}
+					else
+					{
+						// TODO
+						ASSERT(0);
+					}
+				}
+			}
+
+			count++;
+
+			++it;
+		}
+
+		std::printf("**********************************************\n");
+		std::printf("**********************************************\n");
+		std::printf("**********************************************\n");
+	//	char buf[5];
+	//	gets(buf);
+
+		count = 0;
+
+		while (scan < m_next)
+		{
+		//	printf("%d\n", count);
+		//	gets(buf);
+
+			HeapRecord* record = (HeapRecord*)scan;
+			if (record->get_kind() == 0)
+			{
+				ASSERT(record->get_f() == NULL);
+
+				void* object = (void*)(record+1);
+				ClassType* pClassType = GetType((uint8*)object);
+
+				/*
+				if (*pClassType->m_name == "SocketWindow")
+				{
+					MessageBeep(-1);
+				}
+				*/
+
+				/*
+			if (*pClassType->m_name == "FontFamilyStyle")
+			{
+				MessageBeep(-1);
+			}
+			*/
+
+			//	printf("object: %s(%p), qname: %s(%p)\n", pClassType->m_name->c_str(), pClassType->m_name, pClassType->m_qname->c_str(), pClassType->m_qname);
+
+				ForwardFieldsNoRecurse((uint8*)object, pClassType);
+
+				ULONG size = (pClassType->m_sizeof + BLOCK_MASK) & ~BLOCK_MASK;
+				scan += sizeof(HeapRecord) + size;
+			}
+			else
+			{
+				ULONG size = (record->get_size()/*(*(ULONG*)(record+1)*/ + BLOCK_MASK) & ~BLOCK_MASK;
+			//	printf("memory buffer size: %d\n", size);
+				scan += sizeof(HeapRecord) + /*4 +*/ size;
+			}
+
+			count++;
+		}
+		std::printf("**********************************************\n");
+		std::printf("**********************************************\n");
+		std::printf("**********************************************\n");
+	//	gets(buf);
+	}
+	else
+	{
+	//	sofar = 0;
+		list<void**, std_allocator>::iterator it = live->begin();
+		while (it != live->end())
+		{
+			void* object = *(*it);
+			HeapRecord* record = ((HeapRecord*)object)-1;
+
+			ClassType* pType = GetType(object);
+
+			/*
+			if (*pType->GetQName() == "System::CVR")
+			{
+				MessageBeep(-1);
+			}
+			*/
+
+			if (pType == NULL)
+			{
+				//pType = GetType(object);
+				ASSERT(pType);
+			}
+
+		//	if (i < 100)
+		//		printf("%d %s\n", i, pType->m_qname->c_str());
+
+			*(*it) = (Object*)(Forward(record, pType) + 1);
+
+			++it;
+	//		sofar++;
+		}
+	}
+
+	m_toggle = !m_toggle;
+
+//	SetEvent(m_hEvent_gc);
+}
+
+int sofar = 0;
+//int level = 0;
+
+void Heap::ForwardField(void ** ppchildpointer, Type* pType)
+{
+	ASSERT(0);
+#if 0
+
+	if (*ppchildpointer)
+	{
+		void * childpointer = *ppchildpointer;
+
+		// TODO, try to check HeapRecord kind somehow
+		if (pType->GetKind() != type_class || !pType->GetClass()->HasVirtualTable())
+		{
+			childpointer = ((uint8*)childpointer - 4);
+
+			*ppchildpointer = (uint8*)(Forward((HeapRecord*)childpointer-1)+1)+4;
+		}
+		else
+		{
+			ASSERT(pType->GetClass()->m_bVT == true);
+
+			//if (pType->GetClass()->m_bVT == 1)
+			{
+				ClassType* pMostDerivedClass = GetType(childpointer);
+
+				// TODO top_of_object
+
+#if WIN32
+				void* childobject = NULL;
+				int offset_to_top = 0;
+
+#if 0
+				void* childobject0 = (void*)__RTDynamicCast(childpointer, 0, (void*)&typeid(childpointer), (void*)&typeid(System::Object), 0);
+				if (childobject0)
+#endif
+
+				{
+					void* vtable = *(void**)childpointer;
+					rti* p3 = ((rti**)vtable)[-1];
+					offset_to_top = p3->offset_to_top;
+					/*
+					if (offset_to_top != 0)
+					{
+						MessageBeep(-1);
+					}
+					*/
+
+#if 0
+					int offset = (uint8*)childobject0 - (uint8*)childpointer;
+					ASSERT(offset_to_top == -offset);
+
+#endif
+					childobject = (uint8*)childpointer - offset_to_top;
+				}
+
+#else
+				void *vtable = *(void**)childpointer;
+				ptrdiff_t offset_to_top = ((ptrdiff_t*)vtable)[-2];
+				void* childobject = (uint8*)childpointer - offset_to_top;
+#endif
+				if (childobject)
+				{
+					*ppchildpointer = (uint8*)(Forward((HeapRecord*)childobject-1, pMostDerivedClass)+1) + offset_to_top;
+
+					/*
+					if (level == 1)
+					{
+				//		MessageBeep(-1);
+					}
+					*/
+				}
+				else
+				{
+					//*ppchildpointer = (uint8*)(Forward((HeapRecord*)childobject-1, pMostDerivedClass)+1) + offset_to_top;
+				}
+			}
+			/*
+			else
+			{
+				*ppchildpointer = Forward((HeapRecord*)childpointer-1, pType->GetClass())+1;
+			}
+			*/
+		}
+	}
+#endif
+}
+
+void Heap::ForwardFieldNoRecurse_Kind(void ** ppchildpointer, int kind, ClassType* pDebugType, int debugOffset)
+{
+#if 0
+	if (*ppchildpointer)
+	{
+		void* childpointer = *ppchildpointer;
+
+		{
+			if (kind == 1)
+			{
+				childpointer = ((uint8*)childpointer/* - 4*/);
+
+				*ppchildpointer = (uint8*)(Forward((HeapRecord*)childpointer-1, pDebugType, debugOffset)+1)/*+4*/;
+			}
+			else
+			{
+	#if 0
+			HeapRecord* record = ((HeapRecord*)childpointer) - 1;
+
+			if ((uint8*)record >= m_data && (uint8*)record < m_data + m_size*2)	// within gc heap
+			{
+				if (((uint8*)record >= (m_data + m_size)) == m_toggle)	// points to from-space
+				{
+					ULONG p_f = record->get_f();
+					if (p_f != NULL && (((uint8*)p_f < (m_data + m_size)) == m_toggle))	// points to to-space
+					{
+						ASSERT(((uint8*)p_f >= m_data && (uint8*)p_f < m_data + m_size*2));
+						return (HeapRecord*)p_f;
+					}
+					else
+					{
+					//if (pType->GetKind() != type_class || !pType->GetClass()->HasVirtualTable())
+						if (record->get_kind() == 1)
+						{
+	#if 0
+						//	childpointer = ((uint8*)childpointer - 4);
+
+						//	*ppchildpointer = (uint8*)(Forward((HeapRecord*)childpointer-1)+1)+4;
+	#endif
+							ULONG size = *(ULONG*)(record);
+							ULONG up_size = (size + BLOCK_MASK) & ~BLOCK_MASK;
+
+						//	ASSERT((ULONG)m_next < 0x8000000);
+							p_f = (ULONG)m_next;
+							((HeapRecord*)p_f)->set_f(NULL);
+							((HeapRecord*)p_f)->set_kind(1);
+							p->set_f(p_f);
+							m_next += sizeof(HeapRecord) + 4 + up_size;
+
+							memcpy((HeapRecord*)p_f+1, p+1, 4 + up_size);
+
+							return (HeapRecord*)p_f;
+
+						}
+						else
+						{
+						}
+					}
+				}
+			}
+	#endif
+				{
+			//	ASSERT(pType->GetClass()->m_bVT == 1);
+
+					//if (pType->GetClass()->m_bVT == 1)
+					{
+
+		#if _WIN64
+						void* childobject = nullptr;
+						ClassType* pMostDerivedClass = nullptr;
+						int offset_to_top = 0;
+		#elif WIN32
+						void* childobject = nullptr;
+						ClassType* pMostDerivedClass;
+						int offset_to_top;
+
+		#if 0
+						void* childobject0 = (void*)__RTDynamicCast(childpointer, 0, (void*)&typeid(childpointer), (void*)&typeid(System::Object), 0);
+						if (childobject0)
+		#endif
+
+						void* vtable = *(void**)childpointer;
+						rtti_object_locator* p3 = ((rtti_object_locator**)vtable)[-1];
+						BaseClassDescriptor** table = p3->m_classHierarchyDescriptor->pBaseClassArray;
+						pMostDerivedClass = *(ClassType**)&table[0]->typedesc->_m_data;
+						if (pMostDerivedClass == nullptr)
+						{
+							MessageBoxA(NULL, "pMostDerivedClass == NULL", "", MB_OK);
+							ASSERT(0);
+						}
+
+						offset_to_top = p3->offset_to_top;
+						ASSERT(offset_to_top >= 0);
+						/*
+						if (offset_to_top != 0)
+						{
+							MessageBeep(-1);
+						}
+						*/
+
+	#if 0
+						int offset = (uint8*)childobject0 - (uint8*)childpointer;
+						ASSERT(offset_to_top == -offset);
+
+	#endif
+						childobject = (uint8*)childpointer - offset_to_top;
+
+		#else
+						void *vtable = *(void**)childpointer;
+						__type_info2* ti = (__type_info2*)((void**)vtable)[-1];
+						ptrdiff_t offset_to_top = - ((ptrdiff_t*)vtable)[-2];
+						//ASSERT(offset_to_top <= 0);
+						if (offset_to_top < 0 || offset_to_top > 1000)
+						{
+							printf("offset_to_top is probably too large: %d\n", offset_to_top);
+							printf("%s - %d\n", pDebugType->m_qname->c_str(), debugOffset);
+							ASSERT(0);
+						//	ASSERT(offset_to_top >= 0 && offset_to_top < 512);
+						}
+
+						ClassType* pMostDerivedClass = *(ClassType**)(ti->__type_name - 4);
+						//ClassType* pMostDerivedClass = (ClassType*)ti->__type_name;
+
+						void* childobject = (uint8*)childpointer - offset_to_top;
+		#endif
+					//	if (childobject)
+						{
+							*ppchildpointer = (uint8*)(ForwardNoRecurse((HeapRecord*)childobject-1, pMostDerivedClass)+1) + offset_to_top;
+
+							/*
+							if (level == 1)
+							{
+						//		MessageBeep(-1);
+							}
+							*/
+						}
+						/*
+						else
+						{
+							//*ppchildpointer = (uint8*)(Forward((HeapRecord*)childobject-1, pMostDerivedClass)+1) + offset_to_top;
+						}
+						*/
+					}
+					/*
+					else
+					{
+						*ppchildpointer = Forward((HeapRecord*)childpointer-1, pType->GetClass())+1;
+					}
+					*/
+				}
+			}
+		}
+	}
+#endif
+}
+
+#if 0
+void Heap::ForwardFieldNoRecurse(void ** ppchildpointer, int kind, ClassType* pDebugType, int debugOffset)
+{
+	if (*ppchildpointer)
+	{
+		void* childpointer = *ppchildpointer;
+
+		if ((uint8*)childpointer >= m_data && (uint8*)childpointer < m_data + m_size*2)	// within gc heap
+		{
+			if ((ULONG)childpointer & BLOCK_MASK)
+			{
+				printf("not a multiple of 8, %s - %d\n", pDebugType->m_qname->c_str(), debugOffset);
+				ASSERT(0);
+			}
+			ASSERT(((ULONG)childpointer & BLOCK_MASK) == 0);
+
+			HeapRecord* record = ((HeapRecord*)childpointer) - 1;
+
+			if (record->get_kind() == 1)
+			{
+				childpointer = ((uint8*)childpointer/* - 4*/);
+
+				*ppchildpointer = (uint8*)(Forward((HeapRecord*)childpointer-1, pDebugType, debugOffset)+1)/*+4*/;
+			}
+			else
+			{
+	#if 0
+			HeapRecord* record = ((HeapRecord*)childpointer) - 1;
+
+			if ((uint8*)record >= m_data && (uint8*)record < m_data + m_size*2)	// within gc heap
+			{
+				if (((uint8*)record >= (m_data + m_size)) == m_toggle)	// points to from-space
+				{
+					ULONG p_f = record->get_f();
+					if (p_f != NULL && (((uint8*)p_f < (m_data + m_size)) == m_toggle))	// points to to-space
+					{
+						ASSERT(((uint8*)p_f >= m_data && (uint8*)p_f < m_data + m_size*2));
+						return (HeapRecord*)p_f;
+					}
+					else
+					{
+					//if (pType->GetKind() != type_class || !pType->GetClass()->HasVirtualTable())
+						if (record->get_kind() == 1)
+						{
+	#if 0
+						//	childpointer = ((uint8*)childpointer - 4);
+
+						//	*ppchildpointer = (uint8*)(Forward((HeapRecord*)childpointer-1)+1)+4;
+	#endif
+							ULONG size = *(ULONG*)(record);
+							ULONG up_size = (size + BLOCK_MASK) & ~BLOCK_MASK;
+
+						//	ASSERT((ULONG)m_next < 0x8000000);
+							p_f = (ULONG)m_next;
+							((HeapRecord*)p_f)->set_f(NULL);
+							((HeapRecord*)p_f)->set_kind(1);
+							p->set_f(p_f);
+							m_next += sizeof(HeapRecord) + 4 + up_size;
+
+							memcpy((HeapRecord*)p_f+1, p+1, 4 + up_size);
+
+							return (HeapRecord*)p_f;
+
+						}
+						else
+						{
+						}
+					}
+				}
+			}
+	#endif
+				{
+			//	ASSERT(pType->GetClass()->m_bVT == 1);
+
+					//if (pType->GetClass()->m_bVT == 1)
+					{
+
+		#if WIN32
+						void* childobject = NULL;
+						ClassType* pMostDerivedClass;
+						int offset_to_top;
+
+		#if 0
+						void* childobject0 = (void*)__RTDynamicCast(childpointer, 0, (void*)&typeid(childpointer), (void*)&typeid(System::Object), 0);
+						if (childobject0)
+		#endif
+
+						void* vtable = *(void**)childpointer;
+						rtti_object_locator* p3 = ((rtti_object_locator**)vtable)[-1];
+						BaseClassDescriptor** table = p3->m_classHierarchyDescriptor->m_baseClassArray;
+						pMostDerivedClass = *(ClassType**)&table[0]->typedesc->_m_data;
+						if (pMostDerivedClass == NULL)
+						{
+							MessageBoxA(NULL, "pMostDerivedClass == NULL", "", MB_OK);
+							ASSERT(0);
+						}
+
+						offset_to_top = p3->offset_to_top;
+						ASSERT(offset_to_top >= 0);
+						/*
+						if (offset_to_top != 0)
+						{
+							MessageBeep(-1);
+						}
+						*/
+
+	#if 0
+						int offset = (uint8*)childobject0 - (uint8*)childpointer;
+						ASSERT(offset_to_top == -offset);
+
+	#endif
+						childobject = (uint8*)childpointer - offset_to_top;
+
+		#else
+						void *vtable = *(void**)childpointer;
+						__type_info2* ti = (__type_info2*)((void**)vtable)[-1];
+						ptrdiff_t offset_to_top = - ((ptrdiff_t*)vtable)[-2];
+						//ASSERT(offset_to_top <= 0);
+						if (offset_to_top < 0 || offset_to_top > 1000)
+						{
+							printf("offset_to_top is probably too large: %d\n", offset_to_top);
+							printf("%s - %d\n", pDebugType->m_qname->c_str(), debugOffset);
+							ASSERT(0);
+						//	ASSERT(offset_to_top >= 0 && offset_to_top < 512);
+						}
+
+						ClassType* pMostDerivedClass = *(ClassType**)(ti->__type_name - 4);
+						//ClassType* pMostDerivedClass = (ClassType*)ti->__type_name;
+
+						void* childobject = (uint8*)childpointer - offset_to_top;
+		#endif
+					//	if (childobject)
+						{
+							*ppchildpointer = (uint8*)(ForwardNoRecurse((HeapRecord*)childobject-1, pMostDerivedClass)+1) + offset_to_top;
+
+							/*
+							if (level == 1)
+							{
+						//		MessageBeep(-1);
+							}
+							*/
+						}
+						/*
+						else
+						{
+							//*ppchildpointer = (uint8*)(Forward((HeapRecord*)childobject-1, pMostDerivedClass)+1) + offset_to_top;
+						}
+						*/
+					}
+					/*
+					else
+					{
+						*ppchildpointer = Forward((HeapRecord*)childpointer-1, pType->GetClass())+1;
+					}
+					*/
+				}
+			}
+		}
+	}
+}
+#endif
+
+void Heap::ForwardFields(uint8 * object, ClassType* pMostDerivedClass)
+{
+	ASSERT(0);
+#if 0
+	int ncount = pMostDerivedClass->m_gcMembers.size();
+	GCMember* declrefs = pMostDerivedClass->m_gcMembers.begin();
+
+	while (ncount--)
+	{
+		const GCMember* decl = declrefs;
+
+		Type *pType = decl->m_pType;
+
+		/*
+		if (decl->m_bArray)
+		{
+			ArrayBaseData* pArray = (ArrayBaseData*)(object + decl->m_offset);
+
+			*(uint8**)&pArray->m_pData = (uint8*)(Forward((HeapRecord*)((uint8*)pArray->m_pData-4)-1)+1)+4;
+
+			for (int i = 0; i < pArray->size(); i++)
+			{
+				uint8 * object = (uint8*)pArray->m_pData + i * pType->get_sizeof();
+				
+				switch (pType->GetKind())
+				{
+				case type_class:
+					{
+						ForwardFields(object, pType->GetClass());
+					}
+					break;
+					
+				case type_pointer:
+					{
+						ForwardField((void**)object, pType->GetPointerTo());
+					}
+					break;
+					
+			//	default:
+			//		ASSERT(0);
+				}
+			}
+		}
+		else
+		*/
+		{
+			void ** ppchildpointer = (void**)(object + decl->m_offset);
+
+			ForwardField(ppchildpointer, pType);
+		}
+
+		declrefs++;
+	}
+
+	ncount = pMostDerivedClass->m_gcArrayMembers.size();
+	declrefs = pMostDerivedClass->m_gcArrayMembers.begin();
+
+	while (ncount--)
+	{
+		const GCMember* decl = declrefs;
+
+		Type *pType = decl->m_pType;
+
+		//if (decl->m_bArray)
+		{
+			ArrayBaseData* pArray = (ArrayBaseData*)(object + decl->m_offset);
+
+		//	*(uint8**)&pArray->m_pData = (uint8*)(Forward((HeapRecord*)((uint8*)pArray->m_pData-4)-1)+1)+4;
+			*(uint8**)&pArray->m_pData = (uint8*)(Forward((HeapRecord*)((uint8*)pArray->m_pData-4)-1)+1)+4;
+
+			for (int i = 0; i < pArray->size(); i++)
+			{
+				uint8 * object = (uint8*)pArray->m_pData + i * pType->m_sizeof;
+				
+				switch (pType->GetKind())
+				{
+				case type_class:
+					{
+						ForwardFields(object, pType->GetClass());
+					}
+					break;
+					
+				case type_pointer:
+					{
+						ForwardField((void**)object, pType->GetPointerTo());
+					}
+					break;
+					
+			//	default:
+			//		ASSERT(0);
+				}
+			}
+		}
+		/*
+		else
+		{
+			void ** ppchildpointer = (void**)(object + decl->m_offset);
+
+			ForwardField(ppchildpointer, pType);
+		}
+		*/
+
+		declrefs++;
+	}
+#endif
+}
+
+void Heap::ForwardFieldsNoRecurse(uint8* object, ClassType* pMostDerivedClass)
+{
+	//char buf[6];
+	{
+		int ncount = pMostDerivedClass->m_gcMembers.size();
+		GCMember* declrefs = pMostDerivedClass->m_gcMembers.begin();
+
+	//	printf("count: %d\n", ncount);
+
+		if (false)
+		{
+			// inner_ptr
+			void** pptr = NULL;
+			void** pbaseptr = NULL;
+
+			int ptr_diff = *(uint8**)pptr - *(uint8**)pbaseptr;
+
+			int offset;
+			ForwardFieldNoRecurse_Kind(pbaseptr, 0, pMostDerivedClass, offset);
+
+			*pptr = *(uint8**)pbaseptr + ptr_diff;
+		}
+
+		while (ncount--)
+		{
+			const GCMember* decl = declrefs;
+
+		//	Type *pType = decl->m_pType;
+
+		//	gets(buf);
+			/*
+			if (decl->m_bArray)
+			{
+				ArrayBaseData* pArray = (ArrayBaseData*)(object + decl->m_offset);
+
+				*(uint8**)&pArray->m_pData = (uint8*)(Forward((HeapRecord*)((uint8*)pArray->m_pData-4)-1)+1)+4;
+
+				for (int i = 0; i < pArray->size(); i++)
+				{
+					uint8 * object = (uint8*)pArray->m_pData + i * pType->get_sizeof();
+					
+					switch (pType->GetKind())
+					{
+					case type_class:
+						{
+							ForwardFieldsNoRecurse(object, pType->GetClass());
+						}
+						break;
+						
+					case type_pointer:
+						{
+							ForwardFieldNoRecurse((void**)object, pType->GetPointerTo());
+						}
+						break;
+						
+				//	default:
+				//		ASSERT(0);
+					}
+				}
+			}
+			else
+			*/
+			int offset = decl->m_offset_and_kind>>1;
+			int kind = decl->m_offset_and_kind & 1;
+
+		//	printf("offset: %d kind: %d\n", offset, kind);
+
+			void** ppchildpointer = (void**)(object + offset);
+
+			ForwardFieldNoRecurse_Kind(ppchildpointer, kind, pMostDerivedClass, offset);
+
+			declrefs++;
+		}
+	}
+
+	{
+		int ncount = pMostDerivedClass->m_gcArrayMembers.size();
+		GCArrayMember* declrefs = pMostDerivedClass->m_gcArrayMembers.begin();
+
+		if (declrefs == NULL)
+		{
+			ASSERT(ncount == 0);
+		}
+
+	//	printf("arraycount: %d\n", ncount);
+
+		while (ncount--)
+		{
+			const GCArrayMember* decl = declrefs;
+
+		//	gets(buf);
+
+			Type *pType = decl->m_pType;
+
+			//if (decl->m_bArray)
+			{
+				ArrayBaseData* pArray = (ArrayBaseData*)(object + decl->m_offset);
+
+			//	printf("arraydata:");
+			//	*(uint8**)&pArray->m_pData = (uint8*)(Forward((HeapRecord*)((uint8*)pArray->m_pData-4)-1, pMostDerivedClass, decl->m_offset)+1)+4;
+				*(uint8**)&pArray->m_pData = (uint8*)(Forward((HeapRecord*)((uint8*)pArray->m_pData)-1, pMostDerivedClass, decl->m_offset)+1);
+
+				uint arraysize = pArray->m_nSize;
+				uint elemsize = pType->get_sizeof();
+
+			//	printf("size: %d, elemsize: %d\n", pArray->size(), elemsize);
+			//	gets(buf);
+
+				switch (pType->get_Kind())
+				{
+					case type_typedef:
+						ASSERT(0);
+						break;
+
+					case type_class:
+						{
+						//	printf("class\n");
+						//	gets(buf);
+
+							for (uint i = 0; i < arraysize; i++)
+							{
+								uint8 * object = (uint8*)pArray->m_pData + i * elemsize;
+					
+								ForwardFieldsNoRecurse(object, (ClassType*)pType);
+							}
+						}
+						break;
+						
+					case type_pointer:
+						{
+						//	printf("pointer\n");
+						//	gets(buf);
+
+							Type* pPointerTo = pType->GetPointerTo()->GetStripped();
+
+						//	ASSERT(pType->GetPointerTo()->GetKind() != type_typedef);
+							int kind = !(pPointerTo->get_Kind() == type_class && pPointerTo->AsClass()->HasVirtualTable());
+
+							for (uint i = 0; i < arraysize; i++)
+							{
+								uint8* object = (uint8*)pArray->m_pData + i * elemsize;//sizeof(void*);//pType->get_sizeof();
+
+								ForwardFieldNoRecurse_Kind((void**)object, kind, pMostDerivedClass, decl->m_offset);
+							}
+						}
+						break;
+				}
+			}
+			/*
+			else
+			{
+				void ** ppchildpointer = (void**)(object + decl->m_offset);
+
+				ForwardFieldNoRecurse(ppchildpointer, pType);
+			}
+			*/
+
+			declrefs++;
+		}
+	}
+}
+
+Object* Heap::allocate_object(ULONG size)
+{
+	// align
+	size = (size + BLOCK_MASK) & ~BLOCK_MASK;
+
+#if WIN32
+//	heap->m_crit.Lock();
+#endif
+
+	if (m_toggle == 0)
+	{
+		if (m_next + size > m_data + m_size)
+		{
+			MessageBoxA(NULL, "heap space", "", MB_OK);
+			THROW(-1);
+		//	WaitFor_gc();
+		}
+	}
+	else
+	{
+		if (m_next + size > m_data + m_size*2)
+		{
+			MessageBoxA(NULL, "heap space", "", MB_OK);
+			THROW(-1);
+		//	WaitFor_gc();
+		}
+	}
+
+	uint8* p = m_next;
+	m_next += sizeof(HeapRecord) + size;
+//	((HeapRecord*)p)->set_f(NULL);
+//	((HeapRecord*)p)->set_kind(0);
+#undef new
+	::new (p) HeapRecord(NULL, 0);
+#define new DEBUG_NEW
+
+#if WIN32
+//	heap->m_crit.Unlock();
+#endif
+
+	return (Object*)(p + sizeof(HeapRecord));
+}
+
+void* Heap::allocate_buffer(ULONG size)
+{
+	if (size & ~0xffffff)	// 24 bit is max
+	{
+		ASSERT(0);
+		return NULL;
+	}
+
+	// align
+	ULONG up_size = (size + BLOCK_MASK) & ~BLOCK_MASK;
+
+	/*
+	ASSERT(n >= 0);
+	ASSERT(n < 256);
+
+  // TODO, only once
+	rtis[n].m_classHierarchyDescriptor = &hier[n];
+	ptrbaseclassdescriptors[n] = &baseclassdescriptors[n];
+	hier[n].m_baseClassArray = &ptrbaseclassdescriptors[n];
+	baseclassdescriptors[n].typedesc = &typedescriptors[n];
+	*(ClassType**)typedescriptors[n].rawname = &BufferClasses[n];
+	BufferClasses[n].m_sizeof = size;
+	vtables[n] = &rtis[n];
+
+	uint8* p = heap.m_next;
+	heap.m_next += sizeof(HeapRecord) + 4 + size;
+	*(rti**)(p + sizeof(HeapRecord)) = vtables[n]+1;
+	*/
+
+#if WIN32
+//	heap->m_crit.Lock();
+#endif
+	if (m_toggle == 0)
+	{
+		if (m_next + up_size > m_data + m_size)
+		{
+			MessageBoxA(NULL, "heap space", "", MB_OK);
+			throw -1;
+//			WaitFor_gc();
+		}
+	}
+	else
+	{
+		if (m_next + up_size > m_data + m_size*2)
+		{
+			MessageBoxA(NULL, "heap space", "", MB_OK);
+			throw -1;
+//			WaitFor_gc();
+		}
+	}
+
+	uint8* p = heap->m_next;
+	heap->m_next += sizeof(HeapRecord) + /*4 +*/ up_size;
+	//*(ULONG*)(p + sizeof(HeapRecord)) = size;
+
+	/*
+	((HeapRecord*)p)->set_f(NULL);
+	((HeapRecord*)p)->set_kind(1);
+	*/
+#undef new
+	::new (p) HeapRecord(NULL, 1);
+#define new DEBUG_NEW
+	((HeapRecord*)p)->set_size(size);
+
+#if WIN32
+//	heap->m_crit.Unlock();
+#endif
+
+	return p + sizeof(HeapRecord);// + 4;
+}
+
+void Heap::deallocate_buffer(void* p)
+{
+	if (p)
+	{
+		if (m_toggle == 0)
+		{
+			ASSERT(p >= m_data && p < m_data + m_size);
+		}
+		else
+		{
+			ASSERT(p >= m_data+m_size && p < m_data + m_size*2);
+		}
+	}
+}
+
+//static int cnt = 0;
+
+void* Heap::reallocate_buffer(void* pv, ULONG size)
+{
+	if (size & ~0xffffff)	// 24 bit is max
+	{
+		ASSERT(0);
+		return NULL;
+	}
+
+	uint8* pb = (uint8*)pv;
+
+	if (pb == NULL)
+	{
+		return allocate_buffer(size);
+	}
+
+	// align
+	ULONG up_size = (size + BLOCK_MASK) & ~BLOCK_MASK;
+
+	HeapRecord* record = (HeapRecord*)pb - 1;
+
+//	cnt++;
+
+#if WIN32
+//	m_crit.Lock();
+#endif
+
+	ULONG up_oldsize = (record->get_size() + BLOCK_MASK) & ~BLOCK_MASK;
+
+	if (m_next == pb + up_oldsize)	// Last record on heap
+	{
+		// TODO, make sure there's room
+
+		if (m_toggle == 0)
+		{
+			if (pb + up_size > m_data + m_size)
+			{
+				MessageBoxA(NULL, "heap space", "", MB_OK);
+				throw -1;
+			}
+		}
+		else
+		{
+			if (pb + up_size > m_data + m_size*2)
+			{
+				MessageBoxA(NULL, "heap space", "", MB_OK);
+				throw -1;
+			}
+		}
+
+		record->set_size(size);
+		m_next = pb + up_size;
+	}
+	else
+	{
+		/*
+		if (up_size <= up_oldsize)	// reallocate to smaller size
+		{
+			// TODO
+			ASSERT(0);
+			THROW(-1);
+		//	record->set_size(size);	// This wouldn't work
+		}
+		else
+		*/
+		{
+			void* pv2 = allocate_buffer(size);
+
+			std::memcpy(pv2, pv, up_oldsize);
+			pb = (uint8*)pv2;
+		}
+	}
+
+#if WIN32
+//	m_crit.Unlock();
+#endif
+
+	return pb;
+}
+
+/*
+void Heap::maybe_gc()
+{
+}
+*/
+
+/*
+void Heap::WaitFor_gc()
+{
+	if (GetCurrentThreadId() == m_threadId)
+	{
+		throw -1;
+		ASSERT(0);
+	}
+
+	m_crit.Unlock();
+	WaitForSingleObject(m_hEvent_gc, INFINITE);
+
+	m_crit.Lock();
+}
+*/
+
+ULONG Heap::get_buffer_size(const void* pv)
+{
+	ULONG* p = (ULONG*)pv - 1;
+	return *p;
+}
+
+#if 0
+void Heap::free_object(void* pv)
+{
+	uint8* pb = (uint8*)pv;
+
+	ULONG* p = (ULONG*)(pb - 4);
+
+	m_crit.Lock();
+
+	GetType(
+
+	if (m_next == pb + *p)	// Last record on heap
+	{
+		m_next = p
+	}
+	else
+	{
+		// TODO
+		ASSERT(0);
+	}
+
+	m_crit.Unlock();
+}
+#endif
+
+#if 0
+LFCEXT void gc()
+{
+//	printf("gc\n");
+
+	heap->Copy();
+
+#if 0
+	mark_lives();
+	heap.sweep();
+#endif
+	MessageBeep(-1);
+}
+#endif
+
+}	// System
+
+#endif

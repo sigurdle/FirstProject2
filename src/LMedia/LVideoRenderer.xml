@@ -1,0 +1,8 @@
+<filter name="Video Renderer">
+ <inputpin name="Video Input" minOccurs="1" maxOccurs="1">
+   <mediatypes>
+	 <mediatype majortype="Video" />
+ 	</mediatypes>
+ </inputpin>
+
+</filter>

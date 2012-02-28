@@ -1,0 +1,273 @@
+#include "stdafx.h"
+#include "LXML2.h"
+#include "MediaList.h"
+
+//#include "CSSStream.h"
+
+namespace System
+{
+namespace Web
+{
+
+	/*
+int MediaQuery::FinalConstruct()
+{
+	return 0;
+}
+
+void MediaQuery::FinalRelease()
+{
+}
+*/
+
+void MediaQuery::UpdateCSSText()
+{
+}
+
+void MediaQuery::ParseCSSText()
+{
+	ASSERT(0);
+#if 0
+
+	//CSSStream* stream = NULL;
+
+	if (m_mediaText == NULL)//->Length() == 0)
+		return;
+
+	TRY
+	{
+		CSSStream stream(m_mediaText);
+
+		stream.SkipSpaces();
+
+		String ident = stream.GetID();
+
+		stream.SkipSpaces();
+
+		if (ident == L"only" ||
+			ident == L"not")
+		{
+			m_prefix = ident;
+			m_mediaType = stream.GetID();
+		}
+		else
+		{
+			m_prefix = NULL;
+			m_mediaType = ident;
+		}
+
+	// Expressions
+		while (!stream.eof())
+		{
+		}
+	}
+	CATCH (Exception* e)
+	{
+	//	TRACE("Error parsing css media query: %S\n", p);
+		TRACE("Error parsing css media query\n");
+	}
+#endif
+	//delete stream;
+}
+
+/*
+const sysstring& MediaQuery::GetTextRef()
+{
+}
+*/
+String MediaQuery::get_text()
+{
+	if (!m_bTextUpdated)
+	{
+		UpdateCSSText();
+		m_bTextUpdated = true;
+	}
+
+	return m_mediaText;
+}
+
+void MediaQuery::set_text(StringIn newVal)
+{
+	m_mediaText = newVal;
+	m_bTextUpdated = true;
+
+	ParseCSSText();
+}
+
+String MediaQuery::get_prefix()
+{
+	return m_prefix;
+}
+
+void MediaQuery::set_prefix(StringIn newVal)
+{
+	m_prefix = newVal;
+	m_bTextUpdated = false;
+}
+
+String MediaQuery::get_mediaType()
+{
+	return m_mediaType;
+}
+
+void MediaQuery::set_mediaType(StringIn newVal)
+{
+	m_mediaType = newVal;
+	m_bTextUpdated = false;
+}
+
+uint MediaQuery::get_numberOfExpressions() const
+{
+	return 0;
+}
+
+#if 0
+STDMETHODIMP MediaQuery::getExpression(/*[in]*/ long index, /*[out,retval]*/ ILMediaExpression* *pVal)
+{
+	return E_NOTIMPL;
+}
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+// MediaList
+
+/*
+int MediaList::FinalConstruct()
+{
+	return 0;
+}
+
+void MediaList::FinalRelease()
+{
+	for (int i = 0; i < m_items.GetSize(); i++)
+	{
+//		m_items[i]->Release();
+	}
+	m_items.RemoveAll();
+}
+*/
+
+void MediaList::UpdateCSSText()
+{
+	ASSERT(0);
+#if 0
+
+	m_mediaText = OLESTR("");
+
+	for (int i = 0; i < m_items.GetSize(); i++)
+	{
+		if (i > 0) m_mediaText += OLESTR(",");
+		m_mediaText += m_items[i]->GetTextRef();
+	}
+#endif
+}
+
+void MediaList::ParseCSSText()
+{
+	for (size_t i = 0; i < m_items.GetSize(); i++)
+	{
+//		m_items[i]->Release();
+	}
+	m_items.RemoveAll();
+
+	//CSSStream* stream = NULL;
+
+	if (m_mediaText == nullptr)//->Length() == 0)
+		return;
+
+	ASSERT(0);
+#if 0
+
+	TRY
+	{
+		CSSStream stream(m_mediaText);
+
+		stream.getnextc();
+		stream.SkipSpaces();
+
+		while (!stream.eof())
+		{
+			String query = stream.GetID();
+
+			MediaQuery* pQuery = new MediaQuery;
+			pQuery->set_text(query);
+			m_items.Add(pQuery);
+
+			stream.SkipSpaces();
+
+			if (stream.m_c != L',')
+			{
+				break;
+			}
+			stream.getnextc();
+		}
+	}
+	CATCH (Exception* e)
+	{
+	//	TRACE("ERROR Parsing Stylesheet: %S\n", p);
+		TRACE("ERROR Parsing Stylesheet\n");
+#if 0
+		MessageBox(NULL, p, "CSS", MB_OK);
+#endif
+	}
+#endif
+
+	//delete stream;
+}
+
+String MediaList::get_mediaText()
+{
+	if (!m_bTextUpdated)
+	{
+		UpdateCSSText();
+		m_bTextUpdated = true;
+	}
+
+	return m_mediaText;
+}
+
+void MediaList::set_mediaText(StringIn newVal)
+{
+	m_mediaText = newVal;
+
+	ParseCSSText();
+	m_bTextUpdated = true;
+}
+
+unsigned int MediaList::get_length() const
+{
+	return m_items.GetSize();
+}
+
+MediaQuery* MediaList::item(unsigned int index)
+{
+#if 0
+	ASSERT(pVal != NULL);
+	if (pVal == NULL) return E_POINTER;
+	if (index >= 0 && index < m_items.GetSize())
+	{
+		*pVal = m_items[index].m_T.Copy();
+	}
+	else
+		*pVal = NULL;
+#endif
+
+	return NULL;
+}
+
+void MediaList::deleteMedium(StringIn oldMedium)
+{
+	ASSERT(0);
+}
+
+void MediaList::appendMedium(StringIn newMedium)
+{
+	ASSERT(0);	// TODO
+#if 0
+	m_items.Add(CComBSTR(newMedium));
+	m_bTextUpdated = false;
+#endif
+}
+
+}	// Web
+}

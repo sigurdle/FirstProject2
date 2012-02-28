@@ -1,0 +1,1872 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+#include "physics.h"
+
+namespace System
+{
+namespace Gui
+{
+
+D2D1_POINT_2F cnv(gm::PointF point)
+{
+	D2D1_POINT_2F p;
+	p.x = point.X;
+	p.y = point.Y;
+	return p;
+}
+
+gm::PointF cnv(D2D1_POINT_2F point)
+{
+	return gm::PointF(point.x, point.y);
+}
+
+	/*
+ID3D10Effect* Direct10::s_effect;
+ID3D10EffectTechnique* Direct10::s_RenderTextureTechnique;
+ID3D10EffectTechnique* Direct10::s_RenderTextureMaskTechnique;
+ID3D10EffectMatrixVariable* Direct10::s_modelViewProjectionVariable;
+ID3D10EffectShaderResourceVariable* Direct10::s_texture0Variable;
+ID3D10EffectMatrixVariable* Direct10::s_textureMatrix0Variable;
+
+ID3D10InputLayout* Direct10::s_vertexLayout0;
+ID3D10InputLayout* Direct10::s_vertexLayout1;
+ID3D10InputLayout* Direct10::s_vertexLayout2;
+*/
+	/*
+void Bitmap::Create(int width, int height)
+{
+	// Create the render target texture
+	D3D10_TEXTURE2D_DESC desc;
+	ZeroMemory(&desc, sizeof(desc));
+	desc.Width = width;
+	desc.Height = height;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+//	desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.Usage = D3D10_USAGE_DEFAULT;
+	desc.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
+
+	ID3D10Texture2D *pRenderTarget = NULL;
+	PlatformWindow::get_D3D10Device()->CreateTexture2D(&desc, NULL, &pRenderTarget);
+}
+*/
+
+IMP_DEPENDENCY_PROPERTY(UIElement*, Visual, Parent, NULL/*, new PropertyMetadata(true)*/)
+IMP_DEPENDENCY_PROPERTY(UIElement*, Visual, LogicalParent, NULL/*, new PropertyMetadata(true)*/)
+IMP_DEPENDENCY_PROPERTY(Window*, Visual, ParentWindow, NULL/*, new PropertyMetadata(true)*/)
+IMP_DEPENDENCY_PROPERTY1(Transform*, Visual, Transform, NULL, new PropertyMetadata(true))
+IMP_DEPENDENCY_PROPERTY(Geometry*, Visual, VisibleGeometry, NULL/*, new PropertyMetadata(true)*/)
+IMP_DEPENDENCY_PROPERTY(Geometry*, Visual, HitGeometry, NULL/*, new PropertyMetadata(true)*/)
+IMP_DEPENDENCY_PROPERTY(float, Visual, Opacity, 1.0f)
+IMP_DEPENDENCY_PROPERTY1(Brush*, Visual, OpacityMask, NULL, new PropertyMetadata(true))
+IMP_DEPENDENCY_PROPERTY1(Geometry*, Visual, Clip, NULL, new PropertyMetadata(true))
+IMP_DEPENDENCY_PROPERTY(bool, Visual, Antialias, true)
+IMP_DEPENDENCY_PROPERTY(int, Visual, ChildPosition, -1)
+
+IMP_DEPENDENCY_PROPERTY(UIElement*, Visual, TemplatedOwner, NULL/*, new PropertyMetadata()*/);
+
+DependencyClass* Visual::get_Class()
+{
+	static DependencyClass depclass(typeid(thisClass), baseClass::get_Class());
+
+	static DependencyProperty* properties[] =
+	{
+		get_TemplatedOwnerProperty(),
+
+		get_ParentProperty(),
+		get_LogicalParentProperty(),
+		get_ParentWindowProperty(),
+		get_TransformProperty(),
+		get_VisibleGeometryProperty(),
+		get_HitGeometryProperty(),
+		get_OpacityProperty(),
+		get_OpacityMaskProperty(),
+		get_ClipProperty(),
+		get_AntialiasProperty(),
+		get_ChildPositionProperty(),
+	};
+
+	return &depclass;
+}
+
+Visual::Visual(DependencyClass* depClass) : Element(depClass)
+{
+}
+
+size_t Visual::GetChildrenCount()
+{
+	return 0;
+}
+
+Visual* Visual::GetChild(size_t index)
+{
+	raise(ArgumentOutOfRangeException());
+}
+
+void Visual::OnComputedPropertyValueChanged(PropertyValue* pPropertyVal, bool handled)
+{
+	/*
+	if (pPropertyVal->m_dp == get_ParentWindowProperty())
+	{
+	}
+	*/
+
+	IRootVisual* root = GetRoot();
+
+	if (root)
+	{
+		root->InvalidateRender();
+	}
+
+	baseClass::OnComputedPropertyValueChanged(pPropertyVal, handled);
+}
+
+Point Visual::WindowToElement(float ScreenX, float ScreenY)
+{
+	return Point(ScreenX, ScreenY);
+}
+
+geometry Visual::MakeVisibleGeometry(geometry clip)
+{
+	clip &= geometry(get_Clip());
+
+	geometry geom = GetHitGeometry();
+	clip &= geom;
+
+	int nchildren = GetChildrenCount();
+	for (int i = nchildren-1; i >= 0; --i)
+	{
+		Visual* child = GetChild(i);
+
+		geometry geom2 = child->MakeVisibleGeometry(clip);
+
+		clip |= geom2;
+	}
+
+	set_VisibleGeometry(clip);
+	return clip;
+}
+
+bool Visual::IsDescendantOf(Visual* pVisual)
+{
+	UIElement* pParent = get_Parent();
+
+	if (pParent == NULL)
+		return false;
+
+	if (pParent == pVisual)
+		return true;
+
+	return pParent->IsDescendantOf(pVisual);
+}
+
+bool Visual::IsAscendantOf(Visual* pVisual)
+{
+	if (pVisual == NULL) return false;
+	return pVisual->IsDescendantOf(this);
+}
+
+#if 0
+void Visual::RenderToTarget(GL::RenderTarget* rt, ID3D10Texture2D* tempTexture, ID3D10RenderTargetView* tempRenderTargetView, int scaledWidth, int scaledHeight, float scaleX, float scaleY)
+{
+	/*
+	GL::RenderTarget rt2;
+	rt2.m_gi = gi;
+	rt2.m_d3d10 = dynamic_cast<LDraw::Direct3D10_I*>(gi);
+	rt2.m_opengl = dynamic_cast<LDraw::OpenGL_I*>(gi);
+	*/
+
+	/*
+	IDXGISurface* dxgiSurface;
+	m_rt->m_renderTargetTexture->QueryInterface(__uuidof(IDXGISurface), reinterpret_cast<void**>(&dxgiSurface));
+	ASSERT(dxgiSurface);
+
+	GL::RenderTargetStoreState state;
+	rt->BeginDraw(&state);
+
+//	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f }; // RGBA
+//	rt->ClearRenderTargetView(tempRenderTargetView, ClearColor);
+*/
+
+	D3D10_VIEWPORT vp;
+	vp.Width = scaledWidth;
+	vp.Height = scaledHeight;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	rt->m_d3d10->m_device->RSSetViewports(1, &vp);
+
+//	ID2D1RenderTarget* oldSpRT = rt2.m_d3d10->m_spRT;
+//	rt->m_d3d10->m_spRT = NULL;
+
+	{
+		Gui::ImmediateRenderContext rcontext(rt);
+		rcontext.m_rt->m_projection = LDraw::matrix4f::getOrtho2D(0, scaledWidth, scaledHeight, 0);
+		rcontext.m_rt->m_modelView = LDraw::matrix4f::getIdentity();
+
+#if 0
+		if (GL::Direct10::get_D3DDevice1())
+		{
+			HRESULT hr = GL::Direct10::get_D2DFactory()->CreateDxgiSurfaceRenderTarget(dxgiSurface, 
+				D2D1::RenderTargetProperties(
+					D2D1_RENDER_TARGET_TYPE_HARDWARE,//D2D1_RENDER_TARGET_TYPE_DEFAULT,
+					D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM/*DXGI_FORMAT_UNKNOWN*/, D2D1_ALPHA_MODE_PREMULTIPLIED), 96, 96),
+				&rcontext.m_rt->m_spRT);
+			ASSERT(SUCCEEDED(hr));
+		}
+
+		if (rcontext.GetRT()->m_spRT)
+		{
+			rcontext.GetRT()->m_spRT->BeginDraw();
+		}
+#endif
+
+		D2D1_MATRIX_3X2_F transform =
+		{
+			1, 0,
+			0, 1,
+			-0, -0
+		//	-m_expandedBBox.X, -m_expandedBBox.Y
+		};
+		if (rcontext.GetRT()->m_spRT)
+		{
+			rcontext.GetRT()->m_spRT->SetTransform(transform);
+		}
+
+	//	Render_(NULL/*pC*/, outImage, &rcontext, m_scaleX, m_scaleY, false, false);
+		Render_(&rcontext);
+
+		if (rcontext.GetRT()->m_spRT)
+		{
+			rcontext.GetRT()->m_spRT->EndDraw();
+			rcontext.GetRT()->m_spRT->Flush();	// TODO, not
+		//	rcontext.GetRT()->m_d3d10->m_spRT->Release();
+		}
+	}
+
+//	rt2.m_spRT = oldSpRT;
+
+	dxgiSurface->Release();
+}
+#endif
+
+Graphics::Bitmap* Visual::GetBitmap(Graphics::RenderTarget* rt, int scaledWidth, int scaledHeight, float scaleX, float scaleY)
+{
+	ID3D10Device* device;
+	if (rt)
+		device = rt->m_d3d10->m_device;
+	else
+		device = Graphics::Direct10::get_D3DDevice();
+
+	/*
+	ID3D10Texture2D* tempTexture = NULL;
+	ID3D10ShaderResourceView* tempShaderResourceView = NULL;
+	ID3D10RenderTargetView* tempRenderTargetView = NULL;
+
+	// Create the render target texture and view
+	D3D10_TEXTURE2D_DESC desc;
+	ZeroMemory(&desc, sizeof(desc));
+	desc.Width = scaledWidth;
+	desc.Height = scaledHeight;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.Usage = D3D10_USAGE_DEFAULT;
+	desc.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE;
+
+	device->CreateTexture2D(&desc, NULL, &tempTexture);
+
+	D3D10_RENDER_TARGET_VIEW_DESC rtDesc;
+	rtDesc.Format = desc.Format;
+	rtDesc.ViewDimension = D3D10_RTV_DIMENSION_TEXTURE2D;
+	rtDesc.Texture2D.MipSlice = 0;
+	device->CreateRenderTargetView(tempTexture, &rtDesc, &tempRenderTargetView);
+
+	D3D10_SHADER_RESOURCE_VIEW_DESC srDesc;
+	srDesc.Format = desc.Format;
+	srDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
+	srDesc.Texture2D.MostDetailedMip = 0;
+	srDesc.Texture2D.MipLevels = 1;
+	device->CreateShaderResourceView(tempTexture, &srDesc, &tempShaderResourceView);
+
+	LDraw::Bitmap* outImage = new LDraw::Bitmap(scaledWidth, scaledHeight, 0, LDraw::PixelFormat_t::RGBAP_32, NULL);
+	outImage->m_d3d10_texture = tempTexture;
+	outImage->m_d3d10_texture->AddRef();
+
+	outImage->m_d3d10_renderTargetView = tempRenderTargetView;
+	outImage->m_d3d10_renderTargetView->AddRef();
+
+	outImage->m_d3d10_shaderResourceView = tempShaderResourceView;
+	outImage->m_d3d10_shaderResourceView->AddRef();
+
+//	RenderToTarget(&GL::RenderTarget(rt->m_gi), tempTexture, tempRenderTargetView, scaledWidth, scaledHeight, scaleX, scaleY);
+
+	GL::RenderTarget rt2(rt->m_gi, tempTexture, tempRenderTargetView);
+*/
+
+	Graphics::D3D10Texture2D texture(device, scaledWidth, scaledHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
+	Graphics::Bitmap* outImage = new Graphics::Bitmap(device, texture);
+	//scaledWidth, scaledHeight, 0, LDraw::PixelFormat_t::RGBAP_32, NULL);
+
+	Graphics::RenderTarget rt2(Graphics::Direct3D10_I::GetCurrent(), outImage->m_d3d10_texture, outImage->GetD3D10RenderTargetView());
+
+	Graphics::RenderTargetStoreState state;
+	rt2.BeginDraw(&state);
+
+	Gui::ImmediateRenderContext rcontext(&rt2);
+	Render_(&rcontext);
+
+	rt2.EndDraw(&state);
+//	rt2.m_spRT->Flush();
+	if (rt2.m_spRT) rt2.m_spRT->Release();
+
+	/*
+	tempRenderTargetView->Release();
+	tempTexture->Release();
+	tempShaderResourceView->Release();
+	*/
+
+	return outImage;
+#if 0
+	LDraw::Bitmap* outImage = new LDraw::Bitmap(m_scaledWidth, m_scaledHeight, 0, LDraw::PixelFormat_t::RGBAP_32, NULL);
+
+	LDraw::Direct3D9_I* pD3D9 = dynamic_cast<LDraw::Direct3D9_I*>(pO->m_device);
+
+	HRESULT hr;
+
+	IDirect3DTexture9* pTexture = NULL;
+	IDirect3DSurface9* pTextureSurface = NULL;
+	IDirect3DSurface9* pMultiSampleSurface = NULL;
+	IDirect3DSurface9* pRenderTargetSurface = NULL;
+
+	hr = pD3D9->m_d3dDevice->CreateTexture(m_scaledWidth, m_scaledHeight, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &pTexture, NULL);
+//	pD3D9->m_d3dDevice->CreateTexture(m_scaledWidth, m_scaledHeight, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8, D3DPOOL_DEFAULT, &pTexture, NULL);
+	ASSERT(pTexture);
+	pTexture->GetSurfaceLevel(0, &pTextureSurface);
+
+	outImage->m_texture = LDraw::Texture(pO->m_device, pTexture);
+
+	D3DMULTISAMPLE_TYPE MultiSample = D3DMULTISAMPLE_4_SAMPLES;
+//	D3DMULTISAMPLE_TYPE MultiSample = D3DMULTISAMPLE_NONMASKABLE;
+	int quality = 0;
+
+	if (MultiSample == D3DMULTISAMPLE_NONE)	// Create texture directly as RenderTarget
+	{
+		pRenderTargetSurface = pTextureSurface;
+	}
+	else	 // Create multisample RenderTarget
+	{
+		hr = pD3D9->m_d3dDevice->CreateRenderTarget(m_scaledWidth, m_scaledHeight, D3DFMT_A8R8G8B8, MultiSample, quality, FALSE/*lockable*/, &pMultiSampleSurface, NULL);
+		ASSERT(pMultiSampleSurface);
+
+		pRenderTargetSurface = pMultiSampleSurface;
+	}
+
+	IDirect3DSurface9* pOldRenderTarget;
+	pD3D9->m_d3dDevice->GetRenderTarget(0, &pOldRenderTarget);
+
+	pD3D9->m_d3dDevice->SetRenderTarget(0, pRenderTargetSurface);
+
+	pD3D9->m_d3dDevice->Clear(0, NULL, D3DCLEAR_TARGET, 0x00000000, 0, 0);
+
+//	LDraw::Direct3D9_I* device2 = new LDraw::Direct3D9_I(m_d3dDevice);
+//	m_pGraphicsO->m_device = device2;
+
+	if (true)
+	{
+		LDraw::Commands* commands = new LDraw::Commands;
+		LDraw::GraphicsMetafile* pMetafile = new LDraw::GraphicsMetafile(pO->m_device, pO->m_bufferData, commands);
+		UI::Graphics graphics(pMetafile);
+
+		CHTMRenderContext rcontext;
+		rcontext.m_clip = LDraw::RectF(0, 0, /*m_pReferencingElement->*/m_filterRect.Width, /*m_pReferencingElement->*/m_filterRect.Height);
+		/*m_pReferencingElement->*/Render4(&rcontext, outImage, &graphics, m_scaleX, m_scaleY, false, false);
+
+		pD3D9->SetMatrixMode(GL_PROJECTION);
+		pD3D9->PushMatrix();
+		pD3D9->SetTransform(LDraw::matrix4f::getOrtho(0, m_scaledWidth, m_scaledHeight, 0, -1/*zNear*/, 1/*zFar*/));
+
+		pD3D9->SetMatrixMode(GL_MODELVIEW);
+		pD3D9->PushMatrix();
+		pD3D9->IdentityTransform();
+
+		pO->PushTransform();
+	//	pO->SetTransform(LDraw::Matrix3f::GetIdentity());
+		pO->SetTransform(LDraw::Matrix3f::GetTranslate(-m_expandedBBox.X, -m_expandedBBox.Y));
+
+	//	pD3D9->m_d3dDevice->BeginScene();
+		pO->RenderCommands(commands);
+	//	pD3D9->m_d3dDevice->EndScene();
+
+		pO->PopTransform();
+
+		pD3D9->SetMatrixMode(GL_PROJECTION);
+		pD3D9->PopMatrix();
+		pD3D9->SetMatrixMode(GL_MODELVIEW);
+		pD3D9->PopMatrix();
+	}
+	else
+	{
+	//	Direct3D9_I
+		LDraw::BufferData* bufferData = new LDraw::BufferData;
+		LDraw::Direct3D9_I* device2 = new LDraw::Direct3D9_I(pD3D9->m_d3dDevice);
+
+		LDraw::Commands* commands = new LDraw::Commands;
+		LDraw::GraphicsMetafile* pMetafile = new LDraw::GraphicsMetafile(device2, bufferData, commands);
+		UI::Graphics graphics(pMetafile);
+
+		CHTMRenderContext rcontext;
+		rcontext.m_clip = LDraw::RectF(0, 0, /*m_pReferencingElement->*/m_filterRect.Width, /*m_pReferencingElement->*/m_filterRect.Height);
+		/*m_pReferencingElement->*/Render4(&rcontext, outImage, &graphics, m_scaleX, m_scaleY, false, false);
+
+		LDraw::GraphicsO gO;
+		
+		gO.m_res = pO->m_res;
+		/*
+		gO.m_d3d9_effect = pO->m_d3d9_effect;
+		gO.m_d3d9_technique0 = pO->m_d3d9_technique0;
+		gO.m_d3d9_technique1 = pO->m_d3d9_technique1;
+		gO.m_d3d9_technique2 = pO->m_d3d9_technique2;
+		gO.m_d3d9_technique4 = pO->m_d3d9_technique4;
+
+		gO.m_vertexDeclaration0 = pO->m_vertexDeclaration0;
+		gO.m_vertexDeclaration1 = pO->m_vertexDeclaration1;
+
+		gO.m_d3d9_modelViewVariable = pO->m_d3d9_modelViewVariable;
+		gO.m_d3d9_projectionVariable = pO->m_d3d9_projectionVariable;
+		gO.m_d3d9_modelViewProjectionVariable = pO->m_d3d9_modelViewProjectionVariable;
+		gO.m_d3d9_textureMatrix0Variable = pO->m_d3d9_textureMatrix0Variable;
+		gO.m_d3d9_solidColorVariable = pO->m_d3d9_solidColorVariable;
+		gO.m_d3d9_texture0Variable = pO->m_d3d9_texture0Variable;
+		*/
+
+		gO.m_device = device2;
+		gO.m_bufferData = bufferData;
+
+		pD3D9->SetMatrixMode(GL_PROJECTION);
+		pD3D9->PushMatrix();
+		pD3D9->SetTransform(LDraw::matrix4f::getOrtho(0, m_scaledWidth, m_scaledHeight, 0, -1/*zNear*/, 1/*zFar*/));
+
+		pD3D9->SetMatrixMode(GL_MODELVIEW);
+		pD3D9->PushMatrix();
+		pD3D9->IdentityTransform();
+
+		device2->SetMatrixMode(GL_PROJECTION);
+		device2->SetTransform(LDraw::matrix4f::getOrtho(0, m_scaledWidth, m_scaledHeight, 0, -1/*zNear*/, 1/*zFar*/));
+		device2->SetMatrixMode(GL_MODELVIEW);
+		device2->IdentityTransform();
+
+	//	pD3D9->m_d3dDevice->BeginScene();
+		gO.RenderCommands(commands);
+	//	pD3D9->m_d3dDevice->EndScene();
+
+		pD3D9->SetMatrixMode(GL_PROJECTION);
+		pD3D9->PopMatrix();
+		pD3D9->SetMatrixMode(GL_MODELVIEW);
+		pD3D9->PopMatrix();
+	}
+
+	pD3D9->m_d3dDevice->SetRenderTarget(0, pOldRenderTarget);
+
+	if (pMultiSampleSurface)
+	{
+		HRESULT hr;
+		hr = pD3D9->m_d3dDevice->StretchRect(pMultiSampleSurface, NULL, pTextureSurface, NULL, D3DTEXF_POINT);
+		ASSERT(SUCCEEDED(hr));
+
+		pMultiSampleSurface->Release();
+	}
+
+	pTextureSurface->Release();
+
+	return outImage;
+#endif
+}
+
+D2D1_MATRIX_3X2_F Visual::get_TransformMatrix()
+{
+	return m_transformMatrix;
+}
+
+D2D1_MATRIX_3X2_F Visual::get_TransformToWindowMatrix()
+{
+	return m_transformToWindowMatrix;
+}
+
+void Visual::InvalidateVisual()
+{
+	if (m_visuals)
+	{
+	//	m_visuals->m_items.clear();
+		if (m_visuals->get_Children())
+		{
+			m_visuals->get_Children()->m_items.clear();
+		}
+	}
+
+	m_visualValid = false;
+//	m_visual = NULL;
+
+	IRootVisual* root = GetRoot();
+	if (root)
+	{
+		root->InvalidateRender();
+	}
+}
+
+Visual* Visual::FindElement(StringIn id)
+{
+	if (get_ID() == id)
+	{
+		return this;
+	}
+
+	uint nchildren = GetChildrenCount();
+
+	for (uint i = 0; i < nchildren; ++i)
+	{
+		Visual* visual = GetChild(i);
+		Visual* element = visual->FindElement(id);
+		if (element)
+			return element;
+	}
+
+	return NULL;
+}
+
+void Visual::Render_(ManagedRenderContext renderContext)
+{
+	Transform* pTransform = get_Transform();
+	if (pTransform)
+	{
+		renderContext.PushTransform(pTransform);
+	}
+
+	bool antialias = get_Antialias();
+	renderContext.m_p->SetAntialiasPerPrimitive(antialias);
+
+	Brush* opacityBrush = get_OpacityMask();
+	Geometry* clip = get_Clip();
+	if (opacityBrush != NULL || clip != NULL)
+//	if (false)
+	{
+		ID2D1Layer *pLayer = NULL;
+		if (renderContext.m_p->GetRT()->m_spRT)
+		{
+			HRESULT hr = renderContext.m_p->GetRT()->m_spRT->CreateLayer(NULL, &pLayer);
+			ASSERT(SUCCEEDED(hr));
+
+			D2D1_LAYER_PARAMETERS layer_params;
+			layer_params.contentBounds = D2D1::InfiniteRect();
+
+			if (clip)
+				layer_params.geometricMask = clip->GetD2DGeometry();
+			else
+				layer_params.geometricMask = NULL;
+
+			if (opacityBrush)
+				layer_params.opacityBrush = opacityBrush->Create(renderContext.m_p, this);
+			else
+				layer_params.opacityBrush = NULL;
+
+			layer_params.maskAntialiasMode = D2D1_ANTIALIAS_MODE_PER_PRIMITIVE;
+			layer_params.maskTransform = D2D1::Matrix3x2F::Identity();
+			layer_params.opacity = get_Opacity();
+		//	layer_params.layerOptions = D2D1_LAYER_OPTIONS_INITIALIZE_FOR_CLEARTYPE;
+			layer_params.layerOptions = D2D1_LAYER_OPTIONS_NONE;
+
+			renderContext.m_p->GetRT()->m_spRT->PushLayer(layer_params, pLayer);
+		}
+
+	//	LDraw::Bitmap* offscreenBitmap = GetBitmap(renderContext.m_p->GetRT(), 400, 400, 1, 1);
+
+		Render(renderContext);
+
+	//	delete offscreenBitmap;
+
+		if (renderContext.m_p->GetRT()->m_spRT)
+		{
+			renderContext.m_p->GetRT()->m_spRT->PopLayer();
+
+			pLayer->Release();
+		}
+	}
+	else
+	{
+		if (m_effect)
+		{
+			gm::RectF destRect(0, 0, 400, 400);
+
+			m_effect->m_root->Render(renderContext.m_p, destRect, gm::matrix4f::getIdentity(), gm::matrix4f::getOrtho2D(0, 400, 400, 0));
+		}
+		else
+		{
+			Render(renderContext);
+		}
+	}
+
+	if (pTransform)
+	{
+		renderContext.Pop();
+	}
+}
+
+UIElement* Visual::HitTest_(gm::PointF point)
+{
+	Transform* transform = get_Transform();
+
+	if (transform)
+	{
+		point = transform->InverseTransformPoint(point);
+	}
+
+	return HitTest(point);
+}
+
+void VisualInstance::Render(ManagedRenderContext renderContext)
+{
+	m_visual->SetRoot(GetRoot());
+	renderContext.m_p->DrawVisual(m_visual);
+}
+
+/*
+D2D1_MATRIX_3X2_F Visual::get_TransformToVisualMatrix(Visual* visual)
+{
+	re
+}
+*/
+
+/*
+Visual* Visual::GetParent()
+{
+	return m_parent;
+}
+
+void Visual::SetParent(Visual* parent)
+{
+	OnSetParent(parent);
+	m_parent = parent;
+}
+*/
+
+/*
+void Visual::SetParent(Visual* parent)
+{
+	if (GetRoot() != parent->GetRoot())
+	{
+		SetRoot(parent->GetRoot());
+	}
+}
+*/
+
+// virtual
+void Visual::OnSetParent(Visual* parent)
+{
+}
+
+/*
+IRootVisual* Visual::GetRoot()
+{
+	return m_root;
+}
+
+void Visual::SetRoot(IRootVisual* root)
+{
+	if (m_root != root)
+	{
+		OnSetRoot(root);
+
+		m_root = root;
+	}
+}
+*/
+
+void Visual::AddChild(Visual* child)
+{
+	ASSERT(0);
+	/*
+	Visual* prevParent = child->GetParent();
+	if (prevParent)
+	{
+		prevParent->RemoveChild(child);
+	}
+
+	child->SetParent(this);
+	m_children.push_back(child);
+	*/
+}
+
+void Visual::RemoveChild(Visual* child)
+{
+	ASSERT(0);
+
+	/*
+	if (child->GetParent() != this)
+		throw new Exception(WSTR("not a child"));
+
+	child->SetParent(NULL);
+	m_children.erase(m_children.find(child));
+	*/
+}
+
+void Visual::RenderRetained(ManagedRetainedRenderContext renderContext)
+{
+	ASSERT(0);
+}
+
+
+/*
+Object* TemplatedOwnerExpression::Evaluate(Expressive::EvalContext* context)
+{
+	return context->m_templatedOwner;
+}
+
+void TemplatedOwnerExpression::TraceCallback(Expressive::EvalContext* context, Expressive::ExpTrace& trace, Expressive::ITraceCallback* callback)
+{
+	TRACE("TemplatedOwner");
+}
+*/
+
+/*
+PropertyBinding::PropertyBinding(PropertyValue* upStreamProperty) : m_upStreamProperty(upStreamProperty)
+{
+}
+*/
+
+/*
+void PropertyValue::Set(Object* value)
+{
+	list<Binding*>::iterator it = m_outBindings.begin();
+	while (it != m_outBindings.end())
+	{
+		Binding* binding = *it;
+		++it;
+
+		binding->set(value);
+	}
+}
+*/
+
+/*
+Object* ObjectTemplate::Evaluate(Expressive::EvalContext* context)
+{
+	ASSERT(0);
+	//return Create(context->m_templateOwner);
+	return NULL;
+}
+*/
+
+tSetPropertyGroup tSetProperty::operator, (tSetProperty prop)
+{
+	tSetPropertyGroup group(new SetPropertyGroup());
+	group.m_p->m_items.push_back(m_p);
+	group.m_p->m_items.push_back(prop.m_p);
+	return group;
+}
+
+// static
+Expressive::Expression* get_Width()
+{
+	return NULL;
+}
+
+// static
+Expressive::Expression* get_Height()
+{
+	return NULL;
+}
+
+BitmapShape::BitmapShape()
+{
+	m_d3d10_VertexBuffer = NULL;
+	m_bitmap = NULL;
+}
+
+void BitmapShape::Create(Graphics::RenderTarget* rt, Graphics::Bitmap* bitmap, gm::RectF dstRect, gm::RectF srcRect)
+{
+	m_bitmap = bitmap;
+
+	// Create vertex buffer
+	Graphics::VERTEX_XYZ_T2 vertices[4] =
+	{
+		// front
+		gm::vector3f(dstRect.GetLeft(), dstRect.GetTop(), 0), gm::vector2f(0, 0),
+		gm::vector3f(dstRect.GetRight(), dstRect.GetTop(), 0), gm::vector2f(1, 0),
+		gm::vector3f(dstRect.GetLeft(), dstRect.GetBottom(), 0), gm::vector2f(0, 1),
+		gm::vector3f(dstRect.GetRight(), dstRect.GetBottom(), 0), gm::vector2f(1, 1),
+	};
+
+	ASSERT(m_d3d10_VertexBuffer == NULL);
+
+	D3D10_BUFFER_DESC bd;
+	bd.Usage = D3D10_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(vertices);
+	bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	bd.MiscFlags = 0;
+	D3D10_SUBRESOURCE_DATA InitData;
+	InitData.pSysMem = vertices;
+	rt->m_d3d10->m_device->CreateBuffer(&bd, &InitData, &m_d3d10_VertexBuffer);
+}
+
+bool BitmapShape::IsValid(ImmediateRenderContext* renderContext)
+{
+	return m_d3d10_VertexBuffer != NULL;
+}
+
+void BitmapShape::Draw(ImmediateRenderContext* renderContext)
+{
+	if (m_bitmap->m_d3d10_shaderResourceView == NULL)
+		return;
+
+	ASSERT(m_bitmap->m_d3d10_shaderResourceView);
+
+	renderContext->GetRT()->m_d3d10->m_device->IASetInputLayout(Graphics::Direct10::s.m_vertexLayout0);
+
+	UINT stride = sizeof(Graphics::VERTEX_XYZ_T2);
+	UINT offset = 0;
+	renderContext->GetRT()->m_d3d10->m_device->IASetVertexBuffers(0, 1, &m_d3d10_VertexBuffer, &stride, &offset);
+	renderContext->GetRT()->m_d3d10->m_device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+	/*
+	LDraw::matrix4f xform =
+		LDraw::matrix4f::getTranslate(dstRect.X, dstRect.Y, 0) *
+		LDraw::matrix4f::getScale(dstRect.Width, dstRect.Height, 1);
+*/
+//	GL::Direct10::s.m_modelViewVariable->SetMatrix(renderContext->modelViewMatrix());
+	Graphics::Direct10::s.m_modelViewProjectionVariable->SetMatrix(renderContext->modelViewProjectionMatrix());
+
+//	LDraw::matrix4f textureMatrix = LDraw::matrix4f::getIdentity();
+	/*
+		LDraw::matrix4f::getTranslate(-srcRect.X, -srcRect.Y) *
+		LDraw::matrix4f::getScale(srcRect.Width / bitmap->GetWidth(), srcRect.Height / bitmap->GetHeight());
+*/
+
+	Graphics::Direct10::s.m_texture0Variable->SetResource(m_bitmap->m_d3d10_shaderResourceView);
+
+	Graphics::Direct10::s.m_textureMatrix0Variable->SetMatrix((float*)gm::matrix4f::getIdentity());
+
+#if 0
+	if (args)
+	{
+		m_colorTransformVariable->SetMatrix((float*)args->m_colorTransform.m_transform);
+		m_colorTranslateVariable->SetFloatVector((float*)args->m_colorTransform.m_translate);
+
+		D3D10_TECHNIQUE_DESC techDesc;
+		HRESULT hr = m_RenderTextureColorMatrixTechnique->GetDesc(&techDesc);
+
+		for (UINT p = 0; p < techDesc.Passes; ++p)
+		{
+			m_RenderTextureColorMatrixTechnique->GetPassByIndex(p)->Apply(0);
+
+			rt->m_d3d10->m_device->Draw(
+				4, // VertexCount
+				0 // StartVertexLocation
+				);
+		}
+	}
+	else
+#endif
+	{
+		D3DX10_TECHNIQUE_DESC techDesc;
+		Graphics::Direct10::s.m_RenderTextureTechnique->GetDesc(&techDesc);
+
+		for (UINT p = 0; p < techDesc.Passes; ++p)
+		{
+			Graphics::Direct10::s.m_RenderTextureTechnique->GetPassByIndex(p)->Apply(0);
+
+			renderContext->GetRT()->m_d3d10->m_deviceContext->Draw(
+				4, // VertexCount
+				0 // StartVertexLocation
+				);
+		}
+	}
+}
+
+namespace Media3D
+{
+
+//ID3D10Effect* Mesh::g_pEffect;
+
+ID3DX11Effect*                       g_pEffect10 = NULL;
+ID3D11InputLayout*                  g_pVertexLayout = NULL;
+ID3DX11EffectTechnique*              g_pNoSpecularTechnique = NULL;
+ID3DX11EffectShaderResourceVariable* g_ptxDiffuseVariable = NULL;
+
+ID3DX11EffectVectorVariable*         g_pAmbient = NULL;
+ID3DX11EffectVectorVariable*         g_pDiffuse = NULL;
+ID3DX11EffectVectorVariable*         g_pSpecular = NULL;
+ID3DX11EffectScalarVariable*         g_pOpacity = NULL;
+ID3DX11EffectScalarVariable*         g_pSpecularPower = NULL;
+ID3DX11EffectVectorVariable*         g_pLightColor = NULL;
+ID3DX11EffectVectorVariable*         g_pLightPosition = NULL;
+ID3DX11EffectVectorVariable*         g_pCameraPosition = NULL;
+ID3DX11EffectScalarVariable*         g_pTime = NULL;
+ID3DX11EffectMatrixVariable*         g_pWorld = NULL;
+ID3DX11EffectMatrixVariable*         g_pWorldViewProjection = NULL;
+
+#if 0
+void Mesh::Init()
+{
+	if (g_pEffect10 == NULL)
+	{
+		ID3D10Device* pd3dDevice = GL::Direct10::get_D3DDevice();
+
+		HRESULT hr;
+
+		ID3D10Blob* errors = NULL;
+
+		UINT hlslFlags = 0;
+		hlslFlags |= D3D10_SHADER_ENABLE_STRICTNESS;
+#ifdef _DEBUG
+		hlslFlags |= D3D10_SHADER_DEBUG;
+		hlslFlags |= D3D10_SHADER_SKIP_OPTIMIZATION;
+#endif
+
+		hr = D3DX10CreateEffectFromFile(L"../../../Shaders/MeshFromOBJ10.fx", NULL, NULL, "fx_4_0", hlslFlags, 0, pd3dDevice, NULL, NULL, &g_pEffect10, &errors, NULL);
+		if (FAILED(hr))
+		{
+			/*
+			switch (hr)
+			{
+			case D3D10_ERROR_FILE_NOT_FOUND:
+				MessageBox(NULL, L"fx file not found\n", L"Draw", MB_OK);
+				break;
+			}
+			*/
+
+			String errormsg;
+
+			if (errors)
+			{
+				int size = errors->GetBufferSize();
+				errormsg = (WCHAR*)errors->GetBufferPointer();
+				errors->Release();
+			}
+
+			raise(Exception("fx err: " + errormsg));
+		}
+
+		g_pNoSpecularTechnique = g_pEffect10->GetTechniqueByName("NoSpecular");
+
+		g_pAmbient = g_pEffect10->GetVariableByName("g_vMaterialAmbient" )->AsVector();
+		g_pDiffuse = g_pEffect10->GetVariableByName("g_vMaterialDiffuse" )->AsVector();
+		g_pSpecular = g_pEffect10->GetVariableByName("g_vMaterialSpecular" )->AsVector();
+		g_pOpacity = g_pEffect10->GetVariableByName("g_fMaterialAlpha" )->AsScalar();
+		g_pSpecularPower = g_pEffect10->GetVariableByName("g_nMaterialShininess" )->AsScalar();
+		g_pLightColor = g_pEffect10->GetVariableByName("g_vLightColor" )->AsVector();
+		g_pLightPosition = g_pEffect10->GetVariableByName("g_vLightPosition" )->AsVector();
+		g_pCameraPosition = g_pEffect10->GetVariableByName("g_vCameraPosition" )->AsVector();
+		g_pTime = g_pEffect10->GetVariableByName("g_fTime")->AsScalar();
+		g_pWorld = g_pEffect10->GetVariableByName("g_mWorld" )->AsMatrix();
+		g_pWorldViewProjection = g_pEffect10->GetVariableByName("g_mWorldViewProjection" )->AsMatrix();
+
+		// Define the input layout
+		const D3D10_INPUT_ELEMENT_DESC layout[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+		} ;
+		UINT numElements = sizeof(layout) / sizeof(layout[0]);
+
+		// Create the input layout
+		D3D10_PASS_DESC PassDesc;
+		g_pNoSpecularTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
+		pd3dDevice->CreateInputLayout(layout, numElements, PassDesc.pIAInputSignature,
+												 PassDesc.IAInputSignatureSize, &g_pVertexLayout);
+	}
+}
+#endif
+
+/*
+DependencyClass* PerspectiveCamera::get_Class()
+{
+	static DependencyClass depclass(typeid(WindowVisual), ContentControl::get_Class());
+
+	static DependencyProperty* properties[] =
+	{
+		get_EyeProperty(),
+		get_AtProperty(),
+		get_UpProperty(),
+	};
+
+	return &depclass;
+}
+*/
+
+void Mesh::Render(ManagedRenderContext renderContext)
+{
+	ASSERT(0);
+#if 0
+	ASSERT(g_pEffect10);
+
+	ID3D10Device* pd3dDevice = GL::Direct10::get_D3DDevice();
+
+	m_subsetMaterial[0]->m_pTechnique = g_pEffect10->GetTechniqueByName("NoSpecular");
+
+    pd3dDevice->IASetInputLayout(g_pVertexLayout);
+
+	UINT nAttribTableEntries;
+	m_pMesh->GetAttributeTable(NULL, &nAttribTableEntries);
+
+	D3DX10_ATTRIBUTE_RANGE* pAttribTable = (D3DX10_ATTRIBUTE_RANGE*)_alloca(sizeof(D3DX10_ATTRIBUTE_RANGE)*nAttribTableEntries);
+	m_pMesh->GetAttributeTable(pAttribTable, &nAttribTableEntries);
+
+	for (UINT iAttr = 0; iAttr < nAttribTableEntries; ++iAttr)
+	{
+		// apply effect parameters for material pAttribTable[iAttr].AttribId
+
+		Material* pMaterial = m_subsetMaterial[iAttr];
+
+		pMaterial->m_pTechnique = g_pNoSpecularTechnique;
+
+		LDraw::vector4f v(pMaterial->m_diffuseColor[0], pMaterial->m_diffuseColor[1], pMaterial->m_diffuseColor[2], 1);
+
+		g_pDiffuse->SetFloatVector(v);
+		g_pOpacity->SetFloat(pMaterial->m_alpha);
+
+		D3D10_TECHNIQUE_DESC techDesc;
+		pMaterial->m_pTechnique->GetDesc(&techDesc);
+
+		for (UINT p = 0; p < techDesc.Passes; ++p)
+		{
+			pMaterial->m_pTechnique->GetPassByIndex(p)->Apply(0);
+
+			HRESULT hr = m_pMesh->DrawSubset(iAttr);
+			ASSERT(SUCCEEDED(hr));
+		}
+	}
+
+//	renderContext.m_p->GetRT()->m_device->DrawIndexed(
+#endif
+}
+
+void MeshContainer::Render(ManagedRenderContext renderContext)
+{
+}
+
+void Document3D::AddAnimation(Animation* animation)
+{
+}
+
+////////////
+
+BoxShape::~BoxShape()
+{
+}
+
+bool BoxShape::IsValid(ImmediateRenderContext* renderContext)
+{
+	if (renderContext->GetRT()->m_opengl)
+	{
+		return m_vertexBuffer != NULL;
+	}
+	else
+	{
+		return m_d3d10_VertexBuffer[0] != NULL;
+	}
+}
+
+void BoxShape::Create(RenderContext* renderContext, gm::vector3f size)
+{
+	float rx = size[0]*0.5f;
+	float ry = size[1]*0.5f;
+	float rz = size[2]*0.5f;
+
+	// Create vertex buffer
+	VERTEX_XYZ_NORMAL vertices[24] =
+	{
+		// front
+		gm::vector3f( -rx, -ry, rz), gm::vector3f(0, 0, 1),
+		gm::vector3f( rx, -ry, rz), gm::vector3f(0, 0, 1),
+		gm::vector3f( -rx, ry, rz), gm::vector3f(0, 0, 1),
+		gm::vector3f( rx, ry, rz), gm::vector3f(0, 0, 1),
+
+		// back
+		gm::vector3f( rx, -ry, -rz), gm::vector3f(0, 0, -1),
+		gm::vector3f( -rx, -ry, -rz), gm::vector3f(0, 0, -1),
+		gm::vector3f( rx, ry, -rz), gm::vector3f(0, 0, -1),
+		gm::vector3f( -rx, ry, -rz), gm::vector3f(0, 0, -1),
+
+		// right
+		gm::vector3f(rx, -ry, rz), gm::vector3f(1, 0, 0),
+		gm::vector3f(rx, -ry, -rz), gm::vector3f(1, 0, 0),
+		gm::vector3f(rx, ry, rz), gm::vector3f(1, 0, 0),
+		gm::vector3f(rx, ry, -rz), gm::vector3f(1, 0, 0),
+
+		// left
+		gm::vector3f(-rx, -ry, -rz), gm::vector3f(-1, 0, 0),
+		gm::vector3f(-rx, -ry, rz), gm::vector3f(-1, 0, 0),
+		gm::vector3f(-rx, ry, -rz), gm::vector3f(-1, 0, 0),
+		gm::vector3f(-rx, ry, rz), gm::vector3f(-1, 0, 0),
+
+		// top
+		gm::vector3f(-rx, ry, rz), gm::vector3f(0, 1, 0),
+		gm::vector3f(rx, ry, rz), gm::vector3f(0, 1, 0),
+		gm::vector3f(-rx, ry, -rz), gm::vector3f(0, 1, 0),
+		gm::vector3f(rx, ry, -rz), gm::vector3f(0, 1, 0),
+
+		// bottom
+		gm::vector3f(rx, -ry, -rz), gm::vector3f(0, -1, 0),
+		gm::vector3f(rx, -ry, rz), gm::vector3f(0, -1, 0),
+		gm::vector3f(-rx, -ry, rz), gm::vector3f(0, -1, 0),
+		gm::vector3f(-rx, -ry, -rz), gm::vector3f(0, -1, 0),
+	};
+
+	uint32 indices[36] =
+	{
+		// front
+		0+0, 0+1, 0+2,
+		0+1, 0+3, 0+2,
+
+		// back
+		4+0, 4+1, 4+2,
+		4+1, 4+3, 4+2,
+
+		// right
+		8+0, 8+1, 8+2,
+		8+1, 8+3, 8+2,
+
+		// left
+		12+0, 12+1, 12+2,
+		12+1, 12+3, 12+2,
+
+		// top
+		16+0, 16+1, 16+2,
+		16+1, 16+3, 16+2,
+
+		// bottom
+		20+0, 20+1, 20+2,
+		20+1, 20+3, 20+2,
+	};
+
+	Graphics::OpenGL_I* pGL = renderContext->GetRT()->m_opengl;
+
+	if (pGL)
+	{
+		ASSERT(m_vertexBuffer == NULL);
+		{
+			/*
+			VERTEX_XYZ_NORMAL vertices[4*4];
+
+			vertices[0].position = LDraw::vector3f(-s[0]/2, -s[1]/2, s[2]/2);
+			vertices[0].normal = LDraw::vector3f(0, 0, 1);
+			vertices[1].position = LDraw::vector3f(s[0]/2, -s[1]/2, s[2]/2);
+			vertices[1].normal = LDraw::vector3f(0, 0, 1);
+			vertices[2].position = LDraw::vector3f(s[0]/2, s[1]/2, s[2]/2);
+			vertices[2].normal = LDraw::vector3f(0, 0, 1);
+			vertices[3].position = LDraw::vector3f(-s[0]/2, s[1]/2, s[2]/2);
+			vertices[3].normal = LDraw::vector3f(0, 0, 1);
+*/
+			m_vertexBuffer = pGL->CreateVertexBuffer(sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+		//	pDC->m_pGraphics3D->BindBuffer(GL_ARRAY_BUFFER, m_buffer);
+		//	pDC->m_pGraphics3D->BufferData(GL_ARRAY_BUFFER, sizeof(VERTEX_XYZ_NORMAL)*4*4, vertices, 0);
+
+			Graphics::VertexDeclElement elements[] =
+			{
+				{"POSITION", 0, 0, Graphics::DECLTYPE_FLOAT3, 0},
+				{"NORMAL", 0, 12, Graphics::DECLTYPE_FLOAT3, 0},
+			};
+
+			m_vertexDeclaration = pGL->CreateVertexDeclaration(elements, 2, 0/*shader*/);
+
+			m_indexBuffer = pGL->CreateIndexBuffer(GL_UNSIGNED_INT, sizeof(indices), indices);
+		}
+	}
+	else
+	{
+		ASSERT(m_d3d10_VertexBuffer[0] == NULL);
+
+		D3D10_BUFFER_DESC bd;
+		bd.Usage = D3D10_USAGE_DEFAULT;
+		bd.ByteWidth = sizeof(vertices);
+		bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+		bd.CPUAccessFlags = 0;
+		bd.MiscFlags = 0;
+		D3D10_SUBRESOURCE_DATA InitData;
+		InitData.pSysMem = vertices;
+		renderContext->GetRT()->m_d3d10->m_device->CreateBuffer(&bd, &InitData, &m_d3d10_VertexBuffer[0]);
+
+		// Texture coordinates
+		if (true)
+		{
+			gm::vector2f vertices[] =
+			{
+				// front
+				gm::vector2f( 0.0f, 0.0f),
+				gm::vector2f( 1.0f, 0.0f),
+				gm::vector2f( 0.0f, 1.0f),
+				gm::vector2f( 1.0f, 1.0f),
+
+				// back
+				gm::vector2f( 0.0f, 0.0f),
+				gm::vector2f( 1.0f, 0.0f),
+				gm::vector2f( 0.0f, 1.0f),
+				gm::vector2f( 1.0f, 1.0f),
+
+				// right
+				gm::vector2f( 0.0f, 0.0f),
+				gm::vector2f( 1.0f, 0.0f),
+				gm::vector2f( 0.0f, 1.0f),
+				gm::vector2f( 1.0f, 1.0f),
+
+				// left
+				gm::vector2f( 0.0f, 0.0f),
+				gm::vector2f( 1.0f, 0.0f),
+				gm::vector2f( 0.0f, 1.0f),
+				gm::vector2f( 1.0f, 1.0f),
+
+				// top
+				gm::vector2f( 0.0f, 0.0f),
+				gm::vector2f( 1.0f, 0.0f),
+				gm::vector2f( 0.0f, 1.0f),
+				gm::vector2f( 1.0f, 1.0f),
+
+				// bottom
+				gm::vector2f( 0.0f, 0.0f),
+				gm::vector2f( 1.0f, 0.0f),
+				gm::vector2f( 0.0f, 1.0f),
+				gm::vector2f( 1.0f, 1.0f),
+			};
+
+			D3D10_BUFFER_DESC bd;
+			bd.Usage = D3D10_USAGE_DEFAULT;
+			bd.ByteWidth = sizeof(vertices);
+			bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+			bd.CPUAccessFlags = 0;
+			bd.MiscFlags = 0;
+			D3D10_SUBRESOURCE_DATA InitData;
+			InitData.pSysMem = vertices;
+			renderContext->GetRT()->m_d3d10->m_device->CreateBuffer(&bd, &InitData, &m_d3d10_VertexBuffer[1]);
+		}
+
+		if (m_d3d10_IndexBuffer == NULL)
+		{
+			D3D10_BUFFER_DESC bd;
+			bd.Usage = D3D10_USAGE_DEFAULT;
+			bd.ByteWidth = sizeof(indices);
+			bd.BindFlags = D3D10_BIND_INDEX_BUFFER;
+			bd.CPUAccessFlags = 0;
+			bd.MiscFlags = 0;
+			D3D10_SUBRESOURCE_DATA InitData;
+			InitData.pSysMem = indices;
+			renderContext->GetRT()->m_d3d10->m_device->CreateBuffer(&bd, &InitData, &m_d3d10_IndexBuffer);
+		}
+	}
+}
+
+void BoxShape::Draw(ImmediateRenderContext* renderContext)
+{
+	Graphics::OpenGL_I* pGL = renderContext->GetRT()->m_opengl;
+
+	if (pGL)
+	{
+		pGL->SetVertexDeclaration(m_vertexDeclaration);
+
+		pGL->SetIndexBuffer(m_indexBuffer, 0);
+		pGL->SetVertexBuffer(0, m_vertexBuffer, 0, sizeof(VERTEX_XYZ_NORMAL));
+	//	pDC->m_pGraphics3D->InterleavedArrays(GL_N3F_V3F, 0, NULL);
+		pGL->SetPrimitiveTopology(GL_TRIANGLES);
+		pGL->DrawIndexed(0, 23, 36);
+	//	pDC->m_pGraphics3D->DrawArrays(GL_TRIANGLE_FAN, 4, 4);
+	//	pDC->m_pGraphics3D->DrawArrays(GL_TRIANGLE_FAN, 8, 4);
+	//	pDC->m_pGraphics3D->DrawArrays(GL_TRIANGLE_FAN, 12, 4);
+	}
+	else
+	{
+		{
+			UINT stride[2] = { sizeof(VERTEX_XYZ_NORMAL), sizeof(gm::vector2f) };
+			UINT offset[2] = {0,0};
+			renderContext->GetRT()->m_d3d10->m_device->IASetVertexBuffers(0, 2, m_d3d10_VertexBuffer, stride, offset);
+		}
+		/*
+		{
+			UINT stride = sizeof(LDraw::vector2f);
+			UINT offset = 0;
+			renderContext->GetRT()->m_device->IASetVertexBuffers(1, 1, &m_d3d10_TexCoordBuffer, &stride, &offset);
+		}
+		*/
+
+		ASSERT(m_d3d10_IndexBuffer);
+		renderContext->GetRT()->m_d3d10->m_device->IASetIndexBuffer(m_d3d10_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		renderContext->GetRT()->m_d3d10->m_device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//	renderContext->GetRT()->m_d3d10->m_device->DrawIndexed(36, 0/*StartIndexLocation*/, 0/*BaseVertexLocation*/);
+		renderContext->GetRT()->m_d3d10->m_device->DrawIndexed(6*5, 0/*StartIndexLocation*/, 0/*BaseVertexLocation*/);
+
+//		renderContext->GetRT()->m_gi->SetPrimitiveTopology(GL_TRIANGLES);
+
+//		renderContext->GetRT()->m_gi->DrawIndexed(36, 0/*StartIndexLocation*/, 0/*BaseVertexLocation*/);
+	}
+}
+
+SphereShape::SphereShape()
+{
+	m_d3d10_VertexBuffer[0] = NULL;
+}
+
+SkySphereShape::SkySphereShape()
+{
+	m_d3d10_VertexBuffer[0] = NULL;
+}
+
+SkySphereShape::~SkySphereShape()
+{
+}
+
+bool SkySphereShape::IsValid(ImmediateRenderContext* renderContext)
+{
+	return m_d3d10_VertexBuffer[0] != NULL;
+}
+
+void SkySphereShape::Destroy()
+{
+	if (m_d3d10_VertexBuffer[0])
+	{
+		m_d3d10_VertexBuffer[0]->Release();
+		m_d3d10_VertexBuffer[0] = NULL;
+	}
+}
+
+void SkySphereShape::Create(RenderContext* renderContext, double radius, int slices, vector<float>& radians, vector<gm::vector4f>& colors, int nsign)
+{
+	m_slices = slices;
+	m_stacks = radians.GetSize()-1;
+
+	__try
+	{
+
+#if 0
+	   drho = M_PI / (GLfloat) stacks;
+	   dtheta = 2.0 * M_PI / (GLfloat) slices;
+
+		ds = 1.0 / slices;
+		dt = 1.0 / stacks;
+		t = 1.0;  /* because loop now runs from 0 */
+	/*
+		if (qobj->TextureFlag) {
+			imin = 0;
+			imax = stacks;
+		}
+		else
+	*/	{
+			imin = 1;
+			imax = stacks-1;
+		}
+#endif
+		VERTEX_XYZ_COLOR* vertices = (VERTEX_XYZ_COLOR*)_malloca((m_stacks)*(slices+1)*2*sizeof(VERTEX_XYZ_COLOR));
+		VERTEX_XYZ_COLOR* vertex = vertices;
+
+		for (uint n = 0; n < radians.GetSize()-1; ++n)
+		{
+			float radian1 = radians[n];
+			float radian2 = radians[n+1];
+
+			gm::vector4f color1 = colors[n];
+			gm::vector4f color2 = colors[n+1];
+
+			float cos_rho = cos(radian1);
+			float sin_rho = sin(radian1);
+
+			float cos_rho2 = cos(radian2);
+			float sin_rho2 = sin(radian2);
+
+			float rho = radian1;
+
+			for (int m = 0; m <= slices; ++m)
+			{
+				float theta = (m == slices)? 0 : ((float)m / slices) * M_PI*2;
+
+				float x, y, z;
+
+				z = -sin(theta) * sin_rho;
+				x = cos(theta) * sin_rho;
+				y = nsign * cos_rho;
+			//	pG->glColorf(color1[0], color1[1], color1[2]);
+			//	pG->glVertexf( x*radius, y*radius, z*radius );
+				vertex->color = color1;
+				vertex->position = gm::vector3f(x*radius, y*radius, z*radius);
+				++vertex;
+
+				z = -sin(theta) * sin_rho2;
+				x = cos(theta) * sin_rho2;
+				y = nsign * cos_rho2;
+			//	pG->glColorf(color2[0], color2[1], color2[2]);
+			//	pG->glVertexf( x*radius, y*radius, z*radius );
+				vertex->color = color2;
+				vertex->position = gm::vector3f(x*radius, y*radius, z*radius);
+				++vertex;
+			}
+		}
+
+		ASSERT(m_d3d10_VertexBuffer[0] == NULL);
+		{
+		D3D10_BUFFER_DESC bd;
+		bd.Usage = D3D10_USAGE_DEFAULT;
+		bd.ByteWidth = (vertex - vertices)*sizeof(VERTEX_XYZ_COLOR);
+		bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+		bd.CPUAccessFlags = 0;
+		bd.MiscFlags = 0;
+		D3D10_SUBRESOURCE_DATA InitData;
+		InitData.pSysMem = vertices;
+		renderContext->GetRT()->m_d3d10->m_device->CreateBuffer(&bd, &InitData, &m_d3d10_VertexBuffer[0]);
+		}
+
+		if (m_inputLayout == NULL)
+		{
+			// Define the input layout
+			D3D10_INPUT_ELEMENT_DESC layout[] =
+			{
+				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+				{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 }, 
+			};
+
+			m_d3d10_technique = renderContext->GetRT()->m_d3d10->m_d3d10_effect->GetTechniqueByName("SolidColorTechnique");
+
+			// Create the input layout
+			D3DX10_PASS_DESC PassDesc;
+			m_d3d10_technique->GetPassByIndex(0)->GetDesc(&PassDesc);
+			HRESULT hr = renderContext->GetRT()->m_d3d10->m_device->CreateInputLayout(layout, _countof(layout), PassDesc.pIAInputSignature, 
+					PassDesc.IAInputSignatureSize, &m_inputLayout);
+			ASSERT(SUCCEEDED(hr));
+		}
+
+		_freea(vertices);
+	}
+	__except (GetExceptionCode() == STATUS_STACK_OVERFLOW)
+	{
+		_resetstkoflw();
+	}
+}
+
+void SkySphereShape::Draw(ImmediateRenderContext* renderContext)
+{
+	UINT stride[1] = { sizeof(VERTEX_XYZ_COLOR)};
+	UINT offset[1] = { 0 };
+	renderContext->GetRT()->m_d3d10->m_device->IASetVertexBuffers(0, 1, m_d3d10_VertexBuffer, stride, offset);
+	renderContext->GetRT()->m_d3d10->m_device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	renderContext->GetRT()->m_d3d10->m_device->IASetInputLayout(m_inputLayout);
+
+	renderContext->GetRT()->m_d3d10->m_d3d10_modelViewVariable->SetMatrix(renderContext->modelViewMatrix());
+	renderContext->GetRT()->m_d3d10->m_d3d10_projectionVariable->SetMatrix(renderContext->projectionMatrix());
+	renderContext->GetRT()->m_d3d10->m_d3d10_modelViewProjectionVariable->SetMatrix(renderContext->modelViewProjectionMatrix());
+
+	m_d3d10_technique->GetPassByIndex(0)->Apply(0);
+
+	int count = (m_slices+1)*2;
+	int start = 0;
+	for (size_t i = 0; i < m_stacks; ++i)
+	{
+		renderContext->GetRT()->m_d3d10->m_device->Draw(count, start);
+		start += count;
+	}
+}
+
+//////////////////////////////
+
+/*
+void Lines::Create(RenderContext* renderContext, LDraw::vector3f* points, uint* indices, uint nindices, LDraw::vector3f color)
+{
+		// Define the input layout
+		D3D10_INPUT_ELEMENT_DESC layout[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },  
+			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 },  
+		};
+
+		m_d3d10_technique = renderContext->GetRT()->m_d3d10->m_d3d10_effect->GetTechniqueByName("SolidColorTechnique");
+
+		// Create the input layout
+		D3D10_PASS_DESC PassDesc;
+		m_d3d10_technique->GetPassByIndex(0)->GetDesc(&PassDesc);
+		HRESULT hr = renderContext->GetRT()->m_d3d10->m_device->CreateInputLayout(layout, _countof(layout), PassDesc.pIAInputSignature, 
+				PassDesc.IAInputSignatureSize, &m_inputLayout);
+		ASSERT(SUCCEEDED(hr));
+	}
+}
+*/
+
+///////////////////////////////
+
+IndexedLines::IndexedLines()
+{
+	m_d3d10_VertexBuffer = NULL;
+	m_d3d10_IndexBuffer = NULL;
+}
+
+IndexedLines::~IndexedLines()
+{
+	if (m_d3d10_VertexBuffer)
+	{
+//		m_d3d10_VertexBuffer->Release();
+	}
+}
+
+bool IndexedLines::IsValid(ImmediateRenderContext* renderContext)
+{
+	return m_d3d10_VertexBuffer != NULL;
+}
+
+void IndexedLines::Create(RenderContext* renderContext, gm::vector3f* points, uint nvertices, uint* indices, uint nindices, gm::vector4f color)
+{
+	m_nvertices = nvertices;
+	m_nindices = nindices;
+
+	VERTEX_XYZ_COLOR* vertices = (VERTEX_XYZ_COLOR*)_malloca(nvertices*sizeof(VERTEX_XYZ_COLOR));
+	VERTEX_XYZ_COLOR* pvertex = vertices;
+
+	gm::vector3f* ppoint = points;
+
+	for (uint i = 0; i < nvertices; i += 1)
+	{
+		pvertex->position = *ppoint;
+		pvertex->color = color;
+		++pvertex;
+		++ppoint;
+	}
+
+	ASSERT(m_d3d10_VertexBuffer == NULL);
+	{
+		D3D10_BUFFER_DESC bd;
+		bd.Usage = D3D10_USAGE_DEFAULT;
+		bd.ByteWidth = nvertices*sizeof(VERTEX_XYZ_COLOR);
+		bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+		bd.CPUAccessFlags = 0;
+		bd.MiscFlags = 0;
+		D3D10_SUBRESOURCE_DATA InitData;
+		InitData.pSysMem = vertices;
+		renderContext->GetRT()->m_d3d10->m_device->CreateBuffer(&bd, &InitData, &m_d3d10_VertexBuffer);
+	}
+
+	ASSERT(m_d3d10_IndexBuffer == NULL);
+	{
+		D3D10_BUFFER_DESC bd;
+		bd.Usage = D3D10_USAGE_DEFAULT;
+		bd.ByteWidth = nindices*sizeof(uint);
+		bd.BindFlags = D3D10_BIND_INDEX_BUFFER;
+		bd.CPUAccessFlags = 0;
+		bd.MiscFlags = 0;
+		D3D10_SUBRESOURCE_DATA InitData;
+		InitData.pSysMem = indices;
+		renderContext->GetRT()->m_d3d10->m_device->CreateBuffer(&bd, &InitData, &m_d3d10_IndexBuffer);
+	}
+
+	_freea(vertices);
+}
+
+void IndexedLines::Draw(ImmediateRenderContext* renderContext)
+{
+	UINT stride[1] = { sizeof(VERTEX_XYZ_COLOR)};
+	UINT offset[1] = { 0 };
+	renderContext->GetRT()->m_d3d10->m_device->IASetIndexBuffer(m_d3d10_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	renderContext->GetRT()->m_d3d10->m_device->IASetVertexBuffers(0, 1, &m_d3d10_VertexBuffer, stride, offset);
+	renderContext->GetRT()->m_d3d10->m_device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
+	renderContext->GetRT()->m_d3d10->m_device->IASetInputLayout(renderContext->GetRT()->m_d3d10->m_solidColorInputLayout);
+
+	renderContext->GetRT()->m_d3d10->m_d3d10_modelViewVariable->SetMatrix(renderContext->modelViewMatrix());
+	renderContext->GetRT()->m_d3d10->m_d3d10_projectionVariable->SetMatrix(renderContext->projectionMatrix());
+	renderContext->GetRT()->m_d3d10->m_d3d10_modelViewProjectionVariable->SetMatrix(renderContext->modelViewProjectionMatrix());
+
+	renderContext->GetRT()->m_d3d10->m_solidColorTechnique->GetPassByIndex(0)->Apply(0);
+
+	renderContext->GetRT()->m_d3d10->m_deviceContext->DrawIndexed(m_nindices, 0, 0);
+}
+
+//////////////////////////////
+
+CylinderShape::~CylinderShape()
+{
+}
+
+void CylinderShape::Create(RenderContext* renderContext, float bottomRadius, float topRadius, float height)
+{
+	uint slices = 40;
+
+	uint nvertices = slices*2;
+	float stepradian = (M_PI/180)*(360.0f/nvertices);
+	VERTEX_XYZ_NORMAL* vertices = (VERTEX_XYZ_NORMAL*)_alloca(sizeof(VERTEX_XYZ_NORMAL)*nvertices);
+	uint nvertex = 0;
+
+	float normy = (bottomRadius-topRadius)/height;
+
+	for (uint i = 0; i < nvertices; i++)
+	{
+		float radian = stepradian * i;
+
+		float normx = cos(radian);
+		float normz = sin(radian);
+
+		if (i & 1)
+		{
+			float x = normx * topRadius;
+			float z = normz * topRadius;
+
+			vertices[nvertex].position[0] = x;
+			vertices[nvertex].position[1] = height/2;
+			vertices[nvertex].position[2] = z;
+			vertices[nvertex].normal[0] = normx;
+			vertices[nvertex].normal[1] = normz;
+			vertices[nvertex].normal[2] = normz;
+			vertices[nvertex].normal.normalize();
+		}
+		else
+		{
+			float x = normx * bottomRadius;
+			float z = normz * bottomRadius;
+
+			vertices[nvertex].position[0] = x;
+			vertices[nvertex].position[1] = -height/2;
+			vertices[nvertex].position[2] = z;
+			vertices[nvertex].normal[0] = normx;
+			vertices[nvertex].normal[1] = normz;
+			vertices[nvertex].normal[2] = normy;
+			vertices[nvertex].normal.normalize();
+		}
+		++nvertex;
+	}
+
+	D3D10_BUFFER_DESC bd;
+	bd.Usage = D3D10_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(VERTEX_XYZ_NORMAL) * nvertices;
+	bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	bd.MiscFlags = 0;
+	D3D10_SUBRESOURCE_DATA InitData;
+	InitData.pSysMem = vertices;
+	renderContext->GetRT()->m_d3d10->m_device->CreateBuffer(&bd, &InitData, &m_d3d10_VertexBuffer);
+
+	m_nvertices = nvertices;
+}
+
+bool CylinderShape::IsValid(ImmediateRenderContext* renderContext)
+{
+	return m_d3d10_VertexBuffer != NULL;
+}
+
+void CylinderShape::Draw(ImmediateRenderContext* renderContext)
+{
+	UINT stride = sizeof(VERTEX_XYZ_NORMAL);
+	UINT offset = 0;
+	renderContext->GetRT()->m_d3d10->m_device->IASetVertexBuffers(0, 1, &m_d3d10_VertexBuffer, &stride, &offset);
+//	renderContext->GetRT()->m_device->IASetIndexBuffer(m_d3d10_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	renderContext->GetRT()->m_d3d10->m_device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+	renderContext->GetRT()->m_d3d10->m_device->Draw(m_nvertices, 0/*StartVertexLocation*/);
+}
+
+DiskShape::DiskShape()
+{
+	m_d3d10_VertexBuffer = NULL;
+	m_d3d10_IndexBuffer = NULL;
+}
+
+void DiskShape::Draw(ImmediateRenderContext* renderContext)
+{
+	ASSERT(0);
+}
+
+bool DiskShape::IsValid(ImmediateRenderContext* renderContext)
+{
+	ASSERT(0);
+	return false;
+}
+
+Rectangle2DShape::Rectangle2DShape()
+{
+	m_d3d10_VertexBuffer[0] = NULL;
+	m_d3d10_VertexBuffer[1] = NULL;
+}
+
+Rectangle2DShape::~Rectangle2DShape()
+{
+}
+
+void Rectangle2DShape::Create(RenderContext* renderContext, gm::vector2f size)
+{
+	ASSERT(m_d3d10_VertexBuffer[0] == NULL);
+
+	float rx = size[0]*0.5f;
+	float ry = size[1]*0.5f;
+
+	// Create vertex buffer
+	VERTEX_XYZ_NORMAL vertices[] =
+	{
+		gm::vector3f( rx, ry, 0), gm::vector3f(0, 0, 1),
+		gm::vector3f( rx, -ry, 0), gm::vector3f(0, 0, 1),
+		gm::vector3f( -rx, -ry, 0), gm::vector3f(0, 0, 1),
+		gm::vector3f( -rx, ry, 0), gm::vector3f(0, 0, 1),
+	};
+
+	D3D10_BUFFER_DESC bd;
+	bd.Usage = D3D10_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(VERTEX_XYZ_NORMAL) * _countof(vertices);
+	bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	bd.MiscFlags = 0;
+	D3D10_SUBRESOURCE_DATA InitData;
+	InitData.pSysMem = vertices;
+	renderContext->GetRT()->m_d3d10->m_device->CreateBuffer(&bd, &InitData, &m_d3d10_VertexBuffer[0]);
+
+	// Texture coordinates
+	if (true)
+	{
+		gm::vector2f vertices[] =
+		{
+			// front
+			gm::vector2f( 0.0f, 0.0f),
+			gm::vector2f( 1.0f, 0.0f),
+			gm::vector2f( 1.0f, 1.0f),
+			gm::vector2f( 0.0f, 1.0f),
+
+			// back
+			gm::vector2f( 0.0f, 0.0f),
+			gm::vector2f( 1.0f, 0.0f),
+			gm::vector2f( 1.0f, 1.0f),
+			gm::vector2f( 0.0f, 1.0f),
+
+			// left
+			gm::vector2f( 0.0f, 0.0f),
+			gm::vector2f( 1.0f, 0.0f),
+			gm::vector2f( 1.0f, 1.0f),
+			gm::vector2f( 0.0f, 1.0f),
+
+			// right
+			gm::vector2f( 0.0f, 0.0f),
+			gm::vector2f( 1.0f, 0.0f),
+			gm::vector2f( 1.0f, 1.0f),
+			gm::vector2f( 0.0f, 1.0f),
+
+			// top
+			gm::vector2f( 0.0f, 0.0f),
+			gm::vector2f( 1.0f, 0.0f),
+			gm::vector2f( 1.0f, 1.0f),
+			gm::vector2f( 0.0f, 1.0f),
+
+			// bottom
+			gm::vector2f( 0.0f, 0.0f),
+			gm::vector2f( 1.0f, 0.0f),
+			gm::vector2f( 1.0f, 1.0f),
+			gm::vector2f( 0.0f, 1.0f),
+		};
+
+		D3D10_BUFFER_DESC bd;
+		bd.Usage = D3D10_USAGE_DEFAULT;
+		bd.ByteWidth = sizeof(gm::vector2f) * _countof(vertices);
+		bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+		bd.CPUAccessFlags = 0;
+		bd.MiscFlags = 0;
+		D3D10_SUBRESOURCE_DATA InitData;
+		InitData.pSysMem = vertices;
+		renderContext->GetRT()->m_d3d10->m_device->CreateBuffer(&bd, &InitData, &m_d3d10_VertexBuffer[1]);
+	}
+}
+
+bool Rectangle2DShape::IsValid(ImmediateRenderContext* renderContext)
+{
+	return m_d3d10_VertexBuffer[0] != NULL;
+}
+
+void Rectangle2DShape::Draw(ImmediateRenderContext* renderContext)
+{
+	UINT stride[2] = { sizeof(VERTEX_XYZ_NORMAL), sizeof(gm::vector2f) };
+	UINT offset[2] = {0,0};
+	renderContext->GetRT()->m_d3d10->m_device->IASetVertexBuffers(0, 2, m_d3d10_VertexBuffer, stride, offset);
+
+	renderContext->GetRT()->m_d3d10->m_device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+	renderContext->GetRT()->m_d3d10->m_device->Draw(4/*VertexCount*/, 0/*StartVertexLocation*/);
+}
+
+}
+
+/*
+//--------------------------------------------------------------------------------------
+// This function loads the mesh and ensures the mesh has normals; it also optimizes the 
+// mesh for the graphics card's vertex cache, which improves performance by organizing 
+// the internal triangle list for less cache misses.
+//--------------------------------------------------------------------------------------
+HRESULT LoadMesh( IDirect3DDevice9* pd3dDevice, WCHAR* strFileName, ID3DXMesh** ppMesh )
+{
+    ID3DXMesh* pMesh = NULL;
+    WCHAR str[MAX_PATH];
+    HRESULT hr;
+
+    // Load the mesh with D3DX and get back a ID3DXMesh*.  For this
+    // sample we'll ignore the X file's embedded materials since we know 
+    // exactly the model we're loading.  See the mesh samples such as
+    // "OptimizedMesh" for a more generic mesh loading example.
+    V_RETURN( DXUTFindDXSDKMediaFileCch( str, MAX_PATH, strFileName ) );
+    V_RETURN( D3DXLoadMeshFromX( str, D3DXMESH_MANAGED, pd3dDevice, NULL, NULL, NULL, NULL, &pMesh ) );
+
+    DWORD* rgdwAdjacency = NULL;
+
+    // Make sure there are normals which are required for lighting
+    if( !( pMesh->GetFVF() & D3DFVF_NORMAL ) )
+    {
+        ID3DXMesh* pTempMesh;
+        V( pMesh->CloneMeshFVF( pMesh->GetOptions(),
+                                pMesh->GetFVF() | D3DFVF_NORMAL,
+                                pd3dDevice, &pTempMesh ) );
+        V( D3DXComputeNormals( pTempMesh, NULL ) );
+
+        SAFE_RELEASE( pMesh );
+        pMesh = pTempMesh;
+    }
+
+    // Optimize the mesh for this graphics card's vertex cache 
+    // so when rendering the mesh's triangle list the vertices will 
+    // cache hit more often so it won't have to re-execute the vertex shader 
+    // on those vertices so it will improve perf.     
+    rgdwAdjacency = new DWORD[pMesh->GetNumFaces() * 3];
+    if( rgdwAdjacency == NULL )
+        return E_OUTOFMEMORY;
+    V( pMesh->GenerateAdjacency( 1e-6f, rgdwAdjacency ) );
+    V( pMesh->OptimizeInplace( D3DXMESHOPT_VERTEXCACHE, rgdwAdjacency, NULL, NULL, NULL ) );
+    delete []rgdwAdjacency;
+
+    *ppMesh = pMesh;
+
+    return S_OK;
+}
+*/
+
+GUIEXT void Edit(TextDocument* td)
+{
+	TextVisual* tv = new TextVisual;
+	tv->set_TextSource(td);
+	Window* win = new Window(tv);
+	win->set_Width(600);
+	win->set_Height(500);
+	win->Show();
+}
+
+DependencyClass* VisualInstance::get_Class()
+{
+	static DependencyClass depclass(typeid(thisClass), baseClass::get_Class());
+
+	/*
+	static DependencyProperty* properties[] =
+	{
+		get_ParentProperty(),
+		get_ParentWindowProperty(),
+		get_TransformProperty(),
+		get_VisibleGeometryProperty(),
+		get_HitGeometryProperty(),
+		get_OpacityProperty(),
+		get_OpacityMaskProperty(),
+		get_ClipProperty(),
+		get_AntialiasProperty(),
+	};
+	*/
+
+	return &depclass;
+}
+
+}	// Gui
+}	// System

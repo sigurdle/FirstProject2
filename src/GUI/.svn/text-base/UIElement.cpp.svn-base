@@ -1,0 +1,872 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+//////////////////////////
+// UIElement
+
+IMP_DEPENDENCY_PROPERTY(float, UIElement, Width, 0.0f)
+IMP_DEPENDENCY_PROPERTY(float, UIElement, Height, 0.0f)
+IMP_DEPENDENCY_PROPERTY(float, UIElement, MinWidth, 0.0f)
+IMP_DEPENDENCY_PROPERTY(float, UIElement, MinHeight, 0.0f)
+IMP_DEPENDENCY_PROPERTY(float, UIElement, MaxWidth, 0.0f)
+IMP_DEPENDENCY_PROPERTY(float, UIElement, MaxHeight, 0.0f)
+IMP_DEPENDENCY_PROPERTY(float, UIElement, ActualWidth, 0.0f)
+IMP_DEPENDENCY_PROPERTY(float, UIElement, ActualHeight, 0.0f)
+IMP_DEPENDENCY_PROPERTY(bool, UIElement, HasMouseCapture, false)
+IMP_DEPENDENCY_PROPERTY(bool, UIElement, HasFocus, false)
+IMP_DEPENDENCY_PROPERTY(bool, UIElement, IsFocusable, false)
+IMP_DEPENDENCY_PROPERTY(bool, UIElement, IsMouseOver, false)
+IMP_DEPENDENCY_PROPERTY(bool, UIElement, IsMouseDirectlyOver, false)
+IMP_DEPENDENCY_PROPERTY(bool, UIElement, AllowDrop, true)
+IMP_DEPENDENCY_PROPERTY(bool, UIElement, IsActive, false)
+IMP_DEPENDENCY_PROPERTY(bool, UIElement, IsActivatable, true)
+IMP_DEPENDENCY_PROPERTY(bool, UIElement, IsEnabled, true)
+IMP_DEPENDENCY_PROPERTY(Cursor*, UIElement, Cursor, Cursors::get_Arrow())
+IMP_DEPENDENCY_PROPERTY(UIElement*, UIElement, ShadowTree, NULL)
+
+DependencyClass* UIElement::get_Class()
+{
+	static DependencyClass depclass(typeid(UIElement), baseClass::get_Class());
+
+	static DependencyProperty* properties[] =
+	{
+		get_WidthProperty(),
+		get_HeightProperty(),
+
+		get_MinWidthProperty(),
+		get_MinHeightProperty(),
+
+		get_MaxWidthProperty(),
+		get_MaxHeightProperty(),
+
+		get_ActualWidthProperty(),
+		get_ActualHeightProperty(),
+
+		get_AllowDropProperty(),
+		get_HasMouseCaptureProperty(),
+		get_HasFocusProperty(),
+		get_IsFocusableProperty(),
+		get_IsActiveProperty(),
+		get_IsActivatableProperty(),
+		get_IsEnabledProperty(),
+		get_IsMouseOverProperty(),
+		get_IsMouseDirectlyOverProperty(),
+
+		get_CursorProperty(),
+		get_ShadowTreeProperty(),
+	};
+
+	return &depclass;
+}
+
+RoutedEvent* UIElement::MouseButtonDownEvent = EventManager::RegisterRoutedEvent("MouseButtonDown", RoutingStrategy_Bubble, typeid(Event2<Object*, MouseButtonEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::MouseButtonUpEvent = EventManager::RegisterRoutedEvent("MouseButtonUp", RoutingStrategy_Bubble, typeid(Event2<Object*, MouseButtonEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::MouseLeftButtonDownEvent = EventManager::RegisterRoutedEvent("MouseLeftButtonDown", RoutingStrategy_Bubble, typeid(Event2<Object*, MouseButtonEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::MouseLeftButtonUpEvent = EventManager::RegisterRoutedEvent("MouseLeftButtonUp", RoutingStrategy_Bubble, typeid(Event2<Object*, MouseButtonEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::MouseRightButtonDownEvent = EventManager::RegisterRoutedEvent("MouseRightButtonDown", RoutingStrategy_Bubble, typeid(Event2<Object*, MouseButtonEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::MouseRightButtonUpEvent = EventManager::RegisterRoutedEvent("MouseRightButtonUp", RoutingStrategy_Bubble, typeid(Event2<Object*, MouseButtonEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::MouseMiddleButtonDownEvent = EventManager::RegisterRoutedEvent("MouseMiddleButtonDown", RoutingStrategy_Bubble, typeid(Event2<Object*, MouseButtonEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::MouseMiddleButtonUpEvent = EventManager::RegisterRoutedEvent("MouseMiddleButtonUp", RoutingStrategy_Bubble, typeid(Event2<Object*, MouseButtonEventArgs*>), typeid(UIElement));
+
+RoutedEvent* UIElement::MouseLeftButtonDoubleClickEvent = EventManager::RegisterRoutedEvent("MouseLeftButtonDoubleClick", RoutingStrategy_Bubble, typeid(Event2<Object*, MouseButtonEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::MouseRightButtonDoubleClickEvent = EventManager::RegisterRoutedEvent("MouseRightButtonDoubleClick", RoutingStrategy_Bubble, typeid(Event2<Object*, MouseButtonEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::MouseMiddleButtonDoubleClickEvent = EventManager::RegisterRoutedEvent("MouseMiddleButtonDoubleClick", RoutingStrategy_Bubble, typeid(Event2<Object*, MouseButtonEventArgs*>), typeid(UIElement));
+
+RoutedEvent* UIElement::MouseMoveEvent = EventManager::RegisterRoutedEvent("MouseMove", RoutingStrategy_Bubble, typeid(Event2<Object*,MouseEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::KeyEvent = EventManager::RegisterRoutedEvent("Key", RoutingStrategy_Bubble, typeid(IFunction2<void, Object*, KeyEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::TextCompositionEvent = EventManager::RegisterRoutedEvent("TextComposition", RoutingStrategy_Bubble, typeid(Event2<Object*, TextCompositionEventArgs*>), typeid(UIElement));
+
+RoutedEvent* UIElement::DragEnterEvent = EventManager::RegisterRoutedEvent("DragEnter", RoutingStrategy_Bubble, typeid(Event2<Object*, DragEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::DragLeaveEvent = EventManager::RegisterRoutedEvent("DragLeave", RoutingStrategy_Bubble, typeid(Event2<Object*, DragEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::DragOverEvent = EventManager::RegisterRoutedEvent("DragOver", RoutingStrategy_Bubble, typeid(Event2<Object*, DragEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::DragDropEvent = EventManager::RegisterRoutedEvent("DragDrop", RoutingStrategy_Bubble, typeid(Event2<Object*, DragEventArgs*>), typeid(UIElement));
+
+RoutedEvent* UIElement::ContextMenuOpeningEvent = EventManager::RegisterRoutedEvent("ContextMenuOpening", RoutingStrategy_Bubble, typeid(Event2<Object*, ContextMenuEventArgs*>), typeid(UIElement));
+RoutedEvent* UIElement::QueryCursorEvent = EventManager::RegisterRoutedEvent("QueryCursor", RoutingStrategy_Bubble, typeid(Event2<Object*, QueryCursorEventArgs*>), typeid(UIElement));
+
+RoutedEvent* UIElement::ActivateEvent = EventManager::RegisterRoutedEvent("Activate", RoutingStrategy_Bubble, typeid(Event2<Object*, RoutedEventArgs*>), typeid(UIElement));
+
+template<class class_type, class arg1_type> mem_funo<class_type, Object*, arg1_type>* mem_fun(void (class_type::*memf)(arg1_type))
+{
+	return new mem_funo<class_type, Object*, arg1_type>(memf);
+}
+
+template class GUIEXT Event2<Object*, MouseEventArgs*>;
+template class GUIEXT Event2<Object*, MouseButtonEventArgs*>;
+template class GUIEXT Event2<Object*, KeyEventArgs*>;
+template class GUIEXT Event2<Object*, TextCompositionEventArgs*>;
+template class GUIEXT Event2<Object*, DragEventArgs*>;
+template class GUIEXT Event2<Object*, ContextMenuEventArgs*>;
+template class GUIEXT Event2<Object*, QueryCursorEventArgs*>;
+template class GUIEXT Event2<Object*, RoutedEventArgs*>;
+
+UIElement::Init::Init()
+{
+	EventManager::RegisterClassHandler(typeid(UIElement), MouseButtonDownEvent, mem_fun(&UIElement::OnMouseButtonDown));
+	EventManager::RegisterClassHandler(typeid(UIElement), MouseButtonUpEvent, mem_fun(&UIElement::OnMouseButtonUp));
+
+	EventManager::RegisterClassHandler(typeid(UIElement), MouseLeftButtonDownEvent, mem_fun(&UIElement::OnMouseLeftButtonDown));
+	EventManager::RegisterClassHandler(typeid(UIElement), MouseLeftButtonUpEvent, mem_fun(&UIElement::OnMouseLeftButtonUp));
+	EventManager::RegisterClassHandler(typeid(UIElement), MouseRightButtonDownEvent, mem_fun(&UIElement::OnMouseRightButtonDown));
+	EventManager::RegisterClassHandler(typeid(UIElement), MouseRightButtonUpEvent, mem_fun(&UIElement::OnMouseRightButtonUp));
+	EventManager::RegisterClassHandler(typeid(UIElement), MouseMiddleButtonDownEvent, mem_fun(&UIElement::OnMouseMiddleButtonDown));
+	EventManager::RegisterClassHandler(typeid(UIElement), MouseMiddleButtonUpEvent, mem_fun(&UIElement::OnMouseMiddleButtonUp));
+	EventManager::RegisterClassHandler(typeid(UIElement), MouseLeftButtonDoubleClickEvent, mem_fun(&UIElement::OnMouseLeftButtonDoubleClick));
+	EventManager::RegisterClassHandler(typeid(UIElement), MouseRightButtonDoubleClickEvent, mem_fun(&UIElement::OnMouseRightButtonDoubleClick));
+	EventManager::RegisterClassHandler(typeid(UIElement), MouseMiddleButtonDoubleClickEvent, mem_fun(&UIElement::OnMouseMiddleButtonDoubleClick));
+	EventManager::RegisterClassHandler(typeid(UIElement), MouseMoveEvent, mem_fun(&UIElement::OnMouseMove));
+	EventManager::RegisterClassHandler(typeid(UIElement), KeyEvent, mem_fun(&UIElement::OnKey));
+	EventManager::RegisterClassHandler(typeid(UIElement), TextCompositionEvent, mem_fun(&UIElement::OnTextComposition));
+
+	EventManager::RegisterClassHandler(typeid(UIElement), DragEnterEvent, mem_fun(&UIElement::OnDragEnter));
+	EventManager::RegisterClassHandler(typeid(UIElement), DragLeaveEvent, mem_fun(&UIElement::OnDragLeave));
+	EventManager::RegisterClassHandler(typeid(UIElement), DragOverEvent, mem_fun(&UIElement::OnDragOver));
+	EventManager::RegisterClassHandler(typeid(UIElement), DragDropEvent, mem_fun(&UIElement::OnDragDrop));
+
+	EventManager::RegisterClassHandler(typeid(UIElement), QueryCursorEvent, mem_fun(&UIElement::OnQueryCursor));
+	EventManager::RegisterClassHandler(typeid(UIElement), ContextMenuOpeningEvent, mem_fun(&UIElement::OnContextMenuOpening));
+
+	EventManager::RegisterClassHandler(typeid(UIElement), ActivateEvent, mem_fun(&UIElement::OnActivate));
+}
+
+/*
+template<class T>
+class iterator
+{
+public:
+	sizet_ index;
+}
+*/
+
+UIElement::Init UIElement::init;
+
+UIElement::UIElement(DependencyClass* depClass) : Visual(depClass)
+{
+	//AddHandler(NULL, EventHandler(this, &UIElement::OnLeftMouseButtonDown));
+
+//	get_LeftMouseButtonDownEvent().Connect(EventHandler(this, &UIElement::OnLeftMouseButtonDown));
+//	get_LeftMouseButtonDownEvent().Disconnect(EventHandler(this, &UIElement::OnLeftMouseButtonDown));
+}
+
+UIElement::UIElement(DependencyClass* depClass, gm::SizeF size) : Visual(depClass)
+{
+	set_Width(size.Width);
+	set_Height(size.Height);
+}
+
+void UIElement::OnComputedPropertyValueChanging(PropertyValue* pPropertyVal, Object* oldValue, Object* newValue, bool handled)
+{
+	if (pPropertyVal->m_dp == get_ShadowTreeProperty())
+	{
+		// remove old
+
+		UIElement* uielement = get_ShadowTree();
+
+		if (uielement)
+		{
+			uielement->SetRoot(NULL);
+			uielement->set_Parent(NULL);
+			uielement->set_ParentWindow(NULL);
+		}
+
+		handled = true;
+	}
+
+	baseClass::OnComputedPropertyValueChanging(pPropertyVal, oldValue, newValue, handled);
+}
+
+void UIElement::OnComputedPropertyValueChanged(PropertyValue* pPropertyVal, bool handled)
+{
+	if (pPropertyVal->m_dp == get_CursorProperty())
+	{
+		IRootVisual* root = GetRoot();
+		if (root)
+		{
+			root->ElementSetMouseCursor(this);
+		}
+	}
+	else if (pPropertyVal->m_dp == get_ShadowTreeProperty())
+	{
+		if (!handled)
+		{
+			UIElement* shadowTree = get_ShadowTree();
+			if (shadowTree)
+			{
+				shadowTree->SetRoot(GetRoot());
+				shadowTree->set_ParentWindow(get_ParentWindow());
+
+				shadowTree->set_Parent(this);
+				shadowTree->set_TemplatedOwner(this);
+
+				// ??
+				shadowTree->DoLayoutSize(gm::SizeF(get_ActualWidth(), get_ActualHeight()));
+			}
+		}
+	}
+	else if (pPropertyVal->m_dp == get_ParentWindowProperty())
+	{
+		Window* parentwindow = get_ParentWindow();
+
+		UIElement* shadowTree = get_ShadowTree();
+		if (shadowTree)
+		{
+			shadowTree->set_ParentWindow(parentwindow);
+		}
+
+		size_t nchildren = GetChildrenCount();
+		for (size_t i = 0; i < nchildren; ++i)
+		{
+			Visual* child = GetChild(i);
+			ASSERT(child);
+
+			child->set_ParentWindow(parentwindow);
+		}
+	}
+	else if (pPropertyVal->m_dp == get_TemplatedOwnerProperty())
+	{
+		UIElement* owner = get_TemplatedOwner();
+
+		/*
+		UIElement* shadowTree = get_ShadowTree();
+		if (shadowTree)
+		{
+			shadowTree->set_ParentWindow(parentwindow);
+		}
+		*/
+
+		size_t nchildren = GetChildrenCount();
+		for (size_t i = 0; i < nchildren; ++i)
+		{
+			Visual* child = GetChild(i);
+			ASSERT(child);
+
+			child->set_TemplatedOwner(owner);
+		}
+	}
+	else if (pPropertyVal->m_dp == get_WidthProperty())
+	{
+		float minWidth = get_MinWidth();
+		float width = get_Width();
+
+		if (width < minWidth) width = minWidth;
+
+		set_ActualWidth(width);
+	}
+	else if (pPropertyVal->m_dp == get_HeightProperty())
+	{
+		float minHeight = get_MinHeight();
+		float height = get_Height();
+
+		if (height < minHeight) height = minHeight;
+
+		set_ActualHeight(height);
+	}
+	else if (pPropertyVal->m_dp == get_ActualWidthProperty() ||
+			pPropertyVal->m_dp == get_ActualHeightProperty())
+	{
+		m_visibleGeometryValid = false;
+
+		get_Parent();
+
+		m_measureValid = false;
+
+	}
+
+	baseClass::OnComputedPropertyValueChanged(pPropertyVal, handled);
+}
+
+void UIElement::Focus()
+{
+	IRootVisual* root = GetRoot();
+	if (root)
+	{
+		root->ElementSetFocus(this);
+	}
+}
+
+void UIElement::Render(ManagedRenderContext renderContext)
+{
+	UIElement* shadowTree = get_ShadowTree();
+
+	if (shadowTree == NULL)
+	{
+		m_visuals = new GroupVisual;
+		set_ShadowTree(m_visuals);
+
+		shadowTree = m_visuals;
+		m_visualValid = false;
+	}
+
+	if (!m_visualValid)
+	{
+		m_visualValid = true;
+		if (m_visuals)
+		{
+			if (m_visuals->get_Children())
+			{
+				m_visuals->get_Children()->m_items.clear();
+			}
+
+			RetainedRenderContext rrc(GetRoot(), m_visuals);
+			ManagedRetainedRenderContext retainedRenderContext(&rrc);
+			RenderRetained(retainedRenderContext);
+		}
+	}
+
+	shadowTree->Render_(renderContext);
+}
+
+void UIElement::RenderRetained(ManagedRetainedRenderContext renderContext)
+{
+	/*
+	Visual* visual = GetVisual();
+	if (visual)
+	{
+		renderContext.DrawVisual(visual);
+	}
+	*/
+}
+
+size_t UIElement::GetChildrenCount()
+{
+	return get_ShadowTree()? 1: 0;
+}
+
+Visual* UIElement::GetChild(size_t index)
+{
+	if (index > 0 || get_ShadowTree() == NULL)
+	{
+		raise(ArgumentOutOfRangeException());
+	}
+
+	return get_ShadowTree();
+}
+
+size_t UIElement::GetLogicalChildrenCount()
+{
+	return 0;
+}
+
+Object* UIElement::GetLogicalChild(size_t position)
+{
+	raise(ArgumentOutOfRangeException());
+}
+
+// This is logical child
+Object* UIElement::ReplaceChild(size_t position, Object* newChild)
+{
+	raise(ArgumentOutOfRangeException());
+	return NULL;
+
+	/*
+	VisualCollection* visuals = get_Children();
+	Visual* oldChild = visuals->m_items[position];
+	oldChild->set_Parent(NULL);
+	oldChild->set_ChildPosition(-1);
+
+	visuals->m_items[position] = newChild;
+	newChild->set_Parent(this);
+	newChild->set_ChildPosition(position);
+	*/
+
+}
+
+/*
+void UIElement::AddHandler(RoutedEvent* routedEvent, EventHandler handler)
+{
+	//get_RoutedEvent(routedEvent)->Connect(handler);
+}
+
+void UIElement::RemoveHandler(RoutedEvent* routedEvent, EventHandler handler)
+{
+	//get_RoutedEvent(routedEvent)->Disconnect(handler);
+}
+*/
+
+/*
+Event2<Object*,MouseButtonEventArgs*>& UIElement::get_LeftMouseButtonDownEvent()
+{
+	return *(Event2<Object*,MouseButtonEventArgs*>*)get_RoutedEvent(LeftMouseButtonDownEvent);
+}
+
+Event2<Object*,MouseButtonEventArgs*>& UIElement::get_LeftMouseButtonUpEvent()
+{
+	return *(Event2<Object*,MouseButtonEventArgs*>*)get_RoutedEvent(LeftMouseButtonUpEvent);
+}
+
+Event2<Object*,MouseEventArgs*>& UIElement::get_MouseMoveEvent()
+{
+	return *(Event2<Object*,MouseEventArgs*>*)get_RoutedEvent(MouseMoveEvent);
+}
+*/
+
+Event* UIElement::get_RoutedEvent(RoutedEvent* routedEvent)
+{
+	if (m_events[routedEvent->GetIndex()] == NULL)
+	{
+		m_events[routedEvent->GetIndex()] = dynamic_cast<Event*>(newobj(routedEvent->get_HandlerType()));
+		ASSERT(m_events[routedEvent->GetIndex()]);
+	}
+
+	return m_events[routedEvent->GetIndex()];
+}
+
+#if 0
+void UIElement::AddHandler(RoutedEvent* routedEvent, stub_interface_base* handler)
+{
+	if (handler->GetType()->IsDerivedFrom(routedEvent->get_HandlerType()->GetClass()))
+	{
+		throw new Exception(WSTR("Handler of wrong type"));
+	}
+
+	int index = routedEvent->GetIndex();
+
+	if (m_handlers[index] == NULL)
+	{
+		VERIFY(routedEvent->get_HandlerType()->GetClass());
+		ClassType* pSigType = dynamic_cast<ClassType*>(routedEvent->get_HandlerType()->GetClass()->LookupType(ASTR("signal_type"))->GetStripped());
+		m_handlers[index] = (signal_base*)newobj(pSigType);
+	}
+
+	m_handlers[index]->connect(handler);
+}
+#endif
+
+//////////////////////
+
+///////////
+
+///////
+
+class EventRoute : public Object
+{
+public:
+	// TODO
+	list<UIElement*> ancestors;
+};
+
+UIElement* UIElement::HitTest(gm::PointF point)
+{
+	int nchildren = (int)GetChildrenCount();
+	for (int i = nchildren-1; i >= 0; --i)
+	{
+		Visual* child = GetChild(i);
+		ASSERT(child);
+
+		UIElement* hitElement = child->HitTest_(point);
+		if (hitElement != NULL)
+		{
+			return hitElement;
+		}
+	}
+
+	//  TODO remove, done above?
+	UIElement* shadowTree = get_ShadowTree();
+	if (shadowTree)
+	{
+		UIElement* hitElement = shadowTree->HitTest_(point);
+		if (hitElement)
+		{
+			return hitElement;
+		}
+	}
+
+//	Geometry* hitGeometry = GetHitGeometry();
+	Geometry* hitGeometry = get_VisibleGeometry();
+	if (hitGeometry)
+	{
+		if (hitGeometry->Contains(point))
+		{
+			return this;
+		}
+	}
+
+	return NULL;
+}
+
+void UIElement::OnAddChild(VisualCollection* collection, Visual* element)
+{
+	ASSERT(element);
+
+	element->SetRoot(GetRoot());
+	element->set_Parent(this);
+}
+
+Geometry* UIElement::GetHitGeometry()
+{
+	return new RectangleGeometry(0, 0, get_ActualWidth(), get_ActualHeight());
+}
+
+geometry UIElement::MakeVisibleGeometry(geometry clip)
+{
+	m_visibleGeometryValid = true;
+
+	gm::RectF bounds = clip.GetBounds();
+
+	clip &= geometry(get_Clip());
+
+	bounds = clip.GetBounds();
+
+	geometry geom = GetHitGeometry();
+	gm::RectF bounds2 = geom.GetBounds();
+
+	clip &= geom;
+
+	gm::RectF bounds3 = clip.GetBounds();
+
+	size_t nchildren = GetChildrenCount();
+	for (size_t i = nchildren; i > 0; --i)
+	{
+		Visual* child = GetChild(i-1);
+
+		geometry geom2 = child->MakeVisibleGeometry(clip);
+
+		clip |= geom2;
+	}
+
+	UIElement* shadowTree = get_ShadowTree();
+	if (shadowTree)
+	{
+		geometry geom2 = shadowTree->MakeVisibleGeometry(clip);
+		clip |= geom2;
+	}
+
+	set_VisibleGeometry(clip);
+
+	return clip;
+}
+
+void UIElement::RaiseEvent(RoutedEventArgs* args)
+{
+	args->m_originalSource = this;
+
+	RoutedEvent* routedEvent = args->get_RoutedEvent();
+	if (routedEvent == NULL)
+	{
+		raise(SystemException("routedEvent = NULL"));
+	}
+
+	// preview phase
+	if (routedEvent->get_RoutingStrategy() == RoutingStrategy_Tunnel)
+	{
+#if 0
+		EventRoute route;
+
+		UIElement* p = this;//dynamic_cast<UIElement*>(GetRParent());
+		while (p)
+		{
+			route.ancestors.push_front(p);
+			p = dynamic_cast<UIElement*>(p->GetRParent());
+		}
+
+		list<UIElement*>::iterator it = route.ancestors.begin();
+		while (it != route.ancestors.end())
+		{
+			UIElement* el = *it;
+
+			// Class handlers
+			if (!args->get_Handled())	// TODO
+			{
+				EventManager::InvokeClassHandlers(el/*args->get_Source()*/->GetType(), el, args);
+			}
+
+			// Instance handlers
+			signal_base* sig = el->m_handlers[routedEvent->m_index];
+
+			if (sig)
+			{
+				int nslots = sig->GetSlotCount();
+
+			//	signal2<Object*,RoutedEventArgs*>::connection_type it2 = el->m_handlers[routedEvent->m_index]->m_slots.begin();
+			//	while (it2 != el->m_handlers[routedEvent->m_index]->m_slots.end())
+				for (int i = 0; i < nslots; i++)
+				{
+					stub_interface_base* slot = sig->GetSlot(i);
+
+					if (!args->get_Handled())	// TODO
+					{
+						args->InvokeEventHandler(this, slot);
+					}
+				//	++it2;
+				}
+			}
+
+			++it;
+		}
+#endif
+	}
+	else if (routedEvent->get_RoutingStrategy() == RoutingStrategy_Bubble)
+	{
+		EventRoute route;
+
+		UIElement* p = this;
+		do
+		{
+			route.ancestors.push_back(p);
+			p = p->get_Parent();
+		}
+		while (p);
+
+		if (args->get_Source() == NULL)
+		{
+			args->set_Source(this);
+		}
+
+		for (auto it = route.ancestors.begin(); it != route.ancestors.end(); ++it)
+		{
+			UIElement* el = *it;
+
+			// Class handlers
+			if (!args->get_Handled())	// TODO
+			{
+				EventManager::InvokeClassHandlers(el->GetType(), el, args);
+			}
+
+			// Instance handlers
+
+			Event* pEvent = el->m_events[routedEvent->GetIndex()];
+
+			if (pEvent)
+			{
+				try
+				{
+					switch (pEvent->get_NumArgs())
+					{
+					case 2:
+						{
+							pEvent->Handle(el, args);
+						}
+						break;
+
+					default:
+						ASSERT(0);
+					}
+				}
+				catch (Exception* e)
+				{
+					MessageBox(NULL, e->get_Reason().c_strw(), L"GUI", MB_OK | MB_ICONERROR);
+				}
+			}
+
+			args->set_Source(el);
+
+#if 0
+				list<IDispatch*>::iterator it = pEvent->m_handlers.begin();
+
+				while (it != pEvent->m_handlers.end())
+				{
+					IDispatch* handler = *it;
+					++it;
+
+					if (!args->get_Handled())	// TODO
+					{
+						args->InvokeEventHandler(this, handler);
+					}
+				}
+
+				/*
+				int nslots = el->m_handlers[routedEvent->m_index]->GetSlotCount();
+
+				signal2<Object*,RoutedEventArgs*>::connection_type it2 = el->m_handlers[routedEvent->m_index].m_slots.begin();
+				while (it2 != el->m_handlers[routedEvent->m_index].m_slots.end())
+				{
+					args->InvokeEventHandler(this, *it2);
+					++it2;
+				}
+				*/
+			}
+#endif
+		}
+	}
+	else if (routedEvent->get_RoutingStrategy() == RoutingStrategy_Direct)
+	{
+		VERIFY(0);
+	}
+}
+
+void UIElement::OnSetRoot(IRootVisual* root)
+{
+	UIElement* shadowTree = get_ShadowTree();
+	if (shadowTree)
+	{
+		shadowTree->SetRoot(root);
+	}
+
+	size_t nchildren = GetChildrenCount();
+	for (size_t i = 0; i < nchildren; ++i)
+	{
+		Visual* child = GetChild(i);
+		ASSERT(child);
+
+		child->SetRoot(root);
+	}
+}
+
+Style::IStyleDeclaration* Element::get_inlineStyle(uint index)
+{
+	return NULL;
+}
+
+void UIElement::SetCaptureMouse(bool b)
+{
+	SetPropertyValue(get_HasMouseCaptureProperty(), b);
+}
+
+bool UIElement::CaptureMouse()
+{
+	IRootVisual* root = GetRoot();
+	if (root)
+	{
+		bool b = root->ElementCaptureMouse(this);
+		return b;
+	}
+	else
+		return false;
+}
+
+void UIElement::ReleaseMouseCapture()
+{
+	IRootVisual* root = GetRoot();
+	if (root)
+	{
+		root->ElementReleaseMouseCapture(this);
+	}
+}
+
+void UIElement::OnQueryCursor(QueryCursorEventArgs* args)
+{
+	args->set_Cursor(get_Cursor());
+}
+
+void UIElement::DoLayoutSize(gm::SizeF size)
+{
+	set_ActualWidth(size.Width);
+	set_ActualHeight(size.Height);
+
+	LayoutChildren();
+
+	UIElement* shadowTree = get_ShadowTree();
+	if (shadowTree)
+	{
+		shadowTree->DoLayoutSize(size);
+	}
+}
+
+// TODO
+void UIElement::DoLayout()
+{
+}
+
+/////////////
+
+IMP_DEPENDENCY_PROPERTY(float, Layout, DesiredWidth, float_NaN.value)
+IMP_DEPENDENCY_PROPERTY(float, Layout, DesiredHeight, float_NaN.value)
+IMP_DEPENDENCY_PROPERTY(float, Layout, ActualWidth, float_NaN.value)
+IMP_DEPENDENCY_PROPERTY(float, Layout, ActualHeight, float_NaN.value)
+
+DependencyClass* Layout::get_Class()
+{
+	static DependencyClass depclass(typeid(Layout), DependencyObject::get_Class());
+
+	/*
+	static DependencyProperty* properties[] =
+	{
+		get_DataProperty(),
+	};
+	*/
+
+	return &depclass;
+}
+
+DependencyClass* Layout::pClass(get_Class());
+
+Layout::Layout(UIElement* element) : DependencyObject(get_Class()), m_element(element)
+{
+}
+
+size_t Layout::GetChildrenCount()
+{
+	return 0;
+}
+
+Layout* Layout::GetChild(size_t index)
+{
+	return NULL;
+}
+
+void Layout::AddChild(Layout* child)
+{
+}
+
+gm::SizeF Layout::get_DesiredSize()
+{
+	return gm::SizeF(0,0);
+}
+
+// PanelLayout
+
+size_t PanelLayout::GetChildrenCount()
+{
+	return m_children.size();
+}
+
+Layout* PanelLayout::GetChild(size_t index)
+{
+	return m_children[index];
+}
+
+void PanelLayout::AddChild(Layout* child)
+{
+	m_children.push_back(child);
+}
+
+// StackLayout
+
+StackLayout::StackLayout(UIElement* element) : PanelLayout(element)
+{
+	m_direction = Direction_Horizontal;
+}
+
+gm::SizeF StackLayout::PreLayOut(gm::RectF availRect)
+{
+	return gm::SizeF(0,0);
+}
+
+gm::SizeF StackLayout::LayOut(gm::RectF layoutRect)
+{
+	float y = 0;
+
+	gm::RectF childRect(0, 0, layoutRect.Width, 0);
+
+	size_t nchildren = GetChildrenCount();
+	for (size_t i = 0; i < nchildren; ++i)
+	{
+		Layout* child = GetChild(i);
+
+		gm::SizeF desiredSize = child->get_DesiredSize();
+
+		childRect.Y = y;
+		childRect.Height = 0;
+
+		child->LayOut(childRect);
+	}
+
+	return gm::SizeF(0,0);
+}
+
+void Element::SetRoot(IRootVisual* root)
+{
+	if (m_root != root)
+	{
+		OnSetRoot(root);
+		m_root = root;
+	}
+}
+
+}	// Gui
+}	// System

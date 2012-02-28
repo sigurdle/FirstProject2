@@ -1,0 +1,210 @@
+#ifndef __CSSSTYLEDECLARATION_H_
+#define __CSSSTYLEDECLARATION_H_
+
+namespace System
+{
+namespace Web
+{
+
+class WEBEXT CCSSPropertyType : public CAttributeType
+{
+public:
+	int m_propertyIndex;
+
+	CTOR CCSSPropertyType()
+	{
+		m_propertyIndex = -1;
+	}
+
+	virtual CValueType* NewVal();
+};
+
+// CSS declaration/value pair (e.g: { background: black } )
+class WEBEXT CSSDecl  : public CATAttr
+{
+public:
+	CTOR CSSDecl()
+	{
+		m_bExcplicitSet = false;
+		m_priority = null;//WSTR("");
+
+		m_propertyIndex = -1;
+		m_pValue = NULL;
+	}
+
+	~CSSDecl();
+
+	bool m_bExcplicitSet;
+	int m_propertyIndex;
+	String m_propertyName;
+//	CCSSPrimitiveValue* m_pValue;
+//	CCSSValue* m_pValue;
+
+#if 0
+	LXML::CValueType* m_pValue;
+#endif
+	CSSValue* m_pValue;
+
+	String m_priority;
+
+// When animated
+//	virtual CValueType* NewVal();
+//	virtual void SetAnimVal(BSTR bstr);
+
+	virtual CValueType* GetAnimVal()
+	{
+		ASSERT(0);
+		return NULL;
+#if 0
+		return CSSValueType
+		return m_pValue;
+#endif
+	}
+};
+
+}	// Web
+}
+
+namespace System
+{
+namespace Web
+{
+
+//class CSSStyleDeclaration;
+
+interface ICSSStyleDeclarationListener
+{
+	virtual void OnStyleDeclChanged(CSSStyleDeclaration* pStyleDecl) = 0;
+};
+
+}
+}
+
+#include "CSS2PropertiesImpl.h"
+
+namespace System
+{
+namespace Web
+{
+class CSSRuleImpl;
+
+class WEBEXT CSSStyleDeclaration : public Object,
+	public ICSSStyleDeclaration,
+//	public CLCSS2PropertiesImpl<CSSStyleDeclaration>,
+
+	public ICSSPrimitiveValueListener,
+	public ICSSValueListListener,
+	public ISVGPaintListener,
+	public ISVGColorListener
+{
+public:
+	CTOR CSSStyleDeclaration()
+	{
+		m_bCSSTextUpdated = false;
+		m_parentRule = NULL;
+
+		m_pListener = NULL;
+
+		m_bSettingPropertyText = 0;
+	}
+
+	~CSSStyleDeclaration()
+	{
+		ASSERT(m_pListener == NULL);
+//		ASSERT(m_handlers.GetSize() == 0);
+	}
+
+	virtual void SetProperty(StringIn prefix, StringIn name, StringIn strvalue);
+
+	virtual Object* GetPropertyValue(Object* pProperty) override;
+	virtual bool HasProperty(Object* pProperty) override;
+
+	CSSDecl* FindDecl(StringIn name) const;
+	CSSDecl* FindDecl(int propertyIndex) const;
+
+	bool m_bCSSTextUpdated;
+	void UpdateCSSText();
+	void ParseCSSText();
+
+	void internalSetProperty(StringIn propertyName, StringIn value, StringIn priority);
+	void internalSetProperty(int propertyIndex, StringIn value, StringIn priority);
+
+	void internalSetLonghandProperty(StringIn propertyName, int propertyIndex, StringIn value, StringIn priority, bool bExcplicit);
+	CSSDecl* internalCreateLonghandProperty(StringIn propertyName, int propertyIndex);
+
+	void internalSetLonghandProperty(int propertyIndex, StringIn value, StringIn priority, bool bExcplicit)
+	{
+		ASSERT(propertyIndex >= 0);
+		/*return */ internalSetLonghandProperty(&CSSProperties::csspropertyList[propertyIndex]->m_name, propertyIndex, value, priority, bExcplicit);
+	}
+
+	void Clear();
+
+	virtual void OnCSSValueChanged(CSSPrimitiveValue* pValue);
+	virtual void OnCSSValueChanged(CSSValueList* pValue);
+	virtual void OnCSSValueChanged(SVGPaint* pValue);
+	virtual void OnCSSValueChanged(SVGColor* pValue);
+
+	String item(unsigned int index) const;
+	unsigned int get_length() const;
+	String get_cssText();
+	void set_cssText(StringIn newVal);
+	CSSRuleImpl* get_parentRule();
+
+	CSSValue* getPropertyCSSValue(StringIn propertyName);
+	void setProperty(StringIn propertyName, StringIn value, StringIn priority);
+	String removeProperty(StringIn propertyName);
+	String getPropertyValue(StringIn propertyName);
+	String getPropertyPriority(StringIn propertyName);
+
+#if 0
+	STDMETHOD(setProperty)(/*[in]*/ BSTR propertyName, /*[in]*/ BSTR value, /*[in,optional]*/ VARIANT vPriority)
+	{
+		if (V_VT(&vPriority) == VT_BSTR)
+			return setProperty(propertyName, value, V_BSTR(&vPriority));
+		else
+			return setProperty(propertyName, value, NULL);
+	}
+#endif
+
+#if 0
+	void addHandler(/*[in]*/ ICSSStyleDeclarationHandler* handler)
+	{
+		if (handler == NULL) throw (int)Error_NullPointerArgument;
+		m_handlers.Add(handler);
+	}
+	
+	void removeHandler(/*[in]*/ ICSSStyleDeclarationHandler* handler)
+	{
+		if (handler == NULL) THROW(-1);
+
+		for (unsigned int i = 0; i < m_handlers.GetSize(); i++)
+		{
+			if (m_handlers[i] == handler)
+			{
+				ASSERT(0);
+				//m_handlers.RemoveAt(i);
+				return;
+			}
+		}
+
+		ASSERT(0);
+		THROW(-1);
+	}
+
+	vector<ICSSStyleDeclarationHandler*> m_handlers;
+#endif
+
+	String m_cssText;
+	vector<CSSDecl*> m_decls;	// Parsed m_cssText
+	CSSRuleImpl* m_parentRule;
+
+	int m_bSettingPropertyText;
+
+	ICSSStyleDeclarationListener* m_pListener;
+};
+
+}	// Web
+}
+
+#endif // __CSSSTYLEDECLARATION_H_

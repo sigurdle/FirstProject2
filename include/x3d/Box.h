@@ -1,0 +1,41 @@
+#ifndef x3d_Box_h
+#define x3d_Box_h
+
+namespace System
+{
+namespace x3d
+{
+
+class X3DEXT Box : 
+	public X3DGeometryNode,
+	public X3DBoundedImplImpl,
+	public RenderImplImpl,
+	public IGeometryRender,
+	public ISizeable3f
+{
+public:
+	CTOR Box();
+
+	X3DSFIELD(SFVec3f, size, Size)
+
+	X3DNODE(Box, X3DGeometryNode)
+
+	virtual Vec3f getSize3f() override;
+	virtual void setSize3f(Vec3f size) override;
+
+protected:
+
+	virtual void AddShapeDesc(physx::PxRigidActor* actor) override;
+
+	virtual void Draw(X3DDrawContext* pDC, X3DTextureNodeImplImpl* pTextureNode);
+
+// X3DBoundedImplImpl
+	virtual BoundingBox CalculateBoundingBox(gm::matrix4f& transform);
+
+	Gui::Media3D::BoxShape m_shape;
+};
+
+}	// x3d
+}	// System
+
+#endif // x3d_Box_h

@@ -1,0 +1,18 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="include/LSVG/PSVGTextPositioningElement.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="include/LSVG/PSVGAltGlyphElement.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_p_s_v_g_alt_glyph_element_8h.html"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="include/LSVG/PSVGFlowTextElement.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_p_s_v_g_flow_text_element_8h.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="include/LSVG/PSVGTextElement.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_p_s_v_g_text_element_8h.html"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="include/LSVG/PSVGTRefElement.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_p_s_v_g_t_ref_element_8h.html"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="include/LSVG/PSVGTSpanElement.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_p_s_v_g_t_span_element_8h.html"];
+  Node1 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="include/LSVG/SVGAltGlyphElement.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_s_v_g_alt_glyph_element_8h.html"];
+}

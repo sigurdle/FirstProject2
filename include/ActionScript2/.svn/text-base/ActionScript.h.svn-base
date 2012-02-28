@@ -1,0 +1,380 @@
+#ifndef ActionScript_h
+#define ActionScript_h
+
+namespace System
+{
+namespace ActionScripting
+{
+
+enum ActionOp
+{
+	ActionNextFrame = 0x04,
+	ActionPrevFrame = 0x05,
+	ActionPlay = 0x06,
+	ActionStop = 0x07,
+	ActionToggleQuality = 0x08,
+	ActionStopSounds = 0x09,
+	ActionAdd = 0x0A,
+	ActionSubtract = 0x0B,
+	ActionMultiply = 0x0C,
+	ActionDivide = 0x0D,
+	ActionEquals = 0x0E,
+	ActionLess = 0x0F,
+	ActionAnd = 0x10,
+	ActionOr = 0x11,
+	ActionNot = 0x12,
+	ActionStringEquals = 0x13,
+	ActionStringLength = 0x14,
+	ActionStringExtract = 0x15,
+	ActionPop = 0x17,
+	ActionToInteger = 0x18,
+	ActionGetVariable = 0x1C,
+	ActionSetVariable = 0x1D,
+	ActionSetTarget2 = 0x20,
+	ActionStringAdd = 0x21,
+	ActionGetProperty = 0x22,
+	ActionSetProperty = 0x23,
+	ActionCloneSprite = 0x24,
+	ActionRemoveSprite = 0x25,
+	ActionTrace = 0x26,
+	ActionStartDrag = 0x27,
+	ActionEndDrag = 0x28,
+	ActionStringLess = 0x29,
+	ActionThrow = 0x2A,
+	ActionCastOp = 0x2B,
+	ActionImplementsOp = 0x2C,
+	ActionRandomNumber = 0x30,
+	ActionMBStringLength = 0x31,
+	ActionCharToAscii = 0x32,
+	ActionAsciiToChar = 0x33,
+	ActionGetTime = 0x34,
+	ActionMBStringExtract = 0x35,
+	ActionMBCharToAscii = 0x36,
+	ActionMBAsciiToChar = 0x37,
+	ActionDelete = 0x3A,
+	ActionDelete2 = 0x3B,
+	ActionDefineLocal = 0x3C,
+	ActionCallFunction = 0x3D,
+	ActionReturn = 0x3E,
+	ActionModulo = 0x3F,
+	ActionNewObject = 0x40,
+	ActionDefineLocal2 = 0x41,
+	ActionInitArray = 0x42,
+	ActionInitObject = 0x43,
+	ActionTypeOf = 0x44,
+	ActionTargetPath = 0x45,
+	ActionEnumerate = 0x46,
+	ActionAdd2 = 0x47,
+	ActionLess2 = 0x48,
+	ActionEquals2 = 0x49,
+	ActionToNumber = 0x4A,
+	ActionToString = 0x4B,
+	ActionPushDuplicate = 0x4C,
+	ActionStackSwap = 0x4D,
+	ActionGetMember = 0x4E,
+	ActionSetMember = 0x4F,
+	ActionIncrement = 0x50,
+	ActionDecrement = 0x51,
+	ActionCallMethod = 0x52,
+	ActionNewMethod = 0x53,
+	ActionInstanceOf = 0x54,
+	ActionEnumerate2 = 0x55,
+	ActionBitAnd = 0x60,
+	ActionBitOr = 0x61,
+	ActionBitXor = 0x62,
+	ActionBitLShift = 0x63,
+	ActionBitRShift = 0x64,
+	ActionBitURShift = 0x65,
+	ActionStrictEquals = 0x66,
+	ActionGreater = 0x67,
+	ActionStringGreater = 0x68,
+	ActionExtends = 0x69,
+	ActionGotoFrame = 0x81,
+	ActionGetURL = 0x83,
+	ActionStoreRegister = 0x87,
+	ActionConstantPool = 0x88,
+	ActionWaitForFrame = 0x8A,
+	ActionSetTarget = 0x8B,
+	ActionGoToLabel = 0x8C,
+	ActionWaitForFrame2 = 0x8D,
+	ActionDefineFunction2 = 0x8E,
+	ActionTry = 0x8F,
+	ActionWith = 0x94,
+	ActionPush = 0x96,
+	ActionJump = 0x99,
+	ActionGetURL2 = 0x9A,
+	ActionDefineFunction = 0x9B,
+	ActionIf = 0x9D,
+	ActionCall = 0x9E,
+	ActionGotoFrame2 = 0x9F,
+};
+
+class VM;
+class ActionScriptFunction;
+
+class ActionScript2Ext StkElt
+{
+public:
+	inline CTOR StkElt()
+	{
+	}
+
+	inline CTOR StkElt(System::VariantKind _kind) : m_variant(_kind)
+	{
+	}
+
+	inline CTOR StkElt(bool value) : m_variant(value)
+	{
+	}
+
+	/*
+	inline CTOR StkElt(VariantKind kind, int32 value) : m_variant(kind, value)
+	{
+	}
+	*/
+
+	inline CTOR StkElt(int32 value) : m_variant(value)
+	{
+	}
+
+	inline CTOR StkElt(float value) : m_variant(value)
+	{
+	}
+
+	inline CTOR StkElt(double value) : m_variant(value)
+	{
+	}
+
+	inline CTOR StkElt(const System::Variant& v) : m_variant(v)
+	{
+	}
+
+	inline CTOR StkElt(System::StringA* string) : m_variant(string)
+	{
+	}
+
+	inline CTOR StkElt(System::StringW* string) : m_variant(string)
+	{
+	}
+
+	inline CTOR StkElt(String string) : m_variant(string)
+	{
+	}
+
+	inline CTOR StkElt(StringIn string) : m_variant(string)
+	{
+	}
+
+	inline CTOR StkElt(const StringBuilderBase& string) : m_variant(string)
+	{
+	}
+
+	inline CTOR StkElt(Object* obj) : m_variant(obj)
+	{
+	}
+
+	inline CTOR StkElt(byte* p, Type* pType) : m_variant(p, pType)
+	{
+	}
+
+	inline CTOR StkElt(const StkElt& other) : m_variant(other.m_variant)
+	{
+	}
+
+	operator Variant& ()
+	{
+		return m_variant;
+	}
+
+	inline operator const Variant& () const
+	{
+		return m_variant;
+	}
+
+	bool ToBool() const;
+	int32 ToInt() const;
+	float ToFloat() const;
+	double ToDouble() const;
+	String ToStringA() const;
+	String ToString() const;
+
+	/*
+	inline operator System::StringA* () const
+	{
+		return toString();
+	}
+	*/
+
+	/*
+	operator StringA () const
+	{
+		return m_stringValue;
+	}
+	*/
+
+	StkElt& operator = (const StkElt& other)
+	{
+		m_variant = other.m_variant;
+		return *this;
+	}
+
+	inline bool operator == (const StkElt& other) const
+	{
+		ASSERT(0);
+		return false;
+		//return m_stringValue == other.m_stringValue;
+	}
+
+	inline bool operator != (const StkElt& other) const
+	{
+		return !(*this == other);
+	}
+
+	inline bool operator == (bool boolValue) const
+	{
+		ASSERT(0);
+		return false;
+		//return m_stringValue == other.m_stringValue;
+	}
+
+	String Identifier() const;
+
+	System::Variant m_variant;
+};
+
+interface IMembersMap
+{
+	virtual Variant GetMember(StringIn name) = 0;
+	virtual void SetMember(StringIn name, System::Variant value) = 0;
+};
+
+class ActionScript2Ext MembersMap : public IMembersMap//, public _ObjectImpl
+{
+public:
+	map<String, Variant> m_members;
+
+	virtual System::Variant GetMember(StringIn name);
+	virtual void SetMember(StringIn name, System::Variant value);
+};
+
+class ActionScript2Ext ActionContext : public Object
+{
+public:
+	vector<StkElt> m_constantPool;
+
+//	map<System::StringA*, ActionScriptFunction*, Ref_Less<System::StringA> > m_funmap;
+};
+
+class ActionScript2Ext StackFrame : public Object
+{
+public:
+	CTOR StackFrame();
+
+	StackFrame* m_pCaller;
+	uint8* m_instructionsData;
+	uint32 m_instructionsLength;
+	uint8* m_return_pc;	// TODO, not this ??
+
+	ActionContext* m_pContext;
+	map<String, StkElt> m_variables;
+};
+
+class ActionScript2Ext Function : public Object, public IFunction
+{
+public:
+	virtual void dispatch(VM* vm, StackFrame* frame, uint numargs) = 0;
+};
+
+class ActionScript2Ext VM
+{
+public:
+
+	CTOR VM();
+
+	bool next();
+
+	void push(StkElt value);
+	StkElt pop();
+
+	void CallMethod(System::Dispatch* pDispatch, void* object, Declarator* pMethod, unsigned int numargs, bool bReturnValue);
+	void CallMethod(System::Dispatch* pDispatch, void* object, Declarator* pMethod, vector<StkElt>& argsarr, bool bReturnValue);
+	byte* GetArgs(FunctionType* pFun, byte* args, unsigned int numargs);
+
+	void as_notimpl(unsigned int length);
+	void as_If(unsigned int length);
+	void as_ConstantPool(unsigned int length);
+	void as_Push(unsigned int length);
+	void as_Pop(unsigned int length);
+	void as_NewObject(unsigned int length);
+	void as_CallFunction(unsigned int length);
+	void as_DefineLocal2(unsigned int length);
+	void as_CallMethod(unsigned int length);
+	void as_GetVariable(unsigned int length);
+	void as_SetVariable(unsigned int length);
+	void as_GetMember(unsigned int length);
+	void as_SetMember(unsigned int length);
+	void as_With(unsigned int length);
+	void as_DefineFunction(unsigned int length);
+	void as_Less(unsigned int length);
+	void as_Less2(unsigned int length);
+	void as_Greater(unsigned int length);
+	void as_Add2(unsigned int length);
+	void as_NextFrame(unsigned int length);
+	void as_Play(unsigned int length);
+	void as_SetTarget(unsigned int length);
+	void as_StringAdd(unsigned int length);
+	void as_Typeof(unsigned int length);
+
+public:
+
+	typedef void (*BreakpointFunction)(VM* vm, System::Object* userobject, int cause);
+
+	BreakpointFunction m_breakpoint;
+	System::Object* m_userobject;
+	Object* m_global;
+	uint8* m_pc;
+
+	StackFrame* m_pFrame;
+
+	vector<StkElt> m_stack;
+
+	ULONG m_flags;
+	int m_level;
+	DWORD m_gui_threadId;
+
+	void (*OnSetVariable)(StackFrame* frame, StringIn varname, StkElt value);
+
+	typedef void (VM::*tyasfunc)(unsigned int length);
+	static tyasfunc asfuncs[256];
+};
+
+}	// ActionScripting
+
+/*
+
+namespace JScript
+{
+
+class ActionScript2Ext Math
+{
+public:
+
+	static double get_PI()
+	{
+		return M_PI;
+	}
+
+private:
+
+	CTOR Math();
+};
+
+}
+
+*/
+
+}
+
+#include "ActionScriptFunction.h"
+
+#endif // ActionScript_h

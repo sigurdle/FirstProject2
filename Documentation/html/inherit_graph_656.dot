@@ -1,0 +1,33 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::javavm::_jobject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1javavm_1_1__jobject.html"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::javavm::_jarray",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1javavm_1_1__jarray.html"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::javavm::_jbooleanArray",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1javavm_1_1__jboolean_array.html"];
+  Node2 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::javavm::_jbyteArray",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1javavm_1_1__jbyte_array.html"];
+  Node2 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="System::javavm::_jcharArray",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1javavm_1_1__jchar_array.html"];
+  Node2 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="System::javavm::_jdoubleArray",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1javavm_1_1__jdouble_array.html"];
+  Node2 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="System::javavm::_jfloatArray",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1javavm_1_1__jfloat_array.html"];
+  Node2 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="System::javavm::_jintArray",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1javavm_1_1__jint_array.html"];
+  Node2 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="System::javavm::_jlongArray",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1javavm_1_1__jlong_array.html"];
+  Node2 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="System::javavm::_jobjectArray",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1javavm_1_1__jobject_array.html"];
+  Node2 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="System::javavm::_jshortArray",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1javavm_1_1__jshort_array.html"];
+  Node1 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="System::javavm::_jclass",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1javavm_1_1__jclass.html"];
+  Node1 -> Node13 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="System::javavm::_jstring",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1javavm_1_1__jstring.html"];
+  Node1 -> Node14 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node14 [label="System::javavm::_jthrowable",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1javavm_1_1__jthrowable.html"];
+}

@@ -1,0 +1,24 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="System::XPath::PathExp",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::XPath::Exp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_x_path_1_1_exp.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node5 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_path" ,fontname="Helvetica"];
+  Node5 [label="System::XPath::StepList",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_x_path_1_1_step_list.html"];
+  Node3 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" tail" ,fontname="Helvetica"];
+  Node6 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" head" ,fontname="Helvetica"];
+  Node6 [label="System::XPath::Step",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_x_path_1_1_step.html"];
+  Node3 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 -> Node6 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_predicates" ,fontname="Helvetica"];
+  Node7 [label="System::XPath::ExpList",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_x_path_1_1_exp_list.html"];
+  Node3 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 -> Node7 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" head" ,fontname="Helvetica"];
+  Node7 -> Node7 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" tail" ,fontname="Helvetica"];
+}

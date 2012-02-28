@@ -1,0 +1,255 @@
+namespace System
+{
+
+namespace Gui
+{
+
+template<class class_type, class arg0_type, class arg1_type> class mem_funo : public Object, public IFunction2<void, arg0_type, arg1_type>
+{
+public:
+
+#ifndef __LERSTAD__
+	CTOR mem_funo(void (class_type::*memf)(arg1_type)) : m_memf(memf)
+	{
+	}
+#endif
+
+	virtual size_t get_NumArgs() override
+	{
+		return 2;
+	}
+
+	virtual void Call(arg0_type arg0, arg1_type arg1)
+	{
+#ifndef __LERSTAD__
+		((static_cast<class_type*>(arg0))->*m_memf)(arg1);
+	//	(arg0->*m_memf)(arg1);
+#endif
+	}
+
+	void (class_type::*m_memf)(arg1_type);
+};
+
+typedef Event2<Object*, MouseEventArgs*> type1_;
+typedef Event2<Object*, MouseButtonEventArgs*> type2_;
+typedef Event2<Object*, KeyEventArgs*> type3_;
+typedef Event2<Object*, TextCompositionEventArgs*> type4_;
+typedef Event2<Object*, DragEventArgs*> type5_;
+typedef Event2<Object*, ContextMenuEventArgs*> type6_;
+typedef Event2<Object*, QueryCursorEventArgs*> type7_;
+typedef Event2<Object*, RoutedEventArgs*> type8_;
+
+typedef mem_funo<UIElement, Object*, MouseEventArgs*> type1;
+typedef mem_funo<UIElement, Object*, MouseButtonEventArgs*> type2;
+typedef mem_funo<UIElement, Object*, KeyEventArgs*> type3;
+typedef mem_funo<UIElement, Object*, TextCompositionEventArgs*> type4;
+typedef mem_funo<UIElement, Object*, DragEventArgs*> type5;
+typedef mem_funo<UIElement, Object*, ContextMenuEventArgs*> type6;
+typedef mem_funo<UIElement, Object*, QueryCursorEventArgs*> type7;
+typedef mem_funo<UIElement, Object*, RoutedEventArgs*> type8;
+
+class GUIEXT UIElement : public Visual, public IInputElement
+{
+protected:
+	CTOR UIElement(DependencyClass* depClass);
+	CTOR UIElement(DependencyClass* depClass, gm::SizeF size);
+
+public:
+
+	virtual Geometry* GetHitGeometry() override;
+
+	virtual geometry MakeVisibleGeometry(geometry clip) override;
+
+	virtual void Render(ManagedRenderContext renderContext) override;
+	virtual void RenderRetained(ManagedRetainedRenderContext renderContext) override;
+
+	virtual size_t GetChildrenCount() override;
+	virtual Visual* GetChild(size_t index) override;
+
+	virtual size_t GetLogicalChildrenCount();
+	virtual Object* GetLogicalChild(size_t position);
+	virtual Object* ReplaceChild(size_t position, Object* newChild);	// Logical
+
+	virtual void DoLayout() override;	// TODO
+	virtual void DoLayoutSize(gm::SizeF size);
+
+	virtual void LayoutChildren()
+	{
+	}
+
+//	virtual void AddHandler(RoutedEvent* routedEvent, Ev::EventHandler handler);
+//	virtual void RemoveHandler(RoutedEvent* routedEvent, Ev::EventHandler handler);
+	virtual bool CaptureMouse() override;
+	virtual void ReleaseMouseCapture() override;
+
+//	Event2<Object*,MouseButtonEventArgs*>& get_LeftMouseButtonDownEvent();
+	//Event2<Object*,MouseButtonEventArgs*>& get_LeftMouseButtonUpEvent();
+	//Event2<Object*,MouseEventArgs*>& get_MouseMoveEvent();
+
+	Event* get_RoutedEvent(RoutedEvent* routedEvent);
+
+//	Event2<Object*,MouseEventArgs*> m_LeftMouseButtonDownEvent;
+//	Event2<Object*,MouseEventArgs*> m_LeftMouseButtonUpEvent;
+
+//	virtual void AddHandler(RoutedEvent* routedEvent, stub_interface_base* handler);
+	virtual void RaiseEvent(RoutedEventArgs* args);
+
+	Layout* get_Layout();
+	void set_Layout(Layout* layout);
+
+	virtual void OnComputedPropertyValueChanged(PropertyValue* pPropertyVal, bool handled) override;
+	virtual void OnComputedPropertyValueChanging(PropertyValue* pPropertyVal, Object* oldValue, Object* newValue, bool handled) override;
+
+	DEFINE_THIS(_UIElement)
+
+	DEPENDENCY_CLASS_ABSTRACT(UIElement, Visual)
+
+	DEPENDENCY_PROPERTY(float, Width)
+	DEPENDENCY_PROPERTY(float, Height)
+	DEPENDENCY_PROPERTY(float, MinWidth)
+	DEPENDENCY_PROPERTY(float, MinHeight)
+	DEPENDENCY_PROPERTY(float, MaxWidth)
+	DEPENDENCY_PROPERTY(float, MaxHeight)
+	DEPENDENCY_PROPERTY_RO(float, ActualWidth)
+	DEPENDENCY_PROPERTY_RO(float, ActualHeight)
+	DEPENDENCY_PROPERTY(bool, AllowDrop)
+	DEPENDENCY_PROPERTY(bool, IsActive)
+	DEPENDENCY_PROPERTY(bool, IsActivatable)
+	DEPENDENCY_PROPERTY(bool, IsEnabled)
+	DEPENDENCY_PROPERTY_RO(bool, HasMouseCapture)
+	DEPENDENCY_PROPERTY(bool, HasFocus)
+	DEPENDENCY_PROPERTY(bool, IsFocusable)
+	DEPENDENCY_PROPERTY_RO(bool, IsMouseOver)
+	DEPENDENCY_PROPERTY_RO(bool, IsMouseDirectlyOver)
+	DEPENDENCY_PROPERTY_RO(bool, IsStylusOver)
+	DEPENDENCY_PROPERTY_RO(bool, IsStylusDirectlyOver)
+	DEPENDENCY_PROPERTY(Cursor*, Cursor)
+	DEPENDENCY_PROPERTY_RO(UIElement*, ShadowTree)
+
+	/*
+	static RoutedEvent* MouseButtonDownEvent;
+	static RoutedEvent* MouseButtonUpEvent;
+	static RoutedEvent* LeftMouseButtonDownEvent;
+	static RoutedEvent* LeftMouseButtonUpEvent;
+	static RoutedEvent* RightMouseButtonDownEvent;
+	static RoutedEvent* RightMouseButtonUpEvent;
+	static RoutedEvent* MiddleMouseButtonDownEvent;
+	static RoutedEvent* MiddleMouseButtonUpEvent;
+	static RoutedEvent* LeftMouseButtonDoubleClickEvent;
+	static RoutedEvent* RightMouseButtonDoubleClickEvent;
+	static RoutedEvent* MiddleMouseButtonDoubleClickEvent;
+
+	static RoutedEvent* MouseMoveEvent;
+	static RoutedEvent* KeyEvent;
+	static RoutedEvent* TextCompositionEvent;
+	static RoutedEvent* DragEnterEvent;
+	static RoutedEvent* DragLeaveEvent;
+	static RoutedEvent* DragOverEvent;
+	static RoutedEvent* DragDropEvent;
+	static RoutedEvent* ContextMenuOpeningEvent;
+	static RoutedEvent* QueryCursorEvent;
+	*/
+
+	virtual void SetCaptureMouse(bool b) override;
+
+	virtual void Focus();
+
+	virtual void OnAddChild(VisualCollection* collection, Visual* element);
+
+	virtual void OnSetRoot(IRootVisual* root) override;
+
+	friend class WindowVisual;
+	friend class PlatformWindow;
+
+	ROUTEDEVENT_IMP0(UIElement, MouseButtonEventArgs, MouseButtonDown)
+	ROUTEDEVENT_IMP0(UIElement, MouseButtonEventArgs, MouseButtonUp)
+	ROUTEDEVENT_IMP0(UIElement, MouseButtonEventArgs, MouseLeftButtonDown)
+	ROUTEDEVENT_IMP0(UIElement, MouseButtonEventArgs, MouseRightButtonDown)
+	ROUTEDEVENT_IMP0(UIElement, MouseButtonEventArgs, MouseMiddleButtonDown)
+	ROUTEDEVENT_IMP0(UIElement, MouseButtonEventArgs, MouseLeftButtonUp)
+	ROUTEDEVENT_IMP0(UIElement, MouseButtonEventArgs, MouseRightButtonUp)
+	ROUTEDEVENT_IMP0(UIElement, MouseButtonEventArgs, MouseMiddleButtonUp)
+	ROUTEDEVENT_IMP0(UIElement, MouseButtonEventArgs, MouseLeftButtonDoubleClick)
+	ROUTEDEVENT_IMP0(UIElement, MouseButtonEventArgs, MouseRightButtonDoubleClick)
+	ROUTEDEVENT_IMP0(UIElement, MouseButtonEventArgs, MouseMiddleButtonDoubleClick)
+
+	ROUTEDEVENT_IMP0(UIElement, MouseEventArgs, MouseMove)
+	ROUTEDEVENT_IMP0(UIElement, KeyEventArgs, Key)
+	ROUTEDEVENT_IMP0(UIElement, TextCompositionEventArgs, TextComposition)
+
+	ROUTEDEVENT_IMP0(UIElement, DragEventArgs, DragEnter)
+	ROUTEDEVENT_IMP0(UIElement, DragEventArgs, DragLeave)
+	ROUTEDEVENT_IMP0(UIElement, DragEventArgs, DragOver)
+	ROUTEDEVENT_IMP0(UIElement, DragEventArgs, DragDrop)
+	ROUTEDEVENT_IMP0(UIElement, ContextMenuEventArgs, ContextMenuOpening)
+	ROUTEDEVENT_IMP1(UIElement, QueryCursorEventArgs, QueryCursor)
+
+	ROUTEDEVENT_IMP0(UIElement, RoutedEventArgs, Activate)
+
+protected:
+
+	/*
+	virtual void OnMouseButtonDown(MouseButtonEventArgs* args);
+	virtual void OnMouseButtonUp(MouseButtonEventArgs* args);
+	virtual void OnLeftMouseButtonDown(MouseButtonEventArgs* args);
+	virtual void OnLeftMouseButtonUp(MouseButtonEventArgs* args);
+	virtual void OnRightMouseButtonDown(MouseButtonEventArgs* args);
+	virtual void OnRightMouseButtonUp(MouseButtonEventArgs* args);
+	virtual void OnMiddleMouseButtonDown(MouseButtonEventArgs* args);
+	virtual void OnMiddleMouseButtonUp(MouseButtonEventArgs* args);
+
+	virtual void OnLeftMouseButtonDoubleClick(MouseButtonEventArgs* args);
+	virtual void OnRightMouseButtonDoubleClick(MouseButtonEventArgs* args);
+	virtual void OnMiddleMouseButtonDoubleClick(MouseButtonEventArgs* args);
+
+	virtual void OnMouseMove(MouseEventArgs* args);
+	virtual void OnKey(KeyEventArgs* args);
+	virtual void OnTextComposition(TextCompositionEventArgs* args);
+
+	virtual void OnDragEnter(DragEventArgs* args);
+	virtual void OnDragLeave(DragEventArgs* args);
+	virtual void OnDragOver(DragEventArgs* args);
+	virtual void OnDragDrop(DragEventArgs* args);
+	virtual void OnContextMenuOpening(ContextMenuEventArgs* args);
+	virtual void OnQueryCursor(QueryCursorEventArgs* args);
+	*/
+	virtual UIElement* HitTest(gm::PointF point) override;
+
+protected:
+
+	class Init
+	{
+	public:
+		CTOR Init();
+	};
+
+	static Init init;
+
+private:
+
+	Layout* m_layout;	// TODO dep property
+
+	Event* m_events[22];	// TODO
+};
+
+class GUIEXT _UIElement : public _Element
+{
+public:
+
+	CTOR _UIElement(const Expressive::expression& exp) : _Element(exp)
+	{
+	}
+
+	Expressive::typed_expression<float> getWidth() const
+	{
+		return getProperty(UIElement::get_WidthProperty());
+	}
+
+	Expressive::typed_expression<float> getHeight() const
+	{
+		return getProperty(UIElement::get_HeightProperty());
+	}
+};
+
+}	// Gui
+}	// System

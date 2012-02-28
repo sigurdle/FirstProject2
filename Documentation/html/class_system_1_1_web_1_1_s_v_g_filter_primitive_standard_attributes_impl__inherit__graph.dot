@@ -1,0 +1,38 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::Web::SVGFilterPrimitiveStandardAttributesImpl\< T \>",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Web::SVGStylableImpl\< T \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_s_v_g_stylable_impl.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Web::ElementCSSInlineStyleImpl\< T \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_element_c_s_s_inline_style_impl.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="ICSSStyleDeclarationListener",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_i_c_s_s_style_declaration_listener.html"];
+  Node5 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="ISVGFilterPrimitiveStandardAttributes",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_i_s_v_g_filter_primitive_standard_attributes.html"];
+  Node6 -> Node1 [dir="back",color="darkgreen",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="System::Web::AnimatedAttributeT\< SVGAnimatedLength, 0 \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_animated_attribute_t.html"];
+  Node7 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="IAttrOwner",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_i_attr_owner.html"];
+  Node8 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="IAnimatedOwner\< SVGAnimatedLength \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_i_animated_owner.html"];
+  Node9 -> Node1 [dir="back",color="darkgreen",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="System::Web::AnimatedAttributeT\< SVGAnimatedLength, 1 \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_animated_attribute_t.html"];
+  Node7 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 -> Node1 [dir="back",color="darkgreen",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="System::Web::AnimatedAttributeT\< SVGAnimatedLength, 2 \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_animated_attribute_t.html"];
+  Node7 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 -> Node1 [dir="back",color="darkgreen",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="System::Web::AnimatedAttributeT\< SVGAnimatedLength, 3 \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_animated_attribute_t.html"];
+  Node7 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 -> Node1 [dir="back",color="darkgreen",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="System::Web::AnimatedAttributeT\< SVGAnimatedString, 4 \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_animated_attribute_t.html"];
+  Node7 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="IAnimatedOwner\< SVGAnimatedString \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_i_animated_owner.html"];
+}

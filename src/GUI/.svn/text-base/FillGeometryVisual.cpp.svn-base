@@ -1,0 +1,63 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+DependencyClass* FillGeometryVisual::get_Class()
+{
+	static DependencyClass depclass(typeid(thisClass), baseClass::get_Class());
+
+	/*
+	static DependencyProperty* properties[] =
+	{
+		get_CxProperty(),
+		get_CyProperty(),
+		get_RxProperty(),
+		get_RyProperty(),
+		get_BrushProperty(),
+	};
+	*/
+
+	return &depclass;
+}
+
+DependencyClass* FillGeometryVisual::pClass(get_Class());
+
+FillGeometryVisual::FillGeometryVisual() : RenderGeometryVisual(get_Class())
+{
+}
+
+void FillGeometryVisual::Render(ManagedRenderContext renderContext)
+{
+	Geometry* geometry = get_Geometry();
+
+	Brush* brush = get_Brush();
+
+	if (brush)
+	{
+		if (geometry)
+		{
+			geometry->RenderFill(renderContext, brush);
+		}
+	}
+}
+
+UIElement* FillGeometryVisual::HitTest(gm::PointF point)
+{
+	Geometry* geometry = get_Geometry();
+	if (geometry)
+	{
+		if (geometry->FillContainsPoint(point))
+		{
+			return this;
+		}
+	}
+
+	return NULL;
+}
+
+}
+}

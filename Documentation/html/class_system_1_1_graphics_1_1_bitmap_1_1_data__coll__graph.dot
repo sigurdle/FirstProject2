@@ -1,0 +1,18 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="System::Graphics::Bitmap::Data",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pBitmap" ,fontname="Helvetica"];
+  Node2 [label="System::Graphics::Bitmap",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_graphics_1_1_bitmap.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Graphics::Image",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_graphics_1_1_image.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node6 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pixelFormat" ,fontname="Helvetica"];
+  Node6 [label="System::Graphics::PixelFormat_t",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_graphics_1_1_pixel_format__t.html"];
+  Node7 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_colors" ,fontname="Helvetica"];
+  Node7 [label="tagRGBQUAD",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtag_r_g_b_q_u_a_d.html"];
+}

@@ -1,0 +1,185 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+DdeInstance* Application::g_ddeInst;
+HSZ Application::dde_service_name;
+HSZ Application::dde_system;
+
+class DdeStringHandle
+{
+};
+
+class DdeDataHandle
+{
+public:
+
+	CTOR DdeDataHandle() : m_hdata(NULL)
+	{
+	}
+
+	CTOR DdeDataHandle(HDDEDATA hdata) : m_hdata(hdata)
+	{
+	}
+
+	~DdeDataHandle()
+	{
+		if (m_hdata)
+		{
+			DdeFreeDataHandle(m_hdata);
+			m_hdata = NULL;
+		}
+	}
+
+	UINT GetData(byte* dst, UINT cb, UINT offset = 0)
+	{
+		return DdeGetData(m_hdata, dst, cb, offset);
+	}
+
+	UINT GetSize()
+	{
+		return DdeGetData(m_hdata, NULL, 0, 0);
+	}
+
+	operator HDDEDATA () const
+	{
+		return m_hdata;
+	}
+
+	HDDEDATA m_hdata;
+};
+
+class DdeConversationHandle
+{
+public:
+
+	CTOR DdeConversationHandle() : m_hconv(NULL)
+	{
+	}
+
+	CTOR DdeConversationHandle(HCONV hconv) : m_hconv(hconv)
+	{
+	}
+
+	bool SetUserHandle(DWORD id, DWORD_PTR hUser)
+	{
+		return DdeSetUserHandle(m_hconv, id, hUser) != FALSE;
+	}
+
+	operator HCONV () const
+	{
+		return m_hconv;
+	}
+
+	HCONV m_hconv;
+};
+
+HDDEDATA CALLBACK Application::DdeCallback( 
+	UINT uType,       // transaction type 
+	UINT uFmt,        // clipboard data format 
+	HCONV hconv,      // handle to conversation 
+	HSZ hsz1,         // handle to string 
+	HSZ hsz2,         // handle to string 
+	HDDEDATA hdata,   // handle to global memory object 
+	DWORD dwData1,    // transaction-specific data 
+	DWORD dwData2    // transaction-specific data 
+)
+{
+#ifdef _DEBUG
+	WCHAR sz1[256];
+	g_ddeInst->QueryString(hsz1, sz1, _countof(sz1));
+
+	WCHAR sz2[256];
+	g_ddeInst->QueryString(hsz2, sz2, _countof(sz2));
+#endif
+
+    switch (uType)
+    {
+	case XTYP_CONNECT:
+		{
+			bool clientIsServer = dwData2 != FALSE;
+
+			if (hsz2 == Application::dde_service_name && hsz1 == Application::dde_system)
+			{
+				return (HDDEDATA)TRUE;
+			}
+
+           return (HDDEDATA) NULL; 
+		}
+		break;
+
+	case XTYP_CONNECT_CONFIRM:
+		{
+			HCONV hConversation = hconv;
+			bool clientIsServer = dwData2 != FALSE;
+			// no return value
+			return 0;
+		}
+		break;
+
+        case XTYP_REGISTER: 
+        case XTYP_UNREGISTER: 
+			//
+            return (HDDEDATA) NULL; 
+ 
+        case XTYP_ADVDATA: 
+			//
+            return (HDDEDATA) DDE_FACK; 
+ 
+        case XTYP_XACT_COMPLETE: 
+            
+            // 
+            
+            return (HDDEDATA) NULL; 
+ 
+        case XTYP_DISCONNECT:
+			{
+            
+				CONVINFO convinfo;
+				convinfo.cb = sizeof(convinfo);
+				UINT nbytes = DdeQueryConvInfo(hconv, QID_SYNC, &convinfo);
+            // 
+            
+				return (HDDEDATA) NULL; 
+			}
+
+		case XTYP_EXECUTE:
+			{
+				// free datahandle
+				DdeDataHandle data(hdata);	// done in dtor
+				DWORD size = data.GetSize();
+
+				byte buffer[4096];
+				DWORD cb = data.GetData(buffer, sizeof(buffer));
+				WCHAR* str = (WCHAR*)buffer;
+
+				Gui::Application::get_Current()->DdeExecute(str);
+				/*
+				if (!wcsncmp(str, "Open"))
+				{
+					return (HDDEDATA)DDE_FACK;
+				}
+				else
+				*/
+				return (HDDEDATA)DDE_FACK;
+			}
+			break;
+
+        default: 
+            return (HDDEDATA) NULL; 
+    } 
+}
+
+Application* Application::s_Current = NULL;
+
+Application* Application::get_Current()
+{
+	return s_Current;
+}
+
+}
+}

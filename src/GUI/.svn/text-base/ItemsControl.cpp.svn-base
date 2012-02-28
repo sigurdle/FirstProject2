@@ -1,0 +1,44 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+IMP_DEPENDENCY_PROPERTY(int, ItemsControl, SelectedIndex, -1)
+IMP_DEPENDENCY_PROPERTY(Object*, ItemsControl, SelectedItem, NULL)
+
+DependencyClass* ItemsControl::get_Class()
+{
+	static DependencyClass depclass(typeid(thisClass), baseClass::get_Class());
+
+	static DependencyProperty* properties[] =
+	{
+		get_SelectedIndexProperty(),
+		get_SelectedItemProperty(),
+	};
+
+	return &depclass;
+}
+
+ItemsControl::ItemsControl(DependencyClass* depClass) : Control(depClass)
+{
+}
+
+void ItemsControl::AddItem(StringIn str)
+{
+	AddItem(String(str).m_stringObject);
+}
+
+void ItemsControl::AddItem(Object* item)
+{
+	UIElement* element = CreateObjectShadowTree(item);
+
+	OnAddElement(element);
+
+	LayoutChildren();
+}
+
+}	// Gui
+}	// System

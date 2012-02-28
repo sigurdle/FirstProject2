@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/firstproject2/!svn/ver/88/FirstProject2/trunk/include/gl
+END
+wglext.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/59/FirstProject2/trunk/include/gl/wglext.h
+END
+glxext.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/88/FirstProject2/trunk/include/gl/glxext.h
+END
+glext.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/firstproject2/!svn/ver/59/FirstProject2/trunk/include/gl/glext.h
+END

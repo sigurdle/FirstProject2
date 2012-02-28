@@ -1,0 +1,368 @@
+// matrix4f.h - 4x4 element matrix class
+//
+// libgm++: Graphics Math Library
+// Ferdi Scheepers and Stephen F May
+// 15 June 1994
+
+#ifndef gmMatrix4f_H
+#define gmMatrix4f_H
+
+#ifndef LFCEXT
+#define LFCEXT DECLSPEC_DLLIMPORT
+#endif
+
+#include "../gm/gmUtils.h"
+
+namespace System
+{
+namespace gm
+{
+
+template<class TYPE> class vector4;
+typedef vector4<float> vector4f;
+
+typedef void (*transform_point_t)(float outvec[4], const float invec[4], const float m[16]);
+
+class LFCEXT matrix4f
+{
+public:
+	CTOR matrix4f()
+	{
+		m_[0][0] = 0;
+		m_[0][1] = 0;
+		m_[0][2] = 0;
+		m_[0][3] = 0;
+
+		m_[1][0] = 0;
+		m_[1][1] = 0;
+		m_[1][2] = 0;
+		m_[1][3] = 0;
+
+		m_[2][0] = 0;
+		m_[2][1] = 0;
+		m_[2][2] = 0;
+		m_[2][3] = 0;
+
+		m_[3][0] = 0;
+		m_[3][1] = 0;
+		m_[3][2] = 0;
+		m_[3][3] = 0;
+	}
+
+	CTOR matrix4f(const matrix4f& M)
+	{
+		m_[0][0] = M[0][0];
+		m_[0][1] = M[0][1];
+		m_[0][2] = M[0][2];
+		m_[0][3] = M[0][3];
+
+		m_[1][0] = M[1][0];
+		m_[1][1] = M[1][1];
+		m_[1][2] = M[1][2];
+		m_[1][3] = M[1][3];
+
+		m_[2][0] = M[2][0];
+		m_[2][1] = M[2][1];
+		m_[2][2] = M[2][2];
+		m_[2][3] = M[2][3];
+
+		m_[3][0] = M[3][0];
+		m_[3][1] = M[3][1];
+		m_[3][2] = M[3][2];
+		m_[3][3] = M[3][3];
+	}
+
+	CTOR matrix4f(const matrix3f& other);
+
+	CTOR matrix4f(const float*);
+
+	CTOR matrix4f(float, float, float, float,
+		float, float, float, float,
+ 	    float, float, float, float,
+		 float, float, float, float);
+	
+	// array access
+	
+	operator float* ();
+	operator const float* () const;
+
+	float* operator [](int);
+	const float* operator [](int) const;
+
+	// assignment
+
+	matrix4f& assign(float, float, float, float,
+		    float, float, float, float,
+			 float, float, float, float,
+			 float, float, float, float);
+
+	matrix4f& operator =(const matrix4f& M)
+	{
+		m_[0][0] = M[0][0];
+		m_[0][1] = M[0][1];
+		m_[0][2] = M[0][2];
+		m_[0][3] = M[0][3];
+
+		m_[1][0] = M[1][0];
+		m_[1][1] = M[1][1];
+		m_[1][2] = M[1][2];
+		m_[1][3] = M[1][3];
+
+		m_[2][0] = M[2][0];
+		m_[2][1] = M[2][1];
+		m_[2][2] = M[2][2];
+		m_[2][3] = M[2][3];
+
+		m_[3][0] = M[3][0];
+		m_[3][1] = M[3][1];
+		m_[3][2] = M[3][2];
+		m_[3][3] = M[3][3];
+
+		return *this;
+	}
+
+	// operators
+	
+	matrix4f& operator +=(const matrix4f&);
+	matrix4f& operator -=(const matrix4f&);
+	matrix4f& operator *=(const matrix4f&);
+	matrix4f& operator *=(float);
+	matrix4f& operator /=(float);
+	
+	matrix4f operator +(const matrix4f&) const;
+	matrix4f operator -(const matrix4f&) const;
+	matrix4f operator -() const;
+	matrix4f operator *(const matrix4f&) const;
+	matrix4f operator *(float) const;
+	matrix4f operator /(float) const;
+	
+	friend matrix4f operator *(float, const matrix4f&);
+	
+	bool operator ==(const matrix4f&) const;
+	bool operator !=(const matrix4f&) const;
+
+	bool FuzzyEquals(const matrix4f&) const;
+	
+	vector4f operator *(const vector4f&) const;
+	
+	friend LFCEXT vector4f operator *(const vector4f&, const matrix4f&);
+	
+	// operations
+	
+	matrix4f getInverse() const;
+	matrix4f getTranspose() const;
+	matrix4f getAdjoint() const;
+	
+	float getDeterminant() const;
+	bool isSingular() const;
+	
+	vector3f transform(const vector3f&) const;
+	//vector4f transform(const vector4f& v) const;
+	// gmVector3t<float> matrix4f::transform_transpose(const gmVector3t<float>& v) const;
+	
+	void copyTo(float [4][4]) const;
+
+	// transformation matrices
+	
+	static matrix4f getIdentity();
+	static matrix4f getRotate(float, const vector3f& axis);
+	static matrix4f getScale(float, float, float);
+	static matrix4f getTranslate(float, float, float);
+	static matrix4f getRotate(float, float x, float y, float z);
+	static matrix4f getScale(const vector3f&);
+	static matrix4f getTranslate(const vector3f&);
+	
+	static matrix4f getPerspective(double fovy, double aspect, double zNear, double zFar);
+	static matrix4f getOrtho(double left, double right, double bottom, double top, double zNear, double zFar);
+	static matrix4f getOrtho2D(double left, double right, double bottom, double top);
+	
+	// cubic basis matrices
+	
+	static matrix4f bezierBasis();
+	static matrix4f bsplineBasis();
+	static matrix4f catmullromBasis();
+	static matrix4f hermiteBasis();
+	
+	static matrix4f tensedBSplineBasis(float);
+	static matrix4f cardinalBasis(float);
+	static matrix4f tauBasis(float, float);
+	static matrix4f betaSplineBasis(float, float);
+	
+protected:
+	
+	float m_[4][4];
+};
+
+// ARRAY ACCESS
+
+inline matrix4f::operator float* ()
+{
+	return &m_[0][0];
+}
+
+inline matrix4f::operator const float* () const
+{
+	return &m_[0][0];
+}
+
+inline float* matrix4f::operator [](int i)
+{
+	ASSERT(i == 0 || i == 1 || i == 2 || i == 3);
+  return &m_[i][0];
+}
+
+inline const float* matrix4f::operator [](int i) const
+{
+  ASSERT(i == 0 || i == 1 || i == 2 || i == 3);
+  return &m_[i][0];
+}
+
+inline void matrix4f::copyTo(float f[4][4]) const
+{
+  f[0][0] = (float)m_[0][0]; f[0][1] = (float)m_[0][1]; 
+  f[0][2] = (float)m_[0][2]; f[0][3] = (float)m_[0][3];
+  f[1][0] = (float)m_[1][0]; f[1][1] = (float)m_[1][1]; 
+  f[1][2] = (float)m_[1][2]; f[1][3] = (float)m_[1][3];
+  f[2][0] = (float)m_[2][0]; f[2][1] = (float)m_[2][1]; 
+  f[2][2] = (float)m_[2][2]; f[2][3] = (float)m_[2][3];
+  f[3][0] = (float)m_[3][0]; f[3][1] = (float)m_[3][1]; 
+  f[3][2] = (float)m_[3][2]; f[3][3] = (float)m_[3][3];
+}
+
+//class Matrix4;
+
+#ifndef __LERSTAD__// WIN32
+#undef new
+#endif
+
+class LFCEXT Matrix4 : public System::RefCountedObject
+{
+public:
+	CTOR Matrix4();
+	CTOR Matrix4(const matrix4f& m);
+	CTOR Matrix4(const float* m);
+	CTOR Matrix4(float a00, float a01, float a02, float a03,
+		     float a10, float a11, float a12, float a13,
+		     float a20, float a21, float a22, float a23,
+		     float a30, float a31, float a32, float a33);
+
+#ifndef __LERSTAD__// WIN32
+	void* operator new (size_t size);
+	void* operator new (size_t size, const char* file, int line);
+	void operator delete (void* p);
+#endif
+
+	void Get(float m[16]) const;
+
+//	void glOrtho(double left, double right, double bottom, double top, double zNear, double zFar);
+//	void gluOrtho2D(double left, double right, double bottom, double top);
+
+	bool IsInvertible() const;
+
+	vector3f Transform(const vector3f& v) const;
+//	vector4f Transform(const vector4f& v) const;
+
+	Matrix4 * operator * (const Matrix4& src) const;
+	vector4f operator * (const vector4f& v) const;
+	LFCEXT friend vector4f operator * (const vector4f& v, const Matrix4& M);
+
+	__release<Matrix4> GetInverse() const;
+
+	bool Equals(const Matrix4& other) const;
+
+	static __release<Matrix4> GetIdentity();
+	static __release<Matrix4> GetRotate(float angle, float x, float y, float z);
+	static __release<Matrix4> GetScale(float x, float y, float z);
+	static __release<Matrix4> GetTranslate(float x, float y, float z);
+	static __release<Matrix4> GetTranslate(const gm::vector3f& vec)
+	{
+		return GetTranslate(vec[0], vec[1], vec[2]);
+	}
+	static __release<Matrix4> GetOrtho(double left, double right, double bottom, double top, double zNear, double zFar);
+	static __release<Matrix4> GetOrtho2D(double left, double right, double bottom, double top);
+	static __release<Matrix4> GetFrustum(double left, double right, double bottom, double top, double zNear, double zFar);
+
+//protected:
+
+//	friend class Matrix4;
+
+	__DECLSPEC_ALIGN_16__ matrix4f m_matrix;
+};
+
+#if 0
+class LFCEXT Matrix4
+{
+public:
+
+	Matrix4();
+	Matrix4(const Matrix4 &src);
+	Matrix4(Matrix4* p);
+	Matrix4(const float* m);
+	Matrix4(float a00, float a01, float a02, float a03,
+		     float a10, float a11, float a12, float a13,
+		     float a20, float a21, float a22, float a23,
+		     float a30, float a31, float a32, float a33);
+
+	~Matrix4();
+
+	void Get(float m[16]) const;
+
+	void Invert();
+
+	Matrix4 GetInverse() const;
+
+	static Matrix4 GetIdentity();
+	static Matrix4 GetRotate(float angle, float x, float y, float z);
+	static Matrix4 GetScale(float x, float y, float z);
+	static Matrix4 GetTranslate(float x, float y, float z);
+	static Matrix4 GetOrtho(double left, double right, double bottom, double top, double zNear, double zFar);
+	static Matrix4 GetOrtho2D(double left, double right, double bottom, double top);
+	static Matrix4 GetFrustum(double left, double right, double bottom, double top, double zNear, double zFar);
+
+	bool IsInvertible() const;
+
+	Matrix4 operator * (const Matrix4 &src) const;
+	vector4f operator *(const vector4f& v) const;
+
+	LFCEXT friend vector4f operator * (const vector4f& v, const Matrix4 &M);
+
+	LFCEXT friend vector3f gluProject(const vector3f& obj, const Matrix4 model, const Matrix4 proj, const double viewport[4]);
+
+	Matrix4& operator = (const Matrix4 &src);
+	Matrix4& operator *= (const Matrix4 &src);
+
+	vector3f Transform(const vector3f &v) const;
+	vector4f Transform(const vector4f &v) const;
+
+	bool ReferenceEquals(const Matrix4 &other) const;
+	bool Equals(const Matrix4 &other) const;
+
+	inline bool operator == (const Matrix4 &other) const
+	{
+		return Equals(other);
+	}
+
+	inline bool operator != (const Matrix4 &other) const
+	{
+		return !Equals(other);
+	}
+
+protected:
+
+	friend class vector3f;
+
+	Matrix4* m_p;
+
+	matrix4f& getm() const
+	{
+		return m_p->m_matrix;
+	}
+};
+#endif
+
+}	// LDraw
+}
+
+#define new _new
+
+#endif // gmMatrix4f_H

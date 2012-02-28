@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/firstproject2/!svn/ver/99/FirstProject2/trunk/src/ZIP
+END
+dllmain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/99/FirstProject2/trunk/src/ZIP/dllmain.cpp
+END
+ZIP.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/firstproject2/!svn/ver/85/FirstProject2/trunk/src/ZIP/ZIP.cpp
+END
+ZIPArchive.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/85/FirstProject2/trunk/src/ZIP/ZIPArchive.cpp
+END
+stdafx.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/firstproject2/!svn/ver/85/FirstProject2/trunk/src/ZIP/stdafx.cpp
+END

@@ -1,0 +1,16 @@
+#if !defined(AFX_STDAFX_H__C7B24DA5_D323_4439_A562_655A96703DAB__INCLUDED_)
+#define AFX_STDAFX_H__C7B24DA5_D323_4439_A562_655A96703DAB__INCLUDED_
+
+#define STRICT
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0400
+#endif
+//#define _ATL_APARTMENT_THREADED
+//#define _ATL_FREE_THREADED
+
+#include "LFC/LFC.h"
+#include "LMedia/LMedia.h"
+
+#include <math.h>
+
+#endif // !defined(AFX_STDAFX_H__C7B24DA5_D323_4439_A562_655A96703DAB__INCLUDED)

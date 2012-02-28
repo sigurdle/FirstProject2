@@ -1,0 +1,161 @@
+#include "stdafx.h"
+#include "LFC.h"
+
+namespace System
+{
+
+void AttributeDef::Store(TypeArchive& ar) const
+{
+	ar << m_pClass;
+	ar << m_method;
+	ar << m_nargs;
+
+	Declarator* pMethod = m_pClass->m_pScope->m_orderedDecls[m_method];
+
+	FunctionType* pFunction = (FunctionType*)pMethod->m_pType;
+
+	for (size_t i = 0; i < m_nargs; ++i)
+	{
+		Type* pType = pFunction->m_parameters.m_parameters[i].m_pType->GetStripped();
+
+		switch (pType->get_Kind())
+		{
+		case type_bool:
+			ar << m_args[i].boolVal;
+			break;
+
+		case type_enum:
+		case type_int:
+		case type_unsigned_int:
+			ar << m_args[i].int32Val;
+			break;
+
+		case type_long_long:
+		case type_unsigned_long_long:
+			ar << m_args[i].int64Val;
+			break;
+
+		case type_float:
+			ar << m_args[i].floatVal;
+			break;
+
+		case type_double:
+			ar << m_args[i].doubleVal;
+			break;
+
+		case type_class:
+			{
+				ClassType* pClass = (ClassType*)pType;
+
+				VERIFY(!pClass->HasVirtualTable());
+				VERIFY(pClass->get_sizeof() == 4);
+
+				ar << m_args[i].int32Val;
+			}
+			break;
+
+		case type_pointer:
+			{
+				if (pType->GetPointerTo()->AsClass())
+				{
+					if (pType->GetPointerTo()->AsClass()->m_qname == L"System::ImmutableString<char>")
+					{
+						ASSERT(0);
+					//	ar << m_args[i].astrVal;
+					}
+					else if (pType->GetPointerTo()->AsClass()->m_qname == L"System::ImmutableString<wchar_t>")
+					{
+						ASSERT(0);
+					//	ar << m_args[i].wstrVal;
+					}
+					else
+						VERIFY(0);
+				}
+				else
+					VERIFY(0);
+			}
+			break;
+
+		default:
+			VERIFY(0);
+		}
+	}
+}
+
+void AttributeDef::Load(TypeArchive& ar)
+{
+	ar >> m_pClass;
+	ar >> m_method;
+	ar >> m_nargs;
+
+	Declarator* pMethod = m_pClass->m_pScope->m_orderedDecls[m_method];
+
+	FunctionType* pFunction = (FunctionType*)pMethod->m_pType;
+
+	m_args = new Arg[m_nargs];
+
+	for (size_t i = 0; i < m_nargs; i++)
+	{
+		Type* pType = pFunction->m_parameters.m_parameters[i].m_pType->GetStripped();
+
+		switch (pType->get_Kind())
+		{
+		case type_bool:
+			ar >> m_args[i].boolVal;
+			break;
+
+		case type_enum:
+		case type_int:
+		case type_unsigned_int:
+			ar >> m_args[i].int32Val;
+			break;
+
+		case type_long_long:
+		case type_unsigned_long_long:
+			ar >> m_args[i].int64Val;
+			break;
+
+		case type_float:
+			ar >> m_args[i].floatVal;
+			break;
+
+		case type_double:
+			ar >> m_args[i].doubleVal;
+			break;
+
+		case type_class:
+			{
+				ClassType* pClass = (ClassType*)pType;
+
+				VERIFY(!pClass->HasVirtualTable());
+				VERIFY(pClass->get_sizeof() == 4);
+
+				ar >> m_args[i].int32Val;
+			}
+			break;
+
+		case type_pointer:
+			{
+				if (pType->GetPointerTo()->AsClass())
+				{
+					if (pType->GetPointerTo()->AsClass()->m_qname == L"System::ImmutableString<char>")
+					{
+						ASSERT(0);
+					//	m_args[i].astrVal = new ImmutableString<char>();
+					//	ar >> *m_args[i].astrVal;
+					}
+					else
+						VERIFY(0);
+				}
+				else
+					VERIFY(0);
+			}
+			break;
+
+		default:
+			VERIFY(0);
+		}
+	}
+}
+
+}	// System

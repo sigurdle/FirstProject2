@@ -1,0 +1,20 @@
+<filter name="AU Parser">
+ <inputpin name="Stream Input" minOccurs="1" maxOccurs="1">
+   <mediatypes>
+	 <mediatype majortype="Stream">
+	   <streamcontent>
+		 <match>
+ 	     <pattern value="2E 73 6E 64" />
+		 </match>
+		</streamcontent>
+	 </mediatype>
+ 	</mediatypes>
+ </inputpin>
+
+ <outputpin name="Audio Output" minOccurs="1" maxOccurs="1">
+	<mediatypes>
+	 <mediatype majortype="Audio" />
+	</mediatypes>
+ </outputpin>
+
+</filter>

@@ -1,0 +1,104 @@
+#include "stdafx.h"
+#include "X3D2.h"
+#include "Sphere.h"
+#include "GUI/physics.h"
+
+namespace System
+{
+namespace x3d
+{
+
+IMP_X3DFIELD3(Sphere, SFFloat, radius, initializeOnly, 1.0f, 0.0f, FLT_MAX)
+
+NodeType* Sphere::GetNodeType()
+{
+	static X3DFieldDefinition* fields[] =
+	{
+		get_radiusFieldDef(),
+	};
+
+	static NodeType nodeType(WSTR("Sphere"), typeid(Sphere), fields, _countof(fields), baseClass::GetNodeType());
+	return &nodeType;
+}
+
+NodeType* Sphere::nodeType(GetNodeType());
+
+Sphere::Sphere() : X3DGeometryNode(GetNodeType()),
+	m_radius(new SFFloat(get_radiusFieldDef(), this))
+{
+}
+
+void Sphere::Draw(X3DDrawContext* pDC, X3DTextureNodeImplImpl* pTextureNode)
+{
+	if (!m_shape.IsValid(pDC->m_renderContext))
+	{
+		m_shape.Create(pDC->m_renderContext, getRadius(), 30, 30);
+	}
+
+	m_shape.Draw(pDC->m_renderContext);
+
+#if 0
+#if 1
+	pDC->m_pGraphics3D->PushAttrib(GL_ENABLE_BIT);
+
+	pDC->m_pGraphics3D->Enable(GL_CULL_FACE);
+	LDraw::gluSphere(pDC->m_pGraphics3D, m_radius->m_value, 12, 12);
+
+	pDC->m_pGraphics3D->PopAttrib();
+#else
+	GLUquadricObj* q = gluNewQuadric();
+	gluQuadricTexture(q, TRUE);
+	gluSphere(q, m_radius->m_value, 16, 16);
+	gluDeleteQuadric(q);
+#endif
+#endif
+}
+
+// X3DBoundedImplImpl
+BoundingBox Sphere::CalculateBoundingBox(gm::matrix4f& transform)
+{
+	m_computedBBoxValid = true;
+	float radius = getRadius();
+
+	return BoundingBox(Vec3f(0,0,0), Vec3f(radius, radius, radius));
+
+	/*
+	m_computedBBoxSize[0] = radius;
+	m_computedBBoxSize[1] = radius;
+	m_computedBBoxSize[2] = radius;
+	*/
+
+	/*
+	m_computedBBoxCenter[0] = 0;
+	m_computedBBoxCenter[1] = 0;
+	m_computedBBoxCenter[2] = 0;
+	*/
+}
+
+void Sphere::AddShapeDesc(physx::PxRigidActor* actor)
+{
+	float radius = m_radius->getValue();
+
+#if defined(PX_PHYSICS_NXPHYSICS_API)
+	physx::PxMaterial* mMaterial;
+	mMaterial = Gui::gPhysics->createMaterial(0.5f, 0.5f, 0.1f);    //static friction, dynamic friction, restitution
+
+	physx::PxSphereGeometry geometry(radius);
+	actor->createShape(geometry, *mMaterial);
+/*
+//	NxBodyDesc bodyDesc;
+//	NxActorDesc actorDesc;
+	NxSphereShapeDesc* sphereDesc = new NxSphereShapeDesc;
+	sphereDesc->radius = radius;
+	actorDesc->shapes.pushBack(sphereDesc);
+	*/
+//	actorDesc.body = &bodyDesc;
+//	actorDesc.density = 10.0f;
+//	actorDesc.globalPose.t = NxVec3(0.0f,0.0f,0.0f); //Position at the origin.
+
+//	m_actor = gScene->createActor(actorDesc);
+#endif
+}
+
+}	// x3d
+}	// System

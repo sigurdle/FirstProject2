@@ -1,0 +1,7 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="_RTL_CRITICAL_SECTION",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$struct___r_t_l___c_r_i_t_i_c_a_l___s_e_c_t_i_o_n.html"];
+}

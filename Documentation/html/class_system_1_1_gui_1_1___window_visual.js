@@ -1,0 +1,26 @@
+var class_system_1_1_gui_1_1___window_visual =
+[
+    [ "_WindowVisual", "class_system_1_1_gui_1_1___window_visual.html#a0f90d08a09a03ea3fe442cb9ce9307a4", null ],
+    [ "getBorderBottom", "class_system_1_1_gui_1_1___window_visual.html#a55f9096f9f7f2d4449d02cc0eb75c133", null ],
+    [ "getBorderLeft", "class_system_1_1_gui_1_1___window_visual.html#ae4139dd382a96836d4d151ca0c62b57e", null ],
+    [ "getBorderLeftRight", "class_system_1_1_gui_1_1___window_visual.html#a06c726002fc6b04da4a0e14a9a70a354", null ],
+    [ "getBorderRight", "class_system_1_1_gui_1_1___window_visual.html#a1aa31ff2651b8c7e61210a1f13a6b3ce", null ],
+    [ "getBorderTop", "class_system_1_1_gui_1_1___window_visual.html#a5c208bae09dfbf07716e740b36f32d80", null ],
+    [ "getBorderTopBottom", "class_system_1_1_gui_1_1___window_visual.html#a46b43fbdc63700317e42d2697a1df941", null ],
+    [ "getBottom", "class_system_1_1_gui_1_1___window_visual.html#ae1d8ed47d9b6360a64fded9e02a68f5c", null ],
+    [ "getClientBottom", "class_system_1_1_gui_1_1___window_visual.html#a9d8bc826df9a5a6388fa9049593666e9", null ],
+    [ "getClientHeight", "class_system_1_1_gui_1_1___window_visual.html#a7778ce45bb1be98cfaade8da0d2cbd71", null ],
+    [ "getClientLeft", "class_system_1_1_gui_1_1___window_visual.html#a8cce753f6e9348977a46489a063f6baf", null ],
+    [ "getClientRight", "class_system_1_1_gui_1_1___window_visual.html#aed51f990c34be3e1b8b24ea6612a7c07", null ],
+    [ "getClientTop", "class_system_1_1_gui_1_1___window_visual.html#a14412069023a1519aa700844b948ff5b", null ],
+    [ "getClientWidth", "class_system_1_1_gui_1_1___window_visual.html#ac2ee3ac4beb0aa7e1c080da0df861297", null ],
+    [ "getClip", "class_system_1_1_gui_1_1___window_visual.html#a9da20931fdbcf809f114ba8e635efb13", null ],
+    [ "getHeight", "class_system_1_1_gui_1_1___window_visual.html#a01f82b3fec352aae15b489af56e97ac0", null ],
+    [ "getLeft", "class_system_1_1_gui_1_1___window_visual.html#a40cdff35bb60034ae3a6dd576097d2c9", null ],
+    [ "getOwner", "class_system_1_1_gui_1_1___window_visual.html#a2e803fd5fd71e395f5fc3a7e5b9f4a20", null ],
+    [ "getRight", "class_system_1_1_gui_1_1___window_visual.html#a5cab081d8809da66dead48848a82fe66", null ],
+    [ "getTitleText", "class_system_1_1_gui_1_1___window_visual.html#a44e9868beb843d8f6798f34f6a6ba297", null ],
+    [ "getTop", "class_system_1_1_gui_1_1___window_visual.html#a4ee891477200b1017fe6725ef9dcfcc4", null ],
+    [ "getTopmost", "class_system_1_1_gui_1_1___window_visual.html#af944902e545000f36438d79aaa28666f", null ],
+    [ "getWidth", "class_system_1_1_gui_1_1___window_visual.html#a5ba02b132a061d427e11e1ed1681bb67", null ]
+];

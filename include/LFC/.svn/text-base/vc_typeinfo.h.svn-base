@@ -1,0 +1,83 @@
+namespace System
+{
+struct rtti_object_locator;
+struct BaseClassDescriptor;
+class TypeDescriptor;
+
+#ifdef _M_X64
+
+struct ClassHierarchyDescriptor
+{
+	DWORD signature;
+	DWORD attributes;	// bit 0 set = multiple inheritance, bit 1 set = virtual inheritance
+	DWORD count;
+	DWORD m_baseClassArray;
+//	BaseClassDescriptor** m_baseClassArray;
+};
+
+#define RTTI_OBJECT_LOCATOR_SIGNATURE 1
+
+struct rtti_object_locator
+{
+	int signature;	// signature=1
+	int offset_to_top;
+	DWORD cdOffset;	//constructor displacement offset
+	DWORD typeinfo;
+	DWORD m_classHierarchyDescriptor;
+//	TypeDescriptor* typeinfo;
+//	ClassHierarchyDescriptor* m_classHierarchyDescriptor;
+};
+
+struct BaseClassDescriptor
+{
+	DWORD typedesc;
+	DWORD num_bases;
+	int base_offset;
+	int flags;
+	int unknown0;
+	int unknown1;
+};
+
+#else
+
+struct ClassHierarchyDescriptor
+{
+	DWORD signature;
+	DWORD attributes;	// bit 0 set = multiple inheritance, bit 1 set = virtual inheritance
+	DWORD count;
+	BaseClassDescriptor** m_baseClassArray;
+};
+
+#define RTTI_OBJECT_LOCATOR_SIGNATURE 0
+
+struct rtti_object_locator
+{
+	int signature;	// signature=0
+	int offset_to_top;
+	DWORD cdOffset;	//constructor displacement offset
+	TypeDescriptor* typeinfo;
+	ClassHierarchyDescriptor* m_classHierarchyDescriptor;
+};
+
+struct BaseClassDescriptor
+{
+	TypeDescriptor* typedesc;
+	long num_bases;
+	long base_offset;
+	long flags;
+	long unknown0;
+	long unknown1;
+//	struct Sub value2;
+};
+
+#endif
+
+class TypeDescriptor	// type_info
+{
+public:
+	void* vtable;	//virtual ~TypeDescriptor()
+	void *_m_data;
+	char rawname[1];
+};
+
+}

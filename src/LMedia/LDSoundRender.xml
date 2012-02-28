@@ -1,0 +1,8 @@
+<filter name="DSound Render">
+ <inputpin name="Audio Input" minOccurs="1" maxOccurs="1">
+   <mediatypes>
+	 <mediatype majortype="Audio" />
+ 	</mediatypes>
+ </inputpin>
+
+</filter>

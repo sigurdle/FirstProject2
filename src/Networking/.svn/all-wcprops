@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/firstproject2/!svn/ver/114/FirstProject2/trunk/src/Networking
+END
+http.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/126/FirstProject2/trunk/src/Networking/http.cpp
+END
+dllmain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/Networking/dllmain.cpp
+END
+Binder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/61/FirstProject2/trunk/src/Networking/Binder.cpp
+END
+Networking.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/Networking/Networking.cpp
+END
+Socket.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/61/FirstProject2/trunk/src/Networking/Socket.cpp
+END
+stdafx.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/61/FirstProject2/trunk/src/Networking/stdafx.cpp
+END
+HttpHeaders.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/61/FirstProject2/trunk/src/Networking/HttpHeaders.cpp
+END

@@ -1,0 +1,755 @@
+// ASXMLSchemaModel.h : Declaration of the CASXMLSchemaModel
+
+#ifndef __ASXMLSCHEMAMODEL_H_
+#define __ASXMLSCHEMAMODEL_H_
+
+//#include "resource.h"       // main symbols
+
+namespace System
+{
+namespace Web
+{
+
+class CASXMLSchemaModel;
+class CContentType;
+class CDefinition;
+class CElementDefinition;
+class CModelGroup;
+class CComplexTypeDefinition;
+
+#if 0
+class CSchema
+{
+public:
+	CDefList m_globalDefs;
+	CArray<CSchemaNode*,CSchemaNode*> m_globalElements;
+
+//	CArray<IXMLSchemaDocument*,IXMLSchemaDocument*> m_allDocuments;
+
+	_bstr_t m_targetNamespace;
+	_bstr_t m_elementFormDefault;
+	_bstr_t m_attributeFormDefault;
+
+	_bstr_t GetTargetNamespace()
+	{
+		return m_targetNamespace;
+	/*
+		BSTR btargetNamespace;
+		m_schemaElement->getAttribute(L"targetNamespace", &btargetNamespace);
+		if (btargetNamespace)
+			return _bstr_t(btargetNamespace, false);
+		else
+			return _bstr_t(L"");
+			*/
+	}
+
+	CTypeDefinition* FindTypeElementByName(ILDOMNode* parent, BSTR btypename);
+	CGlobalElementDefinition* FindElementElementByName(ILDOMNode* parent, BSTR btypename);
+
+	CDefinition* CreateDefinition(Element* element);
+	CDefinition* CreateGlobalDefinition(Element* element);
+
+	/*
+	void AddDocument(IXMLSchemaDocument* document)
+	{
+		document->AddRef();
+		m_allDocuments.Add(document);
+	}
+	*/
+
+	void IncludeSchema(Element* mergeDocumentElement);
+};
+#endif
+
+class CASXMLNamedObjectMap :
+//	public IDispatchImpl<DispIDTDASNamedObjectMap, &IID_DispIDTDASNamedObjectMap, &LIBID_LHTMLLib>,
+
+	public IASNamedObjectMap
+{
+public:
+	vector<IASObject*> m_items;
+
+	size_t get_length() const
+	{
+		return m_items.GetSize();
+	}
+
+	IASObject* getNamedItem(StringIn name)
+	{
+		for (uint i = 0; i < m_items.GetSize(); ++i)
+		{
+			String nodename = m_items[i]->get_nodeName();
+
+			if (name == nodename)
+			{
+				return m_items[i];
+			}
+		}
+
+		return NULL;
+	}
+
+	IASObject* getNamedItemNS(StringIn namespaceURI, StringIn localName)
+	{
+#if 0
+		for (int i = 0; i < m_items.GetSize(); i++)
+		{
+			BSTR nodename;
+			m_items[i]->get_localName(&nodename);
+
+			if (!wcscmp(name, nodename))
+			{
+				*pVal = m_items[i];
+				(*pVal)->AddRef();
+				return Success;
+			}
+		}
+#endif
+
+		return NULL;
+	}
+
+	IASObject* item(size_t index)
+	{
+		if (/*index >= 0 && */ index < m_items.GetSize())
+		{
+			return m_items[index];
+		}
+		else
+			return NULL;
+	}
+
+	IASObject* setNamedItem(IASObject* newASObject)
+	{
+		m_items.Add(newASObject);
+
+		return newASObject;
+	}
+
+	IASObject* setNamedItemNS(IASObject* newASObject)
+	{
+	// Same as above (?)
+		m_items.Add(newASObject);
+
+		return newASObject;
+	}
+};
+
+class CASXMLObjectList :
+	public IASObjectList
+{
+public:
+
+	vector<IASObject*> m_items;
+
+	IASObject* item(size_t index) const
+	{
+		if (/*index >= 0 &&*/ index < m_items.GetSize())
+		{
+			return m_items[index];
+		}
+		else
+			return NULL;
+	}
+
+	size_t get_length() const
+	{
+		return m_items.GetSize();
+	}
+};
+
+class ASObjectImpl : public Object
+{
+public:
+
+#if 0
+	IASModel* get_ownerASModel()
+	{
+		return static_cast<T*>(this)->get_ownerASModel_();
+	}
+	IASObject* cloneASObject(bool deep) const
+	{
+		return static_cast<const T*>(this)->cloneASObject_(deep);
+	}
+
+	STDMETHOD(get_localName)(/*[out, retval]*/ BSTR *pVal)
+	{
+		return E_FAIL;
+	}
+
+	STDMETHOD(set_localName)(/*[in]*/ BSTR newVal)
+	{
+		return E_FAIL;
+	}
+
+	STDMETHOD(get_prefix)(/*[out, retval]*/ BSTR *pVal)
+	{
+		return E_FAIL;
+	}
+
+	STDMETHOD(set_prefix)(/*[in]*/ BSTR newVal)
+	{
+		return E_FAIL;
+	}
+
+	STDMETHOD(setUserData)(const sysstring& key, /*[in]*/ _Object* data, /*[in]*/ IASUserDataHandler* handler, /*[out,retval]*/ _Object* *pVal)
+	{
+		return Success;
+	}
+	STDMETHOD(getUserData)(const sysstring& key, /*[out,retval]*/ _Object* *pVal)
+	{
+		return S_OK;
+	}
+#endif
+};
+
+class CSchemaNode : public System::Object
+{
+public:
+	CSchemaNode()
+	{
+		m_pSchema = NULL;
+	//	m_element = NULL;
+	}
+
+	CASXMLSchemaModel* m_pSchema;
+//	Element* m_element;
+
+	class CUserData
+	{
+	public:
+		String m_key;
+		Object* m_data;
+		IASUserDataHandler* m_handler;
+	};
+
+	vector<CUserData*> m_userdataList;
+
+#if 0
+	STDMETHOD(GetElement)(/*[out,retval]*/ Element* *pVal)
+	{
+		if (pVal == NULL) return E_POINTER;
+		*pVal = m_element;
+		if (*pVal) (*pVal)->AddRef();
+		return S_OK;
+	}
+
+	STDMETHOD(SetElement)(/*[in]*/ Element* newVal)
+	{
+		m_element = newVal;
+		return S_OK;
+	}
+#endif
+
+	IASModel* get_ownerASModel_();
+#if 0
+	STDMETHOD(put_ownerASModel)(/*[in]*/ IASModel* newVal)
+	{
+		return E_FAIL;
+	}
+#endif
+	virtual IASObject* cloneASObject_(bool deep) const
+	{
+		ASSERT(0);	// Should be handled in derived class
+		return NULL;
+	}
+
+#if 0
+	STDMETHOD(get_localName)(/*[out, retval]*/ BSTR *pVal)
+	{
+		return E_FAIL;
+	}
+
+	STDMETHOD(put_localName)(/*[in]*/ BSTR newVal)
+	{
+		return E_FAIL;
+	}
+
+	STDMETHOD(get_prefix)(/*[out, retval]*/ BSTR *pVal)
+	{
+		return E_FAIL;
+	}
+
+	STDMETHOD(put_prefix)(/*[in]*/ BSTR newVal)
+	{
+		return E_FAIL;
+	}
+
+	STDMETHOD(get_nodeName)(/*[out, retval]*/ BSTR *pVal)
+	{
+		return E_FAIL;
+	}
+
+	STDMETHOD(put_nodeName)(const sysstring& newVal)
+	{
+		return E_FAIL;
+	}
+#endif
+
+	Object* setUserData(StringIn key, Object* data, IASUserDataHandler* handler)
+	{
+		for (uint i = 0; i < m_userdataList.GetSize(); ++i)
+		{
+			if (key == m_userdataList[i]->m_key)
+			{
+				Object* oldval = m_userdataList[i]->m_data;
+
+				if (data)
+				{
+					m_userdataList[i]->m_data = data;
+					m_userdataList[i]->m_handler = handler;
+				}
+				else
+				{
+					delete m_userdataList[i];
+					m_userdataList.RemoveAt(i);
+				}
+
+				return oldval;
+			}
+		}
+
+		if (data)
+		{
+			CUserData* pData = new CUserData;
+			pData->m_key = key;
+			pData->m_data = data;
+			pData->m_handler = handler;
+
+			m_userdataList.Add(pData);
+		}
+
+		return NULL;
+	}
+
+	Object* getUserData(StringIn key)
+	{
+		for (uint i = 0; i < m_userdataList.GetSize(); ++i)
+		{
+			if (key == m_userdataList[i]->m_key)
+			{
+				return m_userdataList[i]->m_data;
+			}
+		}
+
+		return nullptr;
+	}
+};
+
+class CDefList
+{
+public:
+	CASXMLSchemaModel* m_pSchema;
+	vector<CDefinition*> m_defs;
+//	CArray<CDefinition*,CDefinition*> m_defs;
+//	CComObject<CDTDASNamedObjectMap>* m_defs;
+
+	CTOR CDefList()
+	{
+		//CComObject<CDTDASNamedObjectMap>::CreateInstance(
+	}
+
+	CElementDefinition* FindElementDefinition(Element* element);
+};
+
+#if 0
+class CASXMLInclude :
+	public CSchemaNode,
+	public ASObjectImpl<CASXMLInclude, IASObject>
+{
+public:
+
+	CASXMLInclude()
+	{
+		m_asModel = NULL;
+	}
+
+	CASXMLSchemaModel* m_asModel;
+
+	sysstring m_location;
+
+public:
+	sysstring get_location()
+	{
+		return m_location;//m_element->getAttribute(L"schemaLocation");
+	}
+	void set_location(const sysstring& newVal)
+	{
+	// TODO
+		ASSERT(0);
+		//return m_element->setAttribute(L"schemaLocation", newVal);
+	}
+	STDMETHOD(get_abslocation)(/*[out, retval]*/ BSTR *pVal);
+	STDMETHOD(get_asModel)(/*[out, retval]*/ IASModel* *pVal);
+// IASObject
+	STDMETHOD(get_asNodeType)(/*[out, retval]*/ ASObjectType *pVal)
+	{
+		ASSERT(pVal != NULL);
+		if (pVal == NULL) return E_POINTER;
+		*pVal = AS_INCLUDE;
+		return E_FAIL;
+	}
+
+	STDMETHOD(get_nodeName)(/*[out, retval]*/ BSTR *pVal)
+	{
+		if (pVal == NULL) return E_POINTER;
+		*pVal = SysAllocString(L"#include");
+		return S_OK;
+	}
+};
+#endif
+
+class CDefinition :
+	public CSchemaNode
+{
+public:
+	CTOR CDefinition()
+	{
+	}
+
+//	virtual _bstr_t GetDefType() = 0;
+
+	/*
+	virtual void BuildDefs()	// ???
+	{
+	}
+	*/
+
+	virtual void BuildDefs(Element* element) = 0;
+
+#if 0
+	IASContentModel* get_asCM)(/*[out, retval]*/  *pVal)
+	{
+		return S_OK;
+	}
+#endif
+
+	void set_asCM(/*[in]*/ IASContentModel* newVal)
+	{
+		ASSERT(0);
+	}
+};
+
+class CTypeDefinition :
+	public CDefinition
+{
+public:
+	CTypeDefinition()
+	{
+		m_pContent = NULL;
+	}
+
+	CContentType* m_pContent;
+// CComObject<CASContentModel>* m_pContent;
+
+	String GetName()
+	{
+#if 0
+		if (m_element == NULL)
+		{
+			*pVal = m_name.copy();
+		}
+		else
+		{
+			m_element->getAttribute(L"name", pVal);
+		}
+#endif
+		return nullptr;
+	}
+
+	String m_name;
+
+// IASObject
+};
+
+class CSimpleTypeDefinition :
+	public CTypeDefinition//<IASSimpleTypeDeclaration>
+{
+public:
+	CSimpleTypeDefinition()
+	{
+	}
+
+	String GetDefType() const
+	{
+		return WSTR("simpleType");
+	}
+
+// IASObject
+	ASObjectType get_asNodeType() const
+	{
+		return AS_SIMPLETYPE_DECLARATION;
+	}
+
+	String get_nodeName()
+	{
+		return nullptr;//m_element->getAttribute(L"name", pVal);
+	}
+
+	virtual void BuildDefs(Element* element)
+	{
+		// TODO
+	}
+};
+
+	/*
+class CComplexTypeDefinition : public CTypeDefinition
+{
+public:
+	CModelGroup* m_contentModel;
+
+	virtual void BuildDefs(Element* element);
+};
+*/
+
+
+#if 0
+#include "ASXMLSchemaGlobalElementDefinition.h"
+
+#include "ASXMLSchemaElementDefinition.h"
+#endif
+
+/*template<class IBase>*/ class CContentType :
+	public CSchemaNode
+{
+public:
+
+	CASXMLSchemaModel* m_pSchema;
+//	Element* m_element;
+
+	String m_derivationMethod;
+	String m_base;
+
+	String GetDerivationMethod()
+	{
+		return m_derivationMethod;
+	}
+
+/*
+	CTypeDefinition* GetBaseTypeDef()
+	{
+		return m_pBaseType;
+	}
+*/
+	virtual void BuildDefs(Element* parent) = 0;
+};
+
+class CSimpleContentType :
+	public CContentType//<IASObject>
+{
+public:
+
+	virtual void BuildDefs(Element* parent)
+	{
+	}
+};
+
+class CComplexContentType :
+	public CContentType//<IASObject>
+{
+public:
+	CTOR CComplexContentType()
+	{
+		m_pModelGroup = NULL;
+		m_pBaseType = NULL;
+	}
+
+	CComplexTypeDefinition* m_pBaseType;
+	CModelGroup* m_pModelGroup;
+
+	virtual void BuildDefs(Element* parent);
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CASXMLSchemaModel
+class WEBEXT CASXMLSchemaModel : 
+//	public CSchemaNode,
+	public ASObjectImpl, public IASModel
+{
+public:
+	CTOR CASXMLSchemaModel();
+
+	/*
+	int FinalConstruct()
+	{
+		CComObject<CASXMLNamedObjectMap>::CreateInstance(&m_globalElements);
+		m_globalElements->AddRef();
+
+		CComObject<CASXMLObjectList>::CreateInstance(&m_asModels);
+		m_asModels->AddRef();
+
+		return 0;
+	}
+	*/
+
+	void BuildFromDocument(Document* document);
+
+	CASXMLObjectList* m_asModels;
+
+	//CComPtr<ILDOMDocument> m_xmlDocument;
+
+	CDefList m_globalDefs;
+//	CArray<CSchemaNode*,CSchemaNode*> m_globalElements;
+//	CArray<IASDeclaration*,IASDeclaration*> m_globalElements;
+	CASXMLNamedObjectMap* m_globalElements;
+
+	CASXMLNamedObjectMap* m_elementDeclarations;
+
+//	CArray<ILDOMDocument*,ILDOMDocument*> m_allDocuments;
+
+	String m_targetNamespace;
+	String m_elementFormDefault;
+	String m_attributeFormDefault;
+
+	String GetTargetNamespace()
+	{
+		return m_targetNamespace;
+	/*
+		BSTR btargetNamespace;
+		m_schemaElement->getAttribute(L"targetNamespace", &btargetNamespace);
+		if (btargetNamespace)
+			return _bstr_t(btargetNamespace, false);
+		else
+			return _bstr_t(L"");
+			*/
+	}
+
+#if 0
+	IASDataTypeDeclaration* /*CTypeDefinition* */ FindTypeElementByName(ILDOMNode* parent, BSTR btypename);
+	CGlobalElementDefinition* FindElementElementByName(ILDOMNode* parent, BSTR btypename);
+#endif
+
+	CDefinition* /*CDefinition* */ CreateDefinition(Element* element);
+//	IASDeclaration* /*CDefinition* */ CreateGlobalDefinition(Element* element);
+
+	/*
+	void AddDocument(ILDOMDocument* document)
+	{
+		document->AddRef();
+		m_allDocuments.Add(document);
+	}
+	*/
+
+	void IncludeSchema(Element* mergeDocumentElement);
+
+// IASXMLSchemaModel
+public:
+//	STDMETHOD(get_xmlDocument)(/*[out, retval]*/ ILDOMDocument* *pVal);
+//	STDMETHOD(set_xmlDocument)(/*[in]*/ ILDOMDocument* newVal);
+
+	ASObjectType get_asNodeType() const
+	{
+		return AS_MODEL;
+	}
+
+	String get_nodeName()
+	{
+		return nullptr;
+	}
+
+// IASObject
+#if 0
+	STDMETHOD(get_ownerASModel)(/*[out, retval]*/ IASModel* *pVal)
+	{
+		if (pVal == NULL) return E_POINTER;
+		*pVal = NULL;
+		return S_OK;
+	}
+#endif
+
+#if 0
+	STDMETHOD(get_localName)(/*[out, retval]*/ BSTR *pVal)
+	{
+		return E_FAIL;
+	}
+	
+	STDMETHOD(set_localName)(/*[in]*/ BSTR newVal)
+	{
+		return E_FAIL;
+	}
+	
+	STDMETHOD(get_prefix)(/*[out, retval]*/ BSTR *pVal)
+	{
+		return E_FAIL;
+	}
+	
+	STDMETHOD(set_prefix)(/*[in]*/ BSTR newVal)
+	{
+		return E_FAIL;
+	}
+	
+	STDMETHOD(get_nodeName)(/*[out, retval]*/ BSTR *pVal)
+	{
+		return E_FAIL;
+	}
+	
+	STDMETHOD(set_nodeName)(const sysstring& newVal)
+	{
+		return E_FAIL;
+	}
+
+	STDMETHOD(get_asNodeType)(/*[out, retval]*/ ASObjectType *pVal)
+	{
+		*pVal = AS_MODEL;
+		return S_OK;
+	}
+#endif
+
+// IASModel
+#if 0
+	STDMETHOD(GetElement)(/*[out,retval]*/ Element* *pVal)
+	{
+		return S_OK;
+	}
+	STDMETHOD(SetElement)(/*[in]*/ Element* newVal)
+	{
+		return S_OK;
+	}
+#endif
+#if 0
+	STDMETHOD(getASModels)(/*[out,retval]*/ IASObjectList* *pVal)
+	{
+		if (pVal == NULL) return E_POINTER;
+		*pVal = m_asModels;
+		(*pVal)->AddRef();
+		return S_OK;
+	}
+
+	STDMETHOD(FireModelChanged)()
+	{
+		return S_OK;
+	}
+#endif
+
+#if 0
+	IASContentModel* createASContentModel(unsigned long minOccurs, unsigned long maxOccurs, /*[in]*/ ASContentModelTypeOp Operator);
+	IASEntityDeclaration* createASEntityDeclaration(const sysstring& name);
+	IASNotationDeclaration* createASNotationDeclaration(const sysstring& namespaceURI, const sysstring& name, const sysstring& systemId, const sysstring& publicId) const;
+
+	STDMETHOD(createASAttributeDeclaration)(/*[in]*/ BSTR namespaceURI, /*[in]*/ BSTR name, /*[out,retval]*/ IASAttributeDeclaration** pVal);
+
+	STDMETHOD(createASElementDeclaration)(/*[in]*/ BSTR namespaceURI, /*[in]*/ BSTR name, /*[out,retval]*/ IASElementDeclaration** pVal)
+	{
+		return S_OK;
+	}
+#endif
+
+	IASNamedObjectMap* get_contentModelDeclarations();
+	IASNamedObjectMap* get_entityDeclarations();
+	IASNamedObjectMap* get_notationDeclarations();
+	IASNamedObjectMap* get_attributeDeclarations();
+	IASNamedObjectMap* get_elementDeclarations()
+	{
+		return m_globalElements;
+	}
+
+	bool get_isNamespaceAware() const
+	{
+		return true;
+	}
+};
+
+}	// Web
+}
+
+#endif //__ASXMLSCHEMAMODEL_H_

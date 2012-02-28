@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParseMap", "ParseMap.vcproj", "{B92888AD-3832-4B55-83F0-D16530A35F7D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BFDB536B-0139-41C6-AE68-7F03B61A4657} = {BFDB536B-0139-41C6-AE68-7F03B61A4657}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LFC", "..\LFC\LFC.vcproj", "{BFDB536B-0139-41C6-AE68-7F03B61A4657}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B92888AD-3832-4B55-83F0-D16530A35F7D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B92888AD-3832-4B55-83F0-D16530A35F7D}.Debug|Win32.Build.0 = Debug|Win32
+		{B92888AD-3832-4B55-83F0-D16530A35F7D}.Release|Win32.ActiveCfg = Release|Win32
+		{B92888AD-3832-4B55-83F0-D16530A35F7D}.Release|Win32.Build.0 = Release|Win32
+		{BFDB536B-0139-41C6-AE68-7F03B61A4657}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BFDB536B-0139-41C6-AE68-7F03B61A4657}.Debug|Win32.Build.0 = Debug|Win32
+		{BFDB536B-0139-41C6-AE68-7F03B61A4657}.Release|Win32.ActiveCfg = Release|Win32
+		{BFDB536B-0139-41C6-AE68-7F03B61A4657}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

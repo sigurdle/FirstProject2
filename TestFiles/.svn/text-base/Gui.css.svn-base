@@ -1,0 +1,6 @@
+Window
+{
+    Window|Left: 100;
+    Window|Top: 400;
+    Window|Opacity: 1.0;
+}

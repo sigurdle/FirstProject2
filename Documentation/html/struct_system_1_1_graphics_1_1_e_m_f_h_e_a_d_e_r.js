@@ -1,0 +1,26 @@
+var struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r =
+[
+    [ "BoundsBottom", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#af59d359bccf6ac12ccc3ed797972a946", null ],
+    [ "BoundsLeft", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#a98b4d03dfdc24982bb2004b9c65a34d0", null ],
+    [ "BoundsRight", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#a99734360fd8ecbe1265be33b7139094a", null ],
+    [ "BoundsTop", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#ac5ffde9906649ae9c61685d1c287a4b2", null ],
+    [ "FrameBottom", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#a5ffd89fc620766f18b82eb918128aeaa", null ],
+    [ "FrameLeft", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#a0e59fab5b33b491017eeb76f2a5ee0d1", null ],
+    [ "FrameRight", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#af2dea0f05f69a73ada2aef0f7018c0a1", null ],
+    [ "FrameTop", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#aa6aa180426cbb290f975d7411ef034e8", null ],
+    [ "HeightDevMM", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#afe9e1c03b1e0755263ce6ac2a2e8613a", null ],
+    [ "HeightDevPixels", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#aa7a57557317a3da752edc372dd9458f7", null ],
+    [ "NumOfHandles", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#abd37eae96fc152d627a78a173c75cf78", null ],
+    [ "NumOfRecords", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#a77ec2ea61dd941a6f0f24c69b0225800", null ],
+    [ "NumPalEntries", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#a68470dae492e2aef0e165001b262c378", null ],
+    [ "OffsOfDescrip", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#a749d38e3c7924f41bbb96dcc2f16d30e", null ],
+    [ "RecordSize", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#a70c046c6516834d9c3efc5eea5d21416", null ],
+    [ "RecordType", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#a450f32a8061ce292a16ec5780011fdc2", null ],
+    [ "Reserved", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#ae392cd861a1923d72c357e7362f8cfa5", null ],
+    [ "Signature", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#aa4160d90932e1db8e72e4dd4b029282c", null ],
+    [ "Size", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#a2ed1bb543cb9b87198fd68a083adc0fb", null ],
+    [ "SizeOfDescrip", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#abb9b6c9c1c0a46b760cfea88b81d6c85", null ],
+    [ "Version", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#a36dafb9baaf8ca213fba7e3e97d861ab", null ],
+    [ "WidthDevMM", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#a99ec0444c1377adc9e4b5388dbf8c5c1", null ],
+    [ "WidthDevPixels", "struct_system_1_1_graphics_1_1_e_m_f_h_e_a_d_e_r.html#ad0ea720daf26db4dc2b27abe48a99db4", null ]
+];

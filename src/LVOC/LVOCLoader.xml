@@ -1,0 +1,20 @@
+<filter name="VOC Loader">
+ <inputpin name="Stream Input" minOccurs="1" maxOccurs="1">
+   <mediatypes>
+	 <mediatype majortype="Stream">
+	   <streamcontent>
+		 <match>
+ 	     <pattern offset="0" value="43726561 74697665 20566F69 63652046 696C65" />
+		 </match>
+		</streamcontent>
+	 </mediatype>
+ 	</mediatypes>
+ </inputpin>
+
+ <outputpin name="Audio Output" minOccurs="1" maxOccurs="1">
+	<mediatypes>
+	 <mediatype majortype="Audio" />
+	</mediatypes>
+ </outputpin>
+
+</filter>

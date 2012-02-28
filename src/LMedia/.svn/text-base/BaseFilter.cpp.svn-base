@@ -1,0 +1,757 @@
+#include "stdafx.h"
+
+/*
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+*/
+
+#include "LMediaImpl.h"
+
+namespace System
+{
+using namespace IO;
+
+namespace MediaShow
+{
+
+BytePattern::BytePattern()
+{
+//	m_refcount = 1;
+
+	m_mask = NULL;
+	m_value = NULL;
+}
+
+BytePattern::BytePattern(const BytePattern& other)
+{
+	m_mask = NULL;
+	m_value = NULL;
+
+	*this = other;
+}
+
+BytePattern::~BytePattern()
+{
+//	if (m_refcount == 1)
+	{
+		delete [] m_mask;
+		delete [] m_value;
+	}
+	m_mask = NULL;
+	m_value = NULL;
+}
+
+BytePattern& BytePattern::operator = (const BytePattern& other)
+{
+//	if (m_refcount == 1)
+	{
+		delete [] m_mask;
+		delete [] m_value;
+	}
+	m_mask = NULL;
+	m_value = NULL;
+
+	m_offset = other.m_offset;
+	m_length = other.m_length;
+
+	m_value = new uint8[other.m_length];
+	std::memcpy(m_value, other.m_value, other.m_length);
+
+	m_mask = new uint8[other.m_length];
+	std::memcpy(m_mask, other.m_mask, other.m_length);
+
+	return *this;
+}
+
+CMatch::CMatch()
+{
+}
+
+CMatch::CMatch(const CMatch& other)
+{
+	for (int i = 0; i < other.m_patterns.GetSize(); i++)
+	{
+		m_patterns.Add(other.m_patterns[i]);
+	}
+}
+
+CMatch& CMatch::operator = (const CMatch& other)
+{
+	m_patterns.RemoveAll();
+	for (int i = 0; i < other.m_patterns.GetSize(); i++)
+	{
+		m_patterns.Add(other.m_patterns[i]);
+	}
+
+	return *this;
+}
+
+VideoInfoHeader::VideoInfoHeader(int numColors)
+{
+	if (numColors < 0) THROW(-1);
+	if (numColors > 255) THROW(-1);
+
+	vih = (VIDEOINFOHEADER*)new uint8[sizeof(VIDEOINFOHEADER) + sizeof(RGBQuad) * numColors];
+	std::memset(vih, 0, sizeof(VIDEOINFOHEADER) + sizeof(RGBQuad) * numColors);
+}
+
+VideoInfoHeader::~VideoInfoHeader()
+{
+	delete vih;
+}
+
+MediaTypeFormat* VideoInfoHeader::Clone() const
+{
+	VideoInfoHeader* p = new VideoInfoHeader(vih->bmiHeader.biClrUsed);
+	std::memcpy(p->vih, vih, sizeof(VIDEOINFOHEADER) + sizeof(RGBQuad) * vih->bmiHeader.biClrUsed);
+//	p->AddRef();
+	return p;
+}
+
+ULONG VideoInfoHeader::GetWidth() const
+{
+	return vih->bmiHeader.biWidth;
+}
+
+ULONG VideoInfoHeader::GetHeight() const
+{
+	return vih->bmiHeader.biHeight;
+}
+
+WaveFormat::WaveFormat()
+{
+	wf = new WAVEFORMATEX;
+}
+
+WaveFormat::~WaveFormat()
+{
+	delete wf;
+}
+
+MediaTypeFormat* WaveFormat::Clone() const
+{
+	WaveFormat* p = new WaveFormat;
+	*p->wf = *wf;
+	//p->AddRef();
+	return p;
+}
+
+ByteStreamWrapper::ByteStreamWrapper(IByteData* stream)
+{
+	m_stream = stream;
+	m_pos = 0;
+}
+
+/*
+ULONG ByteStreamWrapper::AddRef()
+{
+	return _Object::AddRef();
+}
+
+ULONG ByteStreamWrapper::Release()
+{
+	return _Object::Release();
+}
+*/
+
+size_t ByteStreamWrapper::Read(void *pv, size_t cb)
+{
+	ULONG nRead = m_stream->Read(pv, m_pos, cb);
+	m_pos += nRead;
+	return nRead;
+}
+
+size_t ByteStreamWrapper::Write(const void* pv, size_t cb)
+{
+	raise(Exception(L"Write not implemented"));
+	return -1;
+}
+
+uint64 ByteStreamWrapper::Seek(int64 offset, IO::SeekOrigin origin)
+{
+	if (origin == System::IO::STREAM_SEEK_SET)
+	{
+		m_pos = offset;
+	}
+	else if (origin == System::IO::STREAM_SEEK_CUR)
+	{
+		m_pos += offset;
+	}
+	else if (origin == System::IO::STREAM_SEEK_END)
+	{
+		m_pos = m_stream->GetSize() - offset;
+	}
+	else
+		ASSERT(0);
+
+	return m_pos;
+}
+
+uint64 ByteStreamWrapper::GetSize()
+{
+	return m_stream->GetSize();
+}
+
+ByteStreamWrapper* ByteStreamWrapper::Clone() const
+{
+	ByteStreamWrapper* p = new ByteStreamWrapper(m_stream);
+	p->m_pos = m_pos;
+
+	return p;
+}
+
+IByteData* ByteStreamWrapper::GetBaseData()
+{
+	return m_stream;
+}
+
+IBaseFilter* BasePinImpl::QueryFilter() const
+{
+	return m_pFilter;
+}
+
+ErrorCode BasePinImpl::SetMediaType(MediaType* pmt)
+{
+	m_mt = pmt;
+	return 0;
+}
+
+CLEnumPins::CLEnumPins(vector<BasePinImpl*>& arr) : m_list(arr)
+{
+//		m_list = NULL;
+	m_pos = arr.GetData();//begin();
+}
+
+ULONG CLEnumPins::Next(ULONG celt, IPin **rgelt)
+{
+	int n;
+	for (n = 0; n < celt; n++)
+	{
+		if (m_pos == m_list.GetData() + m_list.GetSize()) break;
+		*rgelt = *m_pos;//(ILPin*)m_list->GetNext(m_pos);
+
+		rgelt++;
+		m_pos++;
+		//(*rgelt)->AddRef();
+	}
+
+	return n;
+	/*
+	if (pceltFetched)
+		*pceltFetched = n;
+
+	if (n == celt)
+		return S_OK;
+	else
+		return S_FALSE;
+		*/
+}
+
+bool CLEnumPins::Skip(/* [in] */ ULONG celt)
+{
+#if 0
+	int n;
+	for (n = 0; n < celt; n++)
+	{
+		m_list->GetNext(m_pos);
+		if (m_pos == NULL) break;
+	}
+
+	if (n == celt)
+		return S_OK;
+	else
+#endif
+		return 1;
+}
+
+void CLEnumPins::Reset(void)
+{
+#if 0
+	m_pos = m_list->GetHeadPosition();
+#endif
+}
+
+IEnumPins* CLEnumPins::Clone()
+{
+	CLEnumPins* pEnum = new CLEnumPins(m_list);
+	if (pEnum)
+	{
+
+#if 0
+		pEnum->m_list = m_list;
+#endif
+		pEnum->m_pos = m_pos;
+	}
+
+	return pEnum;
+}
+
+BasePinImpl::BasePinImpl(PIN_DIRECTION dir)
+{
+	m_mt = NULL;
+	m_pFilter = NULL;
+	m_dir = dir;
+	m_connectedTo = NULL;
+}
+
+BasePinImpl::~BasePinImpl()
+{
+}
+
+ErrorCode BasePinImpl::CheckConnect(IPin* pPin)
+{
+	ASSERT(pPin != NULL);
+
+	PIN_DIRECTION dir = pPin->QueryDirection();
+
+	if (dir == m_dir)
+	{
+		return -1;	// TODO, more specific error value
+	}
+
+	return 0;
+}
+
+ErrorCode BasePinImpl::Run(LONGLONG tStart)
+{
+	return 0;
+}
+
+ErrorCode BasePinImpl::Pause()
+{
+	return 0;
+}
+
+void BasePinImpl::BreakConnect()
+{
+}
+
+ErrorCode BasePinImpl::QueryAccept(MediaType* pmt)
+{
+	ErrorCode hr = CheckMediaType(pmt);
+	if (hr < 0)
+		return 1;
+
+	return hr;
+}
+
+ErrorCode BasePinImpl::AttemptConnection(IPin *pReceivePin, MediaType* mt)
+{
+	ErrorCode hr;
+
+	//CheckConnect( Why Is this called here, it will be called multiple times if it's here?
+
+	hr = CheckConnect(pReceivePin);
+	if (hr < 0)
+	{
+		BreakConnect();
+		return hr;
+	}
+
+	hr = CheckMediaType(mt);
+	if (hr < 0)
+	{
+		BreakConnect();
+		return hr;
+	}
+
+	hr = pReceivePin->ReceiveConnection(this, mt);
+	if (hr < 0) return hr;
+
+	hr = SetMediaType(mt);	// ?? Have this here??
+	if (hr < 0)
+	{
+		BreakConnect();
+		return hr;
+	}
+
+	hr = CompleteConnect(pReceivePin);
+	if (hr < 0)
+	{
+		Disconnect();
+		return hr;
+	}
+
+	return 0;
+}
+
+ErrorCode BasePinImpl::Connect(IPin *pReceivePin, MediaType* pmt)
+{
+	ASSERT(pReceivePin != NULL);
+	if (pReceivePin == NULL) throw -1;//return E_INVALIDARG;
+
+	ASSERT(m_connectedTo == NULL);
+	if (m_connectedTo != NULL) return MEDIA_E_ALREADY_CONNECTED;
+
+	if (m_dir != PINDIR_OUTPUT)
+		return Error;
+
+	ErrorCode hr;
+
+	hr = AgreeMediaType(pReceivePin, pmt);
+
+	return hr;
+}
+
+ErrorCode BasePinImpl::CompleteConnect(IPin *pPin)
+{
+	m_connectedTo = pPin;
+	return 0;	// Base class does nothing
+}
+
+ErrorCode BasePinImpl::ReceiveConnection(IPin *pConnector, MediaType* pMediaType)
+{
+	if (pConnector == NULL)
+	{
+		ASSERT(0);
+		//return E_INVALIDARG;
+		throw -1;
+	}
+
+	if (m_dir != PINDIR_INPUT)
+	{
+		ASSERT(0);
+		return Error;
+	}
+
+	ErrorCode hr;
+
+	hr = CheckConnect(pConnector);
+	if (hr < 0)
+	{
+		BreakConnect();
+		return hr;
+	}
+
+	hr = CheckMediaType(pMediaType);
+	if (hr < 0)
+	{
+		BreakConnect();
+		return hr;
+	}
+
+	// Is the order of these last two correct?
+
+	SetMediaType(pMediaType);
+
+	hr = CompleteConnect(pConnector);
+	if (hr < 0)
+	{
+		// BreakConnect(); ??
+		return hr;
+	}
+
+	return 0;
+}
+
+ErrorCode BasePinImpl::Disconnect()
+{
+	BreakConnect();
+	m_connectedTo = NULL;
+	return 0;
+}
+
+IPin* BasePinImpl::ConnectedTo()
+{
+	return m_connectedTo;
+}
+
+PIN_DIRECTION BasePinImpl::QueryDirection() const
+{
+	return m_dir;
+}
+
+ErrorCode BasePinImpl::EndOfStream()
+{
+	return 0;
+}
+
+ErrorCode BasePinImpl::GetMediaType(int iPosition, MediaType** pMediaType)
+{
+	//throw -1;//
+	return -1;
+	//return E_UNEXPECTED;	// Override this method
+}
+
+ErrorCode BasePinImpl::TryMediaTypes(IPin *pReceivePin, MediaType* mt, IEnumMediaTypes *pEnum)
+{
+	MediaType* mt2;//(TRUE);
+	while (pEnum->Next(1, &mt2/*.GetAddress()*/) == 1)
+	{
+		/*
+		If the pmt parameter is non-NULL, the pin skips media types that do not
+		match this type. The pmt parameter can specify a partial media type
+		*/
+		// TODO, improve this
+		bool bSkip = false;
+#if 1
+		if (mt)
+#endif
+		{
+			if (mt->GetMajorType() != GUID_NULL)
+			{
+				if (mt2->GetMajorType() != mt->GetMajorType())
+					bSkip = true;
+			}
+		}
+
+		if (!bSkip)
+		{
+			ErrorCode hr = AttemptConnection(pReceivePin, mt2);
+			if (hr >= 0) return hr;
+		}
+	}
+
+	return Error;//E_FAIL;
+}
+
+ErrorCode BasePinImpl::AgreeMediaType(IPin *pReceivePin, MediaType* mt)
+{
+	ErrorCode hr = Error;	// Assume failure at first
+
+	// TODO
+#if 0
+	if (mt && FALSE)	// The mediatype is fully specified
+	{
+		ErrorCode hr = AttemptConnection(pReceivePin, mt);
+		if (FAILED(hr)) return hr;
+	}
+#endif
+
+	// Try the input pins preferred types
+	IEnumMediaTypes* pEnumIn = pReceivePin->EnumMediaTypes();
+	if (pEnumIn)
+	{
+		hr = TryMediaTypes(pReceivePin, mt, pEnumIn);
+		if (hr >= 0)
+			return hr;
+	}
+
+	// Try the output pins preferred types
+	IEnumMediaTypes* pEnumOut = EnumMediaTypes();
+	if (pEnumOut)
+	{
+		hr = TryMediaTypes(pReceivePin, mt, pEnumOut);
+		if (hr >= 0)
+			return hr;
+	}
+
+	return hr;
+}
+
+ErrorCode BasePinImpl::ConnectionMediaType(MediaType** pmt)
+{
+	//if (pmt == NULL) return E_POINTER;
+	if (m_connectedTo == NULL)
+	{
+		//ASSERT(m_pmt == NULL);
+		return Error;
+	}
+
+	*pmt = m_mt;
+	return 0;
+}
+
+IEnumMediaTypes * BasePinImpl::EnumMediaTypes()
+{
+	CLEnumMediaTypes* p = new CLEnumMediaTypes;
+//	hr = CComObject<CLEnumMediaTypes>::CreateInstance(&p);
+//	if (FAILED(hr)) return hr;
+//	p->AddRef();
+
+	int n = 0;
+
+	MediaType* mediaType;
+	//mediaType.Create();
+	while (GetMediaType(n, &mediaType) == 0)
+	{
+	//	ASSERT(mediaType.m_pmt != NULL);
+
+		p->m_list.Add(mediaType);
+
+		//mediaType.Create();
+		n++;
+	}
+
+	//p->m_list = &m_pins;
+	p->m_pos = p->m_list.GetData();
+
+	return p;
+}
+
+BaseOutputPinImpl::BaseOutputPinImpl() : BasePinImpl(PINDIR_OUTPUT)
+{
+	m_pInputPin = NULL;
+	m_pAllocator = NULL;
+}
+
+ErrorCode BaseOutputPinImpl::CheckConnect(IPin* pPin)
+{
+	IMemInputPin* memInput = dynamic_cast<IMemInputPin*>(pPin);
+	if (memInput == NULL) return Error_NoInterface;
+
+	m_pInputPin = memInput;
+
+	return 0;
+}
+
+void BaseOutputPinImpl::BreakConnect()
+{
+	m_pInputPin = NULL;//.Release();
+}
+
+ErrorCode BaseOutputPinImpl::CompleteConnect(IPin *pPin)
+{
+	ErrorCode hr;
+	hr = BasePinImpl::CompleteConnect(pPin);
+	if (hr < 0) return hr;
+
+// TODO improve
+	if (m_pInputPin)
+	{
+		m_pAllocator = m_pInputPin->GetAllocator();
+		ASSERT(m_pAllocator);
+	}
+
+	return 0;
+}
+
+BaseFilterImpl::BaseFilterImpl()
+{
+	m_pFilterGraph = NULL;
+
+	m_state = State_Stopped;
+}
+
+BaseFilterImpl::~BaseFilterImpl()
+{
+#if 0
+	UPOSITION pos = m_pins.GetHeadPosition();
+	while (pos)
+	{
+		ILPin* pin = (ILPin*)m_pins.GetNext(pos);
+		pin->Release();
+	}
+	m_pins.RemoveAll();
+#endif
+
+	/*
+	for (int i = 0; i < m_pins.GetSize(); i++)
+	{
+		m_pins[i]->Release();
+	}
+	*/
+	m_pins.RemoveAll();
+}
+
+void BaseFilterImpl::AddPin(BasePinImpl* pin)
+{
+//	pin->AddRef();
+	m_pins.Add(pin);
+}
+
+IReferenceClock* BaseFilterImpl::GetSyncSource()
+{
+	return m_clock;
+}
+
+void BaseFilterImpl::SetSyncSource(IReferenceClock *pClock)
+{
+	m_clock = pClock;
+}
+
+ErrorCode BaseFilterImpl::SetFilterGraph(IFilterGraph* pFilterGraph, StringIn pName)
+{
+	m_pFilterGraph = pFilterGraph;
+	return Success;
+}
+
+IEnumPins* BaseFilterImpl::EnumPins()
+{
+	CLEnumPins* p = new CLEnumPins(m_pins);
+	return p;
+}
+
+IPin* BaseFilterImpl::FindPin(StringIn Id)
+{
+	if (Id == NULL) THROW(-1);
+
+//	std::vector<BasePinImpl*>::iterator pos = m_pins.begin();
+//	while (pos != m_pins.end())
+	for (int i = 0; i < m_pins.GetSize(); i++)
+	{
+		BasePinImpl* pPin = m_pins[i];//*pos++;
+
+		if (pPin->m_id == Id)
+		{
+			return pPin;
+		}
+	}
+
+	return NULL;
+}
+
+ErrorCode BaseFilterImpl::Run(LONGLONG tStart)
+{
+	{
+		CriticalSectionLock lock(m_criticalSection);
+
+		m_state = State_Running;
+		m_tStart = tStart;
+	}
+
+	ErrorCode hr = 0;
+
+//	std::vector<BasePinImpl*>::iterator pos = m_pins.begin();
+//	while (pos != m_pins.end())
+	for (size_t i = 0; i < m_pins.GetSize(); ++i)
+	{
+		BasePinImpl* pPin = m_pins[i];//*pos++;
+		ErrorCode hr2 = pPin->Run(tStart);
+		if (hr2 < 0)
+			hr = 1;	// ??
+	}
+
+	return hr;
+}
+
+ErrorCode BaseFilterImpl::Stop()
+{
+//	m_criticalSection.Lock();
+	m_state = State_Stopped;
+//	m_criticalSection.Unlock();
+
+	return 0;
+}
+
+ErrorCode BaseFilterImpl::Pause()
+{
+//	m_criticalSection.Lock();
+	m_state = State_Paused;
+//	m_criticalSection.Unlock();
+
+	ErrorCode hr = 0;
+
+//	std::vector<BasePinImpl*>::iterator pos = m_pins.begin();
+//	while (pos != m_pins.end())
+	for (int i = 0; i < m_pins.GetSize(); i++)
+	{
+		BasePinImpl* pPin = m_pins[i];//*pos++;
+		ErrorCode hr2 = pPin->Pause();
+		if (hr2 < 0)
+			hr = 1;	// ??
+	}
+
+	return hr;
+}
+
+FILTER_STATE BaseFilterImpl::GetState()
+{
+//	CriticalSectionLock	lock(m_criticalSection);
+	FILTER_STATE state = m_state;
+	return state;
+}
+
+}	// MediaShow
+}

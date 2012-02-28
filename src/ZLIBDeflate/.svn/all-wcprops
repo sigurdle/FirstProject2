@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/firstproject2/!svn/ver/114/FirstProject2/trunk/src/ZLIBDeflate
+END
+ZLIBEncoder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/122/FirstProject2/trunk/src/ZLIBDeflate/ZLIBEncoder.cpp
+END
+dllmain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/114/FirstProject2/trunk/src/ZLIBDeflate/dllmain.cpp
+END
+Inflate.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/73/FirstProject2/trunk/src/ZLIBDeflate/Inflate.cpp
+END
+ZLIBDeflate.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/114/FirstProject2/trunk/src/ZLIBDeflate/ZLIBDeflate.cpp
+END
+ZLIBDecoder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/firstproject2/!svn/ver/73/FirstProject2/trunk/src/ZLIBDeflate/ZLIBDecoder.cpp
+END
+stdafx.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/73/FirstProject2/trunk/src/ZLIBDeflate/stdafx.cpp
+END

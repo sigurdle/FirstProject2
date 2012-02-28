@@ -1,0 +1,21 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="System::Gui::QueryCursorEventArgs",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Gui::RoutedEventArgs",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_routed_event_args.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Gui::EventArgs",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_event_args.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node6 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_cursor" ,fontname="Helvetica"];
+  Node6 [label="System::Gui::Cursor",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_cursor.html"];
+  Node7 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="System::Gui::DependencyObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_dependency_object.html"];
+  Node8 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="System::DispatcherObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_dispatcher_object.html"];
+  Node4 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+}

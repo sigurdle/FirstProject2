@@ -1,0 +1,655 @@
+#include "stdafx.h"
+#include "LXML2.h"
+#include "DOMRange.h"
+
+#include "Node.h"
+#include "Text.h"
+#include "LDOMDocumentRangeImpl.h"
+
+namespace System
+{
+namespace Web
+{
+
+	/*
+void Range::FinalRelease()
+{
+	if (m_pDocumentRange)
+	{
+		detach();	// ??
+	}
+}
+*/
+
+Range::Range()
+{
+	m_pDocumentRange = NULL;
+
+	m_startOffset = 0;
+	m_endOffset = 0;
+
+	m_startIsDeeperThanEnd = false;
+
+	m_startContainer = NULL;
+	m_endContainer = NULL;
+}
+
+Range::~Range()
+{
+}
+
+Node* Range::get_startContainer() const
+{
+	return m_startContainer;
+}
+
+int Range::get_startOffset() const
+{
+	return m_startOffset;
+}
+
+Node* Range::get_endContainer() const
+{
+	return m_endContainer;
+}
+
+int Range::get_endOffset() const
+{
+	return m_endOffset;
+}
+
+bool Range::get_collapsed() const
+{
+	if (m_startContainer == m_endContainer &&
+		m_startOffset == m_endOffset)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+Node* Range::get_commonAncestorContainer() const
+{
+	return m_commonAncestorContainer;
+}
+
+Node* FindCommonAncestor(Node* node1, Node* node2)
+{
+	Node* parentNode1 = node1->get_parentNode();
+
+	vector<Node*> arr1;
+	vector<Node*> arr2;
+
+	{
+		Node* parentNode = node1;
+		//node1->get_parentNode(&parentNode);
+		while (parentNode)
+		{
+			arr1.Add(parentNode);
+
+			parentNode = parentNode->get_parentNode();
+		}
+	}
+
+	{
+		Node* parentNode = node2;
+		//node2->get_parentNode(&parentNode);
+		while (parentNode)
+		{
+			arr2.Add(parentNode);
+
+			parentNode = parentNode->get_parentNode();
+		}
+	}
+
+	for (int i = 0; i < arr1.GetSize(); i++)
+	{
+		for (int j = 0; j < arr2.GetSize(); j++)
+		{
+			if (arr1[i] == arr2[j])
+				return arr1[i];
+		}
+	}
+
+	ASSERT(0); //???? if the container(s) is the document, then this will be validly NULL
+	return NULL;
+}
+
+void Range::setStart(Node* refNode, int offset)
+{
+//	ASSERT(refNode != NULL);
+//	ASSERT(offset >= 0);
+//	if (refNode == NULL) return E_INVALIDARG;
+//	if (offset < 0) return E_INVALIDARG;
+
+	m_startContainer = refNode;
+	m_startOffset = offset;
+
+	if (m_endContainer == NULL)
+	{
+		m_endContainer = m_startContainer;
+		m_endOffset = m_startOffset;
+	}
+
+	if (refNode)
+		m_commonAncestorContainer = FindCommonAncestor(m_startContainer, m_endContainer);
+	else
+		m_commonAncestorContainer = NULL;
+}
+
+void Range::setEnd(Node *refNode, int offset)
+{
+//	ASSERT(refNode != NULL);
+//	ASSERT(offset >= 0);
+//	if (refNode == NULL) return E_INVALIDARG;
+//	if (offset < 0) return E_INVALIDARG;
+
+	m_endContainer = refNode;
+	m_endOffset = offset;
+
+	if (m_startContainer == NULL)
+	{
+		m_startContainer = m_endContainer;
+		m_startOffset = m_endOffset;
+	}
+
+	if (refNode)
+		m_commonAncestorContainer = FindCommonAncestor(m_startContainer, m_endContainer);
+	else
+		m_commonAncestorContainer = NULL;
+}
+
+void Range::setStartBefore(Node *refNode)
+{
+	// TODO: Add your implementation code here
+}
+
+void Range::setStartAfter(Node *refNode)
+{
+	// TODO: Add your implementation code here
+}
+
+void Range::setEndBefore(Node *refNode)
+{
+	// TODO: Add your implementation code here
+}
+
+void Range::setEndAfter(Node *refNode)
+{
+	// TODO: Add your implementation code here
+}
+
+void Range::collapse(bool toStart)
+{
+	// TODO: Add your implementation code here
+}
+
+void Range::selectNode(Node *refNode)
+{
+	ASSERT(refNode != NULL);
+	if (refNode == NULL) THROW(-1);
+
+	Node* parentNode = refNode->get_parentNode();
+
+	m_startContainer = parentNode;
+	m_endContainer = parentNode;
+
+	NodeList* childNodes = parentNode->get_childNodes();
+
+	long length = childNodes->get_length();
+
+	int i;
+	for (i = 0; i < length; i++)
+	{
+		Node* node = childNodes->item(i);
+
+		if (node == refNode)
+		{
+			break;
+		}
+	}
+
+	ASSERT(i < length);	// refNode Must have been a child of parentNode
+
+	m_startOffset = i;
+	m_endOffset = i+1;
+
+	m_commonAncestorContainer = FindCommonAncestor(m_startContainer, m_endContainer);
+
+#if 0
+	FireOnChanged(NOTIFY_MODIFY, GetUnknown(), DISPID_UNKNOWN);
+#endif
+}
+
+void Range::selectNodeContents(Node *refNode)
+{
+	ASSERT(refNode != NULL);
+	if (refNode == NULL) THROW(-1);
+
+	NodeList* children = refNode->get_childNodes();
+
+	long nchildren = children->get_length();
+
+	m_startContainer = refNode;
+	m_endContainer = refNode;
+
+	m_startOffset = 0;
+	m_endOffset = nchildren;
+
+	m_commonAncestorContainer = FindCommonAncestor(m_startContainer, m_endContainer);
+
+#if 0
+	FireOnChanged(NOTIFY_MODIFY, GetUnknown(), DISPID_UNKNOWN);
+#endif
+}
+
+Range* Range::cloneRange() const
+{
+	Range* pRange = new Range;
+
+	pRange->m_startContainer = m_startContainer;
+	pRange->m_startOffset = m_startOffset;
+	pRange->m_endContainer = m_endContainer;
+	pRange->m_endOffset = m_endOffset;
+	pRange->m_commonAncestorContainer = m_commonAncestorContainer;
+
+	return pRange;
+}
+
+String Range::toString()
+{
+	return null;
+}
+
+void Range::detach()
+{
+	if (m_pDocumentRange)
+	{
+		ASSERT(0);
+#if 0
+		for (int i = 0; i < m_pDocumentRange->m_ranges.GetSize(); i++)
+		{
+			if (m_pDocumentRange->m_ranges[i] == this)
+			{
+				m_pDocumentRange->m_ranges.RemoveAt(i);
+				m_pDocumentRange = NULL;
+				return S_OK;
+			}
+		}
+#endif
+	}
+
+	ASSERT(0);
+	THROW(-1);
+}
+
+void Range::delete2(Node* node, int& hitStart, int& hitEnd)
+{
+	Node* parent = node->get_parentNode();
+
+	CharacterData* text = dynamic_cast<CharacterData*>(node);
+	if (text)
+	{
+		String data = text->get_data();
+
+		int tstartOffset = 0;
+		int tendOffset = -1;
+
+		if (!hitStart)
+		{
+			if (node == m_startContainer)
+			{
+				hitStart = true;
+				tstartOffset = m_startOffset;
+			}
+			else
+			{
+				tstartOffset = data.GetLength();
+			}
+		}
+		else
+			tstartOffset = 0;
+
+		if (node == m_endContainer)
+		{
+			hitEnd = true;
+			tendOffset = m_endOffset;
+		}
+		else
+		{
+			tendOffset = data.GetLength();
+		}
+
+		if (tstartOffset < tendOffset)
+		{
+			text->deleteData(tstartOffset, tendOffset-tstartOffset);
+		}
+		/*
+		else	// remove the node alltogether
+		{
+			parent->removeChild(node, NULL);
+		}
+		*/
+
+		if (node == m_endContainer)
+			return;
+	}
+	else
+	{
+		NodeList* childNodes = node->get_childNodes();
+		long nChildNodes = childNodes->get_length();
+
+		int startOffset;
+		int endOffset;
+
+		if (node == m_startContainer)
+		{
+			hitStart = true;
+			startOffset = m_startOffset;
+		}
+		else
+		{
+			startOffset = 0;
+		}
+
+		if (node == m_endContainer)
+		{
+			hitEnd = true;
+			endOffset = m_endOffset;
+		}
+		else
+		{
+			endOffset = nChildNodes;
+		}
+
+		//if (startOffset > 0 || endOffset < nChildNodes)
+		{
+			for (int nchild = startOffset; nchild < endOffset; nchild++)
+			{
+				Node* child = childNodes->item(nchild);
+
+				delete2(child, hitStart, hitEnd);
+
+				if (hitEnd)
+					return;
+
+				/*
+				if (hitStart)
+				{
+					node->removeChild(child);
+				}
+				*/
+			}
+		}
+
+		if (node == m_endContainer)
+			return;
+	}
+}
+
+bool Range::extract2(Node* node, Node* parent, int& hitStart)
+{
+	ASSERT(0);
+#if 0
+	CComPtr<ILDOMDocument> document;
+	node->get_ownerDocument(&document);
+
+	CComQIPtr<ILDOMCharacterData, &IID_ILDOMCharacterData> text = (IUnknown*)node;
+	if (text)
+	{
+		CComPtr<ILDOMText> newText;
+
+		CComBSTR data;
+		text->get_data(&data);
+
+		int tstartOffset;
+		int tendOffset;
+
+		if (node == m_startContainer)
+		{
+			hitStart = TRUE;
+			tstartOffset = m_startOffset;
+		}
+		else
+			tstartOffset = 0;
+
+		if (node == m_endContainer)
+		{
+			tendOffset = m_endOffset;
+		}
+		else
+			tendOffset = data.Length();
+
+		if (hitStart)
+		{
+			BSTR bnewData = SysAllocStringLen(&((BSTR)data)[tstartOffset], tendOffset-tstartOffset);
+
+		// TODO, also comment, cdata and pi
+			document->createTextNode(bnewData, &newText);
+			SysFreeString(bnewData);
+
+			parent->appendChild(newText, NULL);
+		}
+
+		if (node == m_endContainer)
+		{
+			return FALSE;
+		}
+	}
+	else
+	{
+		CComPtr<ILDOMNodeList> childNodes;
+		node->get_childNodes(&childNodes);
+
+		long nChildNodes;
+		childNodes->get_length(&nChildNodes);
+
+		int startOffset;
+		int endOffset;
+
+		if (node == m_startContainer)
+		{
+			hitStart = TRUE;
+			startOffset = m_startOffset;
+		}
+		else
+			startOffset = 0;
+
+		if (node == m_endContainer)
+		{
+			endOffset = m_endOffset;
+		}
+		else
+		{
+			endOffset = nChildNodes;
+		}
+
+		for (int nchild = startOffset; nchild < endOffset; nchild++)
+		{
+			CComPtr<ILDOMNode> child;
+			childNodes->item(nchild, &child);
+
+			CComQIPtr<ILDOMCharacterData, &IID_ILDOMCharacterData> text((IUnknown*)child);
+			if (text)
+			{
+				extract2(child, parent, hitStart);	// ???
+			}
+			else
+			{
+				CComQIPtr<ILDOMElement, &IID_ILDOMElement> element((IUnknown*)child);
+
+				CComPtr<ILDOMElement> newElement;
+				element->cloneNode(VARIANT_FALSE, (ILDOMNode**)&newElement);
+
+				BOOL bContinue = extract2(element, newElement, hitStart);
+
+				if (hitStart)
+				{
+					parent->appendChild(newElement, NULL);
+				}
+
+				if (!bContinue)
+					return FALSE;
+			}
+		}
+
+		if (node == m_endContainer)
+		{
+			return FALSE;
+		}
+	}
+
+#endif
+	return true;
+}
+
+DocumentFragment* Range::extractContents()
+{
+	ASSERT(0);
+	return NULL;
+#if 0
+	if (pVal == NULL) return E_POINTER;
+
+	CComPtr<ILDOMDocument> document;
+	m_startContainer->get_ownerDocument(&document);
+
+	CComPtr<ILDOMDocumentFragment> fragment;
+	document->createDocumentFragment(&fragment);
+//	fragment.CoCreateInstance(CLSID_DOMDocumentFragment);
+	if (fragment)
+	{
+		int hitStart;
+		int hitEnd;
+
+		hitStart = hitEnd = 0;
+		extract2(m_commonAncestorContainer, fragment, hitStart);
+
+		hitStart = hitEnd = 0;
+		delete2(m_commonAncestorContainer, hitStart, hitEnd);
+
+		/*
+		BSTR xml;
+		document->saveXML(NULL, &xml);
+	//	MessageBox(NULL, _bstr_t(xml), "", MB_OK);
+		SysFreeString(xml);
+		*/
+
+	// TODO set new start
+
+	// Collapse range
+	//	m_endContainer = m_startContainer;
+	//	m_endOffset = m_startOffset;
+		setEnd(m_startContainer, m_startOffset);
+
+		*pVal = fragment;
+		(*pVal)->AddRef();
+	}
+	else
+		*pVal = NULL;
+
+	return S_OK;
+#endif
+}
+
+DocumentFragment* Range::cloneContents() const
+{
+	ASSERT(0);
+	return NULL;
+#if 0
+	if (pVal == NULL) return E_POINTER;
+
+	CComPtr<ILDOMDocument> document;
+	m_startContainer->get_ownerDocument(&document);
+
+	CComPtr<ILDOMDocumentFragment> fragment;
+	document->createDocumentFragment(&fragment);
+	if (fragment)
+	{
+		int hitStart = 0;
+		extract2(m_commonAncestorContainer, fragment, hitStart);
+
+		*pVal = fragment;
+		(*pVal)->AddRef();
+	}
+	else
+		*pVal = NULL;
+
+	return S_OK;
+#endif
+}
+
+void Range::deleteContents()
+{
+	int hitStart;
+	int hitEnd;
+
+	hitStart = hitEnd = 0;
+	delete2(m_commonAncestorContainer, hitStart, hitEnd);
+
+	setEnd(m_startContainer, m_startOffset);
+}
+
+void Range::surroundContents(Node *newParent)
+{
+	Text* text = dynamic_cast<Text*>(m_startContainer);
+
+	long startOffset = m_startOffset;
+	long endOffset = m_endOffset;
+	Node* commonAncestorContainer = m_commonAncestorContainer;
+
+	Text* ntext = text->splitText(endOffset);
+
+	Text* ntext2 = text->splitText(startOffset);
+
+	newParent->appendChild(ntext2);
+
+	Node* parentNode = commonAncestorContainer->get_parentNode();
+
+	parentNode->insertBefore(newParent, ntext);
+}
+
+void Range::insertNode(Node *node)
+{
+	ASSERT(0);
+#if 0
+	CComQIPtr<ILDOMText, &IID_ILDOMText> text = (IUnknown*)m_startContainer;
+	if (text)
+	{
+		CComPtr<ILDOMNode> parentNode;
+		text->get_parentNode(&parentNode);
+
+		CComPtr<ILDOMText> rightText;
+		text->splitText(m_startOffset, &rightText);
+
+		CComQIPtr<ILDOMDocumentFragment, &IID_ILDOMDocumentFragment> fragment((IUnknown*)node);
+		if (fragment)
+		{
+			CComPtr<ILDOMNode> child;
+			fragment->get_firstChild(&child);
+			while (child)
+			{
+				CComPtr<ILDOMNode> nextSibling;
+				child->get_nextSibling(&nextSibling);
+
+				parentNode->insertBefore(child, CComVariant(rightText), NULL);
+
+				child = nextSibling;
+			}
+		}
+		else
+		{
+			parentNode->insertBefore(node, CComVariant(rightText), NULL);
+		}
+	}
+	else
+	{
+		ASSERT(0);
+	}
+#endif
+}
+
+}	// Web
+}

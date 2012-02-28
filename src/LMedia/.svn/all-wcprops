@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/firstproject2/!svn/ver/102/FirstProject2/trunk/src/LMedia
+END
+stdafx.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/78/FirstProject2/trunk/src/LMedia/stdafx.h
+END
+LRegFilter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/78/FirstProject2/trunk/src/LMedia/LRegFilter.cpp
+END
+SystemClock.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/78/FirstProject2/trunk/src/LMedia/SystemClock.cpp
+END
+LPin.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/firstproject2/!svn/ver/78/FirstProject2/trunk/src/LMedia/LPin.cpp
+END
+LStream.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/78/FirstProject2/trunk/src/LMedia/LStream.cpp
+END
+LCollection.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/78/FirstProject2/trunk/src/LMedia/LCollection.cpp
+END
+LDSoundRender.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/78/FirstProject2/trunk/src/LMedia/LDSoundRender.cpp
+END
+LVideoRenderer.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/78/FirstProject2/trunk/src/LMedia/LVideoRenderer.cpp
+END
+BaseFilter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/LMedia/BaseFilter.cpp
+END
+dllmain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/122/FirstProject2/trunk/src/LMedia/dllmain.cpp
+END
+MediaType.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/102/FirstProject2/trunk/src/LMedia/MediaType.cpp
+END
+WaveOutput.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/102/FirstProject2/trunk/src/LMedia/WaveOutput.cpp
+END
+URLSource.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/78/FirstProject2/trunk/src/LMedia/URLSource.cpp
+END
+LFilterGraph.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/102/FirstProject2/trunk/src/LMedia/LFilterGraph.cpp
+END
+stdafx.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/78/FirstProject2/trunk/src/LMedia/stdafx.cpp
+END
+uuids.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/78/FirstProject2/trunk/src/LMedia/uuids.cpp
+END
+LStreams.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/78/FirstProject2/trunk/src/LMedia/LStreams.cpp
+END
+LMedia.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/122/FirstProject2/trunk/src/LMedia/LMedia.cpp
+END

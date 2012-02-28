@@ -1,0 +1,37 @@
+#ifndef _M_X64
+
+#pragma warning(push)
+#pragma warning(disable : 4635)
+#undef new
+#include "NxPhysics.h"
+#define new _new
+#pragma warning(pop)
+
+namespace System
+{
+namespace x3d
+{
+
+#ifndef __LERSTAD__
+
+inline NxVec3 _NxVec3(Vec3f v)
+{
+	return NxVec3(v[0], v[1], v[2]);
+}
+
+inline NxQuat _NxQuat(Rotation v)
+{
+	return NxQuat(v.angleDegrees(), _NxVec3(v.m_axis));
+}
+
+inline Vec3f _Vec3f(NxVec3 v)
+{
+	return Vec3f(v.x, v.y, v.z);
+}
+
+#endif
+
+}
+}
+
+#endif

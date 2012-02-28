@@ -1,0 +1,68 @@
+namespace System
+{
+
+class LFCEXT DoubleObject : public Object
+{
+public:
+
+	String ToString() override;
+
+	inline double GetValue() const
+	{
+		return m_value;
+	}
+
+	inline operator double () const
+	{
+		return m_value;
+	}
+
+	static inline DoubleObject* get_NegativeInfinity()
+	{
+		return &s_NegativeInfinity;
+	}
+
+	static inline DoubleObject* get_PositiveInfinity()
+	{
+		return &s_PositiveInfinity;
+	}
+
+	static inline DoubleObject* get_NaN()
+	{
+		return &s_NaN;
+	}
+
+	static inline DoubleObject* get_Zero()
+	{
+		return &s_Zero;
+	}
+
+	static inline DoubleObject* get_NegativeZero()
+	{
+		return &s_NegativeZero;
+	}
+
+	static inline DoubleObject* get_One()
+	{
+		return &s_One;
+	}
+
+	static DoubleObject* GetObject(double value);
+
+private:
+
+	inline CTOR DoubleObject(double value) : m_value(value)
+	{
+	}
+
+	static DoubleObject s_Zero;
+	static DoubleObject s_NegativeZero;
+	static DoubleObject s_One;
+	static DoubleObject s_NegativeInfinity;
+	static DoubleObject s_PositiveInfinity;
+	static DoubleObject s_NaN;
+
+	double m_value;
+};
+
+}	// System

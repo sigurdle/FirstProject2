@@ -1,0 +1,20 @@
+<filter name="ID3 Parser">
+ <inputpin name="Stream Input" minOccurs="1" maxOccurs="1">
+   <mediatypes>
+	 <mediatype majortype="Stream">
+	   <streamcontent>
+		 <match>
+ 	     <pattern offset="0" value="49 44 33" />
+		 </match>
+		</streamcontent>
+	 </mediatype>
+ 	</mediatypes>
+ </inputpin>
+
+ <outputpin name="Stream Output" minOccurs="1" maxOccurs="1">
+	<mediatypes>
+	 <mediatype majortype="Stream" />
+	</mediatypes>
+ </outputpin>
+
+</filter>

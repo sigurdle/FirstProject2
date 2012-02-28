@@ -1,0 +1,212 @@
+#include "stdafx.h"
+#include "LFC.h"
+#include "Type.h"
+
+namespace System
+{
+
+FunctionType::FunctionType() :
+	m_pTemplateParams(NULL),
+	m_funcspec(CallType_cdecl),
+	m_pReturnType(NULL),
+	m_stackSize(0)
+{
+}
+
+Type* FunctionType::Clone() const
+{
+	// TODO
+	ASSERT(0);
+	return NULL;
+}
+
+uint FunctionType::get_sizeof(uint sizeofptr) const
+{
+	return ~0;
+}
+
+TypeSerializable::Class_Type FunctionType::GetSerializableType() const
+{
+	return Class_Function;
+}
+
+bool FunctionType::IsConst() const
+{
+	return m_bConst;
+}
+
+bool FunctionType::IsVolatile() const
+{
+	return m_bVolatile;
+}
+
+void FunctionType::Load(TypeArchive& ar)
+{
+	_CVType::Load(ar);
+
+	ar >> m_pReturnType;
+
+	ubyte funcspec;
+	ar >> funcspec;
+	m_funcspec = (CallType)funcspec;
+
+	uint16 val;
+	ar >> val;
+
+	m_parameters.m_bVarArg = val & 1;
+	unsigned int nparameters = val>>1;
+
+	m_parameters.m_parameters.reserve(nparameters);
+
+	for (uint i = 0; i < nparameters; ++i)
+	{
+	//	CDeclarator* pdecl = new CDeclarator;
+		FunctionParameters::Param param;
+		ar >> param.m_pType;
+		param.m_name = ar.LoadIdentifier();
+		//param.m_pDeclarator->Load(ar);
+
+	//	pdecl->Load(ar);
+		m_parameters.m_parameters.push_back(param);
+	}
+}
+
+void FunctionType::Store(TypeArchive& ar) const
+{
+	_CVType::Store(ar);
+
+	ar << m_pReturnType;
+	ar << (ubyte)m_funcspec;
+
+	uint16 val = (uint16)m_parameters.m_parameters.size();
+	val <<= 1;
+	val |= (int)m_parameters.m_bVarArg;
+
+	ar << val;
+	//ar << m_parameters.m_bVarArg;
+	//ar << (uint16)m_parameters.m_parameters.size();
+
+	for (size_t i = 0; i < m_parameters.m_parameters.size(); ++i)
+	{
+		ar << m_parameters.m_parameters[i].m_pType;
+		ar.StoreIdentifier(m_parameters.m_parameters[i].m_name);
+		//ar << m_parameters.m_parameters[i].m_pDeclarator->Store(ar);
+	}
+}
+
+uint FunctionType::GetStackSize(CallType calltype)
+{
+	uint stacksize = 0;
+	for (size_t i = 0; i < m_parameters.m_parameters.size(); ++i)
+	{
+		uint sizeofarg = m_parameters.m_parameters[i].m_pType->get_sizeof();
+		stacksize = (stacksize+(sizeofarg-1)) & ~(sizeofarg-1);
+
+		stacksize += sizeofarg;
+	}
+
+	// align on 4 bytes
+	stacksize = (stacksize+3) & ~3;
+
+	return stacksize;
+}
+
+String FunctionType::ToString()
+{
+	IO::StringWriter strbuilder;
+	Write(strbuilder);
+	return strbuilder.str();
+}
+
+IO::TextWriter& FunctionType::Write(IO::TextWriter& stream) const
+{
+	ASSERT(this);
+
+	if (m_pReturnType)
+		m_pReturnType->Write(stream);
+
+	stream << "(";
+	stream << ")";
+
+	m_parameters.Write(stream);
+
+	return stream;
+}
+
+#if 0
+void CFunction::Evaluate(CCPPCompiler* pCompiler, CDeclarator* pFunctionDecl)
+{
+	ASSERT(0);
+#if 0
+	if (m_pBody)
+	{
+		m_pBody->Evaluate(pCompiler, pFunctionDecl);
+	}
+#endif
+}
+#endif
+
+/*
+virtual bool Equals(const Type* pOther) const
+{
+}
+*/
+
+bool FunctionParameters::Param::Equals(const Param& other) const
+{
+	if (this == &other) return true;
+
+	return m_pType->Equals(*other.m_pType);
+}
+
+bool FunctionParameters::Equals(const FunctionParameters& other) const
+{
+	if (this == &other) return true;
+
+	if (m_bVarArg != other.m_bVarArg)
+		return false;
+
+	if (m_parameters.size() != other.m_parameters.size())
+		return false;
+
+	for (uint i = 0; i < m_parameters.size(); i++)
+	{
+		if (!m_parameters[i].Equals(other.m_parameters[i]))
+			return false;
+	}
+
+	return true;
+}
+
+bool FunctionType::Equals(const FunctionType& other) const
+{
+	if (this == &other) return true;
+
+	VERIFY(this);
+	VERIFY(&other);
+
+	if (!m_pReturnType->Equals(*other.m_pReturnType))
+		return false;
+
+	if (!m_parameters.Equals(other.m_parameters))
+		return false;
+
+	return true;	// They're equal
+}
+
+IO::TextWriter& FunctionParameters::Write(IO::TextWriter& stream) const
+{
+	stream << '(';
+
+	for (size_t i = 0; i < m_parameters.size(); ++i)
+	{
+		if (i > 0) stream << ',';
+
+		m_parameters[i].m_pType->Write(stream);
+	}
+
+	stream << ')';
+	return stream;
+}
+
+}	// System

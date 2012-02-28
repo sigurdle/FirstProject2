@@ -1,0 +1,53 @@
+#include "stdafx.h"
+#include "X3D2.h"
+#include "Coordinate.h"
+
+namespace System
+{
+namespace x3d
+{
+
+NodeType* X3DCoordinateNode::GetNodeType()
+{
+#if 0
+	static X3DFieldDefinition point(WSTR("point"), FieldType_MFVec3f, SAIFieldAccess_inputOutput, offsetof(Coordinate, m_point));
+
+	static X3DFieldDefinition* CoordinateFields[] =
+	{
+		&point
+	/*
+			MFVec3f [in,out] point [NULL] (-8,8)
+		*/
+	};
+#endif
+
+	static NodeType nodeType(nullptr, typeid(X3DCoordinateNode), nullptr, 0, X3DGeometricPropertyNode::GetNodeType());
+	return &nodeType;
+}
+
+///////////////////////////////////
+
+NodeType* Coordinate::nodeType(GetNodeType());
+
+NodeType* Coordinate::GetNodeType()
+{
+	static X3DFieldDefinition point("point", FieldType_MFVec3f, SAIFieldAccess_inputOutput, offsetof(Coordinate, m_point));
+
+	static X3DFieldDefinition* CoordinateFields[] =
+	{
+		&point
+	/*
+			MFVec3f [in,out] point [NULL] (-8,8)
+		*/
+	};
+
+	static NodeType nodeType("Coordinate", typeid(Coordinate), CoordinateFields, _countof(CoordinateFields), X3DCoordinateNode::GetNodeType());
+	return &nodeType;
+}
+
+Coordinate::Coordinate() : X3DCoordinateNode(GetNodeType())
+{
+}
+
+}	// x3d
+}

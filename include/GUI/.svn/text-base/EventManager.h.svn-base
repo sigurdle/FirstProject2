@@ -1,0 +1,46 @@
+namespace System
+{
+namespace Gui
+{
+
+class GUIEXT EventManager
+{
+public:
+
+	class PerClass : public Object
+	{
+	public:
+		CTOR PerClass();
+
+		vector<list<IFunction*> > m_handlers;
+	};
+
+	static RoutedEvent* RegisterRoutedEvent(StringIn name, RoutingStrategy routingStrategy, const Type_Info& handlerType, const Type_Info& ownerType);
+
+	static void RegisterClassHandler(const Type_Info& classType, RoutedEvent* pEvent, IFunction* handler);
+	static void RegisterClassHandler(const Type_Info& classType, RoutedEvent* pEvent, IFunction* handler, bool handledEventsToo);
+
+	static void InvokeClassHandlers(ClassType* classType, Object* instance, RoutedEventArgs* args);
+
+	static map<String,PerClass*> s_perclass;
+
+public:
+
+	friend class UIElement;
+
+	class RegisteredEvents : public Object
+	{
+	public:
+		vector<RoutedEvent*> m_items;
+	};
+
+private:
+
+	static RegisteredEvents* s_registeredEvents;
+
+//	static unsigned int s_count;
+//	static RoutedEvent* s_events[512];	// TODO
+};
+
+}	// UI
+}

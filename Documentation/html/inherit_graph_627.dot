@@ -1,0 +1,9 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::IO::BitStreamO",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_i_o_1_1_bit_stream_o.html"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::SWF::BitStreamO",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_s_w_f_1_1_bit_stream_o.html"];
+}

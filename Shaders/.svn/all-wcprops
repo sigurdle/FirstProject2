@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/firstproject2/!svn/ver/93/FirstProject2/trunk/Shaders
+END
+Gui.fx
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/firstproject2/!svn/ver/124/FirstProject2/trunk/Shaders/Gui.fx
+END
+FixedFunction.fx
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/93/FirstProject2/trunk/Shaders/FixedFunction.fx
+END
+FixedFunction2.fx
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/93/FirstProject2/trunk/Shaders/FixedFunction2.fx
+END
+FixedVertexShader.glsl
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/93/FirstProject2/trunk/Shaders/FixedVertexShader.glsl
+END
+ImageEdit.fx
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/123/FirstProject2/trunk/Shaders/ImageEdit.fx
+END
+iron_man_5.jpg
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/93/FirstProject2/trunk/Shaders/iron_man_5.jpg
+END
+MeshFromOBJ10.fx
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/93/FirstProject2/trunk/Shaders/MeshFromOBJ10.fx
+END
+normal.ps
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/firstproject2/!svn/ver/123/FirstProject2/trunk/Shaders/normal.ps
+END
+FixedFragmentShader.glsl
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/93/FirstProject2/trunk/Shaders/FixedFragmentShader.glsl
+END
+GaussianBlur.fx
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/93/FirstProject2/trunk/Shaders/GaussianBlur.fx
+END
+PaintBrush.fx
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/123/FirstProject2/trunk/Shaders/PaintBrush.fx
+END
+ColorGradient4.fx
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/93/FirstProject2/trunk/Shaders/ColorGradient4.fx
+END

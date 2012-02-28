@@ -1,0 +1,868 @@
+Nonterminals useless in grammar
+
+   data_parts_list
+   data_parts_list_1
+   data_part
+   item
+   string_list
+   string_list_1
+   list_separator
+   string
+   data_reference
+
+
+Terminals unused in grammar
+
+   TOKEN_OPAREN
+   TOKEN_CPAREN
+   TOKEN_COMMA
+   TOKEN_FNUM
+   TOKEN_STRING
+
+
+Rules useless in grammar
+
+   52 data_parts_list: data_parts_list_1
+
+   53 data_parts_list_1: data_part
+   54                  | data_parts_list data_part
+
+   55 data_part: data_reference
+   56          | object
+   57          | item
+
+   58 item: TOKEN_INTEGER
+   59     | TOKEN_FNUM
+   60     | TOKEN_STRING
+   61     | list_separator
+
+   62 string_list: string_list_1 list_separator
+
+   63 string_list_1: string
+   64              | string_list_1 list_separator string
+
+   65 list_separator: TOKEN_COMMA
+   66               | TOKEN_SEMICOLON
+
+   67 string: TOKEN_STRING
+
+   68 data_reference: TOKEN_OBRACE name optional_class_id TOKEN_CBRACE
+
+
+Grammatikk
+
+    0 $accept: file $end
+
+    1 file: templates objects
+    2     | templates
+
+    3 templates: template
+    4          | templates template
+
+    5 objects: object
+    6        | object objects
+
+    7 template: TOKEN_TEMPLATE name TOKEN_OBRACE class_id template_parts TOKEN_CBRACE
+
+    8 template_parts: template_members_part TOKEN_OBRACKET template_option_info TOKEN_CBRACKET
+    9               | template_members_list
+
+   10 template_members_part: /* tom */
+   11                      | template_members_list
+
+   12 template_option_info: ellipsis
+   13                     | template_option_list
+
+   14 template_members_list: template_members
+   15                      | template_members_list template_members
+
+   16 template_members: primitive
+   17                 | array
+   18                 | template_reference
+
+   19 primitive: primitive_type optional_name TOKEN_SEMICOLON
+
+   20 array: TOKEN_ARRAY array_data_type name dimension_list TOKEN_SEMICOLON
+
+   21 template_reference: name optional_name TOKEN_SEMICOLON
+
+   22 primitive_type: TOKEN_WORD
+   23               | TOKEN_DWORD
+   24               | TOKEN_FLOAT
+   25               | TOKEN_DOUBLE
+   26               | TOKEN_CHAR
+   27               | TOKEN_UCHAR
+   28               | TOKEN_SWORD
+   29               | TOKEN_SDWORD
+   30               | TOKEN_LPSTR
+   31               | TOKEN_CSTRING
+
+   32 array_data_type: primitive_type
+   33                | name
+
+   34 dimension_list: dimension
+   35               | dimension_list dimension
+
+   36 dimension: TOKEN_OBRACKET dimension_size TOKEN_CBRACKET
+
+   37 dimension_size: TOKEN_INTEGER
+   38               | name
+
+   39 template_option_list: template_option_part
+   40                     | template_option_list template_option_part
+
+   41 template_option_part: name optional_class_id
+
+   42 name: TOKEN_NAME
+
+   43 optional_name: /* tom */
+   44              | name
+
+   45 class_id: TOKEN_GUID
+
+   46 optional_class_id: /* tom */
+   47                  | class_id
+
+   48 ellipsis: TOKEN_DOT TOKEN_DOT TOKEN_DOT
+
+   49 object: identifier
+
+   50 identifier: name
+   51           | primitive_type
+
+
+Terminaler med regler hvor de opptrer
+
+$end (0) 0
+error (256)
+TOKEN_OBRACE (258) 7
+TOKEN_CBRACE (259) 7
+TOKEN_OBRACKET (260) 8 36
+TOKEN_CBRACKET (261) 8 36
+TOKEN_OPAREN (262)
+TOKEN_CPAREN (263)
+TOKEN_CHAR (264) 26
+TOKEN_UCHAR (265) 27
+TOKEN_WORD (266) 22
+TOKEN_DWORD (267) 23
+TOKEN_SWORD (268) 28
+TOKEN_SDWORD (269) 29
+TOKEN_FLOAT (270) 24
+TOKEN_DOUBLE (271) 25
+TOKEN_CSTRING (272) 31
+TOKEN_LPSTR (273) 30
+TOKEN_GUID (274) 45
+TOKEN_TEMPLATE (275) 7
+TOKEN_ARRAY (276) 20
+TOKEN_SEMICOLON (277) 19 20 21
+TOKEN_COMMA (278)
+TOKEN_DOT (279) 48
+TOKEN_FNUM (280)
+TOKEN_INTEGER (281) 37
+TOKEN_NAME (282) 42
+TOKEN_STRING (283)
+
+
+Ikke-terminaler med regler hvor de opptrer
+
+$accept (29)
+    til venstre: 0
+file (30)
+    til venstre: 1 2, til høyre: 0
+templates (31)
+    til venstre: 3 4, til høyre: 1 2 4
+objects (32)
+    til venstre: 5 6, til høyre: 1 6
+template (33)
+    til venstre: 7, til høyre: 3 4
+template_parts (34)
+    til venstre: 8 9, til høyre: 7
+template_members_part (35)
+    til venstre: 10 11, til høyre: 8
+template_option_info (36)
+    til venstre: 12 13, til høyre: 8
+template_members_list (37)
+    til venstre: 14 15, til høyre: 9 11 15
+template_members (38)
+    til venstre: 16 17 18, til høyre: 14 15
+primitive (39)
+    til venstre: 19, til høyre: 16
+array (40)
+    til venstre: 20, til høyre: 17
+template_reference (41)
+    til venstre: 21, til høyre: 18
+primitive_type (42)
+    til venstre: 22 23 24 25 26 27 28 29 30 31, til høyre: 19 32 51
+array_data_type (43)
+    til venstre: 32 33, til høyre: 20
+dimension_list (44)
+    til venstre: 34 35, til høyre: 20 35
+dimension (45)
+    til venstre: 36, til høyre: 34 35
+dimension_size (46)
+    til venstre: 37 38, til høyre: 36
+template_option_list (47)
+    til venstre: 39 40, til høyre: 13 40
+template_option_part (48)
+    til venstre: 41, til høyre: 39 40
+name (49)
+    til venstre: 42, til høyre: 7 20 21 33 38 41 44 50
+optional_name (50)
+    til venstre: 43 44, til høyre: 19 21
+class_id (51)
+    til venstre: 45, til høyre: 7 47
+optional_class_id (52)
+    til venstre: 46 47, til høyre: 41
+ellipsis (53)
+    til venstre: 48, til høyre: 12
+object (54)
+    til venstre: 49, til høyre: 5 6
+identifier (55)
+    til venstre: 50 51, til høyre: 49
+
+
+tilstand 0
+
+    0 $accept: . file $end
+
+    TOKEN_TEMPLATE  skift og gå til tilstand 1
+
+    file       gå til tilstand 2
+    templates  gå til tilstand 3
+    template   gå til tilstand 4
+
+
+tilstand 1
+
+    7 template: TOKEN_TEMPLATE . name TOKEN_OBRACE class_id template_parts TOKEN_CBRACE
+
+    TOKEN_NAME  skift og gå til tilstand 5
+
+    name  gå til tilstand 6
+
+
+tilstand 2
+
+    0 $accept: file . $end
+
+    $end  skift og gå til tilstand 7
+
+
+tilstand 3
+
+    1 file: templates . objects
+    2     | templates .
+    4 templates: templates . template
+
+    TOKEN_CHAR      skift og gå til tilstand 8
+    TOKEN_UCHAR     skift og gå til tilstand 9
+    TOKEN_WORD      skift og gå til tilstand 10
+    TOKEN_DWORD     skift og gå til tilstand 11
+    TOKEN_SWORD     skift og gå til tilstand 12
+    TOKEN_SDWORD    skift og gå til tilstand 13
+    TOKEN_FLOAT     skift og gå til tilstand 14
+    TOKEN_DOUBLE    skift og gå til tilstand 15
+    TOKEN_CSTRING   skift og gå til tilstand 16
+    TOKEN_LPSTR     skift og gå til tilstand 17
+    TOKEN_TEMPLATE  skift og gå til tilstand 1
+    TOKEN_NAME      skift og gå til tilstand 5
+
+    $default  reduksjon ved hjelp av regel 2 (file)
+
+    objects         gå til tilstand 18
+    template        gå til tilstand 19
+    primitive_type  gå til tilstand 20
+    name            gå til tilstand 21
+    object          gå til tilstand 22
+    identifier      gå til tilstand 23
+
+
+tilstand 4
+
+    3 templates: template .
+
+    $default  reduksjon ved hjelp av regel 3 (templates)
+
+
+tilstand 5
+
+   42 name: TOKEN_NAME .
+
+    $default  reduksjon ved hjelp av regel 42 (name)
+
+
+tilstand 6
+
+    7 template: TOKEN_TEMPLATE name . TOKEN_OBRACE class_id template_parts TOKEN_CBRACE
+
+    TOKEN_OBRACE  skift og gå til tilstand 24
+
+
+tilstand 7
+
+    0 $accept: file $end .
+
+    $default  aksept
+
+
+tilstand 8
+
+   26 primitive_type: TOKEN_CHAR .
+
+    $default  reduksjon ved hjelp av regel 26 (primitive_type)
+
+
+tilstand 9
+
+   27 primitive_type: TOKEN_UCHAR .
+
+    $default  reduksjon ved hjelp av regel 27 (primitive_type)
+
+
+tilstand 10
+
+   22 primitive_type: TOKEN_WORD .
+
+    $default  reduksjon ved hjelp av regel 22 (primitive_type)
+
+
+tilstand 11
+
+   23 primitive_type: TOKEN_DWORD .
+
+    $default  reduksjon ved hjelp av regel 23 (primitive_type)
+
+
+tilstand 12
+
+   28 primitive_type: TOKEN_SWORD .
+
+    $default  reduksjon ved hjelp av regel 28 (primitive_type)
+
+
+tilstand 13
+
+   29 primitive_type: TOKEN_SDWORD .
+
+    $default  reduksjon ved hjelp av regel 29 (primitive_type)
+
+
+tilstand 14
+
+   24 primitive_type: TOKEN_FLOAT .
+
+    $default  reduksjon ved hjelp av regel 24 (primitive_type)
+
+
+tilstand 15
+
+   25 primitive_type: TOKEN_DOUBLE .
+
+    $default  reduksjon ved hjelp av regel 25 (primitive_type)
+
+
+tilstand 16
+
+   31 primitive_type: TOKEN_CSTRING .
+
+    $default  reduksjon ved hjelp av regel 31 (primitive_type)
+
+
+tilstand 17
+
+   30 primitive_type: TOKEN_LPSTR .
+
+    $default  reduksjon ved hjelp av regel 30 (primitive_type)
+
+
+tilstand 18
+
+    1 file: templates objects .
+
+    $default  reduksjon ved hjelp av regel 1 (file)
+
+
+tilstand 19
+
+    4 templates: templates template .
+
+    $default  reduksjon ved hjelp av regel 4 (templates)
+
+
+tilstand 20
+
+   51 identifier: primitive_type .
+
+    $default  reduksjon ved hjelp av regel 51 (identifier)
+
+
+tilstand 21
+
+   50 identifier: name .
+
+    $default  reduksjon ved hjelp av regel 50 (identifier)
+
+
+tilstand 22
+
+    5 objects: object .
+    6        | object . objects
+
+    TOKEN_CHAR     skift og gå til tilstand 8
+    TOKEN_UCHAR    skift og gå til tilstand 9
+    TOKEN_WORD     skift og gå til tilstand 10
+    TOKEN_DWORD    skift og gå til tilstand 11
+    TOKEN_SWORD    skift og gå til tilstand 12
+    TOKEN_SDWORD   skift og gå til tilstand 13
+    TOKEN_FLOAT    skift og gå til tilstand 14
+    TOKEN_DOUBLE   skift og gå til tilstand 15
+    TOKEN_CSTRING  skift og gå til tilstand 16
+    TOKEN_LPSTR    skift og gå til tilstand 17
+    TOKEN_NAME     skift og gå til tilstand 5
+
+    $default  reduksjon ved hjelp av regel 5 (objects)
+
+    objects         gå til tilstand 25
+    primitive_type  gå til tilstand 20
+    name            gå til tilstand 21
+    object          gå til tilstand 22
+    identifier      gå til tilstand 23
+
+
+tilstand 23
+
+   49 object: identifier .
+
+    $default  reduksjon ved hjelp av regel 49 (object)
+
+
+tilstand 24
+
+    7 template: TOKEN_TEMPLATE name TOKEN_OBRACE . class_id template_parts TOKEN_CBRACE
+
+    TOKEN_GUID  skift og gå til tilstand 26
+
+    class_id  gå til tilstand 27
+
+
+tilstand 25
+
+    6 objects: object objects .
+
+    $default  reduksjon ved hjelp av regel 6 (objects)
+
+
+tilstand 26
+
+   45 class_id: TOKEN_GUID .
+
+    $default  reduksjon ved hjelp av regel 45 (class_id)
+
+
+tilstand 27
+
+    7 template: TOKEN_TEMPLATE name TOKEN_OBRACE class_id . template_parts TOKEN_CBRACE
+
+    TOKEN_CHAR     skift og gå til tilstand 8
+    TOKEN_UCHAR    skift og gå til tilstand 9
+    TOKEN_WORD     skift og gå til tilstand 10
+    TOKEN_DWORD    skift og gå til tilstand 11
+    TOKEN_SWORD    skift og gå til tilstand 12
+    TOKEN_SDWORD   skift og gå til tilstand 13
+    TOKEN_FLOAT    skift og gå til tilstand 14
+    TOKEN_DOUBLE   skift og gå til tilstand 15
+    TOKEN_CSTRING  skift og gå til tilstand 16
+    TOKEN_LPSTR    skift og gå til tilstand 17
+    TOKEN_ARRAY    skift og gå til tilstand 28
+    TOKEN_NAME     skift og gå til tilstand 5
+
+    $default  reduksjon ved hjelp av regel 10 (template_members_part)
+
+    template_parts         gå til tilstand 29
+    template_members_part  gå til tilstand 30
+    template_members_list  gå til tilstand 31
+    template_members       gå til tilstand 32
+    primitive              gå til tilstand 33
+    array                  gå til tilstand 34
+    template_reference     gå til tilstand 35
+    primitive_type         gå til tilstand 36
+    name                   gå til tilstand 37
+
+
+tilstand 28
+
+   20 array: TOKEN_ARRAY . array_data_type name dimension_list TOKEN_SEMICOLON
+
+    TOKEN_CHAR     skift og gå til tilstand 8
+    TOKEN_UCHAR    skift og gå til tilstand 9
+    TOKEN_WORD     skift og gå til tilstand 10
+    TOKEN_DWORD    skift og gå til tilstand 11
+    TOKEN_SWORD    skift og gå til tilstand 12
+    TOKEN_SDWORD   skift og gå til tilstand 13
+    TOKEN_FLOAT    skift og gå til tilstand 14
+    TOKEN_DOUBLE   skift og gå til tilstand 15
+    TOKEN_CSTRING  skift og gå til tilstand 16
+    TOKEN_LPSTR    skift og gå til tilstand 17
+    TOKEN_NAME     skift og gå til tilstand 5
+
+    primitive_type   gå til tilstand 38
+    array_data_type  gå til tilstand 39
+    name             gå til tilstand 40
+
+
+tilstand 29
+
+    7 template: TOKEN_TEMPLATE name TOKEN_OBRACE class_id template_parts . TOKEN_CBRACE
+
+    TOKEN_CBRACE  skift og gå til tilstand 41
+
+
+tilstand 30
+
+    8 template_parts: template_members_part . TOKEN_OBRACKET template_option_info TOKEN_CBRACKET
+
+    TOKEN_OBRACKET  skift og gå til tilstand 42
+
+
+tilstand 31
+
+    9 template_parts: template_members_list .
+   11 template_members_part: template_members_list .
+   15 template_members_list: template_members_list . template_members
+
+    TOKEN_CHAR     skift og gå til tilstand 8
+    TOKEN_UCHAR    skift og gå til tilstand 9
+    TOKEN_WORD     skift og gå til tilstand 10
+    TOKEN_DWORD    skift og gå til tilstand 11
+    TOKEN_SWORD    skift og gå til tilstand 12
+    TOKEN_SDWORD   skift og gå til tilstand 13
+    TOKEN_FLOAT    skift og gå til tilstand 14
+    TOKEN_DOUBLE   skift og gå til tilstand 15
+    TOKEN_CSTRING  skift og gå til tilstand 16
+    TOKEN_LPSTR    skift og gå til tilstand 17
+    TOKEN_ARRAY    skift og gå til tilstand 28
+    TOKEN_NAME     skift og gå til tilstand 5
+
+    TOKEN_OBRACKET  reduksjon ved hjelp av regel 11 (template_members_part)
+    $default        reduksjon ved hjelp av regel 9 (template_parts)
+
+    template_members    gå til tilstand 43
+    primitive           gå til tilstand 33
+    array               gå til tilstand 34
+    template_reference  gå til tilstand 35
+    primitive_type      gå til tilstand 36
+    name                gå til tilstand 37
+
+
+tilstand 32
+
+   14 template_members_list: template_members .
+
+    $default  reduksjon ved hjelp av regel 14 (template_members_list)
+
+
+tilstand 33
+
+   16 template_members: primitive .
+
+    $default  reduksjon ved hjelp av regel 16 (template_members)
+
+
+tilstand 34
+
+   17 template_members: array .
+
+    $default  reduksjon ved hjelp av regel 17 (template_members)
+
+
+tilstand 35
+
+   18 template_members: template_reference .
+
+    $default  reduksjon ved hjelp av regel 18 (template_members)
+
+
+tilstand 36
+
+   19 primitive: primitive_type . optional_name TOKEN_SEMICOLON
+
+    TOKEN_NAME  skift og gå til tilstand 5
+
+    $default  reduksjon ved hjelp av regel 43 (optional_name)
+
+    name           gå til tilstand 44
+    optional_name  gå til tilstand 45
+
+
+tilstand 37
+
+   21 template_reference: name . optional_name TOKEN_SEMICOLON
+
+    TOKEN_NAME  skift og gå til tilstand 5
+
+    $default  reduksjon ved hjelp av regel 43 (optional_name)
+
+    name           gå til tilstand 44
+    optional_name  gå til tilstand 46
+
+
+tilstand 38
+
+   32 array_data_type: primitive_type .
+
+    $default  reduksjon ved hjelp av regel 32 (array_data_type)
+
+
+tilstand 39
+
+   20 array: TOKEN_ARRAY array_data_type . name dimension_list TOKEN_SEMICOLON
+
+    TOKEN_NAME  skift og gå til tilstand 5
+
+    name  gå til tilstand 47
+
+
+tilstand 40
+
+   33 array_data_type: name .
+
+    $default  reduksjon ved hjelp av regel 33 (array_data_type)
+
+
+tilstand 41
+
+    7 template: TOKEN_TEMPLATE name TOKEN_OBRACE class_id template_parts TOKEN_CBRACE .
+
+    $default  reduksjon ved hjelp av regel 7 (template)
+
+
+tilstand 42
+
+    8 template_parts: template_members_part TOKEN_OBRACKET . template_option_info TOKEN_CBRACKET
+
+    TOKEN_DOT   skift og gå til tilstand 48
+    TOKEN_NAME  skift og gå til tilstand 5
+
+    template_option_info  gå til tilstand 49
+    template_option_list  gå til tilstand 50
+    template_option_part  gå til tilstand 51
+    name                  gå til tilstand 52
+    ellipsis              gå til tilstand 53
+
+
+tilstand 43
+
+   15 template_members_list: template_members_list template_members .
+
+    $default  reduksjon ved hjelp av regel 15 (template_members_list)
+
+
+tilstand 44
+
+   44 optional_name: name .
+
+    $default  reduksjon ved hjelp av regel 44 (optional_name)
+
+
+tilstand 45
+
+   19 primitive: primitive_type optional_name . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  skift og gå til tilstand 54
+
+
+tilstand 46
+
+   21 template_reference: name optional_name . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  skift og gå til tilstand 55
+
+
+tilstand 47
+
+   20 array: TOKEN_ARRAY array_data_type name . dimension_list TOKEN_SEMICOLON
+
+    TOKEN_OBRACKET  skift og gå til tilstand 56
+
+    dimension_list  gå til tilstand 57
+    dimension       gå til tilstand 58
+
+
+tilstand 48
+
+   48 ellipsis: TOKEN_DOT . TOKEN_DOT TOKEN_DOT
+
+    TOKEN_DOT  skift og gå til tilstand 59
+
+
+tilstand 49
+
+    8 template_parts: template_members_part TOKEN_OBRACKET template_option_info . TOKEN_CBRACKET
+
+    TOKEN_CBRACKET  skift og gå til tilstand 60
+
+
+tilstand 50
+
+   13 template_option_info: template_option_list .
+   40 template_option_list: template_option_list . template_option_part
+
+    TOKEN_NAME  skift og gå til tilstand 5
+
+    $default  reduksjon ved hjelp av regel 13 (template_option_info)
+
+    template_option_part  gå til tilstand 61
+    name                  gå til tilstand 52
+
+
+tilstand 51
+
+   39 template_option_list: template_option_part .
+
+    $default  reduksjon ved hjelp av regel 39 (template_option_list)
+
+
+tilstand 52
+
+   41 template_option_part: name . optional_class_id
+
+    TOKEN_GUID  skift og gå til tilstand 26
+
+    $default  reduksjon ved hjelp av regel 46 (optional_class_id)
+
+    class_id           gå til tilstand 62
+    optional_class_id  gå til tilstand 63
+
+
+tilstand 53
+
+   12 template_option_info: ellipsis .
+
+    $default  reduksjon ved hjelp av regel 12 (template_option_info)
+
+
+tilstand 54
+
+   19 primitive: primitive_type optional_name TOKEN_SEMICOLON .
+
+    $default  reduksjon ved hjelp av regel 19 (primitive)
+
+
+tilstand 55
+
+   21 template_reference: name optional_name TOKEN_SEMICOLON .
+
+    $default  reduksjon ved hjelp av regel 21 (template_reference)
+
+
+tilstand 56
+
+   36 dimension: TOKEN_OBRACKET . dimension_size TOKEN_CBRACKET
+
+    TOKEN_INTEGER  skift og gå til tilstand 64
+    TOKEN_NAME     skift og gå til tilstand 5
+
+    dimension_size  gå til tilstand 65
+    name            gå til tilstand 66
+
+
+tilstand 57
+
+   20 array: TOKEN_ARRAY array_data_type name dimension_list . TOKEN_SEMICOLON
+   35 dimension_list: dimension_list . dimension
+
+    TOKEN_OBRACKET   skift og gå til tilstand 56
+    TOKEN_SEMICOLON  skift og gå til tilstand 67
+
+    dimension  gå til tilstand 68
+
+
+tilstand 58
+
+   34 dimension_list: dimension .
+
+    $default  reduksjon ved hjelp av regel 34 (dimension_list)
+
+
+tilstand 59
+
+   48 ellipsis: TOKEN_DOT TOKEN_DOT . TOKEN_DOT
+
+    TOKEN_DOT  skift og gå til tilstand 69
+
+
+tilstand 60
+
+    8 template_parts: template_members_part TOKEN_OBRACKET template_option_info TOKEN_CBRACKET .
+
+    $default  reduksjon ved hjelp av regel 8 (template_parts)
+
+
+tilstand 61
+
+   40 template_option_list: template_option_list template_option_part .
+
+    $default  reduksjon ved hjelp av regel 40 (template_option_list)
+
+
+tilstand 62
+
+   47 optional_class_id: class_id .
+
+    $default  reduksjon ved hjelp av regel 47 (optional_class_id)
+
+
+tilstand 63
+
+   41 template_option_part: name optional_class_id .
+
+    $default  reduksjon ved hjelp av regel 41 (template_option_part)
+
+
+tilstand 64
+
+   37 dimension_size: TOKEN_INTEGER .
+
+    $default  reduksjon ved hjelp av regel 37 (dimension_size)
+
+
+tilstand 65
+
+   36 dimension: TOKEN_OBRACKET dimension_size . TOKEN_CBRACKET
+
+    TOKEN_CBRACKET  skift og gå til tilstand 70
+
+
+tilstand 66
+
+   38 dimension_size: name .
+
+    $default  reduksjon ved hjelp av regel 38 (dimension_size)
+
+
+tilstand 67
+
+   20 array: TOKEN_ARRAY array_data_type name dimension_list TOKEN_SEMICOLON .
+
+    $default  reduksjon ved hjelp av regel 20 (array)
+
+
+tilstand 68
+
+   35 dimension_list: dimension_list dimension .
+
+    $default  reduksjon ved hjelp av regel 35 (dimension_list)
+
+
+tilstand 69
+
+   48 ellipsis: TOKEN_DOT TOKEN_DOT TOKEN_DOT .
+
+    $default  reduksjon ved hjelp av regel 48 (ellipsis)
+
+
+tilstand 70
+
+   36 dimension: TOKEN_OBRACKET dimension_size TOKEN_CBRACKET .
+
+    $default  reduksjon ved hjelp av regel 36 (dimension)

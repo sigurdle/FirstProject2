@@ -1,0 +1,509 @@
+#include "stdafx.h"
+#include "LFC.h"
+
+namespace System
+{
+
+// ConsoleBuffer
+
+ConsoleBuffer::ConsoleBuffer(HANDLE hFile) : m_hFile(hFile)
+{
+}
+
+ConsoleBuffer::ConsoleBuffer()
+{
+	m_hFile = ::CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+}
+
+ConsoleBuffer::~ConsoleBuffer()
+{
+	if (m_hFile)
+	{
+		CloseHandle(m_hFile);
+		m_hFile = NULL;
+	}
+}
+
+void ConsoleBuffer::set_CursorPosition(int x, int y)
+{
+	COORD pos = {x, y};
+	BOOL success = SetConsoleCursorPosition(get_Handle(), pos);
+	if (!success)
+	{
+		raise_(Exception::FromHResult(HRESULT_FROM_WIN32(GetLastError())));
+	}
+}
+
+void ConsoleBuffer::Clear()
+{
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	BOOL success = ::GetConsoleScreenBufferInfo(get_Handle(), &csbi); 
+	if (!success)
+	{
+		raise_(Exception::FromHResult(HRESULT_FROM_WIN32(GetLastError())));
+	}
+
+	COORD coord = {0, 0};
+	DWORD nLength = csbi.dwSize.X * csbi.dwSize.Y;
+	WORD wAttribute = csbi.wAttributes;
+
+	DWORD nWritten;
+
+	success = ::FillConsoleOutputAttribute(get_Handle(), wAttribute, nLength, coord, &nWritten);
+	if (!success)
+	{
+		raise_(Exception::FromHResult(HRESULT_FROM_WIN32(GetLastError())));
+	}
+	success = ::FillConsoleOutputCharacter(get_Handle(), ' ', nLength, coord, &nWritten);
+	if (!success)
+	{
+		raise_(Exception::FromHResult(HRESULT_FROM_WIN32(GetLastError())));
+	}
+
+	success = SetConsoleCursorPosition(get_Handle(), coord);
+	if (!success)
+	{
+		raise_(Exception::FromHResult(HRESULT_FROM_WIN32(GetLastError())));
+	}
+}
+
+ConsoleColor ConsoleBuffer::get_ForegroundColor()
+{
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	BOOL success = ::GetConsoleScreenBufferInfo(get_Handle(), &csbi); 
+	if (!success)
+	{
+		raise_(Exception::FromHResult(HRESULT_FROM_WIN32(GetLastError())));
+	}
+	return (ConsoleColor)(csbi.wAttributes & 0x0F);
+}
+
+void ConsoleBuffer::set_ForegroundColor(ConsoleColor color)
+{
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	::GetConsoleScreenBufferInfo(get_Handle(), &csbi); 
+
+	BOOL success = SetConsoleTextAttribute(get_Handle(), (csbi.wAttributes & ~0x0F) | color);
+	if (!success)
+	{
+		raise_(Exception::FromHResult(HRESULT_FROM_WIN32(GetLastError())));
+	}
+}
+
+ConsoleColor ConsoleBuffer::get_BackgroundColor()
+{
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	BOOL success = ::GetConsoleScreenBufferInfo(get_Handle(), &csbi);
+	if (!success)
+	{
+		raise_(Exception::FromHResult(HRESULT_FROM_WIN32(GetLastError())));
+	}
+
+	return (ConsoleColor)((csbi.wAttributes>>4) & 0x0F);
+}
+
+void ConsoleBuffer::set_BackgroundColor(ConsoleColor color)
+{
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	::GetConsoleScreenBufferInfo(get_Handle(), &csbi); 
+
+	BOOL success = SetConsoleTextAttribute(get_Handle(), (csbi.wAttributes & ~0xF0) | (color<<4));
+	if (!success)
+	{
+		raise_(Exception::FromHResult(HRESULT_FROM_WIN32(GetLastError())));
+	}
+}
+
+// static
+void ConsoleBuffer::SetWindowSize(int width, int height)
+{
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	::GetConsoleScreenBufferInfo(get_Handle(), &csbi); 
+
+	SMALL_RECT rect;
+	rect.Left = csbi.srWindow.Left;
+	rect.Top = csbi.srWindow.Top;
+	rect.Right = rect.Left + width;
+	rect.Bottom = rect.Top + height;
+
+	BOOL success = ::SetConsoleWindowInfo(Std::_Out->GetFileHandle(), TRUE, &rect);
+	if (!success)
+	{
+		raise_(Exception::FromHResult(HRESULT_FROM_WIN32(GetLastError())));
+	}
+}
+
+// Console
+
+// static
+
+bool Console::s_open = false;
+String Console::s_originalTitle;
+_Ptr<ConsoleBuffer> Console::s_activeBuffer;
+Event0 Console::s_titleChanged;
+Event0 Console::s_foregroundColorChanged;
+Event0 Console::s_backgroundColorChanged;
+
+ConsoleBuffer* Console::get_ActiveBuffer()
+{
+	return s_activeBuffer;
+}
+
+void Console::set_ActiveBuffer(ConsoleBuffer* buffer)
+{
+	if (buffer != s_activeBuffer)
+	{
+		BOOL success = SetConsoleActiveScreenBuffer(buffer->get_Handle());
+		if (!success)
+		{
+			raise_(Exception::FromHResult(HRESULT_FROM_WIN32(GetLastError())));
+		}
+		s_activeBuffer = buffer;
+	}
+}
+
+#if 0
+
+#ifndef __LERSTAD__
+	class LFCEXT DropTarget : public Object, public ::IDropTarget
+#else
+	class GUIEXT DropTarget : public Object, public IUnknown
+#endif
+	{
+	public:
+
+		CTOR DropTarget()
+		{
+		}
+
+#ifndef __LERSTAD__
+        virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
+			/* [in] */ REFIID riid,
+            /* [iid_is][out] */ __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject)
+		{
+			if (riid == __uuidof(IUnknown))
+			{
+				*ppvObject = static_cast<IUnknown*>(this);
+			}
+			else if (riid == __uuidof(IDropTarget))
+			{
+				*ppvObject = static_cast<IDropTarget*>(this);
+			}
+			else
+			{
+				*ppvObject = NULL;
+				return E_NOINTERFACE;
+			}
+
+			AddRef();
+			return S_OK;
+		}
+
+        virtual ULONG STDMETHODCALLTYPE AddRef( void)
+		{
+			return 1;
+		}
+
+        virtual ULONG STDMETHODCALLTYPE Release( void)
+		{
+			--m_refCount;
+			return m_refCount;
+		}
+
+		virtual HRESULT STDMETHODCALLTYPE DragEnter( 
+			/* [unique][in] */ __RPC__in_opt ::IDataObject *pDataObj,
+			/* [in] */ DWORD grfKeyState,
+			/* [in] */ POINTL pt,
+			/* [out][in] */ __RPC__inout DWORD *pdwEffect);
+        
+		virtual HRESULT STDMETHODCALLTYPE DragOver( 
+			/* [in] */ DWORD grfKeyState,
+			/* [in] */ POINTL pt,
+			/* [out][in] */ __RPC__inout DWORD *pdwEffect);
+        
+		virtual HRESULT STDMETHODCALLTYPE DragLeave();
+        
+		virtual HRESULT STDMETHODCALLTYPE Drop( 
+			/* [unique][in] */ __RPC__in_opt ::IDataObject *pDataObj,
+			/* [in] */ DWORD grfKeyState,
+			/* [in] */ POINTL pt,
+			/* [out][in] */ __RPC__inout DWORD *pdwEffect);
+#endif
+	protected:
+
+	//	PlatformWindow* m_wnd;
+		long m_refCount;
+	};
+
+		HRESULT STDMETHODCALLTYPE DropTarget::DragEnter( 
+			/* [unique][in] */ __RPC__in_opt ::IDataObject *pDataObj,
+			/* [in] */ DWORD grfKeyState,
+			/* [in] */ POINTL pt,
+			/* [out][in] */ __RPC__inout DWORD *pdwEffect)
+		{
+			return S_OK;
+		}
+        
+		HRESULT STDMETHODCALLTYPE DropTarget::DragOver( 
+			/* [in] */ DWORD grfKeyState,
+			/* [in] */ POINTL pt,
+			/* [out][in] */ __RPC__inout DWORD *pdwEffect)
+		{
+			return S_OK;
+		}
+        
+		HRESULT STDMETHODCALLTYPE DropTarget::DragLeave()
+		{
+			return S_OK;
+		}
+        
+		HRESULT STDMETHODCALLTYPE DropTarget::Drop( 
+			/* [unique][in] */ __RPC__in_opt ::IDataObject *pDataObj,
+			/* [in] */ DWORD grfKeyState,
+			/* [in] */ POINTL pt,
+			/* [out][in] */ __RPC__inout DWORD *pdwEffect)
+		{
+			return S_OK;
+		}
+#endif
+
+// static
+bool Console::Open()
+{
+	if (!s_open)
+	{
+		s_open = true;
+		IncAppLockCount();
+		BOOL success = AllocConsole();
+
+		// Get initial screen buffer
+		HANDLE hFile = CreateFile(L"CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+		ASSERT(hFile != INVALID_HANDLE_VALUE);
+
+		HANDLE hFileIn = CreateFile(L"CONIN$", GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+		ASSERT(hFileIn != INVALID_HANDLE_VALUE);
+
+		s_activeBuffer = new ConsoleBuffer(hFile);
+
+		/*
+		if (true)
+		{
+			HWND hWnd = GetConsoleWindow();
+			ASSERT(IsWindow(hWnd));
+
+			DropTarget* m_dropTarget = new DropTarget();
+			HRESULT hr = RegisterDragDrop(hWnd, m_dropTarget);
+			m_dropTarget = NULL;
+		}
+		*/
+
+		return !!success;
+	}
+	return TRUE;
+}
+
+// static
+bool Console::Close()
+{
+	s_open = false;
+	BOOL success = FreeConsole();
+	DecAppLockCount();
+
+	return !!success;
+}
+
+// static
+void Console::Clear()
+{
+	s_activeBuffer->Clear();
+}
+
+// static
+ConsoleColor Console::get_ForegroundColor()
+{
+	return s_activeBuffer->get_ForegroundColor();
+}
+
+// static
+void Console::set_ForegroundColor(ConsoleColor color)
+{
+	s_activeBuffer->set_ForegroundColor(color);
+	s_foregroundColorChanged();
+}
+
+// static
+ConsoleColor Console::get_BackgroundColor()
+{
+	return s_activeBuffer->get_BackgroundColor();
+}
+
+// static
+void Console::set_BackgroundColor(ConsoleColor color)
+{
+	s_activeBuffer->set_BackgroundColor(color);
+	s_backgroundColorChanged();
+}
+
+// static
+bool Console::get_FullScreen()
+{
+	return false;
+	//GetConsoleDisplayMode(
+}
+
+// static
+void Console::set_FullScreen(bool fullScreen)
+{
+	COORD dims;
+	BOOL success = SetConsoleDisplayMode(Std::_Out->GetFileHandle(), fullScreen? CONSOLE_FULLSCREEN_MODE: CONSOLE_WINDOWED_MODE, &dims);
+	if (!success)
+	{
+		raise_(Exception::FromHResult(HRESULT_FROM_WIN32(GetLastError())));
+	}
+}
+
+// static
+String Console::get_OriginalTitle()
+{
+#if 0
+	static WCHAR buffer[4096];
+	static ImmutableString<WCHAR> str((::GetConsoleOriginalTitleW(buffer, _countof(buffer)), buffer));
+	return &str;
+#else
+	return String();
+#endif
+}
+
+// static
+String Console::get_Title()
+{
+	WCHAR buffer[4096];
+	::GetConsoleTitleW(buffer, _countof(buffer));
+
+	return buffer;
+}
+
+// static
+void Console::set_Title(StringIn title)
+{
+	::SetConsoleTitleW(title.c_strw());
+	s_titleChanged();
+}
+
+// static
+void Console::SetWindowPosition(int left, int top)
+{
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	::GetConsoleScreenBufferInfo(Std::_Out->GetFileHandle(), &csbi); 
+
+	SMALL_RECT rect;
+	rect.Left = left;
+	rect.Top = top;
+	rect.Right = csbi.srWindow.Right;
+	rect.Bottom = csbi.srWindow.Bottom;
+
+	BOOL success = ::SetConsoleWindowInfo(Std::_Out->GetFileHandle(), TRUE, &rect);
+}
+
+// static
+void Console::SetWindowSize(int width, int height)
+{
+	s_activeBuffer->SetWindowSize(width, height);
+}
+
+/*
+// static
+Window* Console::get_Window()
+{
+	return Window::FromHwnd(GetConsoleWindow());
+}
+*/
+
+/*
+// static
+_Ptr<IO::StreamWriter> Console::get_Out()
+{
+	return Std::get_Out();
+}
+*/
+
+// static
+void Console::Beep()
+{
+	BOOL success = MessageBeep(~0);
+}
+
+// static
+void Console::Beep(unsigned int freq, unsigned int duration)
+{
+	BOOL success = ::Beep(freq, duration);
+}
+
+void Console::Write(int number)
+{
+	get_Out() << number;
+}
+
+void Console::Write(float number)
+{
+	get_Out() << number;
+}
+
+void Console::Write(double number)
+{
+	get_Out() << number;
+}
+
+// static
+void Console::Write(StringIn str)
+{
+	get_Out() << str;
+}
+
+// static
+void Console::WriteLn(StringIn str)
+{
+	get_Out() << str << endl;
+}
+
+IO::FileStream* Console::_In = new IO::FileStream(_Out);
+IO::FileStream* Console::_Out = new IO::FileStream(_In);
+IO::FileStream* Console::_Err = new IO::FileStream(NULL, false);
+
+_Ptr<IO::StreamReader> Console::In(new IO::StreamReader(_In));
+_Ptr<IO::StreamWriter> Console::Out(new IO::StreamWriter(_Out));
+_Ptr<IO::StreamWriter> Console::Err(new IO::StreamWriter(_Err));
+
+_Ptr<IO::StreamWriter> Console::get_Out()
+{
+	return Out;
+}
+
+/*
+#define mhash(f)	\
+f[0] +	\
+f[1]*31 +	\
+f[2]*3 +	\
+f[3]*4 +	\
+f[5 % strlen(f)] +	\
+f[10 % strlen(f)] +	\
+f[12 % strlen(f)];
+
+template<int _0, int _1, int _2, int _3, int _4, int _5> class const_str
+{
+public:
+	static ImmutableString<char>* get(const char* str)
+	{
+		static ImmutableString<char> s(str);
+		return &s;
+	}
+};
+
+#define S(s)	const_str<s[0]>::get(s)
+*/
+void Console::set_Out(IO::StreamWriter* writer)
+{
+	Out = writer;
+}
+
+}	// System

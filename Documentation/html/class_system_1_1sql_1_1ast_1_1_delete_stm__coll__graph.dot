@@ -1,0 +1,20 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="System::sql::ast::DeleteStm",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::sql::ast::Stm",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1sql_1_1ast_1_1_stm.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node5 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_from" ,fontname="Helvetica"];
+  Node5 [label="System::String",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_string.html"];
+  Node6 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_stringObject" ,fontname="Helvetica"];
+  Node6 [label="System::StringObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_string_object.html"];
+  Node3 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_whereCriteria" ,fontname="Helvetica"];
+  Node7 [label="System::sql::ast::Exp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1sql_1_1ast_1_1_exp.html"];
+  Node7 -> Node7 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" node\nright\nleft" ,fontname="Helvetica"];
+}

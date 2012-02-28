@@ -1,0 +1,34 @@
+#ifndef __NODEEDITVALIMPL_H__
+#define __NODEEDITVALIMPL_H__
+
+namespace System
+{
+namespace Web
+{
+
+template<class T> class NodeEditVALImpl
+{
+public:
+	String get_defaultValue()
+	{
+		return nullptr;
+	}
+
+	ErrorCode get_enumeratedValues(/*[out,retval]*/ IDOMStringList* *pVal)
+	{
+		*pVal = nullptr;
+		return Success;
+	}
+
+	ErrorCode isNodeValid(/*[in]*/ bool deep, /*[in]*/ CheckTypeVAL wFValidityCheckLevel, /*[out,retval]*/ bool *pVal)
+	{
+		return Error_NotImplemented;
+	}
+
+	char m_dumm;
+};
+
+}	// w3c
+}
+
+#endif // __NODEEDITVALIMPL_H__

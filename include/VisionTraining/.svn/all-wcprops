@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/VisionTraining
+END
+stdafx.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/VisionTraining/stdafx.h
+END
+JumpDuctionElement.h
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/VisionTraining/JumpDuctionElement.h
+END
+PeripheralVisionElement.h
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/VisionTraining/PeripheralVisionElement.h
+END
+SaccadeElement.h
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/VisionTraining/SaccadeElement.h
+END
+SeeThreePicturesElement.h
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/VisionTraining/SeeThreePicturesElement.h
+END
+MovingWindowElement.h
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/VisionTraining/MovingWindowElement.h
+END
+BinocularReadingElement.h
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/VisionTraining/BinocularReadingElement.h
+END
+VisionTraining.h
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/VisionTraining/VisionTraining.h
+END
+targetver.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/VisionTraining/targetver.h
+END
+RandotDuctionElement.h
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svnroot/firstproject2/!svn/ver/105/FirstProject2/trunk/include/VisionTraining/RandotDuctionElement.h
+END

@@ -1,0 +1,250 @@
+#include "stdafx.h"
+//#include "LXML.h"
+#include "LXML2.h"
+#include "ProcessingInstructionStylesheet.h"
+
+#include "MediaList.h"
+
+namespace System
+{
+namespace Web
+{
+
+bool ParseAttributes(StringIn str, CPIAttributes* attributes)
+{
+	ASSERT(0);
+#if 0
+
+	const OLECHAR* p = str;
+	while (*p)
+	{
+		while (iswspace(*p)) p++;
+
+		sysstring name;
+
+		while (iswalnum(*p))
+		{
+			name += *p;
+			p++;
+		}
+
+		while (iswspace(*p)) p++;
+
+		if (*p != L'=') break;
+		p++;
+
+		while (iswspace(*p)) p++;
+
+		sysstring value;
+
+		OLECHAR delimiter = *p++;
+		if (delimiter != L'\'' && delimiter != L'"')
+			break;
+
+		while (*p)
+		{
+			if (*p == delimiter)
+			{
+				break;
+			}
+
+			value += *p;
+			p++;
+		}
+
+		if (*p != delimiter) break;
+		p++;
+
+		CPIAttr* pAttr = new CPIAttr;
+		pAttr->m_name = name;
+		pAttr->m_value = value;
+
+		attributes->m_items.Add(pAttr);
+	}
+#endif
+	return true;
+}
+
+CPIAttributes::~CPIAttributes()
+{
+	RemoveAll();
+}
+
+void CPIAttributes::RemoveAll()
+{
+	for (int i = 0; i < m_items.GetSize(); i++)
+	{
+		delete m_items[i];
+	}
+	m_items.RemoveAll();
+}
+
+CPIAttr* CPIAttributes::GetAttr(StringIn name)
+{
+	for (int i = 0; i < m_items.GetSize(); i++)
+	{
+		if (m_items[i]->m_name == name)
+		{
+			return m_items[i];
+		}
+	}
+
+	return NULL;
+}
+
+String CPIAttributes::GetAttrValue(StringIn name)
+{
+	for (int i = 0; i < m_items.GetSize(); i++)
+	{
+		if (m_items[i]->m_name == name)
+		{
+			return m_items[i]->m_value;
+		}
+	}
+	return NULL;
+}
+
+ProcessingInstructionStylesheet::ProcessingInstructionStylesheet()
+{
+	m_target = NULL;
+	m_data = NULL;
+}
+
+NodeType ProcessingInstructionStylesheet::get_nodeType() const
+{
+	return NODE_PROCESSING_INSTRUCTION;
+}
+
+bool ProcessingInstructionStylesheet::dispatchEvent2(Event* evt, bool bCapture)
+{
+	String type = evt->get_type();
+
+	ASSERT(0);
+#if 0
+	LDOMEventPhaseType phase = evt->get_eventPhase();
+	if (phase == AT_TARGET)
+	{
+	// This element is added to the document tree
+		if (!wcscmp(type, OLESTR("DOMNodeInsertedIntoDocument")))
+		{
+			LoadStyleSheet();
+
+			if (m_styleSheet)
+			{
+				CComQIPtr<ILDocumentStyle, &IID_ILDocumentStyle> documentStyle = m_ownerDocument;
+				if (documentStyle)
+				{
+					CComPtr<ILStyleSheetList> styleSheetList;
+					documentStyle->get_styleSheets(&styleSheetList);
+
+					styleSheetList->append(m_styleSheet);
+				}
+			}
+		}
+	// This element is removed from the document tree
+		else if (!wcscmp(type, OLESTR("DOMNodeRemovedFromDocument")))
+		{
+			if (m_styleSheet)
+			{
+				ASSERT(0);
+				// TODO remove stylesheet from document
+			}
+		}
+	}
+#endif
+	return CLDOMEventTargetImpl::dispatchEvent2(evt, bCapture);
+}
+
+void ProcessingInstructionStylesheet::LoadStyleSheet()
+{
+//	USES_CONVERSION;
+
+	String type = m_attributes.GetAttrValue(WSTR("type"));
+
+	if (type == L"css/text")
+	{
+		if (m_styleSheet == NULL)
+		{
+			m_styleSheet = new CSSStyleSheet(this, NULL/*ownerRule*/);
+			if (m_styleSheet)
+			{
+			//	m_styleSheet->AddRef();
+			//	m_styleSheet->m_ownerNode = this;
+
+				// TODO, do differently
+#if 0
+				{
+					CComQIPtr<INotifySend, &IID_INotifySend> cp(m_styleSheet);
+					DWORD cookie;
+					cp->Advise(this, &cookie);
+				}
+#endif
+			}
+		}
+
+		if (m_styleSheet)
+		{
+			String href = m_attributes.GetAttrValue(WSTR("href"));
+
+			String documentUrl = m_ownerDocument->get_url();
+
+#if 0//_WINDOWS
+			TCHAR result[2048];
+			DWORD resultLen = sizeof(result);
+			InternetCombineUrl(W2A(documentUrl), W2A(href), result, &resultLen, 0);
+
+			{
+				sysstring media = m_attributes.GetAttrValue(L"media");
+				m_styleSheet->m_media->put_mediaText(media.c_str());
+			}
+
+			m_styleSheet->Load(A2W(result));
+#else
+			ASSERT(0);
+#endif
+		}
+	}
+	else
+	{
+		if (m_styleSheet)
+		{
+			ASSERT(0);
+
+			// TODO, remove stylesheet from documents stylesheet list
+			m_styleSheet->m_ownerNode = NULL;
+			m_styleSheet->m_pListener = NULL;
+		//	m_styleSheet->Release();
+			m_styleSheet = NULL;
+		}
+	}
+}
+
+String ProcessingInstructionStylesheet::get_target() const
+{
+	return m_target;
+}
+
+String ProcessingInstructionStylesheet::get_data() const
+{
+	return m_data;
+}
+
+void ProcessingInstructionStylesheet::set_data(StringIn newVal)
+{
+	m_data = newVal;
+
+	m_attributes.RemoveAll();
+	ParseAttributes(m_data, &m_attributes);
+}
+
+Node* ProcessingInstructionStylesheet::cloneNodeExport(Document* ownerDocument, bool deep) const
+{
+	ProcessingInstructionStylesheet* newNode = new ProcessingInstructionStylesheet;
+	newNode->m_ownerDocument = ownerDocument;
+	newNode->m_target = m_target;
+	newNode->m_data = m_data;
+	return newNode;
+}
+
+}	// Web
+}

@@ -1,0 +1,102 @@
+
+#ifdef __LERSTAD__
+#import "../../bin/Win32/Debug/GUI.typeinfo"
+#else
+#include "GUI/GUI.h"
+#endif
+
+#ifdef __LERSTAD__
+#import "../../bin/Win32/Debug/CodeComp.typeinfo"
+#else
+#include "CodeComp/CodeComp.h"
+#endif
+
+#ifdef __LERSTAD__
+#import "../../bin/Win32/Debug/ActionScript2.typeinfo"
+#else
+#include "ActionScript2/ActionScript2.h"
+#endif
+
+/*
+#ifdef __LERSTAD__
+#import "../../bin/Win32/Debug/EcmaScript.typeinfo"
+#else
+#include "EcmaScript/EcmaScript.h"
+#endif
+*/
+
+#ifndef __LERSTAD__
+#include "EcmaScript/EcmaScript.h"
+#endif
+
+/*
+#ifdef __LERSTAD__
+#import "../../bin/Win32/Debug/X3D.typeinfo"
+#else
+#include "X3D/X3D.h"
+#endif
+*/
+
+/*
+#ifdef __LERSTAD__
+#import "../../bin/Win32/Debug/LSVG.typeinfo"
+#else
+#include "LSVG/LSVG.h"
+#endif
+*/
+
+namespace System
+{
+
+DECLSPEC_DLLEXPORT void Search(StringIn str);
+
+namespace Start
+{
+
+DECLSPEC_DLLEXPORT String GetFilename(Type* pType);
+DECLSPEC_DLLEXPORT int Execute(StringIn cmd);
+DECLSPEC_DLLEXPORT void Load(StringIn filename);
+DECLSPEC_DLLEXPORT void CreateBinding(StringIn varname, Gui::IBinding* binding);
+DECLSPEC_DLLEXPORT void Speak(StringIn str);
+
+class StartApp : public Gui::Application
+{
+public:
+	static int Main(StringIn cmdline);
+
+//	virtual bool DdeExecute(StringIn command) override;
+
+	/*
+	static PaintApp* get_Application()
+	{
+		return s_app;
+	}
+	*/
+};
+
+class DECLSPEC_DLLEXPORT MyPage : public Gui::UIElement
+{
+public:
+
+	CTOR MyPage() : UIElement(get_Class())
+	{
+	}
+
+	Expressive::Expression* m_expression;
+
+	DEPENDENCY_CLASS(MyPage, Gui::UIElement)
+
+protected:
+
+	virtual void RenderRetained(Gui::ManagedRetainedRenderContext renderContext) override;
+
+	virtual void OnMouseLeftButtonDown(Gui::MouseButtonEventArgs* args) override;
+};
+
+extern "C" int APIENTRY wWinMain(HINSTANCE hInstance,
+                     HINSTANCE hPrevInstance,
+                     LPWSTR    lpCmdLine,
+                     int       nCmdShow);
+
+}	// Start
+}	// System

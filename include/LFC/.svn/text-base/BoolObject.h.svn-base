@@ -1,0 +1,46 @@
+namespace System
+{
+
+class LFCEXT BoolObject : public Object
+{
+public:
+
+	virtual String ToString() override;
+
+	inline bool GetValue() const
+	{
+		return m_value;
+	}
+
+	inline operator bool () const
+	{
+		return m_value;
+	}
+
+	static inline BoolObject* GetObject(bool value)
+	{
+		return &s_values[value];
+	}
+
+	static inline BoolObject* get_False()
+	{
+		return &s_values[0];
+	}
+
+	static inline BoolObject* get_True()
+	{
+		return &s_values[1];
+	}
+
+private:
+
+	inline CTOR BoolObject(bool value) : m_value(value)
+	{
+	}
+
+	bool m_value;
+
+	static BoolObject s_values[2];
+};
+
+}	// System

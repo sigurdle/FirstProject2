@@ -1,0 +1,55 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: GIF - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x414 /fo"../../Intermediate/Win32/GIF/Release/GIF.res" /d "NDEBUG" "C:\MMStudio\Win32\GIF\GIF.rc"" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14B3.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /FR"../../Intermediate/Win32/GIF/Release/" /Fp"../../Intermediate/Win32/GIF/Release/GIF.pch" /Yu"stdafx.h" /Fo"../../Intermediate/Win32/GIF/Release/" /Fd"../../Intermediate/Win32/GIF/Release/" /FD /c 
+"C:\MMStudio\src\GIF\GIF.cpp"
+"C:\MMStudio\src\GIF\GIFDecoder.cpp"
+"C:\MMStudio\src\GIF\GIFFile.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14B3.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14B4.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /FR"../../Intermediate/Win32/GIF/Release/" /Fp"../../Intermediate/Win32/GIF/Release/GIF.pch" /Yc"stdafx.h" /Fo"../../Intermediate/Win32/GIF/Release/" /Fd"../../Intermediate/Win32/GIF/Release/" /FD /c 
+"C:\MMStudio\src\GIF\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14B4.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14B5.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /pdb:none /debug /machine:I386 /def:".\GIF.def" /out:"../../bin/Win32/Release/GIF.dll" /implib:"Release/GIF.lib" 
+\MMStudio\Intermediate\Win32\GIF\Release\GIF.obj
+\MMStudio\Intermediate\Win32\GIF\Release\GIFDecoder.obj
+\MMStudio\Intermediate\Win32\GIF\Release\GIFFile.obj
+\MMStudio\Intermediate\Win32\GIF\Release\StdAfx.obj
+\MMStudio\Intermediate\Win32\GIF\Release\GIF.res
+]
+Creating command line "link.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14B5.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+GIF.cpp
+C:\MMStudio\src\GIF\GIF.cpp(45) : warning C4390: ';' : empty controlled statement found; is this the intent?
+GIFDecoder.cpp
+C:\MMStudio\src\GIF\GIFDecoder.cpp(435) : warning C4101: 'hr' : unreferenced local variable
+C:\MMStudio\src\GIF\GIFDecoder.cpp(505) : warning C4101: 'threadId' : unreferenced local variable
+GIFFile.cpp
+Generating Code...
+Linking...
+   Creating library Release/GIF.lib and object Release/GIF.exp
+
+
+
+<h3>Results</h3>
+GIF.dll - 0 error(s), 3 warning(s)
+</pre>
+</body>
+</html>

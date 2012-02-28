@@ -1,0 +1,33 @@
+namespace System
+{
+
+class LFCEXT UIntObject : public Object
+{
+public:
+
+	String ToString() override;
+
+	inline unsigned int GetValue() const
+	{
+		return m_value;
+	}
+
+	inline operator unsigned int () const
+	{
+		return m_value;
+	}
+
+	static UIntObject* GetObject(unsigned int value);
+
+private:
+
+	inline CTOR UIntObject(unsigned int value) : m_value(value)
+	{
+	}
+
+	unsigned int m_value;
+
+	static UIntObject s_values[257];	// -1(0xffffffff) .. 255
+};
+
+}	// System

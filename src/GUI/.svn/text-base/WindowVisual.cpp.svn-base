@@ -1,0 +1,1297 @@
+#include "stdafx.h"
+#include "GUI2.h"
+#include <shlguid.h>
+
+namespace System
+{
+namespace Gui
+{
+
+IMP_DEPENDENCY_PROPERTY(float, WindowVisual, Left, 0.0f)
+IMP_DEPENDENCY_PROPERTY(float, WindowVisual, Top, 0.0f)
+//IMP_DEPENDENCY_PROPERTY(float, WindowVisual, Width, 0.0f)
+//IMP_DEPENDENCY_PROPERTY(float, WindowVisual, Height, 0.0f)
+IMP_DEPENDENCY_PROPERTY(bool, WindowVisual, Topmost, false)
+IMP_DEPENDENCY_PROPERTY(String, WindowVisual, TitleText, NULL)
+IMP_DEPENDENCY_PROPERTY(Element*, WindowVisual, Icon, NULL)
+IMP_DEPENDENCY_PROPERTY(Geometry*, WindowVisual, Clip, NULL)
+//IMP_DEPENDENCY_PROPERTY(UIElement*, WindowVisual, Child, NULL/*, new PropertyMetadata(true)*/)
+IMP_DEPENDENCY_PROPERTY(WindowVisual*, WindowVisual, Owner, NULL)
+IMP_DEPENDENCY_PROPERTY(int, WindowVisual, State, 0)
+IMP_DEPENDENCY_PROPERTY(bool, WindowVisual, InSizeMove, false)
+IMP_DEPENDENCY_PROPERTY(bool, WindowVisual, CanMinimize, true)
+IMP_DEPENDENCY_PROPERTY(bool, WindowVisual, CanMaximize, true)
+IMP_DEPENDENCY_PROPERTY(bool, WindowVisual, HasContextHelp, false)
+
+IMP_DEPENDENCY_PROPERTY(String, WindowVisual, RT, new ImmutableString<WCHAR>(L"Direct3D"))
+
+// Computed properties
+IMP_DEPENDENCY_PROPERTY(float, WindowVisual, Right, _this().getLeft() + _this().getWidth())
+IMP_DEPENDENCY_PROPERTY(float, WindowVisual, Bottom, _this().getTop() + _this().getHeight())
+IMP_DEPENDENCY_PROPERTY(float, WindowVisual, ClientLeft, _this().getBorderLeft())
+IMP_DEPENDENCY_PROPERTY(float, WindowVisual, ClientTop, _this().getBorderTop())
+IMP_DEPENDENCY_PROPERTY(float, WindowVisual, ClientWidth, _this().getWidth() - _this().getBorderLeftRight())
+IMP_DEPENDENCY_PROPERTY(float, WindowVisual, ClientHeight, 0/*_this().getHeight() - _this().getBorderTopBottom()*/)
+IMP_DEPENDENCY_PROPERTY(float, WindowVisual, ClientRight, _this().getClientLeft() + _this().getClientWidth())
+IMP_DEPENDENCY_PROPERTY(float, WindowVisual, ClientBottom, 0/*_this().getClientTop() + _this().getClientHeight()*/)
+
+DependencyClass* WindowVisual::get_Class()
+{
+	static DependencyClass depclass(typeid(WindowVisual), baseClass::get_Class());
+
+	static DependencyProperty* properties[] =
+	{
+		get_LeftProperty(),
+		get_TopProperty(),
+	//	get_WidthProperty(),
+	//	get_HeightProperty(),
+		get_TopmostProperty(),
+		get_TitleTextProperty(),
+		get_IconProperty(),
+		get_ClipProperty(),
+	//	get_ChildProperty(),
+		get_OwnerProperty(),
+		get_StateProperty(),
+		get_RTProperty(),
+		get_InSizeMoveProperty(),
+		get_CanMinimizeProperty(),
+		get_CanMaximizeProperty(),
+		get_HasContextHelpProperty(),
+
+		get_RightProperty(),
+		get_BottomProperty(),
+		get_ClientLeftProperty(),
+		get_ClientTopProperty(),
+		get_ClientWidthProperty(),
+		get_ClientHeightProperty(),
+		get_ClientRightProperty(),
+		get_ClientBottomProperty(),
+	};
+
+	return &depclass;
+}
+
+DependencyClass* WindowVisual::pClass(get_Class());
+
+WindowVisual::WindowVisual() : ContentControl(get_Class())
+{
+	Init();
+
+	s_windows.Add(this);	// TODO, not like this
+}
+
+WindowVisual::WindowVisual(Object* content) : ContentControl(get_Class(), content)
+{
+	Init();
+
+	s_windows.Add(this);	// TODO, not like this
+}
+
+WindowVisual::WindowVisual(Object* content, gm::SizeF size) : ContentControl(get_Class(), content, size)
+{
+	Init();
+
+	s_windows.Add(this);	// TODO, not like this
+}
+
+//static __live_object_ptr<Expressive::ADeclarationList> aexp;
+static Expressive::ADeclarationList* aexp;
+
+void WindowVisual::Init()
+{
+	if (aexp == NULL)
+	{
+		aexp = Expressive::Parser::ProgramFromFile("D:\\Window.gui");
+	}
+
+	Expressive::FrameContext frame;
+	frame.m_variables["sc"] = this;
+
+	Expressive::Expression* exp = Expressive::Translator::Translate(aexp, &frame);
+	
+	Object* obj = dynamic_cast<Expressive::StaticObjectExpression*>(exp)->m_obj;
+	UIElement* element = dynamic_cast<UIElement*>(obj);
+
+	/*
+	m_contentContainer = dynamic_cast<UIElement*>(element->FindElement(L"Content"));
+
+	if (m_contentContainer == NULL)
+	{
+		raise(SystemException(L"ListBox - no content container in template"));
+	}
+	*/
+
+	set_ShadowTree(element);
+}
+
+gm::RectI WindowVisual::GetRect()
+{
+	return gm::RectI(int(ceil(get_Left())), int(ceil(get_Top())), int(ceil(get_Width())), int(ceil(get_Height())));
+}
+
+String WindowVisual::ToString()
+{
+	IO::StringWriter str;
+	str << L"Window(";
+	str << get_TitleText();
+
+	if (get_Content())
+	{
+		str << ", " << get_Content()->ToString();
+	}
+
+	str << ")";
+	return str.str();
+}
+
+RectBorder WindowVisual::GetBorders()
+{
+	UINT windowStyle = PlatformWindow::GetWindowStyle(this);
+	UINT windowExStyle = PlatformWindow::GetWindowExStyle(this);
+
+	RECT rect = {0,0,0,0};
+	bool hasMenu = false;
+	AdjustWindowRectEx(&rect, windowStyle, hasMenu, windowExStyle);
+
+	return RectBorder(-rect.left, -rect.top, rect.right, rect.bottom);
+}
+
+gm::SizeF WindowVisual::GetSize()
+{
+	RECT rect;
+	GetClientRect(m_platformWindow->get_Handle(), &rect);
+
+	return gm::SizeF(rect.right, rect.bottom);
+}
+
+float WindowVisual::GetBorderLeft()
+{
+	return WindowVisual::GetBorders().Left;
+}
+
+float WindowVisual::GetBorderTop()
+{
+	return WindowVisual::GetBorders().Top;
+}
+
+float WindowVisual::GetBorderRight()
+{
+	return WindowVisual::GetBorders().Right;
+}
+
+float WindowVisual::GetBorderBottom()
+{
+	return WindowVisual::GetBorders().Bottom;
+}
+
+float WindowVisual::GetBorderLeftRight()
+{
+	RectBorder rectBorder = WindowVisual::GetBorders();
+	return rectBorder.Left + rectBorder.Right;
+}
+
+float WindowVisual::GetBorderTopBottom()
+{
+	RectBorder rectBorder = WindowVisual::GetBorders();
+	return rectBorder.Top + rectBorder.Bottom;
+}
+
+bool WindowVisual::Show()
+{
+	if (m_platformWindow == NULL)
+	{
+		m_platformWindow = new PlatformWindow(this);
+	}
+
+	return m_platformWindow->Show();
+}
+
+void WindowVisual::Hide()
+{
+	if (m_platformWindow)
+	{
+		m_platformWindow->Hide();
+	}
+}
+
+void WindowVisual::Restore()
+{
+	set_State(0);
+}
+
+void WindowVisual::Minimize()
+{
+	set_State(1);
+}
+
+void WindowVisual::Maximize()
+{
+	set_State(2);
+}
+
+Graphics::Bitmap* WindowVisual::GetContentBitmap()
+{
+	if (m_platformWindow)
+	{
+		return m_platformWindow->GetContentBitmap();
+	}
+	return NULL;
+}
+
+OleContainer* WindowVisual::GetOleContainer()
+{
+	if (m_oleContainer == NULL)
+	{
+		m_oleContainer = new OleContainer;
+		m_oleContainer->m_window = this;
+	}
+
+	return m_oleContainer;
+}
+
+Object* WindowVisual::GetLocalPropertyValue(PropertyValue* pPropertyVal)
+{
+	if (pPropertyVal->m_dp == get_IconProperty())
+	{
+		WPARAM wParam = ICON_BIG;
+		HICON hIcon = (HICON)SendMessageW(m_platformWindow->get_Handle(), WM_GETICON, wParam, 0);
+
+	//	VisualElement* element;
+	//	HIconVisual* visual = new HIconVisual;
+	}
+
+	return UIElement::GetLocalPropertyValue(pPropertyVal);
+}
+
+void WindowVisual::OnComputedPropertyValueChanged(PropertyValue* pPropertyVal, bool handled)
+{
+	if (pPropertyVal->m_dp == get_IsActiveProperty())
+	{
+		if (m_platformWindow)
+		{
+			bool isActive = get_IsActive();
+
+			if (isActive)
+			{
+				SetForegroundWindow(m_platformWindow->get_Handle());
+				//::SetWindowPos(m_platformWindow->get_Handle(), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE/* | SWP_NOZORDER*/);
+			}
+		}
+	}
+	else if (pPropertyVal->m_dp == get_OpacityProperty())
+	{
+		if (m_platformWindow)
+		{
+			m_platformWindow->UpdateOpacity();
+		}
+	}
+	else if (pPropertyVal->m_dp == get_ClipProperty())
+	{
+		if (m_platformWindow)
+		{
+			m_platformWindow->UpdateClip();
+		}
+	}
+	else if (pPropertyVal->m_dp == get_TitleTextProperty())
+	{
+		if (m_platformWindow)
+		{
+			String titleText = get_TitleText();
+
+			SetWindowTextW(m_platformWindow->get_Handle(), titleText.c_strw());
+		}
+	}
+	else if (pPropertyVal->m_dp == get_CanMinimizeProperty())
+	{
+		if (m_platformWindow)
+		{
+			bool has = get_CanMaximize();
+
+			DWORD style = GetWindowLongW(m_platformWindow->get_Handle(), GWL_STYLE);
+			if (has)
+				style |= WS_MINIMIZEBOX;
+			else
+				style &= ~WS_MINIMIZEBOX;
+
+			SetWindowLongW(m_platformWindow->get_Handle(), GWL_STYLE, style);
+		}
+	}
+	else if (pPropertyVal->m_dp == get_CanMaximizeProperty())
+	{
+		if (m_platformWindow)
+		{
+			bool has = get_CanMaximize();
+
+			DWORD style = GetWindowLongW(m_platformWindow->get_Handle(), GWL_STYLE);
+			if (has)
+				style |= WS_MAXIMIZEBOX;
+			else
+				style &= ~WS_MAXIMIZEBOX;
+
+			SetWindowLongW(m_platformWindow->get_Handle(), GWL_STYLE, style);
+		}
+	}
+	else if (pPropertyVal->m_dp == get_HasContextHelpProperty())
+	{
+		if (m_platformWindow)
+		{
+			bool has = get_HasContextHelp();
+
+			DWORD style = GetWindowLongW(m_platformWindow->get_Handle(), GWL_EXSTYLE);
+			if (has)
+				style |= WS_EX_CONTEXTHELP;
+			else
+				style &= ~WS_EX_CONTEXTHELP;
+
+			SetWindowLongW(m_platformWindow->get_Handle(), GWL_EXSTYLE, style);
+		}
+	}
+	else if (pPropertyVal->m_dp == get_FontFamilyProperty() ||
+			pPropertyVal->m_dp == get_FontSizeProperty() ||
+			pPropertyVal->m_dp == get_FontWeightProperty() ||
+			pPropertyVal->m_dp == get_FontStyleProperty())
+	{
+		if (m_platformWindow)
+		{
+			LOGFONT lf = {0};
+			// TODO: Copy16
+			wcscpy_s(lf.lfFaceName, CStringw(get_FontFamily()->get_Name()));
+			lf.lfHeight = -get_FontSize();
+			lf.lfWeight = get_FontWeight();
+
+			HFONT hFont = CreateFontIndirect(&lf);
+			ASSERT(hFont);
+
+			SendMessageW(m_platformWindow->get_Handle(), WM_SETFONT, (WPARAM)hFont, TRUE/*bRedraw*/);
+
+			/*
+			String titleText = get_TitleText();
+
+			SetWindowTextW(m_platformWindow->get_Handle(), CStringw(titleText).c_str());
+			*/
+		}
+	}
+	else if (pPropertyVal->m_dp == get_TopmostProperty())
+	{
+		if (m_platformWindow)
+		{
+			bool topmost = get_Topmost();
+			if (topmost)
+				SetWindowPos(m_platformWindow->get_Handle(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+			else
+				SetWindowPos(m_platformWindow->get_Handle(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+		}
+	}
+	else if (pPropertyVal->m_dp == get_StateProperty())
+	{
+		if (m_platformWindow)
+		{
+			int state = GetPropertyValueInt(get_StateProperty());
+			switch (state)
+			{
+			case 0:
+				::ShowWindow(m_platformWindow->get_Handle(), SW_RESTORE);
+				break;
+
+			case 1:
+				::ShowWindow(m_platformWindow->get_Handle(), SW_MINIMIZE);
+				break;
+
+			case 2:
+				::ShowWindow(m_platformWindow->get_Handle(), SW_MAXIMIZE);
+				break;
+			}
+		}
+	}
+	else if (pPropertyVal->m_dp == get_IsEnabledProperty())
+	{
+		if (m_platformWindow)
+		{
+			bool isEnabled = get_IsEnabled();
+			::EnableWindow(m_platformWindow->get_Handle(), isEnabled);
+		}
+	}
+	else if (pPropertyVal->m_dp == get_LeftProperty() ||
+			pPropertyVal->m_dp == get_TopProperty())
+	{
+		if (m_platformWindow)
+		{
+			int x = int(get_Left());
+			int y = int(get_Top());
+			int cx = int(get_ActualWidth());	// ceil??
+			int cy = int(get_ActualHeight());	// ceil??
+
+			if (!get_InSizeMove() && !m_inSizeMove)
+			{
+				::SetWindowPos(m_platformWindow->get_Handle(), NULL, x, y, cx, cy,
+					SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSIZE/* |
+					SWP_ASYNCWINDOWPOS	// ??*/
+					);
+			}
+		}
+	}
+	else if (pPropertyVal->m_dp == get_ActualWidthProperty() ||
+			pPropertyVal->m_dp == get_ActualHeightProperty())
+	{
+		if (m_platformWindow)
+		{
+			int x = int(get_Left());
+			int y = int(get_Top());
+			int cx = int(get_ActualWidth());	// ceil??
+			int cy = int(get_ActualHeight());	// ceil??
+
+			if (!get_InSizeMove() && !m_inSizeMove)
+			{
+				::SetWindowPos(m_platformWindow->get_Handle(), NULL, x, y, cx, cy,
+					SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE/* |
+					SWP_ASYNCWINDOWPOS	// ??*/
+					);
+			}
+		}
+	}
+	else if (pPropertyVal->m_dp == get_RTProperty())
+	{
+		if (m_platformWindow)
+		{
+			m_platformWindow->ChangeTech();
+		}
+	}
+#if 0
+	else if (pPropertyVal->m_dp == get_ChildProperty())
+	{
+		/*
+		MessageBeep(-1);
+		if (m_platformWindow)
+		{
+		}
+		*/
+		InvalidateVisual();
+	}
+#endif
+	else if (pPropertyVal->m_dp == get_ShadowTreeProperty())
+	{
+		UIElement* uielement = get_ShadowTree();
+
+		if (uielement)
+		{
+			uielement->SetRoot(this);	// This is different from default UIElement implementation
+			uielement->set_ParentWindow(this);	// This is different from default UIElement implementation
+
+			uielement->set_Parent(this);
+			uielement->set_TemplatedOwner(this);	// ??
+
+			// ??
+			uielement->DoLayoutSize(gm::SizeF(get_ActualWidth(), get_ActualHeight()));
+		}
+
+		handled = true;
+	}
+	else if (pPropertyVal->m_dp == get_OwnerProperty())
+	{
+		Window* owner = get_Owner();
+
+		if (m_platformWindow && m_platformWindow->get_Handle())
+		{
+			if (owner)
+			{
+				if (owner->m_platformWindow && owner->m_platformWindow->get_Handle())
+				{
+					::SetParent(m_platformWindow->get_Handle(), owner->m_platformWindow->get_Handle());
+				}
+			}
+			else
+			{
+				::SetParent(m_platformWindow->get_Handle(), NULL);
+			}
+		}
+	}
+
+	baseClass::OnComputedPropertyValueChanged(pPropertyVal, handled);
+}
+
+void WindowVisual::OnComputedPropertyValueChanging(PropertyValue* pPropertyVal, Object* oldValue, Object* newValue, bool handled)
+{
+	if (pPropertyVal->m_dp == get_ShadowTreeProperty())
+	{
+	}
+
+	baseClass::OnComputedPropertyValueChanging(pPropertyVal, oldValue, newValue, handled);
+}
+
+#if 0
+void WindowVisual::set_Owner(WindowVisual* owner)
+{
+	//get_OwnerProperty()->SetValue(owner);
+
+	ASSERT(0);
+#if 0
+
+	if (m_owner != owner)
+	{
+		if (m_owner)	// Remove from previous owner
+		{
+			m_owner->m_popups.erase(m_owner_it);
+		}
+
+		m_owner = owner;
+
+		if (owner)
+		{
+			m_owner_it = owner->m_popups.insert(owner->m_popups.end(), this);
+			if (owner->m_platformWindow && owner->m_platformWindow->get_Handle())
+			{
+				::SetParent(m_platformWindow->get_Handle(), owner->m_platformWindow->get_Handle());
+			}
+		}
+		else
+		{
+			::SetParent(m_platformWindow->get_Handle(), NULL);
+		}
+	}
+#endif
+}
+#endif
+
+#if 0
+void WindowVisual::set_Child(UIElement* child)
+{
+	ASSERT(0);
+	//get_ChildProperty()->SetValue(child);
+	/*
+	if (m_child)
+	{
+		m_child->SetParent(NULL);
+	}
+
+	m_child = child;
+
+	if (m_child)
+	{
+		m_child->SetParent(this);
+	}
+
+	if (m_platformWindow)
+	{
+		InvalidateRender();
+	}
+	*/
+}
+#endif
+
+#if 0
+unsigned int WindowVisual::GetChildrenCount()
+{
+	return get_Child() != NULL? 1: 0;
+}
+#endif
+
+#if 0
+void WindowVisual::AddChild(UIElement* element)
+{
+	ASSERT(0);
+
+	if (get_Child() != NULL)
+	{
+		ASSERT(0);
+	}
+	else
+	{
+		set_Child(element);
+	}
+}
+#endif
+
+#if 0
+UIElement* WindowVisual::GetChild(unsigned int index)
+{
+	UIElement* child = get_Child();
+	if (child == NULL || index != 0)
+	{
+		ASSERT(0);
+		throw new ArgumentOutOfRangeException();
+	}
+
+	return child;
+}
+#endif
+
+void WindowVisual::InvalidateRender()
+{
+	if (m_platformWindow)
+	{
+		m_platformWindow->InvalidateDraw();
+	}
+}
+
+void WindowVisual::PostMessage(const MSG* msg)
+{
+	UIElement* child = get_ShadowTree();
+	if (child)
+	{
+		child->DoLayout();
+	}
+}
+
+Graphics::GraphicsI* WindowVisual::GetGI()
+{
+	if (m_platformWindow)
+	{
+		return m_platformWindow->GetGI();
+	}
+	return NULL;
+}
+
+bool WindowVisual::ElementCaptureMouse(UIElement* element)
+{
+	if (element == NULL)
+	{
+		raise(ArgumentNullException());
+	}
+
+	if (m_MouseCaptureElement != element)
+	{
+		m_MouseCaptureElement = element;
+		m_MouseCaptureElement->SetCaptureMouse(true);
+		if (m_platformWindow)
+		{
+			::SetCapture(m_platformWindow->get_Handle());
+			return true;
+		}
+	}
+
+	return true;
+}
+
+bool WindowVisual::ElementReleaseMouseCapture(UIElement* element)
+{
+	if (element == NULL)
+	{
+		raise(ArgumentNullException());
+	}
+
+	if (m_MouseCaptureElement == element)
+	{
+		m_MouseCaptureElement->SetCaptureMouse(false);
+
+		m_MouseCaptureElement = NULL;
+		if (m_platformWindow)
+		{
+			return ::ReleaseCapture() != FALSE;
+		}
+		else
+			return true;
+	}
+	else
+		return false;
+}
+
+bool showCursor = true;
+
+void WindowVisual::ElementSetFocus(UIElement* element)
+{
+	if (m_FocusElement)
+	{
+		m_FocusElement->set_HasFocus(false);
+	}
+
+	m_FocusElement = element;
+
+	if (m_FocusElement)
+	{
+		m_FocusElement->set_HasFocus(true);
+	}
+}
+
+void WindowVisual::ElementSetMouseCursor(UIElement* element)
+{
+	if (element == NULL)
+	{
+		raise(ArgumentNullException());
+	}
+
+	if (element->get_IsMouseDirectlyOver())
+	{
+		Cursor* pCursor = element->get_Cursor();
+		if (pCursor)
+		{
+			::SetCursor(pCursor->GetHCursor());
+
+			if (!showCursor)
+			{
+				showCursor = true;
+				::ShowCursor(TRUE);
+			}
+		}
+		else
+		{
+			if (showCursor)
+			{
+				::ShowCursor(FALSE);
+				showCursor = false;
+			}
+		}
+	}
+}
+
+/*
+void WindowVisual::RenderRetained(ManagedRetainedRenderContext renderContext)
+{
+	UIElement* child = get_Child();
+	if (child)
+	{
+		child->RenderRetained(renderContext);
+	}
+}
+*/
+
+void WindowVisual::OnHelp(HELPINFO* helpinfo)
+{
+	gm::PointF pos(helpinfo->MousePos.x, helpinfo->MousePos.y);
+}
+
+bool WindowVisual::OnSetCursor(UINT hitTest, POINT screenMousePos)
+{
+	if (hitTest == HTCLIENT)
+	{
+	//	POINT screenMousePos;
+	//	::GetCursorPos(&screenMousePos);
+
+		gm::PointF clientMousePos(screenMousePos.x, screenMousePos.y);
+		ScreenToClient(m_platformWindow->get_Handle(), (POINT*)&clientMousePos);
+
+		IInputElement* hitElement = NULL;
+
+		if (m_MouseCaptureElement)
+		{
+			hitElement = m_MouseCaptureElement;
+		}
+		else
+		{
+			//Visual* child = get_Child();
+			UIElement* child = get_ShadowTree();
+
+			if (child)
+			{
+				hitElement = child->HitTest_(clientMousePos);
+			}
+
+		//	hitElement = child;
+		}
+
+		if (hitElement == NULL)
+		{
+			hitElement = this;
+		}
+
+		if (hitElement)
+		{
+			/*
+			MouseEventArgs* args = new MouseEventArgs(NULL, 0);
+			args->set_RoutedEvent(UIElement::MouseMoveEvent);
+			args->m_screenpos = Point(float(screenMousePos.x), float(screenMousePos.y));
+			args->m_clientpos = clientMousePos;
+
+			hitElement->RaiseEvent(args);
+			*/
+			Cursor* pCursor = dynamic_cast<UIElement*>(hitElement)->get_Cursor();
+			if (pCursor)
+			{
+				SetCursor(pCursor->GetHCursor());
+				if (!showCursor)
+				{
+					showCursor = true;
+					::ShowCursor(TRUE);
+				}
+				return true;
+			}
+			else
+			{
+				if (showCursor)
+				{
+					showCursor = false;
+					::ShowCursor(FALSE);
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+void WindowVisual::OnMouseMove(gm::PointF clientMousePos)
+{
+	POINT screenMousePos;
+	::GetCursorPos(&screenMousePos);
+
+	UIElement* hitElement = NULL;
+
+	if (m_MouseCaptureElement)
+	{
+		hitElement = m_MouseCaptureElement;
+	}
+	else
+	{
+		//Visual* child = get_Child();
+		UIElement* child = get_ShadowTree();
+
+		if (child)
+		{
+			hitElement = child->HitTest_(clientMousePos);
+		}
+	}
+
+	if (m_MouseOverElement != hitElement)
+	{
+		if (m_MouseOverElement)
+		{
+			m_MouseOverElement->set_IsMouseDirectlyOver(false);
+		}
+
+		m_MouseOverElement = hitElement;
+
+		if (m_MouseOverElement)
+		{
+			m_MouseOverElement->set_IsMouseDirectlyOver(true);
+		}
+	}
+
+	if (hitElement)
+	{
+		MouseEventArgs* args = new MouseEventArgs(NULL, 0);
+		args->set_RoutedEvent(UIElement::MouseMoveEvent);
+		args->m_screenpos = Point(float(screenMousePos.x), float(screenMousePos.y));
+		args->m_clientpos = clientMousePos;
+
+		hitElement->RaiseEvent(args);
+	}
+}
+
+void print_children(Visual* visual, int level)
+{
+	for (int i = 0; i < level; ++i)
+	{
+		Console::get_Out() << " ";
+	}
+	Console::get_Out() << visual->GetType()->ToString() << " : ";
+//	Console::get_Out() << visual->get_ActualWidth() << " : ";
+//	Console::get_Out() << visual->get_ActualHeight() << " : ";
+	Console::get_Out() << endl;
+
+	size_t count = visual->GetChildrenCount();
+	for (size_t i = 0; i < count; ++i)
+	{
+		Visual* child = visual->GetChild(i);
+
+		print_children(child, level+1);
+	}
+}
+
+GUIEXT void print_(Visual* visual)
+{
+	print_children(visual, 0);
+}
+
+void WindowVisual::OnMouseButtonDown(gm::PointF clientMousePos, int button)
+{
+	POINT screenMousePos;
+	::GetCursorPos(&screenMousePos);
+
+	UIElement* hitElement = NULL;
+
+	UIElement* child = get_ShadowTree();
+//	Visual* child = get_Child();
+	if (child)
+	{
+		hitElement = child->HitTest_(clientMousePos);
+	}
+//	hitElement = child;
+
+	if (hitElement)
+	{
+		MouseButtonEventArgs* args = new MouseButtonEventArgs(NULL, 0);
+		args->m_screenpos = Point(float(screenMousePos.x), float(screenMousePos.y));
+		args->m_clientpos = clientMousePos;
+
+		// Raise general mousedown event
+		args->set_RoutedEvent(UIElement::MouseButtonDownEvent);
+		hitElement->RaiseEvent(args);
+
+		// Raise button mousedown event
+		if (button == 0)			args->set_RoutedEvent(UIElement::MouseLeftButtonDownEvent);
+		else if (button == 1)		args->set_RoutedEvent(UIElement::MouseMiddleButtonDownEvent);
+		else						args->set_RoutedEvent(UIElement::MouseRightButtonDownEvent);
+
+		hitElement->RaiseEvent(args);
+	}
+}
+
+void WindowVisual::OnMouseButtonDblClk(gm::PointF clientMousePos, int button)
+{
+	POINT screenMousePos;
+	::GetCursorPos(&screenMousePos);
+
+	UIElement* hitElement = NULL;
+
+	UIElement* child = get_ShadowTree();
+//	Visual* child = get_Child();
+	if (child)
+	{
+		hitElement = child->HitTest_(clientMousePos);
+	}
+//	hitElement = child;
+
+	if (hitElement)
+	{
+		MouseButtonEventArgs* args = new MouseButtonEventArgs(NULL, 0);
+
+		if (button == 0)			args->set_RoutedEvent(UIElement::MouseLeftButtonDoubleClickEvent);
+		else if (button == 1)		args->set_RoutedEvent(UIElement::MouseMiddleButtonDoubleClickEvent);
+		else						args->set_RoutedEvent(UIElement::MouseRightButtonDoubleClickEvent);
+
+		args->m_screenpos = Point(float(screenMousePos.x), float(screenMousePos.y));
+		args->m_clientpos = clientMousePos;
+
+		hitElement->RaiseEvent(args);
+	}
+}
+
+void WindowVisual::OnMouseButtonUp(gm::PointF clientMousePos, int button)
+{
+	POINT screenMousePos;
+	::GetCursorPos(&screenMousePos);
+
+	UIElement* hitElement = NULL;
+
+	if (m_MouseCaptureElement)
+	{
+		hitElement = m_MouseCaptureElement;
+	}
+	else
+	{
+//		Visual* child = get_Child();
+		UIElement* child = get_ShadowTree();
+		if (child)
+		{
+		//	hitElement = child->HitTest(clientMousePos);
+		}
+		hitElement = child;
+	}
+
+	if (hitElement)
+	{
+		MouseButtonEventArgs* args = new MouseButtonEventArgs(NULL, 0);
+
+		if (button == 0)			args->set_RoutedEvent(UIElement::MouseLeftButtonUpEvent);
+		else if (button == 1)		args->set_RoutedEvent(UIElement::MouseMiddleButtonUpEvent);
+		else						args->set_RoutedEvent(UIElement::MouseRightButtonUpEvent);
+
+		args->m_screenpos = Point(float(screenMousePos.x), float(screenMousePos.y));
+		args->m_clientpos = clientMousePos;
+
+		hitElement->RaiseEvent(args);
+	}
+}
+
+void WindowVisual::OnKeyDown(UINT wParam, UINT lParam)
+{
+//	POINT screenMousePos;
+//	::GetCursorPos(&screenMousePos);
+
+	IInputElement* hitElement = NULL;
+
+	if (m_FocusElement)
+	{
+		hitElement = m_FocusElement;
+	}
+	else
+	{
+//		Visual* child = get_Child();
+		UIElement* child = get_ShadowTree();
+		if (child)
+		{
+		//	hitElement = child->HitTest(clientMousePos);
+		}
+		hitElement = child;
+	}
+
+	if (hitElement)
+	{
+		KeyEventArgs* args = new KeyEventArgs(NULL, NULL, 0, wParam);
+
+		args->set_RoutedEvent(UIElement::KeyEvent);
+
+		hitElement->RaiseEvent(args);
+	}
+}
+
+void WindowVisual::OnChar(UINT wParam, UINT lParam)
+{
+	if (wParam == 8) return;	// ignore backspace
+
+//	POINT screenMousePos;
+//	::GetCursorPos(&screenMousePos);
+
+	IInputElement* hitElement = NULL;
+
+	if (m_FocusElement)
+	{
+		hitElement = m_FocusElement;
+	}
+	else
+	{
+//		Visual* child = get_Child();
+		UIElement* child = get_ShadowTree();
+		if (child)
+		{
+		//	hitElement = child->HitTest(clientMousePos);
+		}
+		hitElement = child;
+	}
+
+	if (hitElement)
+	{
+		TextCompositionEventArgs* args = new TextCompositionEventArgs(NULL, 0);
+
+		WCHAR str[2] = {wParam, 0};
+		args->m_text = String(str);
+
+		args->set_RoutedEvent(UIElement::TextCompositionEvent);
+
+		hitElement->RaiseEvent(args);
+	}
+}
+
+/*
+UIElement* WindowVisual::CreateShadowTree()
+{
+	ASSERT(0);
+	return NULL;
+}
+*/
+
+void WindowVisual::OnWindowPosChanged(float left, float top)
+{
+	ASSERT(m_inSizeMove == false);
+	m_inSizeMove = true;
+	UpdatePropertyValue(get_LeftProperty(), left);
+	UpdatePropertyValue(get_TopProperty(), top);
+	m_inSizeMove = false;
+}
+
+void WindowVisual::OnWindowSizeChanged(float width, float height)
+{
+	ASSERT(m_inSizeMove == false);
+	m_inSizeMove = true;
+	UpdatePropertyValue(get_WidthProperty(), width);
+	UpdatePropertyValue(get_HeightProperty(), height);
+	m_inSizeMove = false;
+}
+
+void WindowVisual::OnWindowRectChanged(float left, float top, float width, float height)
+{
+	// Not used?
+	ASSERT(0);
+
+	UpdatePropertyValue(get_LeftProperty(), left);
+	UpdatePropertyValue(get_TopProperty(), top);
+	UpdatePropertyValue(get_WidthProperty(), width);
+	UpdatePropertyValue(get_HeightProperty(), height);
+}
+
+HRESULT WindowVisual::DragEnter(
+	::IDataObject* pDataObject,
+	/* [in] */ DWORD grfKeyState,
+	/* [in] */ POINTL pt,
+	/* [out][in] */ __RPC__inout DWORD *pdwEffect)
+{
+	m_pDataObject = pDataObject;
+
+	/*
+	if (m_pDataObject != pDataObject)
+	{
+		m_pDataObject = pDataObject;
+		m_dataObject = new DataObject;
+		m_dataObject->m_pDataObject = m_pDataObject;
+	}*/
+
+	if (m_dropTargetHelper == NULL)
+	{
+		HRESULT hr;
+		hr = m_dropTargetHelper.CoCreateInstance(CLSID_DragDropHelper);
+		if (FAILED(hr)) return hr;
+	}
+
+//	ComPtr<IEnumFORMATETC> enumfmt;
+//	pDataObject->EnumFormatEtc(DATADIR_GET, &enumfmt);
+
+	/*
+	FORMATETC fetc;
+	DWORD fetched;
+	while ((enumfmt->Next(1, &fetc, &fetched) == S_OK) && fetched)
+	{
+		DebugTrace("Format " << fetc.cfFormat << "\n");
+//CF_TEXT
+	}
+	*/
+
+	UIElement* hitElement = NULL;
+
+	Point screenMousePos(pt.x, pt.y);
+
+	ScreenToClient(m_platformWindow->get_Handle(), (POINT*)&pt);
+	Point clientMousePos(pt.x, pt.y);
+
+	UIElement* child = get_ShadowTree();
+	if (child)
+	{
+		hitElement = child->HitTest_(clientMousePos);
+	}
+
+	if (hitElement)
+	{
+		m_DragOverElement = hitElement;
+
+		DragEventArgs* args = new DragEventArgs(pDataObject);
+		args->set_RoutedEvent(UIElement::DragEnterEvent);
+	//	args->m_screenpos = Point(float(screenMousePos.x), float(screenMousePos.y));
+	//	args->m_clientpos = clientMousePos;
+
+		hitElement->RaiseEvent(args);
+	}
+
+// Call IDragImages::DragEnter last
+	m_dropTargetHelper->DragEnter(m_platformWindow->get_Handle(), pDataObject, (POINT*)&pt, *pdwEffect);
+	return S_OK;
+}
+
+HRESULT WindowVisual::DragOver(
+    /* [in] */ DWORD grfKeyState,
+    /* [in] */ POINTL pt,
+    /* [out][in] */ __RPC__inout DWORD *pdwEffect)
+{
+
+	Point screenMousePos(pt.x, pt.y);
+
+	ScreenToClient(m_platformWindow->get_Handle(), (POINT*)&pt);
+	Point clientMousePos(pt.x, pt.y);
+
+	if (m_DragOverElement)
+	{
+		DragEventArgs* args = new DragEventArgs(m_pDataObject);
+		args->set_RoutedEvent(UIElement::DragLeaveEvent);
+	//	args->m_screenpos = Point(float(screenMousePos.x), float(screenMousePos.y));
+	//	args->m_clientpos = clientMousePos;
+
+		m_DragOverElement->RaiseEvent(args);
+	}
+
+	UIElement* child = get_ShadowTree();
+	if (child)
+	{
+		m_DragOverElement = child->HitTest_(clientMousePos);
+	}
+
+	if (m_DragOverElement)
+	{
+		DragEventArgs* args = new DragEventArgs(m_pDataObject);
+		args->set_RoutedEvent(UIElement::DragEnterEvent);
+	//	args->m_screenpos = Point(float(screenMousePos.x), float(screenMousePos.y));
+	//	args->m_clientpos = clientMousePos;
+
+		m_DragOverElement->RaiseEvent(args);
+	}
+
+// Call IDragImages::DragEnter last
+	m_dropTargetHelper->DragOver((POINT*)&pt, *pdwEffect);
+	return S_OK;
+}
+
+HRESULT WindowVisual::DragLeave()
+{
+	if (m_DragOverElement)
+	{
+		DragEventArgs* args = new DragEventArgs(m_pDataObject);
+		args->set_RoutedEvent(UIElement::DragLeaveEvent);
+	//	args->m_screenpos = Point(float(screenMousePos.x), float(screenMousePos.y));
+	//	args->m_clientpos = clientMousePos;
+
+		m_DragOverElement->RaiseEvent(args);
+		m_DragOverElement = NULL;
+	}
+
+	m_dropTargetHelper->DragLeave();
+	return S_OK;
+}
+
+HRESULT WindowVisual::Drop(
+	/* [unique][in] */ ::IDataObject* pDataObject,
+    /* [in] */ DWORD grfKeyState,
+    /* [in] */ POINTL pt,
+    /* [out][in] */ DWORD* pdwEffect)
+{
+#if 0
+	WORD nFormat = CF_HDROP;
+	// 
+
+	FORMATETC fetc = {0};
+	fetc.cfFormat = nFormat;
+	fetc.tymed = TYMED_HGLOBAL;
+	fetc.dwAspect = DVASPECT_CONTENT;
+	fetc.lindex = -1;			//	give me all
+
+	STGMEDIUM stgm = {0};
+	stgm.tymed = TYMED_HGLOBAL;  
+	HRESULT hr = pDataObject->GetData(&fetc, &stgm);
+
+	DROPFILES* dropfiles = (DROPFILES*)GlobalLock(stgm.hGlobal);
+	if (dropfiles)
+	{
+		if (dropfiles->fWide)
+		{
+			WCHAR* p = (WCHAR*)dropfiles + dropfiles->pFiles;
+
+			while (*p)
+			{
+				int len = wcslen(p);
+
+				p += len;
+			}
+		}
+		else
+		{
+			char* p = (char*)dropfiles + dropfiles->pFiles;
+
+			while (*p)
+			{
+				int len = strlen(p);
+
+				p += len;
+			}
+		}
+
+		GlobalUnlock(stgm.hGlobal);
+	}
+
+	if (stgm.pUnkForRelease)
+	{
+		stgm.pUnkForRelease->Release();
+	}
+#endif
+
+	if (m_DragOverElement)
+	{
+		DragEventArgs* args = new DragEventArgs(pDataObject);
+		args->set_RoutedEvent(UIElement::DragDropEvent);
+	//	args->m_screenpos = Point(float(screenMousePos.x), float(screenMousePos.y));
+	//	args->m_clientpos = clientMousePos;
+
+		m_DragOverElement->RaiseEvent(args);
+	}
+
+	m_dropTargetHelper->Drop(pDataObject, (POINT*)&pt, *pdwEffect);
+
+	return S_OK;
+}
+
+}	// Gui
+}	// System

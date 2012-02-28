@@ -1,0 +1,113 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: LPDF - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x414 /fo"../../Intermediate/Win32/LPDF/Release/LPDF.res" /d "NDEBUG" "C:\MMStudio\Win32\LPDF\LPDF.rc"" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14C4.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_USRDLL" /FR"../../Intermediate/Win32/LPDF/Release/" /Fp"../../Intermediate/Win32/LPDF/Release/LPDF.pch" /Yu"stdafx.h" /Fo"../../Intermediate/Win32/LPDF/Release/" /Fd"../../Intermediate/Win32/LPDF/Release/" /FD /c 
+"C:\MMStudio\src\LPDF\PDFCosArray.cpp"
+"C:\MMStudio\src\LPDF\PDFCosBoolean.cpp"
+"C:\MMStudio\src\LPDF\PDFCosDict.cpp"
+"C:\MMStudio\src\LPDF\PDFCosDoc.cpp"
+"C:\MMStudio\src\LPDF\PDFCosInteger.cpp"
+"C:\MMStudio\src\LPDF\PDFCosName.cpp"
+"C:\MMStudio\src\LPDF\PDFCosObj.cpp"
+"C:\MMStudio\src\LPDF\PDFCosReal.cpp"
+"C:\MMStudio\src\LPDF\PDFCosStream.cpp"
+"C:\MMStudio\src\LPDF\PDFCosString.cpp"
+"C:\MMStudio\src\LPDF\PDFPDDoc.cpp"
+"C:\MMStudio\src\LPDF\PDFPDPage.cpp"
+"C:\MMStudio\src\LPDF\PDFEColorSpace.cpp"
+"C:\MMStudio\src\LPDF\PDFEContent.cpp"
+"C:\MMStudio\src\LPDF\PDFEElement.cpp"
+"C:\MMStudio\src\LPDF\PDFEExtGState.cpp"
+"C:\MMStudio\src\LPDF\PDFEGraphicState.cpp"
+"C:\MMStudio\src\LPDF\PDFEImage.cpp"
+"C:\MMStudio\src\LPDF\PDFEMatrix.cpp"
+"C:\MMStudio\src\LPDF\PDFEPath.cpp"
+"C:\MMStudio\src\LPDF\PDFEText.cpp"
+"C:\MMStudio\src\LPDF\LPDF.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14C4.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14C5.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_USRDLL" /FR"../../Intermediate/Win32/LPDF/Release/" /Fp"../../Intermediate/Win32/LPDF/Release/LPDF.pch" /Yc"stdafx.h" /Fo"../../Intermediate/Win32/LPDF/Release/" /Fd"../../Intermediate/Win32/LPDF/Release/" /FD /c 
+"C:\MMStudio\src\LPDF\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14C5.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14C6.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /pdb:none /map:"../../Intermediate/Win32/LPDF/Release/LPDF.map" /debug /machine:I386 /def:".\LPDF.def" /out:"../../bin/Win32/Release/LPDF.dll" /implib:"Release/LPDF.lib" 
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFCosArray.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFCosBoolean.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFCosDict.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFCosDoc.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFCosInteger.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFCosName.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFCosObj.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFCosReal.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFCosStream.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFCosString.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFPDDoc.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFPDPage.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFEColorSpace.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFEContent.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFEElement.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFEExtGState.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFEGraphicState.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFEImage.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFEMatrix.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFEPath.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\PDFEText.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\LPDF.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\StdAfx.obj
+\MMStudio\Intermediate\Win32\LPDF\Release\LPDF.res
+]
+Creating command line "link.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14C6.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+PDFCosArray.cpp
+PDFCosBoolean.cpp
+PDFCosDict.cpp
+PDFCosDoc.cpp
+C:\MMStudio\src\LPDF\PDFCosDoc.cpp(513) : warning C4101: 'version' : unreferenced local variable
+PDFCosInteger.cpp
+PDFCosName.cpp
+PDFCosObj.cpp
+PDFCosReal.cpp
+PDFCosStream.cpp
+PDFCosString.cpp
+PDFPDDoc.cpp
+PDFPDPage.cpp
+PDFEColorSpace.cpp
+PDFEContent.cpp
+PDFEElement.cpp
+PDFEExtGState.cpp
+PDFEGraphicState.cpp
+PDFEImage.cpp
+PDFEMatrix.cpp
+PDFEPath.cpp
+Generating Code...
+Compiling...
+PDFEText.cpp
+LPDF.cpp
+C:\MMStudio\src\LPDF\LPDF.cpp(44) : warning C4390: ';' : empty controlled statement found; is this the intent?
+Generating Code...
+Linking...
+   Creating library Release/LPDF.lib and object Release/LPDF.exp
+
+
+
+<h3>Results</h3>
+LPDF.dll - 0 error(s), 2 warning(s)
+</pre>
+</body>
+</html>

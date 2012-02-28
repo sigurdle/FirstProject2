@@ -1,0 +1,43 @@
+#X3D V3.0 utf8
+PROFILE Interchange
+META "filename" "RedSphereBlueBox.x3dv"
+
+Transform {
+  children [
+    NavigationInfo {
+      headlight FALSE
+      avatarSize [ 0.25 1.6 0.75 ]
+      type [ "EXAMINE" ]
+    }
+    DirectionalLight {
+    }
+    Transform {
+      translation 3.0 0.0 1.0
+      children [
+	Shape {
+	  geometry Sphere { radius 2.3
+	  }
+	  appearance Appearance {
+	    material Material { diffuseColor 1.0 0.0 0.0
+	    }
+	  }
+	}
+      ]
+    }
+    Transform {
+      translation -2.4 0.2 1.0
+      rotation 0.0 0.707 0.707 0.9
+      children [
+	Shape {
+	  geometry Box {
+	  }
+	  appearance Appearance {
+	    material Material { diffuseColor 0.0 0.0 1.0
+	    }
+	  }
+	}
+      ]
+    }
+  ]
+}
+

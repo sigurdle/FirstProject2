@@ -1,0 +1,11 @@
+namespace std
+{
+	class exception
+	{
+	public:
+		CTOR exception()
+		{
+		}
+	};
+
+}

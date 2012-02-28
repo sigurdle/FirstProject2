@@ -1,0 +1,51 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: LPCX - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x414 /fo"../../Intermediate/Win32/LPCX/Release/LPCX.res" /d "NDEBUG" "C:\MMStudio\Win32\LPCX\LPCX.rc"" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP330C.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /O1 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "_ATL_DLL" /Fp"../../Intermediate/Win32/LPCX/Release/LPCX.pch" /Yu"stdafx.h" /Fo"../../Intermediate/Win32/LPCX/Release/" /Fd"../../Intermediate/Win32/LPCX/Release/" /FD /c 
+"C:\MMStudio\src\LPCX\LPCX.cpp"
+"C:\MMStudio\src\LPCX\LPCXParser.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP330C.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP330D.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /O1 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "_ATL_DLL" /Fp"../../Intermediate/Win32/LPCX/Release/LPCX.pch" /Yc"stdafx.h" /Fo"../../Intermediate/Win32/LPCX/Release/" /Fd"../../Intermediate/Win32/LPCX/Release/" /FD /c 
+"C:\MMStudio\src\LPCX\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP330D.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP330E.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /incremental:no /pdb:"Release/LPCX.pdb" /map:"../../Intermediate/Win32/LPCX/Release/LPCX.map" /machine:I386 /def:".\LPCX.def" /out:"../bin/Release/LPCX.dll" /implib:"Release/LPCX.lib" 
+\MMStudio\Intermediate\Win32\LPCX\Release\LPCX.obj
+\MMStudio\Intermediate\Win32\LPCX\Release\LPCX.res
+\MMStudio\Intermediate\Win32\LPCX\Release\LPCXParser.obj
+\MMStudio\Intermediate\Win32\LPCX\Release\StdAfx.obj
+]
+Creating command line "link.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP330E.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+LPCX.cpp
+LPCXParser.cpp
+C:\MMStudio\src\LPCX\LPCXParser.cpp(514) : warning C4101: 'hr' : unreferenced local variable
+C:\MMStudio\src\LPCX\LPCXParser.cpp(544) : warning C4101: 'threadId' : unreferenced local variable
+Generating Code...
+Linking...
+   Creating library Release/LPCX.lib and object Release/LPCX.exp
+
+
+
+<h3>Results</h3>
+LPCX.dll - 0 error(s), 2 warning(s)
+</pre>
+</body>
+</html>

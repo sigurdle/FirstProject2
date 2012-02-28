@@ -1,0 +1,7 @@
+namespace System
+{
+namespace ImageEdit
+{
+
+}
+}

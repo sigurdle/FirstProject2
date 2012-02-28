@@ -1,0 +1,25 @@
+var class_system_1_1javavm_1_1_c_pool_item =
+[
+    [ "CPoolItem", "class_system_1_1javavm_1_1_c_pool_item.html#a12e048a6834ac58b5e9048bebcbfe0f5", null ],
+    [ "~CPoolItem", "class_system_1_1javavm_1_1_c_pool_item.html#a5a205163ad7c9912b6afc2a2de8be9ca", null ],
+    [ "GetString", "class_system_1_1javavm_1_1_c_pool_item.html#a12adf00d0281e295f7b52dbb51e96079", null ],
+    [ "class_index", "class_system_1_1javavm_1_1_c_pool_item.html#aaf81379f37bd38afbf4ec61f0335d839", null ],
+    [ "classData", "class_system_1_1javavm_1_1_c_pool_item.html#a2a90f249e2b09f80ebc8688e6ebaace2", null ],
+    [ "descriptor_index", "class_system_1_1javavm_1_1_c_pool_item.html#affbd82351c7405588bcd956eed31ffb6", null ],
+    [ "double_64", "class_system_1_1javavm_1_1_c_pool_item.html#a8de63463f1c88d1e0b1c7a2374420a56", null ],
+    [ "fieldRef", "class_system_1_1javavm_1_1_c_pool_item.html#a25d57ddb24d824eafde348dfde258d57", null ],
+    [ "float_32", "class_system_1_1javavm_1_1_c_pool_item.html#a6ea0850ca840de72bd2da1d727f5fc35", null ],
+    [ "int_16", "class_system_1_1javavm_1_1_c_pool_item.html#acd03b8d6db6a990abf8beb45c6b4516a", null ],
+    [ "int_32", "class_system_1_1javavm_1_1_c_pool_item.html#a1b00d8415eea5471817d47d4775635f0", null ],
+    [ "long_64", "class_system_1_1javavm_1_1_c_pool_item.html#a0f45f198c4d123c63ce319ecca7da294", null ],
+    [ "m_pClass", "class_system_1_1javavm_1_1_c_pool_item.html#a71951d9c202a74279d5514284e1ffb33", null ],
+    [ "m_pField", "class_system_1_1javavm_1_1_c_pool_item.html#a584ebed2f0960ec9d6f3b96025e87bb1", null ],
+    [ "m_pMethod", "class_system_1_1javavm_1_1_c_pool_item.html#a7a98a57ab5413b191b7ff4b88a2db1ac", null ],
+    [ "methodRef", "class_system_1_1javavm_1_1_c_pool_item.html#a0b1d31fad2fdf31324a68c44e1b68750", null ],
+    [ "name_and_type_index", "class_system_1_1javavm_1_1_c_pool_item.html#a6da22c77de60fc1bbf047a7bf34c1aaf", null ],
+    [ "name_index", "class_system_1_1javavm_1_1_c_pool_item.html#ac464504f3d91b475680dc6fb7e8037ee", null ],
+    [ "nameAndType", "class_system_1_1javavm_1_1_c_pool_item.html#a2325c5fe87a7f1cede48c40fcbb16813", null ],
+    [ "string_index", "class_system_1_1javavm_1_1_c_pool_item.html#ae9c6f5c7f58250f54863e6c490e188a1", null ],
+    [ "tag", "class_system_1_1javavm_1_1_c_pool_item.html#abb47c01b51957826541c790c3621ba50", null ],
+    [ "utf8", "class_system_1_1javavm_1_1_c_pool_item.html#ac8f3c4dfb4a97a83366934086a4b1259", null ]
+];

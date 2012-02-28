@@ -1,0 +1,423 @@
+#ifdef new
+#define OLD_NEW
+#undef new
+#endif
+
+namespace System
+{
+
+class LFCEXT list_node_base : public System::Object
+{
+public:
+	list_node_base* m_next;
+	list_node_base* m_prev;
+};
+
+class LFCEXT list_iterator
+{
+public:
+	list_node_base* m_ptr;
+};
+
+class LFCEXT list_base
+{
+public:
+	CTOR list_base() : m_size(0)
+	{
+	}
+
+	~list_base()
+	{
+	}
+
+	inline size_t size() const
+	{
+		return m_size;
+	}
+
+	bool empty() const
+	{
+		return size() == 0;
+	}
+
+protected:
+
+	list_node_base* m_head;
+	size_t m_size;
+};
+
+template<class T, class A = __gc_allocator> class list
+{
+public:
+
+	typedef T value_type;
+
+	class list_node : public Object
+	{
+	public:
+		CTOR list_node(const value_type& value) : m_value(value)
+		{
+		}
+
+		list_node* m_next;
+		list_node* m_prev;
+		value_type m_value;
+	};
+
+	class const_list_iterator
+	{
+	public:
+
+	//	typedef list_node Node;
+
+		CTOR const_list_iterator() : m_ptr(NULL)
+		{
+		}
+
+		CTOR const_list_iterator(list_node* ptr) : m_ptr(ptr)
+		{
+		}
+
+		const_list_iterator& operator ++ ()	// pre-increment
+		{
+			m_ptr = m_ptr->m_next;
+			return *this;
+		}
+
+		const_list_iterator& operator -- ()	// pre-decrement
+		{
+			m_ptr = m_ptr->m_prev;
+			return *this;
+		}
+
+		const_list_iterator operator ++ (int)		// post-increment
+		{
+#ifndef __LERSTAD__
+			const_list_iterator it(m_ptr);
+#endif
+			m_ptr = m_ptr->m_next;
+			return it;
+		}
+
+		const_list_iterator operator -- (int)		// post-decrement
+		{
+#ifndef __LERSTAD__
+			const_list_iterator it(m_ptr);
+#endif
+			m_ptr = m_ptr->m_prev;
+			return it;
+		}
+
+		const value_type& operator * () const
+		{
+			return m_ptr->m_value;
+		}
+
+		const value_type* operator -> () const
+		{
+			return &m_ptr->m_value;
+		}
+
+		bool operator == (const const_list_iterator& other) const
+		{
+			return m_ptr == other.m_ptr;
+		}
+
+		inline bool operator != (const const_list_iterator& other) const
+		{
+			return !(m_ptr == other.m_ptr);
+		}
+
+		list_node* m_ptr;
+	};
+
+	class list_iterator : public const_list_iterator
+	{
+	public:
+
+		CTOR list_iterator()
+		{
+		}
+
+		CTOR list_iterator(list_node* ptr) : const_list_iterator(ptr)
+		{
+		}
+
+		list_iterator& operator ++ ()	// pre-increment
+		{
+			const_list_iterator::m_ptr = const_list_iterator::m_ptr->m_next;
+			return *this;
+		}
+
+		list_iterator& operator -- ()		// pre-decrement
+		{
+			const_list_iterator::m_ptr = const_list_iterator::m_ptr->m_prev;
+			return *this;
+		}
+
+		list_iterator operator ++ (int)		// post-increment
+		{
+#ifndef __LERSTAD__
+			list_iterator it(m_ptr);
+#endif
+			m_ptr = m_ptr->m_next;
+			return it;
+		}
+
+		list_iterator operator -- (int)		// post-decrement
+		{
+#ifndef __LERSTAD__
+			list_iterator it(m_ptr);
+#endif
+			m_ptr = m_ptr->m_prev;
+			return it;
+		}
+
+		value_type& operator * ()
+		{
+			return const_list_iterator::m_ptr->m_value;
+		}
+
+		value_type* operator -> ()
+		{
+			return &const_list_iterator::m_ptr->m_value;
+		}
+
+		bool operator == (const list_iterator& other) const
+		{
+			return const_list_iterator::m_ptr == other.m_ptr;
+		}
+
+		inline bool operator != (const list_iterator& other) const
+		{
+			return !(const_list_iterator::m_ptr == other.m_ptr);
+		}
+	};
+
+	typedef list_node node;
+	typedef const_list_iterator const_iterator;
+	typedef list_iterator iterator;
+
+	/*
+	typedef const_iterator_list<T> const_iterator;
+	typedef iterator_list<T> iterator;
+*/
+
+	explicit CTOR list(const A& allocator = A()) : m_allocator(allocator)
+	{
+		m_head = (node*)m_allocator.allocate_object(sizeof(node), &_Module);
+		::new (m_head) list_node_base;
+		m_head->m_next = m_head;
+		m_head->m_prev = m_head;
+	}
+
+	CTOR list(const list<T>& other)	// copy constructor
+	{
+		m_head = (node*)m_allocator.allocate_object(sizeof(node), &_Module);
+		::new (m_head) list_node_base;
+		m_head->m_next = m_head;
+		m_head->m_prev = m_head;
+
+		const_iterator it = other.begin();
+		while (it != other.end())
+		{
+			push_back(*it);
+			++it;
+		}
+	}
+
+	~list()
+	{
+		m_allocator.free_object(m_head);
+	}
+
+	iterator find(const T& x)
+	{
+		iterator it = begin();
+		while (it != end())
+		{
+			if (*it == x)
+				break;
+			++it;
+		}
+
+		return it;
+	}
+
+	const_iterator find(const T& x) const
+	{
+		const_iterator it = const_begin();
+		while (it != const_end())
+		{
+			if (*it == x)
+				break;
+			++it;
+		}
+
+		return it;
+	}
+
+	/*
+	template<class Pred> list<T> filter(Pred& pred)
+	{
+		list<T>
+		const_iterator it = const_begin();
+		while (it != const_end())
+		{
+			if (*it == x)
+				break;
+			++it;
+		}
+
+		return it;
+	}
+	*/
+
+	iterator insert(iterator it, const T& x = T())
+	{
+		node* n = (node*)m_allocator.allocate_object(sizeof(node), &_Module);
+
+		::new (n) node(x);
+
+		n->m_prev = it.m_ptr->m_prev;
+		n->m_next = it.m_ptr;
+
+		n->m_prev->m_next = n;
+		n->m_next->m_prev = n;
+
+		++m_size;
+
+		return iterator(n);
+	}
+
+	iterator erase(iterator it)
+	{
+		ASSERT(it.m_ptr != m_head);
+
+		it.m_ptr->m_next->m_prev = it.m_ptr->m_prev;
+		it.m_ptr->m_prev->m_next = it.m_ptr->m_next;
+		--m_size;
+
+		iterator next_it = iterator(it.m_ptr->m_next);
+
+		m_allocator.free_object(it.m_ptr);
+
+		return next_it;
+	}
+
+	value_type& front()
+	{
+		return *begin();
+	}
+
+	const value_type& front() const
+	{
+		return *begin();
+	}
+
+	value_type& back()
+	{
+		return m_head->m_prev->m_value;
+	}
+
+	const value_type& back() const
+	{
+		return m_head->m_prev->m_value;
+	}
+
+	void push_back(const T& x)
+	{
+		insert(end(), x);
+	}
+
+	void push_front(const T& x)
+	{
+		insert(begin(), x);
+	}
+
+	void pop_front()
+	{
+		erase(begin());
+	}
+
+	iterator begin()
+	{
+		return iterator(m_head->m_next);
+	}
+
+	const_iterator begin() const
+	{
+		return const_iterator(m_head->m_next);
+	}
+
+	const_iterator cbegin() const
+	{
+		return const_iterator(m_head->m_next);
+	}
+
+	const_iterator const_begin() const
+	{
+		return const_iterator(m_head->m_next);
+	}
+
+	iterator end()
+	{
+		return iterator(m_head);
+	}
+
+	const_iterator end() const
+	{
+		return const_iterator(m_head);
+	}
+
+	const_iterator cend() const
+	{
+		return const_iterator(m_head);
+	}
+
+	list<T>& operator = (const list<T>& other)
+	{
+		// TODO, optimize
+
+		clear();
+
+		const_iterator it = other.begin();
+		while (it != other.end())
+		{
+			push_back(*it);
+			++it;
+		}
+
+		return *this;
+	}
+
+	void clear()
+	{
+		// TODO
+
+		m_head->m_prev = m_head;
+		m_head->m_next = m_head;
+		m_size = 0;
+	}
+
+	inline size_t size() const
+	{
+		return m_size;
+	}
+
+	inline bool empty() const
+	{
+		return size() == 0;
+	}
+
+	node* m_head;
+	size_t m_size;
+	A m_allocator;
+};
+
+#ifdef OLD_NEW
+#define new _new
+#undef OLD_NEW
+#endif
+
+}

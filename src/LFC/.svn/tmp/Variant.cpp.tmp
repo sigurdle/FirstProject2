@@ -1,0 +1,1207 @@
+#include "stdafx.h"
+#include "LFC.h"
+#include "Variant.h"
+
+namespace System
+{
+
+Variant::Variant(const VARIANT& v)
+{
+	switch (v.vt)
+	{
+	case VT_EMPTY:
+		{
+			kind = VARKIND_UNDEFINED;
+			m_pObject = NULL;
+			m_pType = typeid(void);
+		}
+		break;
+
+	case VT_NULL:
+		{
+			kind = VARKIND_NULL;
+			m_pObject = NULL;
+			m_pType = NULL;
+		}
+		break;
+
+	case VT_UI1:
+		{
+			kind = VARKIND_UINT8;
+			u.uint8_val = v.bVal;
+			m_pObject = NULL;
+			m_pType = typeid(unsigned char);
+		}
+		break;
+
+	case VT_I2:
+		{
+			kind = VARKIND_INT16;
+			u.int16_val = v.iVal;
+			m_pObject = NULL;
+			m_pType = typeid(int16);
+		}
+		break;
+
+	case VT_I4:
+		{
+			kind = VARKIND_INT32;
+			u.int32_val = v.lVal;
+			m_pObject = NULL;
+			m_pType = typeid(int32);
+		}
+		break;
+
+	case VT_INT:
+		{
+			kind = VARKIND_INT32;
+			u.int32_val = v.intVal;
+			m_pObject = NULL;
+			m_pType = typeid(int);
+		}
+		break;
+
+	case VT_UINT:
+		{
+			kind = VARKIND_UINT32;
+			u.uint32_val = v.uintVal;
+			m_pObject = NULL;
+			m_pType = typeid(unsigned int);
+		}
+		break;
+
+	case VT_R4:
+		{
+			kind = VARKIND_FLOAT32;
+			u.float32_val = v.fltVal;
+			m_pObject = NULL;
+			m_pType = typeid(float);
+		}
+		break;
+
+	case VT_R8:
+		{
+			kind = VARKIND_FLOAT64;
+			u.float64_val = v.dblVal;
+			m_pObject = NULL;
+			m_pType = typeid(double);
+		}
+		break;
+
+	case VT_BOOL:
+		{
+			kind = VARKIND_BOOL;
+			u.bool_val = (v.boolVal != 0);
+			m_pObject = NULL;
+			m_pType = typeid(bool);
+		}
+		break;
+
+	case VT_BSTR:
+		{
+			UINT len = SysStringLen(v.bstrVal);
+			m_pObject = new ImmutableString<WCHAR>(string_copy(v.bstrVal, len));
+			m_pType = m_pObject->GetType();
+			kind = VARKIND_STRINGA;
+		}
+		break;
+
+	case VT_UNKNOWN:
+		{
+#undef new
+			::new (&m_structptr) ComPtr<IUnknown>(v.punkVal);
+#define new _new
+			m_pType = typeid(ComPtr<IUnknown>);
+
+			/*
+			m_structptr = v.punkVal;
+			m_pType = typeid(IUnknown);
+			kind = VARKIND_STRINGA;
+			*/
+		}
+		break;
+
+	case VT_DISPATCH:
+		{
+#undef new
+			::new (&m_structptr) ComPtr<IDispatch>(v.pdispVal);
+#define new _new
+			m_pType = typeid(ComPtr<IDispatch>);
+/*
+			m_structptr = v.pdispVal;
+			m_pType = typeid(IDispatch);
+			kind = VARKIND_STRINGA;
+			*/
+		}
+		break;
+
+	default:
+		raise(SystemException("VARIANT.vt unsupported"));
+	}
+}
+
+Variant::Variant(VariantKind _kind)
+{
+	kind = _kind;
+	m_pObject = NULL;
+	m_pType = NULL;
+}
+
+Variant::Variant(bool value) :
+	kind(VARKIND_BOOL),
+	m_pObject(NULL),
+	m_pType(typeid(value))
+{
+	u.bool_val = value;
+}
+
+Variant::Variant(signed char lValue)
+{
+	kind = VARKIND_INT8;
+	u.int8_val = lValue;
+	m_pObject = NULL;
+	m_pType = typeid(lValue);
+}
+
+Variant::Variant(unsigned char lValue)
+{
+	kind = VARKIND_UINT8;
+	u.int8_val = lValue;
+	m_pObject = NULL;
+	m_pType = typeid(lValue);
+}
+
+Variant::Variant(short lValue)
+{
+	kind = VARKIND_INT16;
+	u.int16_val = lValue;
+	m_pObject = NULL;
+	m_pType = typeid(lValue);
+}
+
+Variant::Variant(unsigned short lValue)
+{
+	kind = VARKIND_UINT16;
+	u.int16_val = lValue;
+	m_pObject = NULL;
+	m_pType = typeid(lValue);
+}
+
+Variant::Variant(int lValue)
+{
+	kind = VARKIND_INT32;
+	u.int32_val = lValue;
+	m_pObject = NULL;
+	m_pType = typeid(lValue);
+}
+
+Variant::Variant(unsigned int lValue)
+{
+	kind = VARKIND_UINT32;
+	u.int32_val = lValue;
+	m_pObject = NULL;
+	m_pType = typeid(lValue);
+}
+
+Variant::Variant(float fValue)
+{
+	kind = VARKIND_FLOAT32;
+	u.float32_val = fValue;
+	m_pObject = NULL;
+	m_pType = typeid(fValue);
+}
+
+Variant::Variant(double fValue)
+{
+	kind = VARKIND_FLOAT64;
+	u.float64_val = fValue;
+	m_pObject = NULL;
+	m_pType = typeid(fValue);
+}
+
+Variant::Variant(Type* pType, int value) : m_pType(pType)
+{
+	kind = VARKIND_INT32;
+	u.int32_val = value;
+	m_pObject = NULL;
+}
+
+Variant::Variant(const Variant& other)
+{
+	kind = other.kind;
+	m_pObject = other.m_pObject;
+	m_pType = other.m_pType;
+	u = other.u;
+
+	switch (kind)
+	{
+		/*
+	case VARKIND_UNDEFINED:
+	case VARKIND_NULL:
+		break;
+
+	case VARKIND_BOOL:
+		u.bool_val = other.u.bool_val;
+		break;
+
+	case VARKIND_INT8:
+	case VARKIND_UINT8:
+		u.int8_val = other.u.int8_val;
+		break;
+
+	case VARKIND_INT16:
+	case VARKIND_UINT16:
+		u.int16_val = other.u.int16_val;
+		break;
+
+	case VARKIND_INT32:
+	case VARKIND_UINT32:
+		u.int32_val = other.u.int32_val;
+		break;
+
+	case VARKIND_INT64:
+	case VARKIND_UINT64:
+		u.int64_val = other.u.int64_val;
+		break;
+
+	case VARKIND_FLOAT32:
+		u.float32_val = other.u.float32_val;
+		break;
+
+	case VARKIND_FLOAT64:
+		u.float64_val = other.u.float64_val;
+		break;
+		*/
+
+	case VARKIND_STRINGA:
+	case VARKIND_STRINGW:
+		{
+		//	m_pObject = other.m_pObject;
+			if (m_pObject)
+			{
+				((StringObject*)m_pObject)->IncRef();
+			}
+		}
+		break;
+
+		/*
+	case VARKIND_OBJECT:
+		{
+			m_pObject = other.m_pObject;
+			if (m_pObject)
+			{
+				m_pType = m_pObject->GetType();
+			}
+		}
+		break;
+		*/
+
+	case VARKIND_STRUCT:
+		{
+			m_structptr = new byte[m_pType->get_sizeof()];
+			Declarator* copy_ctor = m_pType->GetClass()->GetCopyConstructor();
+			if (copy_ctor)
+			{
+				copy_ctor->void_invoke_method(m_structptr, other.m_structptr);
+			}
+			else
+			{
+				memcpy(m_structptr, other.m_structptr, m_pType->get_sizeof());
+			}
+		}
+		break;
+
+		/*
+	default:
+		raise(Exception(L"unknown Variant kind"));
+		ASSERT(0);
+		*/
+	}
+}
+
+Variant::Variant(Variant&& other)
+{
+	kind = other.kind;
+	m_pObject = other.m_pObject;
+	m_pType = other.m_pType;
+	u = other.u;
+
+	other.m_pType = typeid(void);
+	other.m_pObject = NULL;
+	other.kind = VARKIND_UNDEFINED;
+}
+
+Variant::Variant(VariantKind _kind, int32 lValue)
+{
+	kind = _kind;
+	m_pObject = NULL;
+
+	switch (kind)
+	{
+	case VARKIND_INT8:
+		u.int8_val = lValue;
+		m_pType = typeid(signed char);
+		break;
+
+	case VARKIND_UINT8:
+		u.int8_val = lValue;
+		m_pType = typeid(unsigned char);
+		break;
+
+	case VARKIND_INT16:
+		u.int16_val = lValue;
+		m_pType = typeid(short);
+		break;
+
+	case VARKIND_UINT16:
+		u.int16_val = lValue;
+		m_pType = typeid(unsigned short);
+		break;
+
+	case VARKIND_INT32:
+		u.int32_val = lValue;
+		m_pType = typeid(int);
+		break;
+
+	case VARKIND_UINT32:
+		u.int32_val = lValue;
+		m_pType = typeid(unsigned int);
+		break;
+
+	default:
+		raise(Exception("Invalid Variant kind"));
+	}
+}
+
+Variant::~Variant()
+{
+	if (kind == VARKIND_STRINGW)
+	{
+		if (m_pObject)
+		{
+			((StringObject*)m_pObject)->DecRef();
+		}
+	}
+	else if (kind == VARKIND_STRINGA)
+	{
+		if (m_pObject)
+		{
+			((StringObject*)m_pObject)->DecRef();
+		}
+	}
+	else if (kind == VARKIND_STRUCT)
+	{
+		ClassType* pClass = m_pType->GetClass();
+		Declarator* dtor = m_pType->GetClass()->GetDestructor();
+
+		if (pClass->get_sizeof() <= sizeof(void*))	// inline
+		{
+			if (dtor)
+			{
+				dtor->void_invoke_method(&m_structptr);
+			}
+		}
+		else if (m_structptr)
+		{
+			// TODO operator delete
+
+			Declarator* dtor = m_pType->GetClass()->GetDestructor();
+			if (dtor)
+			{
+				dtor->void_invoke_method(m_structptr);
+			}
+			delete[] m_structptr;
+		}
+	}
+
+	m_pType = NULL;
+	m_structptr = NULL;
+}
+
+Variant& Variant::operator = (const Variant& other)
+{
+	// incref new
+	switch (other.kind)
+	{
+	case VARKIND_STRINGA:
+	case VARKIND_STRINGW:
+		{
+			if (other.m_pObject)
+			{
+				((StringObject*)other.m_pObject)->IncRef();
+			}
+		}
+		break;
+	}
+
+	// decref old
+	switch (kind)
+	{
+	case VARKIND_STRINGA:
+	case VARKIND_STRINGW:
+		{
+			if (m_pObject)
+			{
+				((StringObject*)m_pObject)->DecRef();
+			}
+		}
+		break;
+	}
+
+	kind = other.kind;
+	u = other.u;	// copy the entire record
+	m_pObject = other.m_pObject;
+	m_pType = other.m_pType;
+
+	return *this;
+}
+
+Variant::Variant(VariantKind _kind, void* pAnyInterface)
+{
+	kind = _kind;
+	ASSERT(_kind == VARKIND_ANYINTERFACE);
+	if (_kind != VARKIND_ANYINTERFACE)
+	{
+		raise(Exception(L"Variant anyinterface"));
+	}
+
+	m_pType = System::GetType(pAnyInterface);
+	m_pAnyInterface = (anyinterface*)pAnyInterface;
+}
+
+Variant::Variant(VariantKind _kind, int64 llValue)
+{
+	kind = _kind;
+	m_pType = typeof(llValue);
+
+	switch (kind)
+	{
+	case VARKIND_INT64:
+		u.int64_val = llValue;
+		break;
+
+	default:
+		raise(Exception(L"Variant llvalue"));
+	}
+}
+
+Variant::Variant(String str)
+{
+	if (str == NULL)
+		kind = VARKIND_NULL;
+	else
+		kind = VARKIND_STRINGA;
+
+	m_pObject = str.m_stringObject;
+	if (m_pObject)
+	{
+		((StringObject*)m_pObject)->IncRef();
+		m_pType = m_pObject->GetType();
+	}
+}
+
+Variant::Variant(StringIn str)
+{
+	if (str == NULL)
+		kind = VARKIND_NULL;
+	else
+		kind = VARKIND_STRINGA;
+	m_pType = NULL;	// TODO ??
+
+	m_pObject = str._stringObject();
+	if (m_pObject)
+	{
+		((StringObject*)m_pObject)->IncRef();
+		m_pType = m_pObject->GetType();
+	}
+}
+
+Variant::Variant(const StringBuilderBase& str)
+{
+	m_pObject = str.BuildString();
+	if (m_pObject)
+	{
+		kind = VARKIND_STRINGA;
+
+		((StringObject*)m_pObject)->IncRef();
+		m_pType = m_pObject->GetType();
+	}
+	else
+	{
+		kind = VARKIND_NULL;
+	}
+}
+
+Variant::Variant(Object* pObject) : m_pObject(pObject)
+{
+	if (pObject == NULL)
+	{
+		kind = VARKIND_NULL;
+		m_pType = NULL;
+	}
+	else
+	{
+		kind = VARKIND_OBJECT;
+		m_pType = pObject->GetType();
+		// ??
+	//	m_pType = new PointerType(pObject->GetType());
+	}
+}
+
+Variant::Variant(const char* str, int len)
+{
+	kind = VARKIND_STRINGA;
+
+	m_pObject = String(string_data<char>(str, len));
+	if (m_pObject)
+	{
+		((StringObject*)m_pObject)->IncRef();
+		m_pType = m_pObject->GetType();
+	}
+}
+
+Variant::operator String () const
+{
+	StringObject* str = dynamic_cast<StringObject*>(m_pObject);
+	if (str == NULL)
+	{
+		raise(SystemException(L"Variant not a string"));
+	}
+	return str;
+}
+
+Variant::operator bool () const
+{
+	return ToBool();
+}
+
+Variant::operator int32 () const
+{
+	return ToInt();
+}
+
+Variant::operator float () const
+{
+	return ToFloat();
+}
+
+Variant::operator double () const
+{
+	return ToDouble();
+}
+
+bool Variant::ToBool() const
+{
+	switch (kind)
+	{
+	case VARKIND_BOOL:
+		return u.bool_val;
+
+	case VARKIND_INT8:
+		if (u.int8_val & ~1) raise(SystemException("Cannot convert to bool"));
+		return u.int8_val & 1;
+
+	case VARKIND_UINT8:
+		if (u.uint8_val & ~1) raise(SystemException("Cannot convert to bool"));
+		return u.uint8_val & 1;
+
+	case VARKIND_INT16:
+		if (u.int16_val & ~1) raise(SystemException("Cannot convert to bool"));
+		return u.int16_val & 1;
+
+	case VARKIND_UINT16:
+		if (u.uint16_val & ~1) raise(SystemException("Cannot convert to bool"));
+		return u.uint16_val & 1;
+
+	case VARKIND_INT32:
+		if (u.int32_val & ~1) raise(SystemException("Cannot convert to bool"));
+		return u.int32_val & 1;
+
+	case VARKIND_UINT32:
+		if (u.uint32_val & ~1) raise(SystemException("Cannot convert to bool"));
+		return u.uint32_val & 1;
+
+	case VARKIND_INT64:
+		if (u.int64_val & ~1) raise(SystemException("Cannot convert to bool"));
+		return u.int64_val & 1;
+
+	case VARKIND_UINT64:
+		if (u.uint64_val & ~1) raise(SystemException("Cannot convert to bool"));
+		return u.uint64_val & 1;
+
+	default:
+		raise(SystemException(L"Cannot convert to bool"));
+		ASSERT(0);
+		return 0;
+	}
+}
+
+int Variant::ToInt() const
+{
+	switch (kind)
+	{
+	case VARKIND_BOOL:
+		return u.bool_val;
+
+	case VARKIND_INT8:
+		return u.int8_val;
+
+	case VARKIND_UINT8:
+		return u.uint8_val;
+
+	case VARKIND_INT16:
+		return u.int16_val;
+
+	case VARKIND_UINT16:
+		return u.uint16_val;
+
+	case VARKIND_INT32:
+		return u.int32_val;
+
+	default:
+		raise(SystemException(L"Cannot convert to int"));
+	}
+}
+
+unsigned int Variant::ToUInt() const
+{
+	switch (kind)
+	{
+	case VARKIND_BOOL:
+		return u.bool_val;
+
+	case VARKIND_INT8:
+		if (u.int8_val < 0) raise(SystemException("negative value cannot be converted to unsigned int"));
+		return u.int8_val;
+
+	case VARKIND_UINT8:
+		return u.uint8_val;
+
+	case VARKIND_INT16:
+		if (u.int16_val < 0) raise(SystemException("negative value cannot be converted to unsigned int"));
+		return u.int16_val;
+
+	case VARKIND_UINT16:
+		return u.uint16_val;
+
+	case VARKIND_INT32:
+		if (u.int32_val < 0) raise(SystemException("negative value cannot be converted to unsigned int"));
+		return u.int32_val;
+
+	case VARKIND_UINT32:
+		return u.uint32_val;
+
+	default:
+		raise(SystemException(L"Cannot convert to int"));
+	}
+}
+
+long Variant::ToLong() const
+{
+	switch (kind)
+	{
+	case VARKIND_BOOL:
+		return u.bool_val;
+
+	case VARKIND_INT8:
+		return u.int8_val;
+
+	case VARKIND_UINT8:
+		return u.uint8_val;
+
+	case VARKIND_INT16:
+		return u.int16_val;
+
+	case VARKIND_UINT16:
+		return u.uint16_val;
+
+	case VARKIND_INT32:
+		return u.int32_val;
+
+#if LONG_MAX == _I64_MAX
+
+	case VARKIND_UINT32:
+		return u.uint32_val;
+
+	case VARKIND_INT64:
+		return u.int64_val;
+#endif
+
+	default:
+		raise(SystemException(L"Cannot convert to long"));
+	}
+}
+
+unsigned long Variant::ToULong() const
+{
+	switch (kind)
+	{
+	case VARKIND_BOOL:
+		return u.bool_val;
+
+	case VARKIND_INT8:
+		if (u.int8_val < 0) raise(SystemException("negative value cannot be converted to unsigned long"));
+		return u.int8_val;
+
+	case VARKIND_UINT8:
+		return u.uint8_val;
+
+	case VARKIND_INT16:
+		if (u.int16_val < 0) raise(SystemException("negative value cannot be converted to unsigned long"));
+		return u.int16_val;
+
+	case VARKIND_UINT16:
+		return u.uint16_val;
+
+	case VARKIND_INT32:
+		if (u.int32_val < 0) raise(SystemException("negative value cannot be converted to unsigned long"));
+		return u.int32_val;
+
+	case VARKIND_UINT32:
+		return u.uint32_val;
+
+#if ULONG_MAX == _UI64_MAX
+	case VARKIND_UINT64:
+		return u.uint64_val;
+#endif
+
+	default:
+		raise(SystemException(L"Cannot convert to unsigned long"));
+		ASSERT(0);
+		return 0;
+	}
+}
+
+float Variant::ToFloat() const
+{
+	switch (kind)
+	{
+	case VARKIND_BOOL:
+		return u.bool_val;
+
+	case VARKIND_INT8:
+		return u.int8_val;
+
+	case VARKIND_UINT8:
+		return u.uint8_val;
+
+	case VARKIND_INT16:
+		return u.int16_val;
+
+	case VARKIND_UINT16:
+		return u.uint16_val;
+
+	case VARKIND_INT32:
+		return (float)u.int32_val;
+
+	case VARKIND_UINT32:
+		return (float)u.uint32_val;
+
+	case VARKIND_INT64:
+		return (float)u.int64_val;
+
+	case VARKIND_UINT64:
+		return (float)u.uint64_val;
+
+	case VARKIND_FLOAT32:
+		return u.float32_val;
+		
+	case VARKIND_FLOAT64:
+		return (float)u.float64_val;
+
+	default:
+		raise(SystemException(L"Cannot convert to float"));
+		ASSERT(0);
+		return 0;
+	}
+}
+
+double Variant::ToDouble() const
+{
+	switch (kind)
+	{
+	case VARKIND_BOOL:
+		return u.bool_val;
+
+	case VARKIND_INT8:
+		return u.int8_val;
+
+	case VARKIND_UINT8:
+		return u.uint8_val;
+
+	case VARKIND_INT16:
+		return u.int16_val;
+
+	case VARKIND_UINT16:
+		return u.uint16_val;
+
+	case VARKIND_INT32:
+		return u.int32_val;
+
+	case VARKIND_UINT32:
+		return u.uint32_val;
+
+	case VARKIND_INT64:
+		return (double)u.int64_val;
+
+	case VARKIND_UINT64:
+		return (double)u.uint64_val;
+
+	case VARKIND_FLOAT32:
+		return u.float32_val;
+		
+	case VARKIND_FLOAT64:
+		return u.float64_val;
+
+		/*
+	case VARKIND_STRINGA:
+		{
+			ASSERT(m_pObject->GetType() == typeid(StringA).GetType());
+			return getfnumber(((StringA*)m_pObject)->c_str());
+		}
+		break;
+
+	case VARKIND_STRINGW:
+		{
+			ASSERT(m_pObject->GetType() == typeid(StringW).GetType());
+			return getfnumber(((StringW*)m_pObject)->c_str());
+		}
+		break;
+		*/
+
+	default:
+		raise(SystemException(L"Cannot convert to double"));
+		ASSERT(0);
+		return 0;
+	}
+}
+
+Variant& Variant::operator ++ ()
+{
+	if (m_pType)
+	{
+		switch (m_pType->get_Kind())
+		{
+		case type_short:
+			++u.int16_val;
+			break;
+
+		case type_unsigned_short:
+			++u.uint16_val;
+			break;
+
+		case type_int:
+			++u.int32_val;
+			break;
+
+		case type_unsigned_int:
+			++u.uint32_val;
+			break;
+
+		case type_long:
+			++u.long_val;
+			break;
+
+		case type_unsigned_long:
+			++u.ulong_val;
+			break;
+
+		default:
+			VERIFY(0);
+		}
+	}
+	else
+	{
+		VERIFY(0);
+	}
+
+	return *this;
+}
+
+Variant& Variant::operator -- ()
+{
+	if (m_pType)
+	{
+		switch (m_pType->get_Kind())
+		{
+		case type_short:
+			--u.int16_val;
+			break;
+
+		case type_unsigned_short:
+			--u.uint16_val;
+			break;
+
+		case type_int:
+			--u.int32_val;
+			break;
+
+		case type_unsigned_int:
+			--u.uint32_val;
+			break;
+
+		case type_long:
+			--u.long_val;
+			break;
+
+		case type_unsigned_long:
+			--u.ulong_val;
+			break;
+
+		default:
+			VERIFY(0);
+		}
+	}
+	else
+	{
+		VERIFY(0);
+	}
+
+	return *this;
+}
+
+String Variant::ToString() const
+{
+	if (m_pType)
+	{
+		switch (m_pType->get_Kind())
+		{
+		case type_null:
+			return "null";
+
+		case type_void:
+			return "undefined";
+
+		case type_bool:
+			return u.bool_val? "true": "false";
+
+			/*
+		case type_char:
+			return "'" + String::FromNumber(u.int8_val);
+			*/
+
+		case type_signed_char:
+			return String::FromNumber(u.int8_val);
+
+		case type_unsigned_char:
+			return String::FromNumber(u.uint8_val);
+
+		case type_short:
+			return String::FromNumber(u.int16_val);
+
+		case type_unsigned_short:
+			return String::FromNumber(u.uint16_val);
+
+		case type_int:
+			return String::FromNumber(u.int32_val);
+
+		case type_unsigned_int:
+			return String::FromNumber(u.uint32_val);
+
+		case type_long:
+			return String::FromNumber(u.long_val);
+
+		case type_unsigned_long:
+			return String::FromNumber(u.ulong_val);
+
+		case type_long_long:
+			return String::FromNumber(u.int64_val);
+
+		case type_unsigned_long_long:
+			return String::FromNumber(u.uint64_val);
+
+		case type_float:
+			return String::FromNumber(u.float32_val);
+
+		case type_double:
+		case type_long_double:
+			return String::FromNumber(u.float64_val);
+
+		case type_enum:
+			{
+				long long value;
+				EnumType* pEnum = static_cast<EnumType*>(m_pType);
+				if (pEnum->m_baseType)
+				{
+					switch (pEnum->m_baseType->get_Kind())
+					{
+					case type_signed_char:
+						value = u.int8_val;
+						break;
+
+					case type_unsigned_char:
+						value = u.uint8_val;
+						break;
+
+					case type_short:
+						value = u.int16_val;
+						break;
+
+					case type_unsigned_short:
+						value = u.uint16_val;
+						break;
+
+					case type_int:
+						value = u.int32_val;
+						break;
+
+					case type_unsigned_int:
+						value = u.uint32_val;
+						break;
+
+					case type_long_long:
+						value = u.int64_val;
+						break;
+
+					default:
+						ASSERT(0);
+						break;
+					}
+				}
+				else
+				{
+					value = u.int32_val;
+				}
+
+				return pEnum->GetItem(value)->m_name;
+			}
+			break;
+
+		case type_class:
+			{
+				if (m_pType->GetClass()->IsPolymorphic())
+				{
+					Object* ob = dynamic_cast<Object*>(m_pObject);
+					if (ob)
+						return m_pObject->ToString();
+					else
+						return "TODO to string";
+				}
+				else
+				{
+					return "struct TODO";
+				}
+			}
+			break;
+
+		default:
+			ASSERT(0);
+		}
+	}
+
+	switch (kind)
+	{
+	case VARKIND_UNDEFINED:
+		return L"undefined";
+		break;
+		/*
+	case VARKIND_BOOL:
+		return u.boolean;
+		*/
+
+	case VARKIND_INT8:
+		{
+			WCHAR buf[32];
+			swprintf_s(buf, L"%d", u.int8_val);
+			return string_copy(buf);
+		}
+		break;
+
+	case VARKIND_UINT8:
+		{
+			WCHAR buf[32];
+			swprintf_s(buf, L"%u", u.uint8_val);
+			return buf;
+		}
+		break;
+
+	case VARKIND_INT16:
+		{
+			WCHAR buf[32];
+			swprintf_s(buf, L"%d", u.int16_val);
+			return buf;
+		}
+		break;
+
+	case VARKIND_UINT16:
+		{
+			WCHAR buf[32];
+			swprintf_s(buf, L"%u", u.uint16_val);
+			return buf;
+		}
+		break;
+
+	case VARKIND_INT32:
+		{
+			WCHAR buf[32];
+			swprintf_s(buf, L"%d", u.int32_val);
+			return buf;
+		}
+		break;
+
+	case VARKIND_UINT32:
+		{
+			WCHAR buf[32];
+			swprintf_s(buf, L"%u", u.uint32_val);
+			return string_copy(buf);
+		}
+		break;
+
+		/*
+
+	case VARKIND_INT64:
+		return (double)u.int64;
+
+	case VARKIND_FLOAT32:
+		return u.float32;
+		
+	case VARKIND_FLOAT64:
+		return u.float64;
+		*/
+
+	case VARKIND_STRINGA:
+		return ((StringObject*)m_pObject);
+
+	case VARKIND_NULL:
+		return L"null";
+
+	case VARKIND_OBJECT:
+		return m_pObject->ToString();
+		/*
+	case VARKIND_STRINGW:
+		{
+			return (StringW*)m_pObject;
+		}
+		break;
+		*/
+
+	default:
+		raise(Exception(L"Invalid Variant"));
+		ASSERT(0);
+	}
+
+	return null;
+}
+
+Object* Variant::operator -> () const
+{
+	if (m_pType->get_Kind() != type_class)
+	{
+		raise(Exception("not an object"));
+	}
+
+	if (m_pObject == NULL)
+	{
+		raise(Exception("accessing null object"));
+	}
+
+	return m_pObject;
+}
+
+LFCEXT IO::TextWriter& WriteToStream(IO::TextWriter& writer, const Variant& v)
+{
+	writer << v.ToString();
+	return writer;
+}
+
+}	// System

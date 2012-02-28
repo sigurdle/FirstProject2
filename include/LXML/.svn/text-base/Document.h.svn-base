@@ -1,0 +1,526 @@
+#ifndef Web_Document_h
+#define Web_Document_h
+
+namespace System
+{
+namespace Web
+{
+
+WEBEXT bool DoAnimationsForAllElements(Element* element, double currentTime);
+//WEBEXT void GetElementsByTagNameNSElement(Element* element, System::StringW* namespaceURI, System::StringW* localName, NodeList *pNodeList);
+WEBEXT bool IsAttrNameValid(StringIn name);
+
+class CHTMLWindow;	// TODO Remove
+//class CXMLDocumentView;
+class CScriptSite;
+
+#if 0
+struct DECLSPEC_UUID("DB40EA2D-969A-4262-A5FE-B04887B2E35D") WEBEXT DECLSPEC_NOVTABLE
+CLDOMDocumentImplImpl :
+	public CLDOMNodeImplImpl
+{
+public:
+	CLDOMDocumentImplImpl();
+	~CLDOMDocumentImplImpl();
+
+	int ConstructScriptEngine();
+	void ReleaseScriptEngine();
+
+	CComBSTR m_version;
+	CComBSTR m_encoding;
+	bool m_standalone;
+
+#if 0
+	ILHTMLActiveDocument* m_acDocument;
+#endif
+
+	CComObject<CScriptSite>* m_pScriptSite;
+
+	CComPtr<ILDOMElement> m_documentElement;
+	CComPtr<ILDOMDocumentType>	m_doctype;
+
+	//CComPtr<ILDOMImplementation> m_implementation;
+	CComObject<CLDOMImplementation>* m_implementation;
+
+	bool m_async;
+	CComBSTR m_uri;
+
+	CArray<CXMLDocumentView*,CXMLDocumentView*> m_pViews;
+
+	void AddView(CXMLDocumentView* pView);
+	void RemoveView(CXMLDocumentView* pView);
+
+	CComPtr<ILDOMLocator> CreateDOMLocator(long lineNumber, long columnNumber, long offset)
+	{
+		CComObject<CLDOMLocator>* p;
+		CComObject<CLDOMLocator>::CreateInstance(&p);
+		//p->AddRef();
+
+		p->m_lineNumber = lineNumber;
+		p->m_columnNumber = columnNumber;
+		p->m_offset = offset;
+		p->m_uri = m_uri;
+
+		return p;
+	}
+
+	HRESULT BindElements(ILDOMNodeList* extensionDefsElements, ILDOMElement* element);
+
+public:
+
+	void saveXML2(Node *node, StringBuilderA& xml);
+//	void saveInnerXML(ILDOMNode* node, CWCharString& xml);
+	HRESULT createElementNS(BSTR namespaceURI, BSTR qualifiedName, ILDOMElement **ppElement);
+	HRESULT createHTMLElement(BSTR localName, ILDOMElement **ppElement);
+
+	//void GetFirstIntervals(ILDOMElement* domElement);
+
+// SMIL animation
+	void SetValuesOnAllAnimations(ILDOMElement* element);
+
+	HRESULT renameNode(ILDOMDocument* thisNode, /*[in]*/ ILDOMNode* n, /*[in]*/ BSTR namespaceURI, /*[in]*/ BSTR name, /*[out,retval]*/ ILDOMNode* *pVal);
+
+#if 0	// Had this
+	HRESULT get_window(ILHTMLWindow* *pVal);
+#endif
+
+	HRESULT AddEventListener(ILDOMElement* element);
+	//void AddEventListeners(ILDOMNode* parent);
+	void AddScript(ILDOMElement* scriptElement);
+	void AddScripts(ILDOMNode* parent);
+
+	HRESULT InitScripting();
+
+	Element* getElementById(const OLECHAR* elementId);
+
+//
+	void MakeFormattedString2(ILDOMNode *node, CWCharString& xml);
+
+// IBindHost
+     HRESULT STDMETHODCALLTYPE CreateMoniker(
+         /* [in] */ LPOLESTR szName,
+         /* [in] */ IBindCtx *pBC,
+         /* [out] */ IMoniker **ppmk,
+         /* [in] */ DWORD dwReserved);
+
+     /* [local] */ HRESULT STDMETHODCALLTYPE MonikerBindToStorage(
+         /* [in] */ IMoniker *pMk,
+         /* [in] */ IBindCtx *pBC,
+         /* [in] */ IBindStatusCallback *pBSC,
+         /* [in] */ REFIID riid,
+         /* [out] */ void **ppvObj)
+	  {
+		  ASSERT(0);
+		  return E_NOTIMPL;
+	  }
+
+     /* [local] */ HRESULT STDMETHODCALLTYPE MonikerBindToObject(
+         /* [in] */ IMoniker *pMk,
+         /* [in] */ IBindCtx *pBC,
+         /* [in] */ IBindStatusCallback *pBSC,
+         /* [in] */ REFIID riid,
+         /* [out] */ void **ppvObj)
+	  {
+		  ASSERT(0);
+		  return E_NOTIMPL;
+	  }
+};
+#endif
+
+/*
+template<class T, class IBase> IDocumentStyleImpl : public IBase
+{
+	virtual StyleSheetList* get_styleSheets()
+	{
+		return 
+	}
+};
+*/
+
+class WEBEXT Document : public ChildNode, public XDM::IData
+{
+public:
+
+	virtual NodeType get_nodeType() const override;
+	virtual String get_nodeName() const override;
+	virtual IAbstractView* get_defaultView();
+
+	virtual void saveXML2(Node* node, IO::TextWriter& xml);
+
+	virtual Style::ICSSStyleDeclaration* getOverrideStyle(Element* elt, StringIn pseudoElt);	// DocumentCSS
+
+	virtual Element* getElementById(StringIn elementId);
+	virtual void adoptNode2(Node* sourceNode);
+	virtual Node* insertNode(Node* newChild, Node* before);
+
+public:
+#if 0
+	STDMETHOD(get_Script)(IDispatch* *pVal)
+	{
+		if (pVal == NULL) return E_POINTER;
+		*pVal = NULL;
+
+		ASSERT(0);
+#if 0
+		if (m_acDocument)
+		{
+			//return m_acDocument->get_Script(pVal);
+		}
+#endif
+
+		return S_OK;
+	}
+#endif
+
+	virtual DocumentFragment* parseFragment(StringIn xml, Node* nsResolverParent);
+
+	virtual IDOMErrorHandler* get_errorHandler() const
+	{
+		return m_errorHandler;
+	}
+
+	virtual void set_errorHandler(IDOMErrorHandler* newVal)
+	{
+		m_errorHandler = newVal;
+	}
+
+	virtual Element* get_documentElement() const
+	{
+		return m_documentElement;
+	}
+
+	virtual void set_documentElement(Element* pVal)
+	{
+		m_documentElement = pVal;
+	}
+
+	virtual DocumentFragment* createDocumentFragment()
+	{
+		DocumentFragment* fragment = new DocumentFragment;
+		fragment->m_ownerDocument = this;
+		return fragment;
+	}
+
+	virtual EntityReference* createEntityReference(StringIn name);
+
+	virtual Element* createElement(StringIn tagName)
+	{
+		return createElementNS(null, tagName);
+	}
+
+	virtual Element* createElementNS(StringIn namespaceURI, StringIn qualifiedName);
+	virtual Element* createElementNS(StringIn namespaceURI, StringIn qualifiedName, NamedNodeMap* attributes);
+
+	virtual Attr* createAttribute(StringIn name);
+	virtual Attr* createAttributeNS(StringIn namespaceURI, StringIn qualifiedName);
+
+	virtual ProcessingInstruction* createProcessingInstruction(StringIn target, StringIn data);
+
+	virtual Text* createTextNode(StringIn data);
+	virtual CDATASection* createCDATASection(StringIn data);
+	virtual Comment* createComment(StringIn data);
+
+	virtual DocumentType* createDocumentType(StringIn qualifiedName, StringIn publicId, StringIn systemId);
+	virtual String get_url() const;
+	virtual void set_url(StringIn newVal);
+	virtual String get_documentURI() const;
+	virtual void set_documentURI(StringIn newVal);
+	virtual NodeList* getElementsByTagNameNS(StringIn namespaceURI, StringIn localName) const;
+
+	NodeList* getElementsByTagName(StringIn tagname) const
+	{
+		return getElementsByTagNameNS(null, tagname);
+	}
+
+	#if 0
+	DWORD __stdcall ParseSourceTextThreadFunc(LPVOID lParam)
+	{
+		CoInitialize(NULL);
+
+		CLDOMDocument* pDoc = (CLDOMDocument*)lParam;
+
+	#if 0
+		pDoc->m_textDoc->LockData(NULL);
+		pDoc->loadXML2();
+		pDoc->m_textDoc->UnlockData(NULL);
+	#endif
+
+		CoUninitialize();
+
+		return 0;
+	}
+	#endif
+
+	#if 0
+	STDMETHODIMP CLDOMDocument::parseSourceText(BOOL * success)
+	{
+		if (m_async)
+		{
+			m_hThread = CreateThread(NULL, 0L/*stacksize*/, ParseSourceTextThreadFunc, (LPVOID)this, 0/*CREATE_SUSPENDED */, &m_threadID);
+			*success = TRUE;
+		}
+		else
+		{
+			m_textDoc->LockData(NULL);
+			*success = !loadXML2();
+			m_textDoc->UnlockData(NULL);
+		}
+
+		return S_OK;
+	}
+	#endif
+
+	void abort()
+	{
+	// TODO
+	}
+
+	virtual bool load(StringIn xmlSource);
+	virtual bool load(IO::Stream* stream);
+	virtual bool loadXML(StringIn sourceText);
+
+	virtual bool save(StringIn url);
+
+	virtual bool get_async() const;
+	virtual void set_async(bool asyncVal);
+	virtual DOMImplementation* get_implementation();
+	virtual String get_actualEncoding() const;
+	virtual void set_actualEncoding(StringIn newVal);
+	virtual String get_xmlEncoding() const;
+	virtual void set_xmlEncoding(StringIn newVal);
+	virtual bool get_xmlStandalone() const;
+	virtual void set_xmlStandalone(bool newVal);
+	virtual String get_xmlVersion() const;
+	virtual void set_xmlVersion(StringIn newVal);
+
+#if 0
+	String saveXML(Node* vtnode)
+	{
+		ASSERT(0);
+		Node* node;
+		if (V_VT(&vtnode) == VT_NULL || V_VT(&vtnode) == VT_EMPTY)
+		{
+			node = NULL;
+		}
+		else if (V_VT(&vtnode) == VT_UNKNOWN || V_VT(&vtnode) == VT_DISPATCH)
+		{
+			node = CComQIPtr<ILDOMNode, &IID_ILDOMNode>(V_UNKNOWN(&vtnode));
+			if (node == NULL) return E_INVALIDARG;
+		}
+		else
+			return E_INVALIDARG;
+
+		ASSERT(pVal);
+		if (pVal == NULL) return E_POINTER;
+
+		if (node == NULL)
+			node = static_cast<T*>(this);
+
+		CWCharString xml;
+		saveXML2(node, xml);
+
+		*pVal = xml.copyBSTR();
+		return null;
+	}
+#endif
+
+	String MakeFormattedString(Node* node)
+	{
+		if (node == NULL)
+			node = this;
+
+		String xml = null;
+		ASSERT(0);
+#if 0
+		MakeFormattedString2(node, xml);
+#endif
+		return xml;
+	}
+
+	DocumentType* get_doctype() const;
+
+#if 0
+	void set_doctype(DocumentType *newVal)
+	{
+	}
+#endif
+
+// DOM Level 2
+	virtual Node* importNode(Node* importedNode, bool deep);
+
+// DOM Level 3
+	virtual Node* adoptNode(Node* sourceNode);
+
+	virtual Node* renameNode(Node* n, StringIn namespaceURI, StringIn name);
+
+//  Extensions
+
+// This is also supported in MSHTML
+#if 0
+	CComPtr<ILDOMElement> m_activeElement;
+#endif
+
+#if 0
+	STDMETHODIMP get_activeElement(/*[out,retval]*/ ILDOMElement* *pVal)
+	{
+		ASSERT(pVal != NULL);
+		if (pVal == NULL) return E_POINTER;
+
+		ASSERT(0);
+		*pVal = NULL;
+#if 0
+		*pVal = m_activeElement;
+		if (*pVal) (*pVal)->AddRef();
+#endif
+
+		return S_OK;
+	}
+
+	// This should only be called internally
+	STDMETHODIMP set_activeElement(/*[in]*/ ILDOMElement* newVal)
+	{
+		m_activeElement = newVal;
+		return S_OK;
+	}
+#endif
+
+#if 0
+	STDMETHOD(createNotWellformed)(/*[in]*/ BSTR data, /*[out,retval]*/ ILDOMNotWellformed* *pVal)
+	{
+		if (pVal == NULL) return E_POINTER;
+
+		CComObject<CLDOMNotWellformed>* p;
+		CComObject<CLDOMNotWellformed>::CreateInstance(&p);
+		if (p)
+		{
+			p->AddRef();
+			p->m_data = data;
+
+			p->m_ownerDocument = static_cast<T*>(this);
+
+			*pVal = p;
+		}
+		else
+			*pVal = NULL;
+
+		return S_OK;
+	}
+#endif
+
+	Node *removeChild(Node* oldChild) override
+	{
+		ASSERT(0);
+#if 0
+		CComQIPtr<ILDOMElement, &IID_ILDOMElement> element;
+		CComQIPtr<ILDOMDocumentType, &IID_ILDOMDocumentType> doctype;
+
+		if (element = oldChild)
+		{
+			ASSERT(m_documentElement != NULL);
+			m_documentElement = NULL;
+		}
+		else if (doctype = oldChild)
+		{
+			ASSERT(m_doctype != NULL);
+			m_doctype = NULL;
+		}
+#endif
+		return Node::removeChild(oldChild);
+	}
+
+	virtual Node* cloneNodeExport(Document* ownerDocument, bool deep) const;
+
+	/*
+// IHlinkSite
+	STDMETHOD(QueryService)(DWORD dwSiteData, REFGUID guidService,
+		REFIID riid, IUnknown __RPC_FAR *__RPC_FAR *ppiunk)
+	{
+		return E_NOINTERFACE;
+	}
+	STDMETHOD(GetMoniker)(DWORD dwSiteData, DWORD dwAssign,
+		DWORD dwWhich, IMoniker __RPC_FAR *__RPC_FAR *ppimk)
+	{
+		return E_NOTIMPL;
+	}
+
+	STDMETHOD(ReadyToNavigate)(DWORD dwSiteData, DWORD dwReserved)
+	{
+		return S_OK;
+	}
+
+	STDMETHOD(OnNavigationComplete)(DWORD dwSiteData, DWORD dwreserved,
+		HRESULT hrError, LPCWSTR pwzError)
+	{
+		return S_OK;
+	}
+	*/
+
+// XDM::IData
+	virtual XDM::IData* getParent() override;
+	virtual unsigned int getPosition() override;
+
+	virtual XDM::IData* getRoot() override;
+
+	virtual unsigned int getAttributeCount() override;
+	virtual Variant getAttributeValue(unsigned int index) override;
+	virtual String getAttributeName(unsigned int index) override;
+	virtual String getAttributeNamespaceURI(unsigned int index) override;
+	virtual Type* getAttributeType(unsigned int index) override;
+
+	virtual unsigned int getChildCount() override;
+	virtual bool IsChildText(unsigned int index) override;
+	virtual String getChildName(unsigned int index) override;
+	virtual String getChildNamespaceURI(unsigned int index) override;
+	virtual Type* getChildType(unsigned int index) override;
+	virtual XDM::IData* getChildElement(unsigned int index) override;
+	virtual String getChildText(unsigned int index) override;
+	virtual Object* GetObject() override;
+
+public:
+
+	CHTMLWindow* m_pWindow;
+	IDOMErrorHandler* m_errorHandler;
+	vector<Element*> m_animatedElements;
+
+	void loadDefaultStylesheet();
+
+	StyleSheetList* get_styleSheets()
+	{
+		return m_styleSheets;
+	}
+
+private:
+
+	StyleSheetList* m_styleSheets;
+
+protected:
+
+	CTOR Document();
+	virtual ~Document();
+
+protected:
+
+	friend class XMLParser;
+	friend class CHTMLWindow;
+
+	DOMImplementation* m_implementation;
+	Element* m_documentElement;
+	DocumentType* m_doctype;
+
+	String m_version;
+	String m_encoding;
+
+#if _WIN32
+	HANDLE m_hThread;
+	DWORD	m_threadID;
+#endif
+
+	String m_uri;
+	bool m_async;
+	bool m_standalone;
+};
+
+}	// Web
+}	// System
+
+#endif // Web_Document_h

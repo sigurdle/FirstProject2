@@ -1,0 +1,56 @@
+#include "stdafx.h"
+#include "LXML2.h"
+#include "EntityReference.h"
+
+#include "Entity.h"
+
+namespace System
+{
+namespace Web
+{
+
+EntityReference::EntityReference()
+{
+	m_entity = NULL;
+}
+
+EntityReference::~EntityReference()
+{
+	ASSERT(m_entity == NULL);
+}
+
+String EntityReference::get_nodeName()
+{
+	if (m_entity)
+	{
+		return m_entity->get_nodeName();
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+#if 0
+STDMETHODIMP EntityReference::get_textContent(/*[out, retval]*/ BSTR *pVal)
+{
+	ASSERT(pVal != NULL);
+	if (pVal == NULL) return E_POINTER;
+
+	/*
+	if (m_entity)
+	{
+		*pVal = m_entity->m_value.Copy();
+	}
+	else
+	{
+		*pVal = NULL;
+	}
+	*/
+
+	return S_OK;
+}
+#endif
+
+}	// w3c
+}

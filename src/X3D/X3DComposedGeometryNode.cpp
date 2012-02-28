@@ -1,0 +1,123 @@
+#include "stdafx.h"
+#include "X3D2.h"
+
+namespace System
+{
+namespace x3d
+{
+
+X3DFieldDefinition* X3DComposedGeometryNode::get_attribFieldDef()
+{
+	static X3DFieldDefinition attrib("attrib", FieldType_MFNode, SAIFieldAccess_inputOutput, offsetof(X3DComposedGeometryNode, m_attrib));
+	return &attrib;
+}
+
+TypedX3DFieldDefinition<SFBool>* X3DComposedGeometryNode::get_ccwFieldDef()
+{
+	static TypedX3DFieldDefinition<SFBool> ccw("ccw",  SAIFieldAccess_initializeOnly, offsetof(X3DComposedGeometryNode, m_ccw), true);
+	return &ccw;
+}
+
+X3DFieldDefinition* X3DComposedGeometryNode::get_colorFieldDef()
+{
+	static X3DFieldDefinition color("color", FieldType_SFNode, SAIFieldAccess_inputOutput, offsetof(X3DComposedGeometryNode, m_color));
+	return &color;
+}
+
+/*
+X3DFieldDefinition* X3DComposedGeometryNode::get_ColorIndexFieldDef()
+{
+	static X3DFieldDefinition colorIndex(WSTR("colorIndex"), FieldType_MFInt32, SAIFieldAccess_initializeOnly, offsetof(X3DComposedGeometryNode, m_colorIndex));
+	return &colorIndex;
+}
+
+X3DFieldDefinition* X3DComposedGeometryNode::get_ColorPerVertexFieldDef()
+{
+	static X3DFieldDefinition colorPerVertex(WSTR("colorPerVertex"), FieldType_SFBool, SAIFieldAccess_initializeOnly, offsetof(X3DComposedGeometryNode, m_colorPerVertex));
+	return &colorPerVertex;
+}
+
+*/
+
+X3DFieldDefinition* X3DComposedGeometryNode::get_coordFieldDef()
+{
+	static X3DFieldDefinition coord("coord", FieldType_SFNode, SAIFieldAccess_inputOutput, offsetof(X3DComposedGeometryNode, m_coord));
+	return &coord;
+}
+
+/*
+X3DFieldDefinition* X3DComposedGeometryNode::get_CreaseAngleFieldDef()
+{
+	static X3DFieldDefinition creaseAngle(WSTR("creaseAngle"), FieldType_SFFloat, SAIFieldAccess_initializeOnly, offsetof(X3DComposedGeometryNode, m_creaseAngle));
+	return &creaseAngle;
+}
+*/
+
+X3DFieldDefinition* X3DComposedGeometryNode::get_normalFieldDef()
+{
+	static X3DFieldDefinition normal("normal", FieldType_SFNode, SAIFieldAccess_inputOutput, offsetof(X3DComposedGeometryNode, m_normal));
+	return &normal;
+}
+
+/*
+X3DFieldDefinition* X3DComposedGeometryNode::get_NormalPerVertexFieldDef()
+{
+	static X3DFieldDefinition normalPerVertex(WSTR("normalPerVertex"), FieldType_SFBool, SAIFieldAccess_initializeOnly, offsetof(X3DComposedGeometryNode, m_normalPerVertex));
+	return &normalPerVertex;
+}
+*/
+
+X3DFieldDefinition* X3DComposedGeometryNode::get_texCoordFieldDef()
+{
+	static X3DFieldDefinition texCoord("texCoord", FieldType_SFNode, SAIFieldAccess_inputOutput, offsetof(X3DComposedGeometryNode, m_texCoord));
+	return &texCoord;
+}
+
+/*
+X3DFieldDefinition* X3DComposedGeometryNode::get_TexCoordIndexFieldDef()
+{
+	static X3DFieldDefinition(WSTR("texCoordIndex"), FieldType_MFInt32, SAIFieldAccess_initializeOnly, offsetof(X3DComposedGeometryNode, m_texCoordIndex));
+	return &texCoordIndex;
+}
+*/
+
+TypedX3DFieldDefinition<SFBool>* X3DComposedGeometryNode::get_solidFieldDef()
+{
+	static TypedX3DFieldDefinition<SFBool> solid("solid", SAIFieldAccess_inputOutput, offsetof(X3DComposedGeometryNode, m_solid), true);
+	return &solid;
+}
+
+NodeType* X3DComposedGeometryNode::GetNodeType()
+{
+	static X3DFieldDefinition* fields[] =
+	{
+		get_colorFieldDef(),
+		get_coordFieldDef(),
+		get_texCoordFieldDef(),
+		get_normalFieldDef(),
+		get_ccwFieldDef(),
+		get_solidFieldDef(),
+	};
+
+	static NodeType nodeType(nullptr, typeid(X3DComposedGeometryNode), fields, _countof(fields), X3DGeometryNode::GetNodeType());
+	return &nodeType;
+}
+
+X3DComposedGeometryNode::X3DComposedGeometryNode(NodeType* nodeType) : X3DGeometryNode(nodeType),
+	m_color(new TypedSFNode<X3DColorNode*>(this)),
+	m_coord(new TypedSFNode<X3DCoordinateNode*>(this)),
+	m_normal(new TypedSFNode<X3DNormalNode*>(this)),
+	m_texCoord(new TypedSFNode<X3DTextureCoordinateNode*>(this)),
+	m_ccw(new SFBool(get_ccwFieldDef(), this)),
+	m_colorPerVertex(new SFBool(this, true)),
+	m_normalPerVertex(new SFBool(this, true)),
+	m_solid(new SFBool(get_solidFieldDef(), this))
+{
+}
+
+X3DComposedGeometryNode::~X3DComposedGeometryNode()
+{
+}
+
+}	// x3d
+}	// System

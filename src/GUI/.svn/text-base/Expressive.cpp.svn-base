@@ -1,0 +1,889 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+
+GUIEXT double ToDouble(Object* obj)
+{
+		 if (obj->GetType() == typeid(DoubleObject).GetType())		return static_cast<DoubleObject*>(obj)->GetValue();
+	else if (obj->GetType() == typeid(FloatObject).GetType())		return static_cast<FloatObject*>(obj)->GetValue();
+	else if (obj->GetType() == typeid(IntObject).GetType())			return static_cast<IntObject*>(obj)->GetValue();
+	else if (obj->GetType() == typeid(BoolObject).GetType())		return static_cast<BoolObject*>(obj)->GetValue();
+	else
+	{
+		ASSERT(0);
+		raise(Exception(WSTR("Wrong type")));
+	}
+}
+
+GUIEXT float ToFloat(Object* obj)
+{
+		 if (obj->GetType() == typeid(DoubleObject).GetType())		return static_cast<DoubleObject*>(obj)->GetValue();
+	else if (obj->GetType() == typeid(FloatObject).GetType())		return static_cast<FloatObject*>(obj)->GetValue();
+	else if (obj->GetType() == typeid(IntObject).GetType())			return static_cast<IntObject*>(obj)->GetValue();
+	else if (obj->GetType() == typeid(BoolObject).GetType())		return static_cast<BoolObject*>(obj)->GetValue();
+	else
+	{
+		ASSERT(0);
+		raise(Exception(WSTR("Wrong type")));
+	}
+}
+
+GUIEXT int ToInt(Object* obj)
+{
+		 if (obj->GetType() == typeid(DoubleObject).GetType())		return static_cast<DoubleObject*>(obj)->GetValue();
+	else if (obj->GetType() == typeid(FloatObject).GetType())		return static_cast<FloatObject*>(obj)->GetValue();
+	else if (obj->GetType() == typeid(IntObject).GetType())			return static_cast<IntObject*>(obj)->GetValue();
+	else if (obj->GetType() == typeid(BoolObject).GetType())		return static_cast<BoolObject*>(obj)->GetValue();
+	else
+	{
+		ASSERT(0);
+		raise(Exception(WSTR("Wrong type")));
+	}
+}
+
+GUIEXT bool ToBool(Object* obj)
+{
+		 if (obj->GetType() == typeid(DoubleObject).GetType())		return static_cast<DoubleObject*>(obj)->GetValue() != 0;
+	else if (obj->GetType() == typeid(FloatObject).GetType())		return static_cast<FloatObject*>(obj)->GetValue() != 0;
+	else if (obj->GetType() == typeid(IntObject).GetType())			return static_cast<IntObject*>(obj)->GetValue() != 0;
+	else if (obj->GetType() == typeid(BoolObject).GetType())		return static_cast<BoolObject*>(obj)->GetValue();
+	else
+	{
+		ASSERT(0);
+		raise(Exception(WSTR("Wrong type")));
+	}
+}
+
+template<> GUIEXT int UnboxCast<int>(Object* obj)
+{
+	if (FloatObject* p = dynamic_cast<FloatObject*>(obj))
+	{
+		return int(p->GetValue());
+	}
+	else if (DoubleObject* p = dynamic_cast<DoubleObject*>(obj))
+	{
+		return int(p->GetValue());
+	}
+	else if (IntObject* p = dynamic_cast<IntObject*>(obj))
+	{
+		return p->GetValue();
+	}
+	else
+	{
+		ASSERT(0);
+		return 0;
+	}
+}
+
+template<> GUIEXT float UnboxCast<float>(Object* obj)
+{
+	if (FloatObject* p = dynamic_cast<FloatObject*>(obj))
+	{
+		return p->GetValue();
+	}
+	else if (DoubleObject* p = dynamic_cast<DoubleObject*>(obj))
+	{
+		return float(p->GetValue());
+	}
+	else if (IntObject* p = dynamic_cast<IntObject*>(obj))
+	{
+		return float(p->GetValue());
+	}
+	else
+	{
+		ASSERT(0);
+		return 0;
+	}
+}
+
+template<> GUIEXT double UnboxCast<double>(Object* obj)
+{
+	if (FloatObject* p = dynamic_cast<FloatObject*>(obj))
+	{
+		return p->GetValue();
+	}
+	else if (DoubleObject* p = dynamic_cast<DoubleObject*>(obj))
+	{
+		return p->GetValue();
+	}
+	else if (IntObject* p = dynamic_cast<IntObject*>(obj))
+	{
+		return double(p->GetValue());
+	}
+	else
+	{
+		ASSERT(0);
+		return 0;
+	}
+}
+
+namespace Expressive
+{
+
+_object::_object(const expression& exp) : expression(exp)
+{
+	if (exp.m_p == NULL)
+	{
+		ASSERT(0);
+	}
+
+//	ASSERT((int)p != 0xcccccccc);
+}
+
+_object::~_object()
+{
+}
+
+Expression* MinusUnaryExpression::GetInverseExpression()
+{
+	return m_exp;
+}
+
+Object* MinusUnaryExpression::Evaluate(EvalContext* context)
+{
+	Object* exp = m_exp->Evaluate(context);
+
+	if (exp->GetType() == typeid(DoubleObject).GetType())
+	{
+		return DoubleObject::GetObject(-static_cast<DoubleObject*>(exp)->GetValue());
+	}
+	else if (exp->GetType() == typeid(FloatObject).GetType())
+	{
+		return FloatObject::GetObject(-static_cast<FloatObject*>(exp)->GetValue());
+	}
+	else if (exp->GetType() == typeid(IntObject).GetType())
+	{
+		return IntObject::GetObject(-static_cast<IntObject*>(exp)->GetValue());
+	}
+
+	return NULL;
+}
+
+int MinusUnaryExpression::EvaluateInt(EvalContext* context)
+{
+	ASSERT(m_pType == typeid(int));
+	return - m_exp->EvaluateInt(context);
+}
+
+float MinusUnaryExpression::EvaluateFloat(EvalContext* context)
+{
+	ASSERT(m_pType == typeid(float));
+	return - m_exp->EvaluateFloat(context);
+}
+
+double MinusUnaryExpression::EvaluateDouble(EvalContext* context)
+{
+	ASSERT(m_pType == typeid(double));
+	return - m_exp->EvaluateDouble(context);
+}
+
+Expression* NotUnaryExpression::GetInverseExpression()
+{
+	return m_exp;
+}
+
+Object* NotUnaryExpression::Evaluate(EvalContext* context)
+{
+	Object* exp = m_exp->Evaluate(context);
+
+	if (exp->GetType() == typeid(BoolObject).GetType())
+	{
+		return BoolObject::GetObject(!static_cast<BoolObject*>(exp)->GetValue());
+	}
+
+	/*
+	if (exp->GetType() == typeid(DoubleObject).GetType())
+	{
+		return DoubleObject::GetObject(-static_cast<DoubleObject*>(exp)->GetValue());
+	}
+	else if (exp->GetType() == typeid(FloatObject).GetType())
+	{
+		return FloatObject::GetObject(-static_cast<FloatObject*>(exp)->GetValue());
+	}
+	else if (exp->GetType() == typeid(IntObject).GetType())
+	{
+		return IntObject::GetObject(-static_cast<IntObject*>(exp)->GetValue());
+	}
+	*/
+
+	ASSERT(0);
+	return NULL;
+}
+
+bool NotUnaryExpression::EvaluateBool(EvalContext* context)
+{
+	return !m_exp->EvaluateBool(context);
+}
+
+void BinaryExpression::TraceCallback(EvalContext* context, ExpTrace& trace, ITraceCallback* callback)
+{
+//	TRACE("(");
+	m_left->TraceCallback(context, ExpTrace(trace, this), callback);
+//	PrintOp(Std::get_Out());
+	m_right->TraceCallback(context, ExpTrace(trace, this), callback);
+//	TRACE(")");
+}
+
+Expression* AddBinaryExpression::GetInverseExpression()
+{
+	ASSERT(0);
+	return NULL;
+}
+
+bool EQRelationalExpression::Set(EvalContext* context, Object* objvalue)
+{
+	if (m_left->GetKind() == Kind_CONST)
+	{
+		bool value = ToBool(objvalue) == ToBool(m_left->Evaluate(NULL));
+		m_right->Set(context, box_cast(value));
+	}
+	else if (m_right->GetKind() == Kind_CONST)
+	{
+		bool value = ToBool(objvalue) == ToBool(m_right->Evaluate(NULL));
+		m_left->Set(context, box_cast(value));
+	}
+	else
+	{
+		// TODO must use constraints
+		ASSERT(0);
+		return false;
+	}
+
+	return true;
+}
+
+bool NEQRelationalExpression::Set(EvalContext* context, Object* objvalue)
+{
+	if (m_left->GetKind() == Kind_CONST)
+	{
+		bool value = ToBool(objvalue) != ToBool(m_left->Evaluate(NULL));
+		m_right->Set(context, box_cast(value));
+	}
+	else if (m_right->GetKind() == Kind_CONST)
+	{
+		bool value = ToBool(objvalue) != ToBool(m_right->Evaluate(NULL));
+		m_left->Set(context, box_cast(value));
+	}
+	else
+	{
+		// TODO must use constraints
+		ASSERT(0);
+		return false;
+	}
+
+	return true;
+}
+
+bool NotUnaryExpression::Set(EvalContext* context, Object* objvalue)
+{
+	bool value = ToBool(objvalue);
+	m_exp->Set(context, box_cast(!value));
+
+	return true;
+}
+
+bool MinusUnaryExpression::Set(EvalContext* context, Object* objvalue)
+{
+	float value = ToFloat(objvalue);
+	m_exp->Set(context, box_cast(-value));
+
+	return true;
+}
+
+bool AddBinaryExpression::Set(EvalContext* context, Object* objvalue)
+{
+	if (m_left->GetKind() == Kind_CONST)
+	{
+		float value = ToFloat(objvalue) - ToFloat(m_left->Evaluate(NULL));
+		m_right->Set(context, box_cast(value));
+	}
+	else if (m_right->GetKind() == Kind_CONST)
+	{
+		float value = ToFloat(objvalue) - ToFloat(m_right->Evaluate(NULL));
+		m_left->Set(context, box_cast(value));
+	}
+	else
+	{
+		// TODO must use constraints
+		ASSERT(0);
+		return false;
+	}
+
+	return true;
+}
+
+bool AddBinaryExpression::Set(EvalContext* context, float value)
+{
+	if (m_left->GetKind() == Kind_CONST)
+	{
+		float value2 = value - m_left->EvaluateT<float>(NULL);
+		m_right->Set(context, value2);
+	}
+	else if (m_right->GetKind() == Kind_CONST)
+	{
+		float value2 = value - m_right->EvaluateT<float>(NULL);
+		m_left->Set(context, value2);
+	}
+	else
+	{
+		// TODO must use constraints
+		ASSERT(0);
+		return false;
+	}
+
+	return true;
+}
+
+bool SubtractBinaryExpression::Set(EvalContext* context, Object* objvalue)
+{
+	if (m_left->GetKind() == Kind_CONST)
+	{
+		float value = -ToFloat(objvalue) + ToFloat(m_left->Evaluate(NULL));
+		m_right->Set(context, box_cast(value));
+	}
+	else if (m_right->GetKind() == Kind_CONST)
+	{
+		float value = ToFloat(objvalue) + ToFloat(m_right->Evaluate(NULL));
+		m_left->Set(context, box_cast(value));
+	}
+	else
+	{
+		// TODO must use constraints
+		ASSERT(0);
+		return false;
+	}
+
+	return true;
+}
+
+bool MultiplyBinaryExpression::Set(EvalContext* context, Object* objvalue)
+{
+	if (m_left->GetKind() == Kind_CONST)
+	{
+		float value = ToFloat(objvalue) / ToFloat(m_left->Evaluate(NULL));
+		m_right->Set(context, box_cast(value));
+	}
+	else if (m_right->GetKind() == Kind_CONST)
+	{
+		float value = ToFloat(objvalue) / ToFloat(m_right->Evaluate(NULL));
+		m_left->Set(context, box_cast(value));
+	}
+	else
+	{
+		// TODO must use constraints
+		ASSERT(0);
+		return false;
+	}
+
+	return true;
+}
+
+bool DivideBinaryExpression::Set(EvalContext* context, Object* objvalue)
+{
+	if (m_left->GetKind() == Kind_CONST)
+	{
+		float value = ToFloat(objvalue) / ToFloat(m_left->Evaluate(NULL));
+		m_right->Set(context, box_cast(value));
+	}
+	else if (m_right->GetKind() == Kind_CONST)
+	{
+		float value = ToFloat(objvalue) * ToFloat(m_right->Evaluate(NULL));
+		m_left->Set(context, box_cast(value));
+	}
+	else
+	{
+		// TODO must use constraints
+		ASSERT(0);
+		return false;
+	}
+
+	return true;
+}
+
+void StaticObjectExpression::TraceCallback(EvalContext* context, ExpTrace& trace, ITraceCallback* callback)
+{
+	/*
+	if (m_obj)
+	{
+		DebugTrace("obj" << paren(m_obj->GetType()->get_QName()));//  m_obj);
+	}
+	else
+	{
+		DebugTrace("obj(null)");
+	}
+	*/
+}
+
+void ThisExpression::TraceCallback(EvalContext* context, ExpTrace& trace, ITraceCallback* callback)
+{
+//	DebugTrace("this");
+}
+
+Object* AddBinaryExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	if (left->GetType() == typeid(DoubleObject).GetType() || right->GetType() == typeid(DoubleObject).GetType())
+	{
+		return DoubleObject::GetObject(ToDouble(left) + ToDouble(right));
+	}
+	else if (left->GetType() == typeid(FloatObject).GetType() || right->GetType() == typeid(FloatObject).GetType())
+	{
+		return FloatObject::GetObject(ToFloat(left) + ToFloat(right));
+	}
+	else if (left->GetType() == typeid(IntObject).GetType() || right->GetType() == typeid(IntObject).GetType())
+	{
+		return IntObject::GetObject(ToInt(left) + ToInt(right));
+	}
+
+	return NULL;
+}
+
+int AddBinaryExpression::EvaluateInt(EvalContext* context)
+{
+	ASSERT(m_pType == typeid(int));
+
+	int left = m_left->EvaluateInt(context);
+	int right = m_right->EvaluateInt(context);
+	return left + right;
+}
+
+float AddBinaryExpression::EvaluateFloat(EvalContext* context)
+{
+	ASSERT(m_pType == typeid(float));
+
+	float left = m_left->EvaluateFloat(context);
+	float right = m_right->EvaluateFloat(context);
+	return left + right;
+}
+
+double AddBinaryExpression::EvaluateDouble(EvalContext* context)
+{
+	ASSERT(m_pType == typeid(double));
+
+	double left = m_left->EvaluateDouble(context);
+	double right = m_right->EvaluateDouble(context);
+	return left + right;
+}
+
+int SubtractBinaryExpression::EvaluateInt(EvalContext* context)
+{
+	ASSERT(m_pType == typeid(int));
+
+	int left = m_left->EvaluateInt(context);
+	int right = m_right->EvaluateInt(context);
+	return left - right;
+}
+
+float SubtractBinaryExpression::EvaluateFloat(EvalContext* context)
+{
+	ASSERT(m_pType == typeid(float));
+
+	float left = m_left->EvaluateFloat(context);
+	float right = m_right->EvaluateFloat(context);
+	return left - right;
+}
+
+double SubtractBinaryExpression::EvaluateDouble(EvalContext* context)
+{
+	ASSERT(m_pType == typeid(double));
+
+	double left = m_left->EvaluateDouble(context);
+	double right = m_right->EvaluateDouble(context);
+	return left - right;
+}
+
+Expression* SubtractBinaryExpression::GetInverseExpression()
+{
+	ASSERT(0);
+	return NULL;
+}
+
+Object* SubtractBinaryExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	if (left->GetType() == typeid(DoubleObject).GetType() || right->GetType() == typeid(DoubleObject).GetType())
+	{
+		return DoubleObject::GetObject(ToDouble(left) - ToDouble(right));
+	}
+	else if (left->GetType() == typeid(FloatObject).GetType() || right->GetType() == typeid(FloatObject).GetType())
+	{
+		return FloatObject::GetObject(ToFloat(left) - ToFloat(right));
+	}
+	else if (left->GetType() == typeid(IntObject).GetType() || right->GetType() == typeid(IntObject).GetType())
+	{
+		return IntObject::GetObject(ToInt(left) - ToInt(right));
+	}
+
+	return NULL;
+}
+
+Object* MultiplyBinaryExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	if (left->GetType() == typeid(DoubleObject).GetType() || right->GetType() == typeid(DoubleObject).GetType())
+	{
+		return DoubleObject::GetObject(ToDouble(left) * ToDouble(right));
+	}
+	else if (left->GetType() == typeid(FloatObject).GetType() || right->GetType() == typeid(FloatObject).GetType())
+	{
+		return FloatObject::GetObject(ToFloat(left) * ToFloat(right));
+	}
+	else if (left->GetType() == typeid(IntObject).GetType() || right->GetType() == typeid(IntObject).GetType())
+	{
+		return IntObject::GetObject(ToInt(left) * ToInt(right));
+	}
+
+	return NULL;
+}
+
+Object* DivideBinaryExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	if (left->GetType() == typeid(DoubleObject).GetType() || right->GetType() == typeid(DoubleObject).GetType())
+	{
+		return DoubleObject::GetObject(ToDouble(left) / ToDouble(right));
+	}
+	else if (left->GetType() == typeid(FloatObject).GetType() || right->GetType() == typeid(FloatObject).GetType())
+	{
+		return FloatObject::GetObject(ToFloat(left) / ToFloat(right));
+	}
+	else if (left->GetType() == typeid(IntObject).GetType() || right->GetType() == typeid(IntObject).GetType())
+	{
+		return IntObject::GetObject(ToInt(left) / ToInt(right));
+	}
+
+	return NULL;
+}
+
+Object* ModulusBinaryExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+//	if (left->GetType() == typeid(IntObject).GetType() && right->GetType() == typeid(IntObject).GetType())
+	{
+		return IntObject::GetObject(ToInt(left) % ToInt(right));
+	}
+
+	return NULL;
+}
+
+Object* BitwiseOrBinaryExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	ASSERT(0);
+
+	return NULL;
+}
+
+Object* BitwiseAndBinaryExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	ASSERT(0);
+
+	return NULL;
+}
+
+Object* BitwiseXorBinaryExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	ASSERT(0);
+
+	return NULL;
+}
+
+Object* EQRelationalExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	if (left->GetType() == typeid(DoubleObject).GetType() || right->GetType() == typeid(DoubleObject).GetType())
+	{
+		return BoolObject::GetObject(ToDouble(left) == ToDouble(right));
+	}
+	else if (left->GetType() == typeid(FloatObject).GetType() || right->GetType() == typeid(FloatObject).GetType())
+	{
+		return BoolObject::GetObject(ToFloat(left) == ToFloat(right));
+	}
+	else if (left->GetType() == typeid(IntObject).GetType() || right->GetType() == typeid(IntObject).GetType())
+	{
+		return BoolObject::GetObject(ToInt(left) == ToInt(right));
+	}
+
+	ASSERT(0);
+	return NULL;
+}
+
+Object* NEQRelationalExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	if (left->GetType() == typeid(DoubleObject).GetType() || right->GetType() == typeid(DoubleObject).GetType())
+	{
+		return BoolObject::GetObject(ToDouble(left) != ToDouble(right));
+	}
+	else if (left->GetType() == typeid(FloatObject).GetType() || right->GetType() == typeid(FloatObject).GetType())
+	{
+		return BoolObject::GetObject(ToFloat(left) != ToFloat(right));
+	}
+	else if (left->GetType() == typeid(IntObject).GetType() || right->GetType() == typeid(IntObject).GetType())
+	{
+		return BoolObject::GetObject(ToInt(left) != ToInt(right));
+	}
+
+	ASSERT(0);
+	return NULL;
+}
+
+Object* LTRelationalExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	if (left->GetType() == typeid(DoubleObject).GetType() || right->GetType() == typeid(DoubleObject).GetType())
+	{
+		return BoolObject::GetObject(ToDouble(left) < ToDouble(right));
+	}
+	else if (left->GetType() == typeid(FloatObject).GetType() || right->GetType() == typeid(FloatObject).GetType())
+	{
+		return BoolObject::GetObject(ToFloat(left) < ToFloat(right));
+	}
+	else if (left->GetType() == typeid(IntObject).GetType() || right->GetType() == typeid(IntObject).GetType())
+	{
+		return BoolObject::GetObject(ToInt(left) < ToInt(right));
+	}
+
+	ASSERT(0);
+	return NULL;
+}
+
+Object* LTEQRelationalExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	if (left->GetType() == typeid(DoubleObject).GetType() || right->GetType() == typeid(DoubleObject).GetType())
+	{
+		return BoolObject::GetObject(ToDouble(left) <= ToDouble(right));
+	}
+	else if (left->GetType() == typeid(FloatObject).GetType() || right->GetType() == typeid(FloatObject).GetType())
+	{
+		return BoolObject::GetObject(ToFloat(left) <= ToFloat(right));
+	}
+	else if (left->GetType() == typeid(IntObject).GetType() || right->GetType() == typeid(IntObject).GetType())
+	{
+		return BoolObject::GetObject(ToInt(left) <= ToInt(right));
+	}
+
+	ASSERT(0);
+	return NULL;
+}
+
+Object* GTRelationalExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	if (left->GetType() == typeid(DoubleObject).GetType() || right->GetType() == typeid(DoubleObject).GetType())
+	{
+		return BoolObject::GetObject(ToDouble(left) > ToDouble(right));
+	}
+	else if (left->GetType() == typeid(FloatObject).GetType() || right->GetType() == typeid(FloatObject).GetType())
+	{
+		return BoolObject::GetObject(ToFloat(left) > ToFloat(right));
+	}
+	else if (left->GetType() == typeid(IntObject).GetType() || right->GetType() == typeid(IntObject).GetType())
+	{
+		return BoolObject::GetObject(ToInt(left) > ToInt(right));
+	}
+
+	return NULL;
+}
+
+Object* GTEQRelationalExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	if (left->GetType() == typeid(DoubleObject).GetType() || right->GetType() == typeid(DoubleObject).GetType())
+	{
+		return BoolObject::GetObject(ToDouble(left) >= ToDouble(right));
+	}
+	else if (left->GetType() == typeid(FloatObject).GetType() || right->GetType() == typeid(FloatObject).GetType())
+	{
+		return BoolObject::GetObject(ToFloat(left) >= ToFloat(right));
+	}
+	else if (left->GetType() == typeid(IntObject).GetType() || right->GetType() == typeid(IntObject).GetType())
+	{
+		return BoolObject::GetObject(ToInt(left) >= ToInt(right));
+	}
+
+	ASSERT(0);
+	return NULL;
+}
+
+Object* LogicalOrExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	/*
+	if (left->GetType() == typeid(DoubleObject).GetType() || right->GetType() == typeid(DoubleObject).GetType())
+	{
+		return BoolObject::GetObject(ToDouble(left) || ToDouble(right));
+	}
+	else if (left->GetType() == typeid(FloatObject).GetType() || right->GetType() == typeid(FloatObject).GetType())
+	{
+		return BoolObject::GetObject(ToFloat(left) || ToFloat(right));
+	}
+	else if (left->GetType() == typeid(IntObject).GetType() || right->GetType() == typeid(IntObject).GetType())
+	{
+		return BoolObject::GetObject(ToInt(left) || ToInt(right));
+	}
+	else
+		*/
+	ASSERT(left->GetType() == typeid(BoolObject).GetType());
+	ASSERT(right->GetType() == typeid(BoolObject).GetType());
+
+	return BoolObject::GetObject(ToBool(left) || ToBool(right));
+}
+
+Object* LogicalAndExpression::Evaluate(EvalContext* context)
+{
+	Object* left = m_left->Evaluate(context);
+	Object* right = m_right->Evaluate(context);
+
+	/*
+	if (left->GetType() == typeid(DoubleObject).GetType() || right->GetType() == typeid(DoubleObject).GetType())
+	{
+		return BoolObject::GetObject(ToDouble(left) && ToDouble(right));
+	}
+	else if (left->GetType() == typeid(FloatObject).GetType() || right->GetType() == typeid(FloatObject).GetType())
+	{
+		return BoolObject::GetObject(ToFloat(left) && ToFloat(right));
+	}
+	else if (left->GetType() == typeid(IntObject).GetType() || right->GetType() == typeid(IntObject).GetType())
+	{
+		return BoolObject::GetObject(ToInt(left) && ToInt(right));
+	}
+*/
+	ASSERT(left->GetType() == typeid(BoolObject).GetType());
+	ASSERT(right->GetType() == typeid(BoolObject).GetType());
+
+	return BoolObject::GetObject(ToBool(left) && ToBool(right));
+}
+
+Object* ConditionalExpression::Evaluate(EvalContext* context)
+{
+	bool test = ToBool(m_testExp->Evaluate(context));
+
+	if (test)
+		return m_trueExp->Evaluate(context);
+	else
+		return m_falseExp->Evaluate(context);
+}
+
+IO::TextWriter& StaticObjectExpression::WriteMLString(IO::TextWriter& stream, map<Object*,int>& defs)
+{
+	if (Gui::DependencyObject* depobj = dynamic_cast<Gui::DependencyObject*>(m_obj))
+	{
+		depobj->WriteMLString(stream, defs);
+	}
+	else
+	{
+		stream << "(object)";
+	}
+
+	return stream;
+}
+
+#if 0
+Object* FunctionCall0Expression::Evaluate(EvalContext* context)
+{
+	/*
+	IFunctionT1<float, DependencyObject*>* function = dynamic_cast<IFunctionT1<float, DependencyObject*>*>(m_function);
+	ASSERT(function);
+	return box_cast(function->call(context->m_this));
+	*/
+
+	ASSERT(0);
+	return NULL;
+}
+#endif
+
+/*
+Object* IDRefExpression::Evaluate(EvalContext* context)
+{
+	return context->m_defs.find(m_id)->second;
+}
+*/
+
+Object* GetMemberByOffsetExpression::Evaluate(EvalContext* context)
+{
+	ASSERT(0);
+	return NULL;
+}
+
+Object* ThisExpression::Evaluate(EvalContext* context)
+{
+	return context->m_this;
+}
+
+GetPropertyExpression::GetPropertyExpression(Expression* object) : m_object(object)
+{
+	if (object == NULL)
+	{
+		ASSERT(0);
+	}
+
+	ASSERT((int)m_object != 0xcccccccc);
+}
+
+ThisExpression ThisExpression::s_thisExp;
+
+//AThisExpression AThisExpression::s_thisExp;
+
+_object _object::s_this(&ThisExpression::s_thisExp);
+
+const _object& _object::get_this()
+{
+	s_this.m_p = &ThisExpression::s_thisExp;	// In case ctor not yet called
+	return s_this;
+}
+
+Object* GetVariableExpression::Evaluate(EvalContext* context)
+{
+	map<String,Object*>::iterator it = context->m_variables.find(m_varName);
+	if (it != context->m_variables.end())
+	{
+		return it->second;
+	}
+	else
+		return NULL;
+}
+
+ConstExpression<bool> ConstExpression<bool>::True(true);
+ConstExpression<bool> ConstExpression<bool>::False(false);
+
+//AConstExpression<bool> AConstExpression<bool>::True(true);
+//AConstExpression<bool> AConstExpression<bool>::False(false);
+
+}	// Expressive
+}	// System

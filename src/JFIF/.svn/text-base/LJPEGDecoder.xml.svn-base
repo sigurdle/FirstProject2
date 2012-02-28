@@ -1,0 +1,20 @@
+<filter name="JPEG Parser">
+ <inputpin name="Stream Input" minOccurs="1" maxOccurs="1">
+   <mediatypes>
+	 <mediatype majortype="Stream">
+	   <streamcontent>
+		 <match>
+ 	     <pattern value="FFD8" />
+		 </match>
+		</streamcontent>
+	 </mediatype>
+ 	</mediatypes>
+ </inputpin>
+
+ <outputpin name="Image Output" minOccurs="1" maxOccurs="1">
+	<mediatypes>
+	 <mediatype majortype="Video" />
+	</mediatypes>
+ </outputpin>
+
+</filter>

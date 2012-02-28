@@ -1,0 +1,63 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+Object* GetDPByExpExpression::Evaluate(Expressive::EvalContext* context)
+{
+	Object* obj = m_object->Evaluate(context);
+	DependencyObject* depObj = dynamic_cast<DependencyObject*>(obj);
+	if (depObj == NULL)
+	{
+		VERIFY(0);
+	}
+	Object* propertyRef = m_exp->Evaluate(context);
+
+	PropertyValue* pProperty;
+
+	if (propertyRef->GetType() == typeof(StringW))
+		pProperty = depObj->GetProperty(depObj->GetClass()->GetLocalProperty(static_cast<StringW*>(propertyRef)));
+	else if (propertyRef->GetType() == typeof(IntObject))
+		pProperty = depObj->GetProperty(depObj->GetClass()->GetLocalProperty(unbox_cast<int>(propertyRef)));
+	else
+		throw new Exception(WSTR("property not found"));
+
+	return pProperty->GetComputedObjectValue();
+}
+
+bool GetDPByExpExpression::Set(Expressive::EvalContext* context, Object* value)
+{
+	Object* obj = m_object->Evaluate(context);
+	DependencyObject* depObj = dynamic_cast<DependencyObject*>(obj);
+	if (depObj == NULL)
+	{
+		VERIFY(0);
+	}
+	Object* propertyRef = m_exp->Evaluate(context);
+
+	PropertyValue* pProperty;
+
+	if (propertyRef->GetType() == typeof(StringW))
+		pProperty = depObj->GetProperty(depObj->GetClass()->GetLocalProperty(static_cast<StringW*>(propertyRef)));
+	else if (propertyRef->GetType() == typeof(IntObject))
+		pProperty = depObj->GetProperty(depObj->GetClass()->GetLocalProperty(unbox_cast<int>(propertyRef)));
+	else
+		raise(Exception(WSTR("property not found")));
+
+	pProperty->UpdateObjectValue(value);
+	return true;
+}
+
+void GetDPByExpExpression::TraceCallback(Expressive::EvalContext* context, Expressive::ExpTrace& trace, Expressive::ITraceCallback* callback)
+{
+	m_object->TraceCallback(context, Expressive::ExpTrace(trace, this), callback);
+	DebugTrace(".getPropertyByExp(");
+	m_exp->TraceCallback(context, Expressive::ExpTrace(trace, this), callback);
+	DebugTrace(")");
+}
+
+}	// Gui
+}	// System

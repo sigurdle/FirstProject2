@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS
+END
+StyleSheet.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/StyleSheet.h
+END
+CSSSelector.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/CSSSelector.h
+END
+stdafx.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/stdafx.h
+END
+CSSCharsetRule.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/CSSCharsetRule.h
+END
+CSSUnknownRule.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/CSSUnknownRule.h
+END
+CSSStyleRule.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/CSSStyleRule.h
+END
+CSSStyleSheet.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/CSSStyleSheet.h
+END
+CSSCommentRule.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/CSSCommentRule.h
+END
+targetver.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/targetver.h
+END
+CSSStream.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/CSSStream.h
+END
+CSSImportRule.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/CSSImportRule.h
+END
+CSSRuleList.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/CSSRuleList.h
+END
+CSSRule.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/CSSRule.h
+END
+CSSMediaRule.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/CSSMediaRule.h
+END
+ViewCSS.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/ViewCSS.h
+END
+CSSSelectorList.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/CSSSelectorList.h
+END
+CSSFontFaceRule.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/CSSFontFaceRule.h
+END
+CSS.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/firstproject2/!svn/ver/44/FirstProject2/trunk/include/CSS/CSS.h
+END

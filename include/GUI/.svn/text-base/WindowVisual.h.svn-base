@@ -1,0 +1,328 @@
+#ifdef __LERSTAD__
+
+typedef struct _POINTL      /* ptl  */
+{
+    LONG  x;
+    LONG  y;
+} POINTL, *PPOINTL;
+
+#endif
+
+#ifdef __LERSTAD__
+struct HELPINFO;
+#endif
+
+namespace System
+{
+namespace Gui
+{
+
+interface IPostMessage
+{
+	virtual void PostMessage(const MSG* msg) abstract;
+};
+
+interface IWindow
+{
+	virtual void OnMouseButtonDown(gm::PointF clientMousePos, int button) abstract;
+	virtual void OnMouseButtonDblClk(gm::PointF clientMousePos, int button) abstract;
+	virtual void OnMouseButtonUp(gm::PointF clientMousePos, int button) abstract;
+	virtual void OnMouseMove(gm::PointF clientMousePos) abstract;
+	virtual bool OnSetCursor(UINT hitTest, POINT screenMousePos) abstract;
+	virtual void OnKeyDown(UINT wParam, UINT lParam) abstract;
+	virtual void OnChar(UINT wParam, UINT lParam) abstract;
+	virtual void OnWindowPosChanged(float left, float top) abstract;
+	virtual void OnWindowSizeChanged(float width, float height) abstract;
+	virtual void OnWindowRectChanged(float left, float top, float width, float height) abstract;
+	virtual void OnHelp(HELPINFO* helpinfo) abstract;
+#ifndef __LERSTAD__
+	virtual HRESULT DragEnter(::IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) abstract;
+	virtual HRESULT DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) abstract;
+	virtual HRESULT DragLeave() abstract;
+	virtual HRESULT Drop(::IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) abstract;
+#else
+	virtual HRESULT DragEnter(__IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) abstract;
+	virtual HRESULT DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) abstract;
+	virtual HRESULT DragLeave() abstract;
+	virtual HRESULT Drop(__IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) abstract;
+#endif
+};
+
+class GUIEXT WindowVisual : public ContentControl, public IRootVisual, public IPostMessage, public IWindow
+{
+public:
+
+	CTOR WindowVisual();
+	CTOR WindowVisual(Object* content);
+	CTOR WindowVisual(Object* content, gm::SizeF size);
+
+	virtual String ToString() override;
+
+//	virtual uint GetChildrenCount() override;
+//	virtual UIElement* GetChild(uint index) override;
+//	virtual void AddChild(UIElement* element);
+
+	virtual void PostMessage(const MSG* msg) override;	// IPostMessage
+
+	virtual void InvalidateRender() override;	// IRootVisual
+	virtual OleContainer* GetOleContainer() override;	// IRootVisual
+	virtual Graphics::GraphicsI* GetGI() override;	// IRootVisual
+	virtual bool ElementCaptureMouse(UIElement* element) override;	// IRootVisual
+	virtual bool ElementReleaseMouseCapture(UIElement* element) override;	// IRootVisual
+	virtual void ElementSetMouseCursor(UIElement* element) override;	// IRootVisual
+	virtual void ElementSetFocus(UIElement* element) override;	// IRootVisual
+
+	virtual void OnMouseButtonDown(gm::PointF clientMousePos, int button) override;
+	virtual void OnMouseButtonDblClk(gm::PointF clientMousePos, int button) override;
+	virtual void OnMouseButtonUp(gm::PointF clientMousePos, int button) override;
+	virtual void OnMouseMove(gm::PointF clientMousePos) override;
+	virtual bool OnSetCursor(UINT hitTest, POINT screenMousePos) override;
+	virtual void OnKeyDown(UINT wParam, UINT lParam) override;
+	virtual void OnChar(UINT wParam, UINT lParam) override;
+	virtual void OnWindowPosChanged(float left, float top) override;
+	virtual void OnWindowSizeChanged(float width, float height) override;
+	virtual void OnWindowRectChanged(float left, float top, float width, float height) override;
+	virtual void OnHelp(HELPINFO* helpinfo) override;
+
+	virtual HRESULT DragEnter(__IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) override;
+	virtual HRESULT DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) override;
+	virtual HRESULT DragLeave() override;
+	virtual HRESULT Drop(__IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) override;
+
+	virtual gm::SizeF GetSize();
+	virtual gm::RectI GetRect();
+
+	virtual void OnComputedPropertyValueChanged(PropertyValue* pPropertyVal, bool handled) override;
+	virtual void OnComputedPropertyValueChanging(PropertyValue* pPropertyVal, Object* oldValue, Object* newValue, bool handled) override;
+	virtual Object* GetLocalPropertyValue(PropertyValue* pPropertyVal) override;
+
+	bool Show();
+	void Hide();
+	void Minimize();
+	void Maximize();
+	void Restore();
+
+	Graphics::Bitmap* GetContentBitmap();
+	Graphics::Bitmap* GetDepthBitmap();
+
+	RectBorder GetBorders();
+
+	float GetBorderLeft();
+	float GetBorderTop();
+	float GetBorderRight();
+	float GetBorderBottom();
+	float GetBorderLeftRight();
+	float GetBorderTopBottom();
+
+	PlatformWindow* get_PWindow()
+	{
+		return m_platformWindow;
+	}
+
+	DEFINE_THIS(_WindowVisual)
+
+	PlatformWindow* m_platformWindow;
+	OleContainer* m_oleContainer;
+
+	UIElement* m_MouseOverElement;
+	UIElement* m_FocusElement;
+	UIElement* m_MouseCaptureElement;
+	UIElement* m_DragOverElement;
+
+	bool m_inSizeMove;
+
+	ComPtr<IDropTargetHelper> m_dropTargetHelper;
+
+	// TODO, this should follow same node input/output as everything else??
+	list<WindowVisual*> m_popups;
+	list<WindowVisual*>::iterator m_owner_it;
+
+	Event1<WindowVisual*> OnMove;
+	Event1<WindowVisual*> OnSize;
+	Event1<WindowVisual*> OnSizing;
+	Event1<WindowVisual*> OnEnterSize;
+	Event1<WindowVisual*> OnExitSize;
+
+	static Window* FromHwnd(HWND hWnd);
+
+	static ValueBinding<Window*> ActiveWindowBinding;
+	static ValueBinding<Window*> ForegroundWindowBinding;
+	static ValueBinding<Window*> FocusWindowBinding;
+
+	static List<WindowVisual*>& get_All()
+	{
+		return s_windows;
+	}
+
+	static List<WindowVisual*> s_windows;
+
+	static unordered_map<HWND,Window*> m_windows;
+
+	DEPENDENCY_CLASS(WindowVisual, ContentControl)
+
+	DEPENDENCY_PROPERTY(float, Left)
+	DEPENDENCY_PROPERTY(float, Top)
+//	DEPENDENCY_PROPERTY(float, Width)
+//	DEPENDENCY_PROPERTY(float, Height)
+	DEPENDENCY_PROPERTY(bool, Topmost)
+	DEPENDENCY_PROPERTY(String, TitleText)
+	DEPENDENCY_PROPERTY(Element*, Icon)
+	DEPENDENCY_PROPERTY(Geometry*, Clip)
+//	DEPENDENCY_PROPERTY(UIElement*, Child)
+	DEPENDENCY_PROPERTY(WindowVisual*, Owner)
+	DEPENDENCY_PROPERTY(int, State)
+
+	DEPENDENCY_PROPERTY(bool, CanMinimize)
+	DEPENDENCY_PROPERTY(bool, CanMaximize)
+	DEPENDENCY_PROPERTY(bool, CanClose)
+	DEPENDENCY_PROPERTY(bool, HasContextHelp)
+
+	DEPENDENCY_PROPERTY(bool, InSizeMove)
+
+	DEPENDENCY_PROPERTY(String, RT)
+
+// Computed properties
+	DEPENDENCY_PROPERTY(float, Right)
+	DEPENDENCY_PROPERTY(float, Bottom)
+	DEPENDENCY_PROPERTY(float, ClientLeft)
+	DEPENDENCY_PROPERTY(float, ClientTop)
+	DEPENDENCY_PROPERTY(float, ClientRight)
+	DEPENDENCY_PROPERTY(float, ClientBottom)
+	DEPENDENCY_PROPERTY(float, ClientWidth)
+	DEPENDENCY_PROPERTY(float, ClientHeight)
+
+private:
+
+	void Init();
+
+	__IDataObject* m_pDataObject;
+};
+
+class GUIEXT _WindowVisual : public _UIElement
+{
+public:
+
+	CTOR _WindowVisual(const Expressive::expression& exp) : _UIElement(exp)
+	{
+	}
+
+	Expressive::methodcall0<float> getBorderLeft() const
+	{
+		return new Expressive::MethodCall0Expression<float>(*this, GetDispatch(typeid(WindowVisual).GetType()->GetClass())->GetMethod(ASTR("GetBorderLeft")));
+	}
+
+	Expressive::methodcall0<float> getBorderTop() const
+	{
+		return new Expressive::MethodCall0Expression<float>(*this, GetDispatch(typeid(WindowVisual).GetType()->GetClass())->GetMethod(ASTR("GetBorderTop")));
+	}
+
+	Expressive::methodcall0<float> getBorderRight() const
+	{
+		return new Expressive::MethodCall0Expression<float>(*this, GetDispatch(typeid(WindowVisual).GetType()->GetClass())->GetMethod(ASTR("GetBorderRight")));
+	}
+
+	Expressive::methodcall0<float> getBorderBottom() const
+	{
+		return new Expressive::MethodCall0Expression<float>(*this, GetDispatch(typeid(WindowVisual).GetType()->GetClass())->GetMethod(ASTR("GetBorderBottom")));
+	}
+
+	Expressive::methodcall0<float> getBorderLeftRight() const
+	{
+		return new Expressive::MethodCall0Expression<float>(*this, GetDispatch(typeid(WindowVisual).GetType()->GetClass())->GetMethod(ASTR("GetBorderLeftRight")));
+	}
+
+	Expressive::methodcall0<float> getBorderTopBottom() const
+	{
+		return new Expressive::MethodCall0Expression<float>(*this, GetDispatch(typeid(WindowVisual).GetType()->GetClass())->GetMethod(ASTR("GetBorderTopBottom")));
+	}
+
+	Expressive::typed_expression<float> getWidth() const
+	{
+		return getProperty(WindowVisual::get_WidthProperty());
+	}
+
+	Expressive::typed_expression<float> getHeight() const
+	{
+		return getProperty(WindowVisual::get_HeightProperty());
+	}
+
+	Expressive::typed_expression<float> getLeft() const
+	{
+		return getProperty(WindowVisual::get_LeftProperty());
+	}
+
+	Expressive::typed_expression<float> getTop() const
+	{
+		return getProperty(WindowVisual::get_TopProperty());
+	}
+
+	Expressive::typed_expression<float> getRight() const
+	{
+		return getProperty(WindowVisual::get_RightProperty());
+	}
+
+	Expressive::typed_expression<float> getBottom() const
+	{
+		return getProperty(WindowVisual::get_BottomProperty());
+	}
+
+	Expressive::typed_expression<float> getClientWidth() const
+	{
+		return getProperty(WindowVisual::get_ClientWidthProperty());
+	}
+
+	Expressive::typed_expression<float> getClientHeight() const
+	{
+		return getProperty(WindowVisual::get_ClientHeightProperty());
+	}
+
+	Expressive::typed_expression<float> getClientLeft() const
+	{
+		return getProperty(WindowVisual::get_ClientLeftProperty());
+	}
+
+	Expressive::typed_expression<float> getClientTop() const
+	{
+		return getProperty(WindowVisual::get_ClientTopProperty());
+	}
+
+	Expressive::typed_expression<float> getClientRight() const
+	{
+		return getProperty(WindowVisual::get_ClientRightProperty());
+	}
+
+	Expressive::typed_expression<float> getClientBottom() const
+	{
+		return getProperty(WindowVisual::get_ClientBottomProperty());
+	}
+
+	_String getTitleText() const
+	{
+		return getProperty(WindowVisual::get_TitleTextProperty());
+	}
+
+	Expressive::typed_expression<bool> getTopmost() const
+	{
+		return getProperty(WindowVisual::get_TopmostProperty());
+	}
+
+	_WindowVisual getOwner() const
+	{
+		return getProperty(WindowVisual::get_OwnerProperty());
+	}
+
+	/*
+	_Visual getChild() const
+	{
+		return getProperty(WindowVisual::get_ChildProperty());
+	}
+	*/
+
+	Expressive::typed_expression<Geometry*> getClip() const
+	{
+		return getProperty(WindowVisual::get_ClipProperty());
+	}
+};
+
+}	// Gui
+}	// System

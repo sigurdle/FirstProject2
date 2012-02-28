@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/firstproject2/!svn/ver/63/FirstProject2/trunk/include/XML
+END
+stdafx.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/63/FirstProject2/trunk/include/XML/stdafx.h
+END
+XmlData.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/59/FirstProject2/trunk/include/XML/XmlData.h
+END
+XmlParser.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/63/FirstProject2/trunk/include/XML/XmlParser.h
+END
+XML.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/firstproject2/!svn/ver/59/FirstProject2/trunk/include/XML/XML.h
+END
+XmlSchema.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/59/FirstProject2/trunk/include/XML/XmlSchema.h
+END
+targetver.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/63/FirstProject2/trunk/include/XML/targetver.h
+END
+SAXParser.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/59/FirstProject2/trunk/include/XML/SAXParser.h
+END

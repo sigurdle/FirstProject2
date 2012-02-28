@@ -1,0 +1,100 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+IMP_DEPENDENCY_PROPERTY(float, TranslateTransform, TranslateX, 0.0f)
+IMP_DEPENDENCY_PROPERTY(float, TranslateTransform, TranslateY, 0.0f)
+
+DependencyClass* TranslateTransform::get_Class()
+{
+	static DependencyClass depclass(typeid(thisClass), baseClass::get_Class());
+
+	static DependencyProperty* properties[] =
+	{
+		get_TranslateXProperty(),
+		get_TranslateYProperty(),
+	};
+
+	return &depclass;
+}
+
+DependencyClass* TranslateTransform::pClass(get_Class());
+
+TranslateTransform::TranslateTransform() : Transform(get_Class())
+{
+}
+
+TranslateTransform::TranslateTransform(float x, float y) : Transform(get_Class())
+{
+	set_TranslateX(x);
+	set_TranslateY(y);
+}
+
+TranslateTransform::TranslateTransform(gm::PointF point) : Transform(get_Class())
+{
+	set_TranslateX(point.X);
+	set_TranslateY(point.Y);
+}
+
+TranslateTransform::TranslateTransform(const Expressive::typed_expression<float>& x, const Expressive::typed_expression<float>& y) : Transform(get_Class())
+{
+	GetProperty(get_TranslateXProperty())->SetInputBinding(new ExpressionBinding(this, x));
+	GetProperty(get_TranslateYProperty())->SetInputBinding(new ExpressionBinding(this, y));
+}
+
+gm::matrix3f TranslateTransform::get_Matrix()
+{
+	return gm::matrix3f::getTranslate(get_TranslateX(), get_TranslateY());
+}
+
+gm::matrix3f TranslateTransform::get_InverseMatrix()
+{
+	return gm::matrix3f::getTranslate(-get_TranslateX(), -get_TranslateY());
+}
+
+gm::PointF TranslateTransform::TransformPoint(gm::PointF point)
+{
+	return gm::PointF(point.X + get_TranslateX(), point.Y + get_TranslateY());
+}
+
+void TranslateTransform::TransformPoints(gm::PointF* destPoints, const gm::PointF* points, unsigned int count)
+{
+	float translateX = get_TranslateX();
+	float translateY = get_TranslateY();
+
+	while (count--)
+	{
+		destPoints->X = points->X + translateX;
+		destPoints->Y = points->Y + translateY;
+
+		++points;
+		++destPoints;
+	}
+}
+
+gm::PointF TranslateTransform::InverseTransformPoint(gm::PointF point)
+{
+	return gm::PointF(point.X - get_TranslateX(), point.Y - get_TranslateY());
+}
+
+void TranslateTransform::InverseTransformPoints(gm::PointF* destPoints, const gm::PointF* points, unsigned int count)
+{
+	float translateX = get_TranslateX();
+	float translateY = get_TranslateY();
+
+	while (count--)
+	{
+		destPoints->X = points->X - translateX;
+		destPoints->Y = points->Y - translateY;
+
+		++points;
+		++destPoints;
+	}
+}
+
+}	// Gui
+}	// System

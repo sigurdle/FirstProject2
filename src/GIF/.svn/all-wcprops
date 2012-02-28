@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/firstproject2/!svn/ver/118/FirstProject2/trunk/src/GIF
+END
+dllmain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/116/FirstProject2/trunk/src/GIF/dllmain.cpp
+END
+GIF.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/firstproject2/!svn/ver/104/FirstProject2/trunk/src/GIF/GIF.cpp
+END
+GIFEncoder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/69/FirstProject2/trunk/src/GIF/GIFEncoder.cpp
+END
+GIFFile.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/118/FirstProject2/trunk/src/GIF/GIFFile.cpp
+END
+StdAfx.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/firstproject2/!svn/ver/69/FirstProject2/trunk/src/GIF/StdAfx.cpp
+END
+GIFDecoder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/69/FirstProject2/trunk/src/GIF/GIFDecoder.cpp
+END

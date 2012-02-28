@@ -1,0 +1,33 @@
+namespace System
+{
+
+class LFCEXT LongIntObject : public Object
+{
+public:
+
+	String ToString() override;
+
+	inline int64 GetValue() const
+	{
+		return m_value;
+	}
+
+	inline operator int64 () const
+	{
+		return m_value;
+	}
+
+	static LongIntObject* GetObject(int64 value);
+
+private:
+
+	inline CTOR LongIntObject(int64 value) : m_value(value)
+	{
+	}
+
+	int64 m_value;
+
+	static LongIntObject s_values[257];	// -1 .. 255
+};
+
+}	// System

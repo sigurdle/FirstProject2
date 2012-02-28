@@ -1,0 +1,322 @@
+#ifdef __LERSTAD__
+
+interface IDropTarget : public IUnknown
+{
+#if 0
+    virtual HRESULT STDMETHODCALLTYPE DragEnter( 
+        /* [unique][in] */ __RPC__in_opt IDataObject *pDataObj,
+        /* [in] */ DWORD grfKeyState,
+        /* [in] */ POINTL pt,
+        /* [out][in] */ __RPC__inout DWORD *pdwEffect) = 0;
+    
+    virtual HRESULT STDMETHODCALLTYPE DragOver( 
+        /* [in] */ DWORD grfKeyState,
+        /* [in] */ POINTL pt,
+        /* [out][in] */ __RPC__inout DWORD *pdwEffect) = 0;
+    
+    virtual HRESULT STDMETHODCALLTYPE DragLeave( void) = 0;
+    
+    virtual HRESULT STDMETHODCALLTYPE Drop( 
+        /* [unique][in] */ __RPC__in_opt IDataObject *pDataObj,
+        /* [in] */ DWORD grfKeyState,
+        /* [in] */ POINTL pt,
+        /* [out][in] */ __RPC__inout DWORD *pdwEffect) = 0;
+#endif
+};
+
+#endif
+
+namespace System
+{
+namespace Gui
+{
+
+class GUIEXT GenericPlatformWindow : public Object
+{
+public:
+
+	CTOR GenericPlatformWindow();
+	CTOR GenericPlatformWindow(HWND hWnd);
+
+	HWND get_Handle()
+	{
+		return m_hWnd;
+	}
+
+	class MyWin// : public Object (never moved)
+	{
+	public:
+	//	__live_object_ptr<GenericPlatformWindow> pWindow;
+		GenericPlatformWindow* pWindow;
+
+#undef new
+		void* operator new (size_t size, Module* pModule)
+		{
+			return malloc(size);
+		}
+
+		void* operator new (size_t size, Module* pModule, const char* filename, int line)
+		{
+			return malloc(size);
+		}
+#define new _new
+
+		void operator delete (void* pv)
+		{
+			free(pv);
+		}
+	};
+
+protected:
+
+	HWND m_hWnd;
+};
+
+class GUIEXT ForeignPlatformWindow : public GenericPlatformWindow
+{
+public:
+
+	CTOR ForeignPlatformWindow(Window* window, HWND hWnd) : GenericPlatformWindow(hWnd), m_window(window)
+	{
+	}
+
+	Window* m_window;
+};
+
+class GUIEXT PlatformWindow : public GenericPlatformWindow, public Graphics::OpenGLContext
+{
+public:
+
+	CTOR PlatformWindow(WindowVisual* ownerVisual);
+
+	bool Show();
+	void Hide();
+
+	void Draw();
+	void InvalidateDraw();
+	void Present();
+
+	void UpdateOpacity();
+	void UpdateClip();
+	void UpdateHBITMAP();
+
+	void ChangeTech();
+
+	WindowVisual* get_OwnerVisual()
+	{
+		return m_ownerVisual;
+	}
+
+	Graphics::Bitmap* GetContentBitmap();
+
+	Graphics::GraphicsI* GetGI()
+	{
+		return m_gi;
+	}
+
+	static void RegisterWndClass(HMODULE hModule);
+	static UINT GetWindowStyle(WindowVisual* windowVisual);
+	static UINT GetWindowExStyle(WindowVisual* windowVisual);
+
+protected:
+
+	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnNcDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+	LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnPrintClient(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+	LRESULT OnEraseBkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+	LRESULT OnGetText(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnGetTextLength(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+	LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+	LRESULT OnRawInput(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+	LRESULT OnContextMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnAppCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnHelp(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+	LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnLButtonDblClk(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+	LRESULT OnRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnRButtonDblClk(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+	LRESULT OnMButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnMButtonDblClk(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnMButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+	LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnSizing(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnMove(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnEnterSizeMove(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnExitSizeMove(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+	LRESULT OnGetIcon(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnSetIcon(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+	LRESULT OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+	LRESULT OnDwmColorizationColorChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+#ifdef WINTAB
+
+	LRESULT OnTabPacket(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	LRESULT OnTabProximity(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+
+#endif
+
+	virtual LRESULT WindowProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT DefWindowProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	WindowVisual* m_ownerVisual;	// TODO, another interface
+	gm::PointF m_dpi;
+
+#ifndef __LERSTAD__
+	class GUIEXT DropTarget : public Object, public ::IDropTarget
+#else
+	class GUIEXT DropTarget : public Object, public IUnknown
+#endif
+	{
+	public:
+
+		CTOR DropTarget(PlatformWindow* wnd) : m_wnd(wnd)
+		{
+		}
+
+#ifndef __LERSTAD__
+        virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
+			/* [in] */ REFIID riid,
+            /* [iid_is][out] */ __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject)
+		{
+			if (riid == __uuidof(IUnknown))
+			{
+				*ppvObject = static_cast<IUnknown*>(this);
+			}
+			else if (riid == __uuidof(IDropTarget))
+			{
+				*ppvObject = static_cast<IDropTarget*>(this);
+			}
+			else
+			{
+				*ppvObject = NULL;
+				return E_NOINTERFACE;
+			}
+
+			AddRef();
+			return S_OK;
+		}
+
+        virtual ULONG STDMETHODCALLTYPE AddRef( void)
+		{
+			return 1;
+		}
+
+        virtual ULONG STDMETHODCALLTYPE Release( void)
+		{
+			--m_refCount;
+			return m_refCount;
+		}
+
+		virtual HRESULT STDMETHODCALLTYPE DragEnter( 
+			/* [unique][in] */ __RPC__in_opt ::IDataObject *pDataObj,
+			/* [in] */ DWORD grfKeyState,
+			/* [in] */ POINTL pt,
+			/* [out][in] */ __RPC__inout DWORD *pdwEffect);
+        
+		virtual HRESULT STDMETHODCALLTYPE DragOver( 
+			/* [in] */ DWORD grfKeyState,
+			/* [in] */ POINTL pt,
+			/* [out][in] */ __RPC__inout DWORD *pdwEffect);
+        
+		virtual HRESULT STDMETHODCALLTYPE DragLeave();
+        
+		virtual HRESULT STDMETHODCALLTYPE Drop( 
+			/* [unique][in] */ __RPC__in_opt ::IDataObject *pDataObj,
+			/* [in] */ DWORD grfKeyState,
+			/* [in] */ POINTL pt,
+			/* [out][in] */ __RPC__inout DWORD *pdwEffect);
+#endif
+	protected:
+
+		PlatformWindow* m_wnd;
+		long m_refCount;
+	};
+
+	DropTarget* m_dropTarget;
+
+private:
+
+	Graphics::GraphicsI* m_gi;
+	Graphics::RenderTarget* m_rt;
+
+	// Direct3D_10
+
+	Graphics::Direct3D10_I* m_d3d10;
+
+	/*
+	ID3D10Device* m_device;
+	IDXGISwapChain* m_swapChain;
+	ID3D10RenderTargetView* m_pRenderTargetView;
+	ID3D10Texture2D* m_pDepthStencil;
+	ID3D10DepthStencilView* m_pDepthStencilView;
+//	ID3D10RasterizerState* m_pRasterizerState;
+*/
+
+	// OpenGL
+//	HGLRC m_hRC;                         // Rendering context.
+//	HDC m_hDC;                           // Device context.
+	Graphics::OpenGL_I* m_opengl;
+//	Graphics::GLProcs* m_glprocs;
+
+	//
+	BITMAPINFOHEADER* m_lpBmi;
+	HBITMAP m_hBitmap;
+	uint8* m_bmBits;
+
+	HRGN m_hRgn;
+
+//#ifdef WINTAB
+// Tablet
+	HANDLE/*HCTX*/ t_hTablet;			// Tablet context
+	//	current pen statistics
+	UINT            t_prsNew;		// Pressure value
+	UINT            t_curNew;		// Cursor number
+//	ORIENTATION     t_ortNew;		// Varios movement values, direction and tilt
+	gm::PointI	m_pntMouseLoc;	// Mouse pointer location, which is also the pen location
+
+	gm::Sizei m_tabletExt;
+
+	HANDLE InitTablet(HWND hWnd);
+	BOOL GetTabState(LPARAM lParam, WPARAM wParam, UINT& nTabPressure, int& nTabAltitude, int& nTabTwist, int& nTabCompass, UINT& nTabCursor);
+
+//#endif // WINTAB
+
+	/*
+	list<IStylusPlugin*> m_stylusPlugins;
+
+	virtual void AddStylusPlugin(IStylusPlugin* plugin);
+	*/
+
+	int m_locked;
+
+	bool m_renderTargetUpdated;
+
+	static const WCHAR* s_wndClassName;
+	static uint16 s_wndClassAtom;	// ATOM
+};
+
+}	// Gui
+}	// System

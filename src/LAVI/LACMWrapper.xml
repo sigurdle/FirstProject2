@@ -1,0 +1,14 @@
+<filter name="ACM Wrapper">
+ <inputpin name="Audio Input" minOccurs="1" maxOccurs="1">
+   <mediatypes>
+	 <mediatype majortype="Audio" />
+ 	</mediatypes>
+ </inputpin>
+
+ <outputpin name="Audio Output" minOccurs="1" maxOccurs="1">
+	<mediatypes>
+	 <mediatype majortype="Audio" />
+	</mediatypes>
+ </outputpin>
+
+</filter>

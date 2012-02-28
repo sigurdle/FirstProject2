@@ -1,0 +1,3774 @@
+Nonterminals useless in grammar
+
+   Identifier_opt
+   EmptyStatement
+
+
+Terminals unused in grammar
+
+   BREAK_KW
+   CONTINUE_KW
+   IN_KW
+   TRY_KW
+   CATCH_KW
+   THROW_KW
+   LOGICAL_AND
+   EQUALEQUAL
+
+
+Rules useless in grammar
+
+  105 Identifier_opt: /* tom */
+  106               | Identifier
+
+  107 EmptyStatement: ';'
+
+
+Tilstand 165 konflikter: 1 skift/reduksjon
+
+
+Grammatikk
+
+    0 $accept: Program $end
+
+    1 Program: SourceElements
+
+    2 Identifier: IDENTIFIER
+
+    3 Literal: NullLiteral
+    4        | BooleanLiteral
+    5        | NumericLiteral
+    6        | StringLiteral
+
+    7 NullLiteral: NULL_KW
+
+    8 BooleanLiteral: TRUE_KW
+    9               | FALSE_KW
+
+   10 NumericLiteral: INTEGER_LITERAL
+   11               | FLOAT_LITERAL
+
+   12 StringLiteral: STRING_LITERAL
+
+   13 PrimaryExpression: THIS_KW
+   14                  | Identifier
+   15                  | Literal
+   16                  | '(' Expression ')'
+
+   17 AssignmentOperator: '='
+
+   18 LeftHandSideExpression: NewExpression
+   19                       | CallExpression
+
+   20 MemberExpression: PrimaryExpression
+   21                 | FunctionExpression
+   22                 | MemberExpression '[' Expression ']'
+   23                 | MemberExpression '.' Identifier
+   24                 | NEW_KW MemberExpression Arguments
+
+   25 NewExpression: MemberExpression
+   26              | NEW_KW NewExpression
+
+   27 CallExpression: MemberExpression Arguments
+   28               | CallExpression Arguments
+   29               | CallExpression '[' Expression ']'
+   30               | CallExpression '.' Identifier
+
+   31 Arguments: '(' ')'
+   32          | '(' ArgumentList ')'
+
+   33 ArgumentList: AssignmentExpression
+   34             | ArgumentList ',' AssignmentExpression
+
+   35 PostfixExpression: LeftHandSideExpression
+   36                  | LeftHandSideExpression PLUSPLUS
+   37                  | LeftHandSideExpression MINUSMINUS
+
+   38 UnaryExpression: PostfixExpression
+   39                | DELETE_KW UnaryExpression
+   40                | VOID_KW UnaryExpression
+   41                | TYPEOF_KW UnaryExpression
+   42                | PLUSPLUS UnaryExpression
+   43                | MINUSMINUS UnaryExpression
+   44                | '+' UnaryExpression
+   45                | '-' UnaryExpression
+   46                | '~' UnaryExpression
+   47                | '!' UnaryExpression
+
+   48 MultiplicativeExpression: UnaryExpression
+   49                         | MultiplicativeExpression '*' UnaryExpression
+   50                         | MultiplicativeExpression '/' UnaryExpression
+
+   51 AdditiveExpression: MultiplicativeExpression
+   52                   | AdditiveExpression '+' MultiplicativeExpression
+   53                   | AdditiveExpression '-' MultiplicativeExpression
+
+   54 RelationalExpression: AdditiveExpression
+   55                     | RelationalExpression '<' AdditiveExpression
+   56                     | RelationalExpression '>' AdditiveExpression
+   57                     | RelationalExpression LEQ AdditiveExpression
+   58                     | RelationalExpression GEQ AdditiveExpression
+
+   59 LogicalANDExpression: RelationalExpression
+
+   60 LogicalORExpression: LogicalANDExpression
+   61                    | LogicalORExpression LOGICAL_OR LogicalANDExpression
+
+   62 ConditionalExpression: LogicalORExpression
+
+   63 AssignmentExpression: ConditionalExpression
+   64                     | LeftHandSideExpression AssignmentOperator AssignmentExpression
+
+   65 Expression: AssignmentExpression
+   66           | Expression ',' AssignmentExpression
+
+   67 Expression_opt: /* tom */
+   68               | Expression
+
+   69 Statement: Block
+   70          | VariableStatement
+   71          | ExpressionStatement
+   72          | IfStatement
+   73          | IterationStatement
+   74          | ReturnStatement
+
+   75 ExpressionStatement: Expression ';'
+
+   76 IfStatement: IF_KW '(' Expression ')' Statement ELSE_KW Statement
+   77            | IF_KW '(' Expression ')' Statement
+
+   78 IterationStatement: DO_KW Statement WHILE_KW '(' Expression ')' ';'
+   79                   | WHILE_KW '(' Expression ')' Statement
+   80                   | FOR_KW '(' Expression ';' Expression_opt ';' Expression_opt ')' Statement
+
+   81 ReturnStatement: RETURN_KW Expression_opt ';'
+
+   82 Block: '{' StatementList_opt '}'
+
+   83 StatementList_opt: /* tom */
+   84                  | StatementList
+
+   85 StatementList: Statement
+   86              | StatementList Statement
+
+   87 VariableStatement: VAR_KW VariableDeclarationList ';'
+
+   88 VariableDeclarationList: VariableDeclaration
+   89                        | VariableDeclarationList ',' VariableDeclaration
+
+   90 VariableDeclaration: Identifier Initialiser_opt
+
+   91 Initialiser_opt: /* tom */
+   92                | Initialiser
+
+   93 Initialiser: '=' AssignmentExpression
+
+   94 FunctionDeclaration: FUNCTION_KW Identifier '(' FormalParameterList_opt ')' '{' FunctionBody '}'
+
+   95 FunctionExpression: FUNCTION_KW '(' FormalParameterList_opt ')' '{' FunctionBody '}'
+
+   96 FormalParameterList_opt: /* tom */
+   97                        | FormalParameterList
+
+   98 FormalParameterList: Identifier
+   99                    | FormalParameterList ',' Identifier
+
+  100 FunctionBody: SourceElements
+
+  101 SourceElements: SourceElement
+  102               | SourceElements SourceElement
+
+  103 SourceElement: Statement
+  104              | FunctionDeclaration
+
+
+Terminaler med regler hvor de opptrer
+
+$end (0) 0
+'!' (33) 47
+'(' (40) 16 31 32 76 77 78 79 80 94 95
+')' (41) 16 31 32 76 77 78 79 80 94 95
+'*' (42) 49
+'+' (43) 44 52
+',' (44) 34 66 89 99
+'-' (45) 45 53
+'.' (46) 23 30
+'/' (47) 50
+';' (59) 75 78 80 81 87
+'<' (60) 55
+'=' (61) 17 93
+'>' (62) 56
+'[' (91) 22 29
+']' (93) 22 29
+'{' (123) 82 94 95
+'}' (125) 82 94 95
+'~' (126) 46
+error (256)
+STRING_LITERAL (258) 12
+INTEGER_LITERAL (259) 10
+FLOAT_LITERAL (260) 11
+IDENTIFIER (261) 2
+NULL_KW (262) 7
+TRUE_KW (263) 8
+FALSE_KW (264) 9
+THIS_KW (265) 13
+NEW_KW (266) 24 26
+DELETE_KW (267) 39
+FUNCTION_KW (268) 94 95
+RETURN_KW (269) 81
+VOID_KW (270) 40
+IF_KW (271) 76 77
+ELSE_KW (272) 76
+VAR_KW (273) 87
+DO_KW (274) 78
+WHILE_KW (275) 78 79
+FOR_KW (276) 80
+BREAK_KW (277)
+CONTINUE_KW (278)
+IN_KW (279)
+TYPEOF_KW (280) 41
+TRY_KW (281)
+CATCH_KW (282)
+THROW_KW (283)
+PLUSPLUS (284) 36 42
+MINUSMINUS (285) 37 43
+LOGICAL_OR (286) 61
+LOGICAL_AND (287)
+EQUALEQUAL (288)
+LEQ (289) 57
+GEQ (290) 58
+
+
+Ikke-terminaler med regler hvor de opptrer
+
+$accept (54)
+    til venstre: 0
+Program (55)
+    til venstre: 1, til høyre: 0
+Identifier (56)
+    til venstre: 2, til høyre: 14 23 30 90 94 98 99
+Literal (57)
+    til venstre: 3 4 5 6, til høyre: 15
+NullLiteral (58)
+    til venstre: 7, til høyre: 3
+BooleanLiteral (59)
+    til venstre: 8 9, til høyre: 4
+NumericLiteral (60)
+    til venstre: 10 11, til høyre: 5
+StringLiteral (61)
+    til venstre: 12, til høyre: 6
+PrimaryExpression (62)
+    til venstre: 13 14 15 16, til høyre: 20
+AssignmentOperator (63)
+    til venstre: 17, til høyre: 64
+LeftHandSideExpression (64)
+    til venstre: 18 19, til høyre: 35 36 37 64
+MemberExpression (65)
+    til venstre: 20 21 22 23 24, til høyre: 22 23 24 25 27
+NewExpression (66)
+    til venstre: 25 26, til høyre: 18 26
+CallExpression (67)
+    til venstre: 27 28 29 30, til høyre: 19 28 29 30
+Arguments (68)
+    til venstre: 31 32, til høyre: 24 27 28
+ArgumentList (69)
+    til venstre: 33 34, til høyre: 32 34
+PostfixExpression (70)
+    til venstre: 35 36 37, til høyre: 38
+UnaryExpression (71)
+    til venstre: 38 39 40 41 42 43 44 45 46 47, til høyre: 39 40 41
+    42 43 44 45 46 47 48 49 50
+MultiplicativeExpression (72)
+    til venstre: 48 49 50, til høyre: 49 50 51 52 53
+AdditiveExpression (73)
+    til venstre: 51 52 53, til høyre: 52 53 54 55 56 57 58
+RelationalExpression (74)
+    til venstre: 54 55 56 57 58, til høyre: 55 56 57 58 59
+LogicalANDExpression (75)
+    til venstre: 59, til høyre: 60 61
+LogicalORExpression (76)
+    til venstre: 60 61, til høyre: 61 62
+ConditionalExpression (77)
+    til venstre: 62, til høyre: 63
+AssignmentExpression (78)
+    til venstre: 63 64, til høyre: 33 34 64 65 66 93
+Expression (79)
+    til venstre: 65 66, til høyre: 16 22 29 66 68 75 76 77 78 79 80
+Expression_opt (80)
+    til venstre: 67 68, til høyre: 80 81
+Statement (81)
+    til venstre: 69 70 71 72 73 74, til høyre: 76 77 78 79 80 85 86
+    103
+ExpressionStatement (82)
+    til venstre: 75, til høyre: 71
+IfStatement (83)
+    til venstre: 76 77, til høyre: 72
+IterationStatement (84)
+    til venstre: 78 79 80, til høyre: 73
+ReturnStatement (85)
+    til venstre: 81, til høyre: 74
+Block (86)
+    til venstre: 82, til høyre: 69
+StatementList_opt (87)
+    til venstre: 83 84, til høyre: 82
+StatementList (88)
+    til venstre: 85 86, til høyre: 84 86
+VariableStatement (89)
+    til venstre: 87, til høyre: 70
+VariableDeclarationList (90)
+    til venstre: 88 89, til høyre: 87 89
+VariableDeclaration (91)
+    til venstre: 90, til høyre: 88 89
+Initialiser_opt (92)
+    til venstre: 91 92, til høyre: 90
+Initialiser (93)
+    til venstre: 93, til høyre: 92
+FunctionDeclaration (94)
+    til venstre: 94, til høyre: 104
+FunctionExpression (95)
+    til venstre: 95, til høyre: 21
+FormalParameterList_opt (96)
+    til venstre: 96 97, til høyre: 94 95
+FormalParameterList (97)
+    til venstre: 98 99, til høyre: 97 99
+FunctionBody (98)
+    til venstre: 100, til høyre: 94 95
+SourceElements (99)
+    til venstre: 101 102, til høyre: 1 100 102
+SourceElement (100)
+    til venstre: 103 104, til høyre: 101 102
+
+
+tilstand 0
+
+    0 $accept: . Program $end
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 11
+    RETURN_KW        skift og gå til tilstand 12
+    VOID_KW          skift og gå til tilstand 13
+    IF_KW            skift og gå til tilstand 14
+    VAR_KW           skift og gå til tilstand 15
+    DO_KW            skift og gå til tilstand 16
+    WHILE_KW         skift og gå til tilstand 17
+    FOR_KW           skift og gå til tilstand 18
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+    '{'              skift og gå til tilstand 27
+
+    Program                   gå til tilstand 28
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 49
+    Statement                 gå til tilstand 50
+    ExpressionStatement       gå til tilstand 51
+    IfStatement               gå til tilstand 52
+    IterationStatement        gå til tilstand 53
+    ReturnStatement           gå til tilstand 54
+    Block                     gå til tilstand 55
+    VariableStatement         gå til tilstand 56
+    FunctionDeclaration       gå til tilstand 57
+    FunctionExpression        gå til tilstand 58
+    SourceElements            gå til tilstand 59
+    SourceElement             gå til tilstand 60
+
+
+tilstand 1
+
+   12 StringLiteral: STRING_LITERAL .
+
+    $default  reduksjon ved hjelp av regel 12 (StringLiteral)
+
+
+tilstand 2
+
+   10 NumericLiteral: INTEGER_LITERAL .
+
+    $default  reduksjon ved hjelp av regel 10 (NumericLiteral)
+
+
+tilstand 3
+
+   11 NumericLiteral: FLOAT_LITERAL .
+
+    $default  reduksjon ved hjelp av regel 11 (NumericLiteral)
+
+
+tilstand 4
+
+    2 Identifier: IDENTIFIER .
+
+    $default  reduksjon ved hjelp av regel 2 (Identifier)
+
+
+tilstand 5
+
+    7 NullLiteral: NULL_KW .
+
+    $default  reduksjon ved hjelp av regel 7 (NullLiteral)
+
+
+tilstand 6
+
+    8 BooleanLiteral: TRUE_KW .
+
+    $default  reduksjon ved hjelp av regel 8 (BooleanLiteral)
+
+
+tilstand 7
+
+    9 BooleanLiteral: FALSE_KW .
+
+    $default  reduksjon ved hjelp av regel 9 (BooleanLiteral)
+
+
+tilstand 8
+
+   13 PrimaryExpression: THIS_KW .
+
+    $default  reduksjon ved hjelp av regel 13 (PrimaryExpression)
+
+
+tilstand 9
+
+   24 MemberExpression: NEW_KW . MemberExpression Arguments
+   26 NewExpression: NEW_KW . NewExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    FUNCTION_KW      skift og gå til tilstand 61
+    '('              skift og gå til tilstand 22
+
+    Identifier          gå til tilstand 29
+    Literal             gå til tilstand 30
+    NullLiteral         gå til tilstand 31
+    BooleanLiteral      gå til tilstand 32
+    NumericLiteral      gå til tilstand 33
+    StringLiteral       gå til tilstand 34
+    PrimaryExpression   gå til tilstand 35
+    MemberExpression    gå til tilstand 62
+    NewExpression       gå til tilstand 63
+    FunctionExpression  gå til tilstand 58
+
+
+tilstand 10
+
+   39 UnaryExpression: DELETE_KW . UnaryExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier              gå til tilstand 29
+    Literal                 gå til tilstand 30
+    NullLiteral             gå til tilstand 31
+    BooleanLiteral          gå til tilstand 32
+    NumericLiteral          gå til tilstand 33
+    StringLiteral           gå til tilstand 34
+    PrimaryExpression       gå til tilstand 35
+    LeftHandSideExpression  gå til tilstand 64
+    MemberExpression        gå til tilstand 37
+    NewExpression           gå til tilstand 38
+    CallExpression          gå til tilstand 39
+    PostfixExpression       gå til tilstand 40
+    UnaryExpression         gå til tilstand 65
+    FunctionExpression      gå til tilstand 58
+
+
+tilstand 11
+
+   94 FunctionDeclaration: FUNCTION_KW . Identifier '(' FormalParameterList_opt ')' '{' FunctionBody '}'
+   95 FunctionExpression: FUNCTION_KW . '(' FormalParameterList_opt ')' '{' FunctionBody '}'
+
+    IDENTIFIER  skift og gå til tilstand 4
+    '('         skift og gå til tilstand 66
+
+    Identifier  gå til tilstand 67
+
+
+tilstand 12
+
+   81 ReturnStatement: RETURN_KW . Expression_opt ';'
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    $default  reduksjon ved hjelp av regel 67 (Expression_opt)
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 68
+    Expression_opt            gå til tilstand 69
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 13
+
+   40 UnaryExpression: VOID_KW . UnaryExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier              gå til tilstand 29
+    Literal                 gå til tilstand 30
+    NullLiteral             gå til tilstand 31
+    BooleanLiteral          gå til tilstand 32
+    NumericLiteral          gå til tilstand 33
+    StringLiteral           gå til tilstand 34
+    PrimaryExpression       gå til tilstand 35
+    LeftHandSideExpression  gå til tilstand 64
+    MemberExpression        gå til tilstand 37
+    NewExpression           gå til tilstand 38
+    CallExpression          gå til tilstand 39
+    PostfixExpression       gå til tilstand 40
+    UnaryExpression         gå til tilstand 70
+    FunctionExpression      gå til tilstand 58
+
+
+tilstand 14
+
+   76 IfStatement: IF_KW . '(' Expression ')' Statement ELSE_KW Statement
+   77            | IF_KW . '(' Expression ')' Statement
+
+    '('  skift og gå til tilstand 71
+
+
+tilstand 15
+
+   87 VariableStatement: VAR_KW . VariableDeclarationList ';'
+
+    IDENTIFIER  skift og gå til tilstand 4
+
+    Identifier               gå til tilstand 72
+    VariableDeclarationList  gå til tilstand 73
+    VariableDeclaration      gå til tilstand 74
+
+
+tilstand 16
+
+   78 IterationStatement: DO_KW . Statement WHILE_KW '(' Expression ')' ';'
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    RETURN_KW        skift og gå til tilstand 12
+    VOID_KW          skift og gå til tilstand 13
+    IF_KW            skift og gå til tilstand 14
+    VAR_KW           skift og gå til tilstand 15
+    DO_KW            skift og gå til tilstand 16
+    WHILE_KW         skift og gå til tilstand 17
+    FOR_KW           skift og gå til tilstand 18
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+    '{'              skift og gå til tilstand 27
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 49
+    Statement                 gå til tilstand 75
+    ExpressionStatement       gå til tilstand 51
+    IfStatement               gå til tilstand 52
+    IterationStatement        gå til tilstand 53
+    ReturnStatement           gå til tilstand 54
+    Block                     gå til tilstand 55
+    VariableStatement         gå til tilstand 56
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 17
+
+   79 IterationStatement: WHILE_KW . '(' Expression ')' Statement
+
+    '('  skift og gå til tilstand 76
+
+
+tilstand 18
+
+   80 IterationStatement: FOR_KW . '(' Expression ';' Expression_opt ';' Expression_opt ')' Statement
+
+    '('  skift og gå til tilstand 77
+
+
+tilstand 19
+
+   41 UnaryExpression: TYPEOF_KW . UnaryExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier              gå til tilstand 29
+    Literal                 gå til tilstand 30
+    NullLiteral             gå til tilstand 31
+    BooleanLiteral          gå til tilstand 32
+    NumericLiteral          gå til tilstand 33
+    StringLiteral           gå til tilstand 34
+    PrimaryExpression       gå til tilstand 35
+    LeftHandSideExpression  gå til tilstand 64
+    MemberExpression        gå til tilstand 37
+    NewExpression           gå til tilstand 38
+    CallExpression          gå til tilstand 39
+    PostfixExpression       gå til tilstand 40
+    UnaryExpression         gå til tilstand 78
+    FunctionExpression      gå til tilstand 58
+
+
+tilstand 20
+
+   42 UnaryExpression: PLUSPLUS . UnaryExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier              gå til tilstand 29
+    Literal                 gå til tilstand 30
+    NullLiteral             gå til tilstand 31
+    BooleanLiteral          gå til tilstand 32
+    NumericLiteral          gå til tilstand 33
+    StringLiteral           gå til tilstand 34
+    PrimaryExpression       gå til tilstand 35
+    LeftHandSideExpression  gå til tilstand 64
+    MemberExpression        gå til tilstand 37
+    NewExpression           gå til tilstand 38
+    CallExpression          gå til tilstand 39
+    PostfixExpression       gå til tilstand 40
+    UnaryExpression         gå til tilstand 79
+    FunctionExpression      gå til tilstand 58
+
+
+tilstand 21
+
+   43 UnaryExpression: MINUSMINUS . UnaryExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier              gå til tilstand 29
+    Literal                 gå til tilstand 30
+    NullLiteral             gå til tilstand 31
+    BooleanLiteral          gå til tilstand 32
+    NumericLiteral          gå til tilstand 33
+    StringLiteral           gå til tilstand 34
+    PrimaryExpression       gå til tilstand 35
+    LeftHandSideExpression  gå til tilstand 64
+    MemberExpression        gå til tilstand 37
+    NewExpression           gå til tilstand 38
+    CallExpression          gå til tilstand 39
+    PostfixExpression       gå til tilstand 40
+    UnaryExpression         gå til tilstand 80
+    FunctionExpression      gå til tilstand 58
+
+
+tilstand 22
+
+   16 PrimaryExpression: '(' . Expression ')'
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 81
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 23
+
+   44 UnaryExpression: '+' . UnaryExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier              gå til tilstand 29
+    Literal                 gå til tilstand 30
+    NullLiteral             gå til tilstand 31
+    BooleanLiteral          gå til tilstand 32
+    NumericLiteral          gå til tilstand 33
+    StringLiteral           gå til tilstand 34
+    PrimaryExpression       gå til tilstand 35
+    LeftHandSideExpression  gå til tilstand 64
+    MemberExpression        gå til tilstand 37
+    NewExpression           gå til tilstand 38
+    CallExpression          gå til tilstand 39
+    PostfixExpression       gå til tilstand 40
+    UnaryExpression         gå til tilstand 82
+    FunctionExpression      gå til tilstand 58
+
+
+tilstand 24
+
+   45 UnaryExpression: '-' . UnaryExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier              gå til tilstand 29
+    Literal                 gå til tilstand 30
+    NullLiteral             gå til tilstand 31
+    BooleanLiteral          gå til tilstand 32
+    NumericLiteral          gå til tilstand 33
+    StringLiteral           gå til tilstand 34
+    PrimaryExpression       gå til tilstand 35
+    LeftHandSideExpression  gå til tilstand 64
+    MemberExpression        gå til tilstand 37
+    NewExpression           gå til tilstand 38
+    CallExpression          gå til tilstand 39
+    PostfixExpression       gå til tilstand 40
+    UnaryExpression         gå til tilstand 83
+    FunctionExpression      gå til tilstand 58
+
+
+tilstand 25
+
+   46 UnaryExpression: '~' . UnaryExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier              gå til tilstand 29
+    Literal                 gå til tilstand 30
+    NullLiteral             gå til tilstand 31
+    BooleanLiteral          gå til tilstand 32
+    NumericLiteral          gå til tilstand 33
+    StringLiteral           gå til tilstand 34
+    PrimaryExpression       gå til tilstand 35
+    LeftHandSideExpression  gå til tilstand 64
+    MemberExpression        gå til tilstand 37
+    NewExpression           gå til tilstand 38
+    CallExpression          gå til tilstand 39
+    PostfixExpression       gå til tilstand 40
+    UnaryExpression         gå til tilstand 84
+    FunctionExpression      gå til tilstand 58
+
+
+tilstand 26
+
+   47 UnaryExpression: '!' . UnaryExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier              gå til tilstand 29
+    Literal                 gå til tilstand 30
+    NullLiteral             gå til tilstand 31
+    BooleanLiteral          gå til tilstand 32
+    NumericLiteral          gå til tilstand 33
+    StringLiteral           gå til tilstand 34
+    PrimaryExpression       gå til tilstand 35
+    LeftHandSideExpression  gå til tilstand 64
+    MemberExpression        gå til tilstand 37
+    NewExpression           gå til tilstand 38
+    CallExpression          gå til tilstand 39
+    PostfixExpression       gå til tilstand 40
+    UnaryExpression         gå til tilstand 85
+    FunctionExpression      gå til tilstand 58
+
+
+tilstand 27
+
+   82 Block: '{' . StatementList_opt '}'
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    RETURN_KW        skift og gå til tilstand 12
+    VOID_KW          skift og gå til tilstand 13
+    IF_KW            skift og gå til tilstand 14
+    VAR_KW           skift og gå til tilstand 15
+    DO_KW            skift og gå til tilstand 16
+    WHILE_KW         skift og gå til tilstand 17
+    FOR_KW           skift og gå til tilstand 18
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+    '{'              skift og gå til tilstand 27
+
+    $default  reduksjon ved hjelp av regel 83 (StatementList_opt)
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 49
+    Statement                 gå til tilstand 86
+    ExpressionStatement       gå til tilstand 51
+    IfStatement               gå til tilstand 52
+    IterationStatement        gå til tilstand 53
+    ReturnStatement           gå til tilstand 54
+    Block                     gå til tilstand 55
+    StatementList_opt         gå til tilstand 87
+    StatementList             gå til tilstand 88
+    VariableStatement         gå til tilstand 56
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 28
+
+    0 $accept: Program . $end
+
+    $end  skift og gå til tilstand 89
+
+
+tilstand 29
+
+   14 PrimaryExpression: Identifier .
+
+    $default  reduksjon ved hjelp av regel 14 (PrimaryExpression)
+
+
+tilstand 30
+
+   15 PrimaryExpression: Literal .
+
+    $default  reduksjon ved hjelp av regel 15 (PrimaryExpression)
+
+
+tilstand 31
+
+    3 Literal: NullLiteral .
+
+    $default  reduksjon ved hjelp av regel 3 (Literal)
+
+
+tilstand 32
+
+    4 Literal: BooleanLiteral .
+
+    $default  reduksjon ved hjelp av regel 4 (Literal)
+
+
+tilstand 33
+
+    5 Literal: NumericLiteral .
+
+    $default  reduksjon ved hjelp av regel 5 (Literal)
+
+
+tilstand 34
+
+    6 Literal: StringLiteral .
+
+    $default  reduksjon ved hjelp av regel 6 (Literal)
+
+
+tilstand 35
+
+   20 MemberExpression: PrimaryExpression .
+
+    $default  reduksjon ved hjelp av regel 20 (MemberExpression)
+
+
+tilstand 36
+
+   35 PostfixExpression: LeftHandSideExpression .
+   36                  | LeftHandSideExpression . PLUSPLUS
+   37                  | LeftHandSideExpression . MINUSMINUS
+   64 AssignmentExpression: LeftHandSideExpression . AssignmentOperator AssignmentExpression
+
+    PLUSPLUS    skift og gå til tilstand 90
+    MINUSMINUS  skift og gå til tilstand 91
+    '='         skift og gå til tilstand 92
+
+    $default  reduksjon ved hjelp av regel 35 (PostfixExpression)
+
+    AssignmentOperator  gå til tilstand 93
+
+
+tilstand 37
+
+   22 MemberExpression: MemberExpression . '[' Expression ']'
+   23                 | MemberExpression . '.' Identifier
+   25 NewExpression: MemberExpression .
+   27 CallExpression: MemberExpression . Arguments
+
+    '('  skift og gå til tilstand 94
+    '['  skift og gå til tilstand 95
+    '.'  skift og gå til tilstand 96
+
+    $default  reduksjon ved hjelp av regel 25 (NewExpression)
+
+    Arguments  gå til tilstand 97
+
+
+tilstand 38
+
+   18 LeftHandSideExpression: NewExpression .
+
+    $default  reduksjon ved hjelp av regel 18 (LeftHandSideExpression)
+
+
+tilstand 39
+
+   19 LeftHandSideExpression: CallExpression .
+   28 CallExpression: CallExpression . Arguments
+   29               | CallExpression . '[' Expression ']'
+   30               | CallExpression . '.' Identifier
+
+    '('  skift og gå til tilstand 94
+    '['  skift og gå til tilstand 98
+    '.'  skift og gå til tilstand 99
+
+    $default  reduksjon ved hjelp av regel 19 (LeftHandSideExpression)
+
+    Arguments  gå til tilstand 100
+
+
+tilstand 40
+
+   38 UnaryExpression: PostfixExpression .
+
+    $default  reduksjon ved hjelp av regel 38 (UnaryExpression)
+
+
+tilstand 41
+
+   48 MultiplicativeExpression: UnaryExpression .
+
+    $default  reduksjon ved hjelp av regel 48 (MultiplicativeExpression)
+
+
+tilstand 42
+
+   49 MultiplicativeExpression: MultiplicativeExpression . '*' UnaryExpression
+   50                         | MultiplicativeExpression . '/' UnaryExpression
+   51 AdditiveExpression: MultiplicativeExpression .
+
+    '*'  skift og gå til tilstand 101
+    '/'  skift og gå til tilstand 102
+
+    $default  reduksjon ved hjelp av regel 51 (AdditiveExpression)
+
+
+tilstand 43
+
+   52 AdditiveExpression: AdditiveExpression . '+' MultiplicativeExpression
+   53                   | AdditiveExpression . '-' MultiplicativeExpression
+   54 RelationalExpression: AdditiveExpression .
+
+    '+'  skift og gå til tilstand 103
+    '-'  skift og gå til tilstand 104
+
+    $default  reduksjon ved hjelp av regel 54 (RelationalExpression)
+
+
+tilstand 44
+
+   55 RelationalExpression: RelationalExpression . '<' AdditiveExpression
+   56                     | RelationalExpression . '>' AdditiveExpression
+   57                     | RelationalExpression . LEQ AdditiveExpression
+   58                     | RelationalExpression . GEQ AdditiveExpression
+   59 LogicalANDExpression: RelationalExpression .
+
+    LEQ  skift og gå til tilstand 105
+    GEQ  skift og gå til tilstand 106
+    '<'  skift og gå til tilstand 107
+    '>'  skift og gå til tilstand 108
+
+    $default  reduksjon ved hjelp av regel 59 (LogicalANDExpression)
+
+
+tilstand 45
+
+   60 LogicalORExpression: LogicalANDExpression .
+
+    $default  reduksjon ved hjelp av regel 60 (LogicalORExpression)
+
+
+tilstand 46
+
+   61 LogicalORExpression: LogicalORExpression . LOGICAL_OR LogicalANDExpression
+   62 ConditionalExpression: LogicalORExpression .
+
+    LOGICAL_OR  skift og gå til tilstand 109
+
+    $default  reduksjon ved hjelp av regel 62 (ConditionalExpression)
+
+
+tilstand 47
+
+   63 AssignmentExpression: ConditionalExpression .
+
+    $default  reduksjon ved hjelp av regel 63 (AssignmentExpression)
+
+
+tilstand 48
+
+   65 Expression: AssignmentExpression .
+
+    $default  reduksjon ved hjelp av regel 65 (Expression)
+
+
+tilstand 49
+
+   66 Expression: Expression . ',' AssignmentExpression
+   75 ExpressionStatement: Expression . ';'
+
+    ','  skift og gå til tilstand 110
+    ';'  skift og gå til tilstand 111
+
+
+tilstand 50
+
+  103 SourceElement: Statement .
+
+    $default  reduksjon ved hjelp av regel 103 (SourceElement)
+
+
+tilstand 51
+
+   71 Statement: ExpressionStatement .
+
+    $default  reduksjon ved hjelp av regel 71 (Statement)
+
+
+tilstand 52
+
+   72 Statement: IfStatement .
+
+    $default  reduksjon ved hjelp av regel 72 (Statement)
+
+
+tilstand 53
+
+   73 Statement: IterationStatement .
+
+    $default  reduksjon ved hjelp av regel 73 (Statement)
+
+
+tilstand 54
+
+   74 Statement: ReturnStatement .
+
+    $default  reduksjon ved hjelp av regel 74 (Statement)
+
+
+tilstand 55
+
+   69 Statement: Block .
+
+    $default  reduksjon ved hjelp av regel 69 (Statement)
+
+
+tilstand 56
+
+   70 Statement: VariableStatement .
+
+    $default  reduksjon ved hjelp av regel 70 (Statement)
+
+
+tilstand 57
+
+  104 SourceElement: FunctionDeclaration .
+
+    $default  reduksjon ved hjelp av regel 104 (SourceElement)
+
+
+tilstand 58
+
+   21 MemberExpression: FunctionExpression .
+
+    $default  reduksjon ved hjelp av regel 21 (MemberExpression)
+
+
+tilstand 59
+
+    1 Program: SourceElements .
+  102 SourceElements: SourceElements . SourceElement
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 11
+    RETURN_KW        skift og gå til tilstand 12
+    VOID_KW          skift og gå til tilstand 13
+    IF_KW            skift og gå til tilstand 14
+    VAR_KW           skift og gå til tilstand 15
+    DO_KW            skift og gå til tilstand 16
+    WHILE_KW         skift og gå til tilstand 17
+    FOR_KW           skift og gå til tilstand 18
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+    '{'              skift og gå til tilstand 27
+
+    $default  reduksjon ved hjelp av regel 1 (Program)
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 49
+    Statement                 gå til tilstand 50
+    ExpressionStatement       gå til tilstand 51
+    IfStatement               gå til tilstand 52
+    IterationStatement        gå til tilstand 53
+    ReturnStatement           gå til tilstand 54
+    Block                     gå til tilstand 55
+    VariableStatement         gå til tilstand 56
+    FunctionDeclaration       gå til tilstand 57
+    FunctionExpression        gå til tilstand 58
+    SourceElement             gå til tilstand 112
+
+
+tilstand 60
+
+  101 SourceElements: SourceElement .
+
+    $default  reduksjon ved hjelp av regel 101 (SourceElements)
+
+
+tilstand 61
+
+   95 FunctionExpression: FUNCTION_KW . '(' FormalParameterList_opt ')' '{' FunctionBody '}'
+
+    '('  skift og gå til tilstand 66
+
+
+tilstand 62
+
+   22 MemberExpression: MemberExpression . '[' Expression ']'
+   23                 | MemberExpression . '.' Identifier
+   24                 | NEW_KW MemberExpression . Arguments
+   25 NewExpression: MemberExpression .
+
+    '('  skift og gå til tilstand 94
+    '['  skift og gå til tilstand 95
+    '.'  skift og gå til tilstand 96
+
+    $default  reduksjon ved hjelp av regel 25 (NewExpression)
+
+    Arguments  gå til tilstand 113
+
+
+tilstand 63
+
+   26 NewExpression: NEW_KW NewExpression .
+
+    $default  reduksjon ved hjelp av regel 26 (NewExpression)
+
+
+tilstand 64
+
+   35 PostfixExpression: LeftHandSideExpression .
+   36                  | LeftHandSideExpression . PLUSPLUS
+   37                  | LeftHandSideExpression . MINUSMINUS
+
+    PLUSPLUS    skift og gå til tilstand 90
+    MINUSMINUS  skift og gå til tilstand 91
+
+    $default  reduksjon ved hjelp av regel 35 (PostfixExpression)
+
+
+tilstand 65
+
+   39 UnaryExpression: DELETE_KW UnaryExpression .
+
+    $default  reduksjon ved hjelp av regel 39 (UnaryExpression)
+
+
+tilstand 66
+
+   95 FunctionExpression: FUNCTION_KW '(' . FormalParameterList_opt ')' '{' FunctionBody '}'
+
+    IDENTIFIER  skift og gå til tilstand 4
+
+    $default  reduksjon ved hjelp av regel 96 (FormalParameterList_opt)
+
+    Identifier               gå til tilstand 114
+    FormalParameterList_opt  gå til tilstand 115
+    FormalParameterList      gå til tilstand 116
+
+
+tilstand 67
+
+   94 FunctionDeclaration: FUNCTION_KW Identifier . '(' FormalParameterList_opt ')' '{' FunctionBody '}'
+
+    '('  skift og gå til tilstand 117
+
+
+tilstand 68
+
+   66 Expression: Expression . ',' AssignmentExpression
+   68 Expression_opt: Expression .
+
+    ','  skift og gå til tilstand 110
+
+    $default  reduksjon ved hjelp av regel 68 (Expression_opt)
+
+
+tilstand 69
+
+   81 ReturnStatement: RETURN_KW Expression_opt . ';'
+
+    ';'  skift og gå til tilstand 118
+
+
+tilstand 70
+
+   40 UnaryExpression: VOID_KW UnaryExpression .
+
+    $default  reduksjon ved hjelp av regel 40 (UnaryExpression)
+
+
+tilstand 71
+
+   76 IfStatement: IF_KW '(' . Expression ')' Statement ELSE_KW Statement
+   77            | IF_KW '(' . Expression ')' Statement
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 119
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 72
+
+   90 VariableDeclaration: Identifier . Initialiser_opt
+
+    '='  skift og gå til tilstand 120
+
+    $default  reduksjon ved hjelp av regel 91 (Initialiser_opt)
+
+    Initialiser_opt  gå til tilstand 121
+    Initialiser      gå til tilstand 122
+
+
+tilstand 73
+
+   87 VariableStatement: VAR_KW VariableDeclarationList . ';'
+   89 VariableDeclarationList: VariableDeclarationList . ',' VariableDeclaration
+
+    ','  skift og gå til tilstand 123
+    ';'  skift og gå til tilstand 124
+
+
+tilstand 74
+
+   88 VariableDeclarationList: VariableDeclaration .
+
+    $default  reduksjon ved hjelp av regel 88 (VariableDeclarationList)
+
+
+tilstand 75
+
+   78 IterationStatement: DO_KW Statement . WHILE_KW '(' Expression ')' ';'
+
+    WHILE_KW  skift og gå til tilstand 125
+
+
+tilstand 76
+
+   79 IterationStatement: WHILE_KW '(' . Expression ')' Statement
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 126
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 77
+
+   80 IterationStatement: FOR_KW '(' . Expression ';' Expression_opt ';' Expression_opt ')' Statement
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 127
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 78
+
+   41 UnaryExpression: TYPEOF_KW UnaryExpression .
+
+    $default  reduksjon ved hjelp av regel 41 (UnaryExpression)
+
+
+tilstand 79
+
+   42 UnaryExpression: PLUSPLUS UnaryExpression .
+
+    $default  reduksjon ved hjelp av regel 42 (UnaryExpression)
+
+
+tilstand 80
+
+   43 UnaryExpression: MINUSMINUS UnaryExpression .
+
+    $default  reduksjon ved hjelp av regel 43 (UnaryExpression)
+
+
+tilstand 81
+
+   16 PrimaryExpression: '(' Expression . ')'
+   66 Expression: Expression . ',' AssignmentExpression
+
+    ')'  skift og gå til tilstand 128
+    ','  skift og gå til tilstand 110
+
+
+tilstand 82
+
+   44 UnaryExpression: '+' UnaryExpression .
+
+    $default  reduksjon ved hjelp av regel 44 (UnaryExpression)
+
+
+tilstand 83
+
+   45 UnaryExpression: '-' UnaryExpression .
+
+    $default  reduksjon ved hjelp av regel 45 (UnaryExpression)
+
+
+tilstand 84
+
+   46 UnaryExpression: '~' UnaryExpression .
+
+    $default  reduksjon ved hjelp av regel 46 (UnaryExpression)
+
+
+tilstand 85
+
+   47 UnaryExpression: '!' UnaryExpression .
+
+    $default  reduksjon ved hjelp av regel 47 (UnaryExpression)
+
+
+tilstand 86
+
+   85 StatementList: Statement .
+
+    $default  reduksjon ved hjelp av regel 85 (StatementList)
+
+
+tilstand 87
+
+   82 Block: '{' StatementList_opt . '}'
+
+    '}'  skift og gå til tilstand 129
+
+
+tilstand 88
+
+   84 StatementList_opt: StatementList .
+   86 StatementList: StatementList . Statement
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    RETURN_KW        skift og gå til tilstand 12
+    VOID_KW          skift og gå til tilstand 13
+    IF_KW            skift og gå til tilstand 14
+    VAR_KW           skift og gå til tilstand 15
+    DO_KW            skift og gå til tilstand 16
+    WHILE_KW         skift og gå til tilstand 17
+    FOR_KW           skift og gå til tilstand 18
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+    '{'              skift og gå til tilstand 27
+
+    $default  reduksjon ved hjelp av regel 84 (StatementList_opt)
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 49
+    Statement                 gå til tilstand 130
+    ExpressionStatement       gå til tilstand 51
+    IfStatement               gå til tilstand 52
+    IterationStatement        gå til tilstand 53
+    ReturnStatement           gå til tilstand 54
+    Block                     gå til tilstand 55
+    VariableStatement         gå til tilstand 56
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 89
+
+    0 $accept: Program $end .
+
+    $default  aksept
+
+
+tilstand 90
+
+   36 PostfixExpression: LeftHandSideExpression PLUSPLUS .
+
+    $default  reduksjon ved hjelp av regel 36 (PostfixExpression)
+
+
+tilstand 91
+
+   37 PostfixExpression: LeftHandSideExpression MINUSMINUS .
+
+    $default  reduksjon ved hjelp av regel 37 (PostfixExpression)
+
+
+tilstand 92
+
+   17 AssignmentOperator: '=' .
+
+    $default  reduksjon ved hjelp av regel 17 (AssignmentOperator)
+
+
+tilstand 93
+
+   64 AssignmentExpression: LeftHandSideExpression AssignmentOperator . AssignmentExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 131
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 94
+
+   31 Arguments: '(' . ')'
+   32          | '(' . ArgumentList ')'
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    ')'              skift og gå til tilstand 132
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    ArgumentList              gå til tilstand 133
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 134
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 95
+
+   22 MemberExpression: MemberExpression '[' . Expression ']'
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 135
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 96
+
+   23 MemberExpression: MemberExpression '.' . Identifier
+
+    IDENTIFIER  skift og gå til tilstand 4
+
+    Identifier  gå til tilstand 136
+
+
+tilstand 97
+
+   27 CallExpression: MemberExpression Arguments .
+
+    $default  reduksjon ved hjelp av regel 27 (CallExpression)
+
+
+tilstand 98
+
+   29 CallExpression: CallExpression '[' . Expression ']'
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 137
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 99
+
+   30 CallExpression: CallExpression '.' . Identifier
+
+    IDENTIFIER  skift og gå til tilstand 4
+
+    Identifier  gå til tilstand 138
+
+
+tilstand 100
+
+   28 CallExpression: CallExpression Arguments .
+
+    $default  reduksjon ved hjelp av regel 28 (CallExpression)
+
+
+tilstand 101
+
+   49 MultiplicativeExpression: MultiplicativeExpression '*' . UnaryExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier              gå til tilstand 29
+    Literal                 gå til tilstand 30
+    NullLiteral             gå til tilstand 31
+    BooleanLiteral          gå til tilstand 32
+    NumericLiteral          gå til tilstand 33
+    StringLiteral           gå til tilstand 34
+    PrimaryExpression       gå til tilstand 35
+    LeftHandSideExpression  gå til tilstand 64
+    MemberExpression        gå til tilstand 37
+    NewExpression           gå til tilstand 38
+    CallExpression          gå til tilstand 39
+    PostfixExpression       gå til tilstand 40
+    UnaryExpression         gå til tilstand 139
+    FunctionExpression      gå til tilstand 58
+
+
+tilstand 102
+
+   50 MultiplicativeExpression: MultiplicativeExpression '/' . UnaryExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier              gå til tilstand 29
+    Literal                 gå til tilstand 30
+    NullLiteral             gå til tilstand 31
+    BooleanLiteral          gå til tilstand 32
+    NumericLiteral          gå til tilstand 33
+    StringLiteral           gå til tilstand 34
+    PrimaryExpression       gå til tilstand 35
+    LeftHandSideExpression  gå til tilstand 64
+    MemberExpression        gå til tilstand 37
+    NewExpression           gå til tilstand 38
+    CallExpression          gå til tilstand 39
+    PostfixExpression       gå til tilstand 40
+    UnaryExpression         gå til tilstand 140
+    FunctionExpression      gå til tilstand 58
+
+
+tilstand 103
+
+   52 AdditiveExpression: AdditiveExpression '+' . MultiplicativeExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 64
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 141
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 104
+
+   53 AdditiveExpression: AdditiveExpression '-' . MultiplicativeExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 64
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 142
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 105
+
+   57 RelationalExpression: RelationalExpression LEQ . AdditiveExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 64
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 143
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 106
+
+   58 RelationalExpression: RelationalExpression GEQ . AdditiveExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 64
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 144
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 107
+
+   55 RelationalExpression: RelationalExpression '<' . AdditiveExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 64
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 145
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 108
+
+   56 RelationalExpression: RelationalExpression '>' . AdditiveExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 64
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 146
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 109
+
+   61 LogicalORExpression: LogicalORExpression LOGICAL_OR . LogicalANDExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 64
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 147
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 110
+
+   66 Expression: Expression ',' . AssignmentExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 148
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 111
+
+   75 ExpressionStatement: Expression ';' .
+
+    $default  reduksjon ved hjelp av regel 75 (ExpressionStatement)
+
+
+tilstand 112
+
+  102 SourceElements: SourceElements SourceElement .
+
+    $default  reduksjon ved hjelp av regel 102 (SourceElements)
+
+
+tilstand 113
+
+   24 MemberExpression: NEW_KW MemberExpression Arguments .
+
+    $default  reduksjon ved hjelp av regel 24 (MemberExpression)
+
+
+tilstand 114
+
+   98 FormalParameterList: Identifier .
+
+    $default  reduksjon ved hjelp av regel 98 (FormalParameterList)
+
+
+tilstand 115
+
+   95 FunctionExpression: FUNCTION_KW '(' FormalParameterList_opt . ')' '{' FunctionBody '}'
+
+    ')'  skift og gå til tilstand 149
+
+
+tilstand 116
+
+   97 FormalParameterList_opt: FormalParameterList .
+   99 FormalParameterList: FormalParameterList . ',' Identifier
+
+    ','  skift og gå til tilstand 150
+
+    $default  reduksjon ved hjelp av regel 97 (FormalParameterList_opt)
+
+
+tilstand 117
+
+   94 FunctionDeclaration: FUNCTION_KW Identifier '(' . FormalParameterList_opt ')' '{' FunctionBody '}'
+
+    IDENTIFIER  skift og gå til tilstand 4
+
+    $default  reduksjon ved hjelp av regel 96 (FormalParameterList_opt)
+
+    Identifier               gå til tilstand 114
+    FormalParameterList_opt  gå til tilstand 151
+    FormalParameterList      gå til tilstand 116
+
+
+tilstand 118
+
+   81 ReturnStatement: RETURN_KW Expression_opt ';' .
+
+    $default  reduksjon ved hjelp av regel 81 (ReturnStatement)
+
+
+tilstand 119
+
+   66 Expression: Expression . ',' AssignmentExpression
+   76 IfStatement: IF_KW '(' Expression . ')' Statement ELSE_KW Statement
+   77            | IF_KW '(' Expression . ')' Statement
+
+    ')'  skift og gå til tilstand 152
+    ','  skift og gå til tilstand 110
+
+
+tilstand 120
+
+   93 Initialiser: '=' . AssignmentExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 153
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 121
+
+   90 VariableDeclaration: Identifier Initialiser_opt .
+
+    $default  reduksjon ved hjelp av regel 90 (VariableDeclaration)
+
+
+tilstand 122
+
+   92 Initialiser_opt: Initialiser .
+
+    $default  reduksjon ved hjelp av regel 92 (Initialiser_opt)
+
+
+tilstand 123
+
+   89 VariableDeclarationList: VariableDeclarationList ',' . VariableDeclaration
+
+    IDENTIFIER  skift og gå til tilstand 4
+
+    Identifier           gå til tilstand 72
+    VariableDeclaration  gå til tilstand 154
+
+
+tilstand 124
+
+   87 VariableStatement: VAR_KW VariableDeclarationList ';' .
+
+    $default  reduksjon ved hjelp av regel 87 (VariableStatement)
+
+
+tilstand 125
+
+   78 IterationStatement: DO_KW Statement WHILE_KW . '(' Expression ')' ';'
+
+    '('  skift og gå til tilstand 155
+
+
+tilstand 126
+
+   66 Expression: Expression . ',' AssignmentExpression
+   79 IterationStatement: WHILE_KW '(' Expression . ')' Statement
+
+    ')'  skift og gå til tilstand 156
+    ','  skift og gå til tilstand 110
+
+
+tilstand 127
+
+   66 Expression: Expression . ',' AssignmentExpression
+   80 IterationStatement: FOR_KW '(' Expression . ';' Expression_opt ';' Expression_opt ')' Statement
+
+    ','  skift og gå til tilstand 110
+    ';'  skift og gå til tilstand 157
+
+
+tilstand 128
+
+   16 PrimaryExpression: '(' Expression ')' .
+
+    $default  reduksjon ved hjelp av regel 16 (PrimaryExpression)
+
+
+tilstand 129
+
+   82 Block: '{' StatementList_opt '}' .
+
+    $default  reduksjon ved hjelp av regel 82 (Block)
+
+
+tilstand 130
+
+   86 StatementList: StatementList Statement .
+
+    $default  reduksjon ved hjelp av regel 86 (StatementList)
+
+
+tilstand 131
+
+   64 AssignmentExpression: LeftHandSideExpression AssignmentOperator AssignmentExpression .
+
+    $default  reduksjon ved hjelp av regel 64 (AssignmentExpression)
+
+
+tilstand 132
+
+   31 Arguments: '(' ')' .
+
+    $default  reduksjon ved hjelp av regel 31 (Arguments)
+
+
+tilstand 133
+
+   32 Arguments: '(' ArgumentList . ')'
+   34 ArgumentList: ArgumentList . ',' AssignmentExpression
+
+    ')'  skift og gå til tilstand 158
+    ','  skift og gå til tilstand 159
+
+
+tilstand 134
+
+   33 ArgumentList: AssignmentExpression .
+
+    $default  reduksjon ved hjelp av regel 33 (ArgumentList)
+
+
+tilstand 135
+
+   22 MemberExpression: MemberExpression '[' Expression . ']'
+   66 Expression: Expression . ',' AssignmentExpression
+
+    ']'  skift og gå til tilstand 160
+    ','  skift og gå til tilstand 110
+
+
+tilstand 136
+
+   23 MemberExpression: MemberExpression '.' Identifier .
+
+    $default  reduksjon ved hjelp av regel 23 (MemberExpression)
+
+
+tilstand 137
+
+   29 CallExpression: CallExpression '[' Expression . ']'
+   66 Expression: Expression . ',' AssignmentExpression
+
+    ']'  skift og gå til tilstand 161
+    ','  skift og gå til tilstand 110
+
+
+tilstand 138
+
+   30 CallExpression: CallExpression '.' Identifier .
+
+    $default  reduksjon ved hjelp av regel 30 (CallExpression)
+
+
+tilstand 139
+
+   49 MultiplicativeExpression: MultiplicativeExpression '*' UnaryExpression .
+
+    $default  reduksjon ved hjelp av regel 49 (MultiplicativeExpression)
+
+
+tilstand 140
+
+   50 MultiplicativeExpression: MultiplicativeExpression '/' UnaryExpression .
+
+    $default  reduksjon ved hjelp av regel 50 (MultiplicativeExpression)
+
+
+tilstand 141
+
+   49 MultiplicativeExpression: MultiplicativeExpression . '*' UnaryExpression
+   50                         | MultiplicativeExpression . '/' UnaryExpression
+   52 AdditiveExpression: AdditiveExpression '+' MultiplicativeExpression .
+
+    '*'  skift og gå til tilstand 101
+    '/'  skift og gå til tilstand 102
+
+    $default  reduksjon ved hjelp av regel 52 (AdditiveExpression)
+
+
+tilstand 142
+
+   49 MultiplicativeExpression: MultiplicativeExpression . '*' UnaryExpression
+   50                         | MultiplicativeExpression . '/' UnaryExpression
+   53 AdditiveExpression: AdditiveExpression '-' MultiplicativeExpression .
+
+    '*'  skift og gå til tilstand 101
+    '/'  skift og gå til tilstand 102
+
+    $default  reduksjon ved hjelp av regel 53 (AdditiveExpression)
+
+
+tilstand 143
+
+   52 AdditiveExpression: AdditiveExpression . '+' MultiplicativeExpression
+   53                   | AdditiveExpression . '-' MultiplicativeExpression
+   57 RelationalExpression: RelationalExpression LEQ AdditiveExpression .
+
+    '+'  skift og gå til tilstand 103
+    '-'  skift og gå til tilstand 104
+
+    $default  reduksjon ved hjelp av regel 57 (RelationalExpression)
+
+
+tilstand 144
+
+   52 AdditiveExpression: AdditiveExpression . '+' MultiplicativeExpression
+   53                   | AdditiveExpression . '-' MultiplicativeExpression
+   58 RelationalExpression: RelationalExpression GEQ AdditiveExpression .
+
+    '+'  skift og gå til tilstand 103
+    '-'  skift og gå til tilstand 104
+
+    $default  reduksjon ved hjelp av regel 58 (RelationalExpression)
+
+
+tilstand 145
+
+   52 AdditiveExpression: AdditiveExpression . '+' MultiplicativeExpression
+   53                   | AdditiveExpression . '-' MultiplicativeExpression
+   55 RelationalExpression: RelationalExpression '<' AdditiveExpression .
+
+    '+'  skift og gå til tilstand 103
+    '-'  skift og gå til tilstand 104
+
+    $default  reduksjon ved hjelp av regel 55 (RelationalExpression)
+
+
+tilstand 146
+
+   52 AdditiveExpression: AdditiveExpression . '+' MultiplicativeExpression
+   53                   | AdditiveExpression . '-' MultiplicativeExpression
+   56 RelationalExpression: RelationalExpression '>' AdditiveExpression .
+
+    '+'  skift og gå til tilstand 103
+    '-'  skift og gå til tilstand 104
+
+    $default  reduksjon ved hjelp av regel 56 (RelationalExpression)
+
+
+tilstand 147
+
+   61 LogicalORExpression: LogicalORExpression LOGICAL_OR LogicalANDExpression .
+
+    $default  reduksjon ved hjelp av regel 61 (LogicalORExpression)
+
+
+tilstand 148
+
+   66 Expression: Expression ',' AssignmentExpression .
+
+    $default  reduksjon ved hjelp av regel 66 (Expression)
+
+
+tilstand 149
+
+   95 FunctionExpression: FUNCTION_KW '(' FormalParameterList_opt ')' . '{' FunctionBody '}'
+
+    '{'  skift og gå til tilstand 162
+
+
+tilstand 150
+
+   99 FormalParameterList: FormalParameterList ',' . Identifier
+
+    IDENTIFIER  skift og gå til tilstand 4
+
+    Identifier  gå til tilstand 163
+
+
+tilstand 151
+
+   94 FunctionDeclaration: FUNCTION_KW Identifier '(' FormalParameterList_opt . ')' '{' FunctionBody '}'
+
+    ')'  skift og gå til tilstand 164
+
+
+tilstand 152
+
+   76 IfStatement: IF_KW '(' Expression ')' . Statement ELSE_KW Statement
+   77            | IF_KW '(' Expression ')' . Statement
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    RETURN_KW        skift og gå til tilstand 12
+    VOID_KW          skift og gå til tilstand 13
+    IF_KW            skift og gå til tilstand 14
+    VAR_KW           skift og gå til tilstand 15
+    DO_KW            skift og gå til tilstand 16
+    WHILE_KW         skift og gå til tilstand 17
+    FOR_KW           skift og gå til tilstand 18
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+    '{'              skift og gå til tilstand 27
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 49
+    Statement                 gå til tilstand 165
+    ExpressionStatement       gå til tilstand 51
+    IfStatement               gå til tilstand 52
+    IterationStatement        gå til tilstand 53
+    ReturnStatement           gå til tilstand 54
+    Block                     gå til tilstand 55
+    VariableStatement         gå til tilstand 56
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 153
+
+   93 Initialiser: '=' AssignmentExpression .
+
+    $default  reduksjon ved hjelp av regel 93 (Initialiser)
+
+
+tilstand 154
+
+   89 VariableDeclarationList: VariableDeclarationList ',' VariableDeclaration .
+
+    $default  reduksjon ved hjelp av regel 89 (VariableDeclarationList)
+
+
+tilstand 155
+
+   78 IterationStatement: DO_KW Statement WHILE_KW '(' . Expression ')' ';'
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 166
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 156
+
+   79 IterationStatement: WHILE_KW '(' Expression ')' . Statement
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    RETURN_KW        skift og gå til tilstand 12
+    VOID_KW          skift og gå til tilstand 13
+    IF_KW            skift og gå til tilstand 14
+    VAR_KW           skift og gå til tilstand 15
+    DO_KW            skift og gå til tilstand 16
+    WHILE_KW         skift og gå til tilstand 17
+    FOR_KW           skift og gå til tilstand 18
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+    '{'              skift og gå til tilstand 27
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 49
+    Statement                 gå til tilstand 167
+    ExpressionStatement       gå til tilstand 51
+    IfStatement               gå til tilstand 52
+    IterationStatement        gå til tilstand 53
+    ReturnStatement           gå til tilstand 54
+    Block                     gå til tilstand 55
+    VariableStatement         gå til tilstand 56
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 157
+
+   80 IterationStatement: FOR_KW '(' Expression ';' . Expression_opt ';' Expression_opt ')' Statement
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    $default  reduksjon ved hjelp av regel 67 (Expression_opt)
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 68
+    Expression_opt            gå til tilstand 168
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 158
+
+   32 Arguments: '(' ArgumentList ')' .
+
+    $default  reduksjon ved hjelp av regel 32 (Arguments)
+
+
+tilstand 159
+
+   34 ArgumentList: ArgumentList ',' . AssignmentExpression
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 169
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 160
+
+   22 MemberExpression: MemberExpression '[' Expression ']' .
+
+    $default  reduksjon ved hjelp av regel 22 (MemberExpression)
+
+
+tilstand 161
+
+   29 CallExpression: CallExpression '[' Expression ']' .
+
+    $default  reduksjon ved hjelp av regel 29 (CallExpression)
+
+
+tilstand 162
+
+   95 FunctionExpression: FUNCTION_KW '(' FormalParameterList_opt ')' '{' . FunctionBody '}'
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 11
+    RETURN_KW        skift og gå til tilstand 12
+    VOID_KW          skift og gå til tilstand 13
+    IF_KW            skift og gå til tilstand 14
+    VAR_KW           skift og gå til tilstand 15
+    DO_KW            skift og gå til tilstand 16
+    WHILE_KW         skift og gå til tilstand 17
+    FOR_KW           skift og gå til tilstand 18
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+    '{'              skift og gå til tilstand 27
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 49
+    Statement                 gå til tilstand 50
+    ExpressionStatement       gå til tilstand 51
+    IfStatement               gå til tilstand 52
+    IterationStatement        gå til tilstand 53
+    ReturnStatement           gå til tilstand 54
+    Block                     gå til tilstand 55
+    VariableStatement         gå til tilstand 56
+    FunctionDeclaration       gå til tilstand 57
+    FunctionExpression        gå til tilstand 58
+    FunctionBody              gå til tilstand 170
+    SourceElements            gå til tilstand 171
+    SourceElement             gå til tilstand 60
+
+
+tilstand 163
+
+   99 FormalParameterList: FormalParameterList ',' Identifier .
+
+    $default  reduksjon ved hjelp av regel 99 (FormalParameterList)
+
+
+tilstand 164
+
+   94 FunctionDeclaration: FUNCTION_KW Identifier '(' FormalParameterList_opt ')' . '{' FunctionBody '}'
+
+    '{'  skift og gå til tilstand 172
+
+
+tilstand 165
+
+   76 IfStatement: IF_KW '(' Expression ')' Statement . ELSE_KW Statement
+   77            | IF_KW '(' Expression ')' Statement .
+
+    ELSE_KW  skift og gå til tilstand 173
+
+    ELSE_KW   [reduksjon ved hjelp av regel 77 (IfStatement)]
+    $default  reduksjon ved hjelp av regel 77 (IfStatement)
+
+
+tilstand 166
+
+   66 Expression: Expression . ',' AssignmentExpression
+   78 IterationStatement: DO_KW Statement WHILE_KW '(' Expression . ')' ';'
+
+    ')'  skift og gå til tilstand 174
+    ','  skift og gå til tilstand 110
+
+
+tilstand 167
+
+   79 IterationStatement: WHILE_KW '(' Expression ')' Statement .
+
+    $default  reduksjon ved hjelp av regel 79 (IterationStatement)
+
+
+tilstand 168
+
+   80 IterationStatement: FOR_KW '(' Expression ';' Expression_opt . ';' Expression_opt ')' Statement
+
+    ';'  skift og gå til tilstand 175
+
+
+tilstand 169
+
+   34 ArgumentList: ArgumentList ',' AssignmentExpression .
+
+    $default  reduksjon ved hjelp av regel 34 (ArgumentList)
+
+
+tilstand 170
+
+   95 FunctionExpression: FUNCTION_KW '(' FormalParameterList_opt ')' '{' FunctionBody . '}'
+
+    '}'  skift og gå til tilstand 176
+
+
+tilstand 171
+
+  100 FunctionBody: SourceElements .
+  102 SourceElements: SourceElements . SourceElement
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 11
+    RETURN_KW        skift og gå til tilstand 12
+    VOID_KW          skift og gå til tilstand 13
+    IF_KW            skift og gå til tilstand 14
+    VAR_KW           skift og gå til tilstand 15
+    DO_KW            skift og gå til tilstand 16
+    WHILE_KW         skift og gå til tilstand 17
+    FOR_KW           skift og gå til tilstand 18
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+    '{'              skift og gå til tilstand 27
+
+    $default  reduksjon ved hjelp av regel 100 (FunctionBody)
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 49
+    Statement                 gå til tilstand 50
+    ExpressionStatement       gå til tilstand 51
+    IfStatement               gå til tilstand 52
+    IterationStatement        gå til tilstand 53
+    ReturnStatement           gå til tilstand 54
+    Block                     gå til tilstand 55
+    VariableStatement         gå til tilstand 56
+    FunctionDeclaration       gå til tilstand 57
+    FunctionExpression        gå til tilstand 58
+    SourceElement             gå til tilstand 112
+
+
+tilstand 172
+
+   94 FunctionDeclaration: FUNCTION_KW Identifier '(' FormalParameterList_opt ')' '{' . FunctionBody '}'
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 11
+    RETURN_KW        skift og gå til tilstand 12
+    VOID_KW          skift og gå til tilstand 13
+    IF_KW            skift og gå til tilstand 14
+    VAR_KW           skift og gå til tilstand 15
+    DO_KW            skift og gå til tilstand 16
+    WHILE_KW         skift og gå til tilstand 17
+    FOR_KW           skift og gå til tilstand 18
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+    '{'              skift og gå til tilstand 27
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 49
+    Statement                 gå til tilstand 50
+    ExpressionStatement       gå til tilstand 51
+    IfStatement               gå til tilstand 52
+    IterationStatement        gå til tilstand 53
+    ReturnStatement           gå til tilstand 54
+    Block                     gå til tilstand 55
+    VariableStatement         gå til tilstand 56
+    FunctionDeclaration       gå til tilstand 57
+    FunctionExpression        gå til tilstand 58
+    FunctionBody              gå til tilstand 177
+    SourceElements            gå til tilstand 171
+    SourceElement             gå til tilstand 60
+
+
+tilstand 173
+
+   76 IfStatement: IF_KW '(' Expression ')' Statement ELSE_KW . Statement
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    RETURN_KW        skift og gå til tilstand 12
+    VOID_KW          skift og gå til tilstand 13
+    IF_KW            skift og gå til tilstand 14
+    VAR_KW           skift og gå til tilstand 15
+    DO_KW            skift og gå til tilstand 16
+    WHILE_KW         skift og gå til tilstand 17
+    FOR_KW           skift og gå til tilstand 18
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+    '{'              skift og gå til tilstand 27
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 49
+    Statement                 gå til tilstand 178
+    ExpressionStatement       gå til tilstand 51
+    IfStatement               gå til tilstand 52
+    IterationStatement        gå til tilstand 53
+    ReturnStatement           gå til tilstand 54
+    Block                     gå til tilstand 55
+    VariableStatement         gå til tilstand 56
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 174
+
+   78 IterationStatement: DO_KW Statement WHILE_KW '(' Expression ')' . ';'
+
+    ';'  skift og gå til tilstand 179
+
+
+tilstand 175
+
+   80 IterationStatement: FOR_KW '(' Expression ';' Expression_opt ';' . Expression_opt ')' Statement
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    VOID_KW          skift og gå til tilstand 13
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+
+    $default  reduksjon ved hjelp av regel 67 (Expression_opt)
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 68
+    Expression_opt            gå til tilstand 180
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 176
+
+   95 FunctionExpression: FUNCTION_KW '(' FormalParameterList_opt ')' '{' FunctionBody '}' .
+
+    $default  reduksjon ved hjelp av regel 95 (FunctionExpression)
+
+
+tilstand 177
+
+   94 FunctionDeclaration: FUNCTION_KW Identifier '(' FormalParameterList_opt ')' '{' FunctionBody . '}'
+
+    '}'  skift og gå til tilstand 181
+
+
+tilstand 178
+
+   76 IfStatement: IF_KW '(' Expression ')' Statement ELSE_KW Statement .
+
+    $default  reduksjon ved hjelp av regel 76 (IfStatement)
+
+
+tilstand 179
+
+   78 IterationStatement: DO_KW Statement WHILE_KW '(' Expression ')' ';' .
+
+    $default  reduksjon ved hjelp av regel 78 (IterationStatement)
+
+
+tilstand 180
+
+   80 IterationStatement: FOR_KW '(' Expression ';' Expression_opt ';' Expression_opt . ')' Statement
+
+    ')'  skift og gå til tilstand 182
+
+
+tilstand 181
+
+   94 FunctionDeclaration: FUNCTION_KW Identifier '(' FormalParameterList_opt ')' '{' FunctionBody '}' .
+
+    $default  reduksjon ved hjelp av regel 94 (FunctionDeclaration)
+
+
+tilstand 182
+
+   80 IterationStatement: FOR_KW '(' Expression ';' Expression_opt ';' Expression_opt ')' . Statement
+
+    STRING_LITERAL   skift og gå til tilstand 1
+    INTEGER_LITERAL  skift og gå til tilstand 2
+    FLOAT_LITERAL    skift og gå til tilstand 3
+    IDENTIFIER       skift og gå til tilstand 4
+    NULL_KW          skift og gå til tilstand 5
+    TRUE_KW          skift og gå til tilstand 6
+    FALSE_KW         skift og gå til tilstand 7
+    THIS_KW          skift og gå til tilstand 8
+    NEW_KW           skift og gå til tilstand 9
+    DELETE_KW        skift og gå til tilstand 10
+    FUNCTION_KW      skift og gå til tilstand 61
+    RETURN_KW        skift og gå til tilstand 12
+    VOID_KW          skift og gå til tilstand 13
+    IF_KW            skift og gå til tilstand 14
+    VAR_KW           skift og gå til tilstand 15
+    DO_KW            skift og gå til tilstand 16
+    WHILE_KW         skift og gå til tilstand 17
+    FOR_KW           skift og gå til tilstand 18
+    TYPEOF_KW        skift og gå til tilstand 19
+    PLUSPLUS         skift og gå til tilstand 20
+    MINUSMINUS       skift og gå til tilstand 21
+    '('              skift og gå til tilstand 22
+    '+'              skift og gå til tilstand 23
+    '-'              skift og gå til tilstand 24
+    '~'              skift og gå til tilstand 25
+    '!'              skift og gå til tilstand 26
+    '{'              skift og gå til tilstand 27
+
+    Identifier                gå til tilstand 29
+    Literal                   gå til tilstand 30
+    NullLiteral               gå til tilstand 31
+    BooleanLiteral            gå til tilstand 32
+    NumericLiteral            gå til tilstand 33
+    StringLiteral             gå til tilstand 34
+    PrimaryExpression         gå til tilstand 35
+    LeftHandSideExpression    gå til tilstand 36
+    MemberExpression          gå til tilstand 37
+    NewExpression             gå til tilstand 38
+    CallExpression            gå til tilstand 39
+    PostfixExpression         gå til tilstand 40
+    UnaryExpression           gå til tilstand 41
+    MultiplicativeExpression  gå til tilstand 42
+    AdditiveExpression        gå til tilstand 43
+    RelationalExpression      gå til tilstand 44
+    LogicalANDExpression      gå til tilstand 45
+    LogicalORExpression       gå til tilstand 46
+    ConditionalExpression     gå til tilstand 47
+    AssignmentExpression      gå til tilstand 48
+    Expression                gå til tilstand 49
+    Statement                 gå til tilstand 183
+    ExpressionStatement       gå til tilstand 51
+    IfStatement               gå til tilstand 52
+    IterationStatement        gå til tilstand 53
+    ReturnStatement           gå til tilstand 54
+    Block                     gå til tilstand 55
+    VariableStatement         gå til tilstand 56
+    FunctionExpression        gå til tilstand 58
+
+
+tilstand 183
+
+   80 IterationStatement: FOR_KW '(' Expression ';' Expression_opt ';' Expression_opt ')' Statement .
+
+    $default  reduksjon ved hjelp av regel 80 (IterationStatement)

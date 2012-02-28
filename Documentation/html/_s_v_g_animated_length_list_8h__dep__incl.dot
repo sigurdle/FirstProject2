@@ -1,0 +1,22 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="include/LSVG/SVGAnimatedLengthList.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="include/LSVG/SVGTextPositioningElementImpl.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_s_v_g_text_positioning_element_impl_8h.html"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="include/LSVG/LSVG2.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_l_s_v_g2_8h.html"];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="include/LSVG/LSVG.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_l_s_v_g_8h.html"];
+  Node2 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="include/LSVG/SVGAltGlyphDefElement.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_s_v_g_alt_glyph_def_element_8h.html"];
+  Node2 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="include/LSVG/SVGTextElement.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_s_v_g_text_element_8h.html"];
+  Node2 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="include/LSVG/SVGTextPathElement.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_s_v_g_text_path_element_8h.html"];
+  Node2 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="include/LSVG/SVGTRefElement.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_s_v_g_t_ref_element_8h.html"];
+  Node2 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="include/LSVG/SVGTSpanElement.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$_s_v_g_t_span_element_8h.html"];
+}

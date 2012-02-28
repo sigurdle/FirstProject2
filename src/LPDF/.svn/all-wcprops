@@ -1,0 +1,287 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF
+END
+StdAfx.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/StdAfx.h
+END
+PDFEPath.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEPath.h
+END
+PDFEMatrix.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEMatrix.cpp
+END
+PDFObject.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFObject.h
+END
+PDFEExtGState.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEExtGState.cpp
+END
+PDFCosDoc.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosDoc.h
+END
+PDFCosObj.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosObj.cpp
+END
+PDFCosString.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosString.h
+END
+PDFCosArray.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosArray.cpp
+END
+PDFEContent.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEContent.h
+END
+PDFEImage.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEImage.cpp
+END
+PDFEGraphicState.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEGraphicState.h
+END
+PDFCosBoolean.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosBoolean.h
+END
+PDFPDDoc.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFPDDoc.cpp
+END
+PDFCosName.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosName.h
+END
+LPDF.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/LPDF.cpp
+END
+PDFCosReal.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosReal.h
+END
+PDFCosDict.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosDict.h
+END
+PDFEElement.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEElement.cpp
+END
+PDFEText.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEText.h
+END
+StdAfx.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/StdAfx.cpp
+END
+PDFEPath.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEPath.cpp
+END
+PDFEColorSpace.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEColorSpace.h
+END
+PDFCosStream.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosStream.h
+END
+PDFPDPage.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFPDPage.h
+END
+PDFCosInteger.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosInteger.h
+END
+PDFCosDoc.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosDoc.cpp
+END
+PDFCosString.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosString.cpp
+END
+PDFEMatrix.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEMatrix.h
+END
+PDFEContent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEContent.cpp
+END
+PDFEExtGState.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEExtGState.h
+END
+PDFEGraphicState.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEGraphicState.cpp
+END
+PDFCosObj.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosObj.h
+END
+PDFCosBoolean.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosBoolean.cpp
+END
+PDFCosName.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosName.cpp
+END
+PDFCosReal.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosReal.cpp
+END
+PDFCosArray.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosArray.h
+END
+PDFCosDict.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosDict.cpp
+END
+PDFEText.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEText.cpp
+END
+PDFEImage.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEImage.h
+END
+PDFPDDoc.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFPDDoc.h
+END
+PDFEColorSpace.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEColorSpace.cpp
+END
+PDFCosStream.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosStream.cpp
+END
+LPDF.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/LPDF.h
+END
+PDFPDPage.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFPDPage.cpp
+END
+PDFCosInteger.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFCosInteger.cpp
+END
+PDFEElement.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/107/FirstProject2/trunk/src/LPDF/PDFEElement.h
+END

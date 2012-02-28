@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/firstproject2/!svn/ver/121/FirstProject2/trunk/include/TIFF
+END
+StdAfx.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/firstproject2/!svn/ver/121/FirstProject2/trunk/include/TIFF/StdAfx.h
+END
+TIFFImage.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/121/FirstProject2/trunk/include/TIFF/TIFFImage.h
+END
+TIFF.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/121/FirstProject2/trunk/include/TIFF/TIFF.h
+END
+TIFFFile.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/121/FirstProject2/trunk/include/TIFF/TIFFFile.h
+END

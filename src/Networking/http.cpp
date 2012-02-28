@@ -1,0 +1,812 @@
+#include "stdafx.h"
+#include "Socket.h"
+
+#include <direct.h>
+#include <stdlib.h>
+
+//#include <sstream>
+
+#include "http.h"
+
+namespace System
+{
+namespace Net
+{
+
+using namespace std;
+using namespace IO;
+
+const char* GetFilenameExtension(const char* str)
+{
+	int len = strlen(str);
+	const char* p = str + len-1;
+	while (p >= str)
+	{
+		if (*p == '.')
+			return p;
+
+		p--;
+	}
+	return NULL;
+}
+
+String GetTempFilename(const char* dir, const char* url)
+{
+	const char* ext = GetFilenameExtension(url);
+
+	_mkdir(dir);
+
+	int n = 0;
+	while (1)
+	{
+		char filename[64];
+		sprintf_s(filename, "temp%d", n);
+
+		char fullpath[512];
+		_makepath_s(fullpath, nullptr, dir, filename, ext);
+
+		FILE* fp = NULL;
+		fopen_s(&fp, fullpath, "rb");
+		if (fp == NULL)	// File doesn't exist, so we return the filename
+			return fullpath;
+
+		fclose(fp);	// Close the file and try another filename
+		n++;
+	}
+
+	return nullptr;
+}
+
+////////////////////////////////////////////////////////
+// HttpContentStream
+
+HttpContentStream::HttpContentStream(HttpRequest* pRequest)// : m_refcount(0)
+{
+	m_transferEncoding = nullptr;
+
+	m_pRequest = pRequest;
+
+	m_pos = 0;
+	m_chunkBytesLeft = 0;
+	m_contentLength = (ULONGLONG)-1;
+}
+
+HttpContentStream::~HttpContentStream()
+{
+	m_contentLength = -1;
+}
+
+uint64 HttpContentStream::GetSize()
+{
+	return m_contentLength;
+}
+
+/*
+ISequentialByteStream* HttpContentStream::Clone() const
+{
+	THROW(-1);
+	return NULL;
+}
+*/
+
+size_t HttpContentStream::Read(void* pv, size_t cb)
+{
+	uint8* pb = (uint8*)pv;
+
+	if (m_transferEncoding && m_transferEncoding != "identity")	// chunked
+	{
+		size_t bytesLeft = cb;
+
+		/*
+
+  TODO, something like this here
+
+		if (m_chunkSize == 0)
+			return 0;
+			*/
+
+		while (bytesLeft)
+		{
+			if (m_chunkBytesLeft == 0)	// Begin next chunk
+			{
+				//StringBuilder stream;
+
+				String str = m_pRequest->m_connection->m_pSocket->ReadLine();
+				//stream.Detach();
+
+				long size = 0;
+				ASSERT(0);
+#if 0
+				if (sscanf(CString(str), "%x", &size) != 1)
+					THROW(-1);
+#endif
+				m_chunkBytesLeft = size;
+
+				if (size == 0)
+				{
+					String crlf = m_pRequest->m_connection->m_pSocket->ReadLine();
+					//String crlf = stream.Detach();
+					ASSERT(crlf.GetLength() == 0);
+					m_pRequest->m_connection->m_pSocket->m_bDone = true;
+					break;
+				}
+
+			//	m_chunkSize = size;
+
+			}
+
+			size_t len = bytesLeft;
+			if (len > m_chunkBytesLeft)	// Don't cross chunks
+				len = m_chunkBytesLeft;
+
+			int nRead = m_pRequest->m_connection->m_pSocket->Read(pb, len);
+
+			m_pos += nRead;
+			pb += nRead;
+			m_chunkBytesLeft -= nRead;
+			bytesLeft -= nRead;
+
+			if (nRead < len)
+				break;
+
+			if (m_chunkBytesLeft == 0)	// End chunk
+			{
+				//StringBuilder stream;
+
+				String crlf = m_pRequest->m_connection->m_pSocket->ReadLine();
+				//String crlf = stream.Detach();
+				ASSERT(crlf.GetLength() == 0);
+			}
+		}
+
+		return cb - bytesLeft;
+	}
+	else
+	{
+#if 0
+		std::string contentLengthStr;
+		if (headers.GetHeaderValue("Content-Length", contentLengthStr))
+		{
+			long contentLength;
+			sscanf(contentLengthStr.c_str(), "%d", &contentLength);
+#endif
+
+		ULONG len = cb;
+		if (m_pos+len > m_contentLength)
+			len = m_contentLength-m_pos;
+
+		ULONG nRead = m_pRequest->m_connection->m_pSocket->Read(pb, len);
+
+		m_pos += nRead;
+		//m_chunkBytesLeft -= nRead;
+
+	//	if (nRead < len)
+	//		m_chunkBytesLeft = 0;
+
+		return nRead;
+	}
+}
+
+uint64 HttpContentStream::Seek(LONGLONG offset, IO::SeekOrigin origin)
+{
+	uint8 buffer[256];
+
+	if (origin == System::IO::STREAM_SEEK_SET)
+	{
+		if (offset < m_pos)	// Can't seek backward
+		{
+			raise(Exception(L"Can't seek backward"));
+		}
+
+		for (int i = m_pos; i < offset; ++i)
+		{
+			int n = 256;
+			if (i+n > offset)
+				n = offset-i;
+
+			Read(buffer, n);
+		}
+	}
+	else if (origin == System::IO::STREAM_SEEK_CUR)
+	{
+		if (offset < 0)	// Can't seek backward
+		{
+			raise(Exception(L"Can't seek backward"));
+		}
+
+		for (int i = 0; i < offset; ++i)
+		{
+			int n = 256;
+			if (i+n > offset)
+				n = offset-i;
+
+			Read(buffer, n);
+		}
+	}
+	else
+	{
+		raise(ArgumentException(L"STREAM_SEEK_END not supported"));
+	}
+
+	return m_pos;
+}
+
+size_t HttpContentStream::Write(const void* pv, size_t cb)
+{
+	raise(Exception());
+	return -1;
+}
+
+/*
+ULONG HttpContentStream::AddRef()
+{
+	return _Object::AddRef();
+	//m_refcount++;
+	//return m_refcount;
+}
+
+ULONG HttpContentStream::Release()
+{
+	return _Object::Release();
+}
+*/
+
+//////////////////////////////////////////////////////////////////
+// HttpRequest
+
+HttpRequest::HttpRequest(HttpConnection* connection, StringIn verb, StringIn objectName) :
+	m_connection(connection),
+	m_verb(verb),
+	m_objectName(objectName)
+{
+	m_pContentStream = new HttpContentStream(this);
+}
+
+void HttpRequest::AddHeader(StringIn fieldName, StringIn fieldValue)
+{
+	m_requestHeaders.m_all += String(fieldName) + " : " + String(fieldValue);
+}
+
+void HttpRequest::AddHeaders(StringIn str)
+{
+	m_requestHeaders.m_all += str;
+}
+
+HttpContentStream* HttpRequest::GetContentStream()
+{
+	return m_pContentStream;
+}
+
+void HttpConnection::HttpSocket::OnSend(int nErrorCode)
+{
+	DebugTrace("OnSend err: " << nErrorCode << "\n");
+
+	/*
+	char* msg = "GET http://www.lerstad.com/index.html HTTP/1.1\r\n"
+					"Host: www.lerstad.com\r\n"
+				//	"Content-Length: 0\r\n"
+					"\r\n";
+
+	int n = Write(msg, strlen(msg));
+	*/
+//	select(0, NULL, &fd, NULL, NULL);
+//	int nSent = send(m_socket, msg, strlen(msg), 0);
+}
+
+void HttpConnection::HttpSocket::OnReceive(int nErrorCode)
+{
+	if (m_state == 0)
+	{
+		m_pConnection->m_pRequest->ReadResponse();
+		m_state = 1;
+		m_pConnection->m_pRequest->m_stateChanged(m_state);
+	}
+	else
+	{
+		ULONG n;
+		IOCtl(FIONREAD, &n);
+
+	//	TRACE("OnRead %p count %d\n", this, n);
+
+	//	if (n > 0)
+		{
+			m_pConnection->m_pRequest->m_downloadCallback->OnDataAvailable(n, m_pConnection->m_pRequest->GetContentStream());
+
+			/*
+			if (m_bDone)
+			{
+				m_pConnection->m_pRequest->m_downloadCallback->OnDone();
+			}
+			*/
+
+			/*
+			m_sofar += n;
+
+			if (m_sofar >= m_pConnection->m_pRequest->m_pContentStream->m_contentLength)
+			{
+				m_pConnection->m_pRequest->m_downloadCallback->OnDone();
+			}
+			*/
+		}
+		//else
+		;//	ASSERT(0);
+	}
+}
+
+HttpConnection::HttpSocket::HttpSocket(HttpConnection* connection) : m_pConnection(connection)
+{
+	m_bDone = false;
+//	m_hEvent = INVALID_HANDLE_VALUE;
+	m_state = 0;
+	m_sofar = 0;
+}
+
+String HttpConnection::HttpSocket::ReadLine()
+{
+	IO::StringWriter stream;
+	ReadLine(stream);
+	return stream.str();
+}
+
+IO::TextWriter& HttpConnection::HttpSocket::ReadLine(IO::TextWriter& stream)
+{
+	while (1)
+	{
+		char c;
+		if (Read(&c, 1) != 1)
+			raise(Exception("read error"));
+
+		if (c == '\r')
+		{
+			char c2;
+			Read(&c2, 1);
+			if (c2 == '\n')
+			{
+				break;
+			}
+			else
+			{
+			//	if (str.length() == 512)
+			//		THROW(-1);
+				stream << c;
+
+			//	if (str.length() == 512)
+			//		THROW(-1);
+				stream << c2;
+			}
+		}
+		else
+		{
+		//	if (str.length() == 512)
+		//		THROW(-1);
+			stream << c;
+		}
+	}
+
+	return stream;
+
+//	TRACE("%s\n", str.c_str());
+//	return buffer.DetachToString();
+}
+
+void HttpConnection::HttpSocket::OnConnect(int nErrorCode)
+{
+	DebugTrace("OnConnect\n");
+//			SetEvent(m_hEvent);
+}
+
+void HttpConnection::HttpSocket::OnClose(int nErrorCode)
+{
+	DebugTrace("OnClose " << nErrorCode << "\n");
+
+	// Check if there's more data to read also in OnClose()
+	ULONG n;
+	IOCtl(FIONREAD, &n);
+	if (n > 0)
+	{
+		if (m_pConnection->m_pRequest->m_downloadCallback)
+		{
+			m_pConnection->m_pRequest->m_downloadCallback->OnDataAvailable(n, m_pConnection->m_pRequest->GetContentStream());
+		}
+	}
+
+	if (m_pConnection->m_pRequest->m_downloadCallback)
+	{
+		m_pConnection->m_pRequest->m_downloadCallback->OnDone();
+	}
+}
+
+void HttpRequest::ReadResponse()
+{
+	// Read Response
+	try
+	{
+		//StringBuilder stream;
+		m_status = m_connection->m_pSocket->ReadLine();
+		//status = stream.Detach();
+
+		if (strstr(CString(m_status).c_str(), "OK") == NULL)
+		{
+			raise(Exception(L"HTTP not OK"));
+		}
+
+		/*
+		// TODO
+		if (m_status != "HTTP/1.1 200 OK")
+		{
+			raise(Exception(L"HTTP not OK"));
+			ASSERT(0);
+		}
+		*/
+	}
+	catch (Exception* e)
+	{
+		return;
+	}
+
+	while (1)
+	{
+		String stream = m_connection->m_pSocket->ReadLine();
+		//if (!strcmp(line.c_str(), ""))
+		if (stream.GetLength() == 0)
+		{
+			break;
+		}
+
+		//line += "\r\n";
+		stream += "\r\n";
+		m_responseHeaders.AddHeaders(stream);
+
+	//	m_headers.m_str += stream;
+
+	//	headers += line;
+	//	headers += "\r\n";
+	}
+
+	String contentLengthStr;
+	if (contentLengthStr = m_responseHeaders.GetHeaderValue("Content-Length"))
+	{
+		ASSERT(0);
+#if 0
+		int contentLength;
+		contentLengthStr >> contentLength;
+		sscanf(contentLengthStr, "%d", &contentLength);
+		m_pContentStream->m_contentLength = contentLength;
+#endif
+	}
+	//m_pContentStream->m_chunkBytesLeft = m_pContentStream->m_contentLength;
+
+	m_pContentStream->m_transferEncoding = m_responseHeaders.GetHeaderValue("Transfer-Encoding");
+
+	if (m_downloadCallback)
+	{
+		m_downloadCallback->OnProgress(this);
+	}
+}
+
+void HttpRequest::Send()
+{
+	IO::StringWriter request;
+
+	request	<< m_verb << " " << m_objectName << " HTTP/1.1\r\n"
+				<< "Host: " << m_connection->m_server << "\r\n"
+				<< "Content-Length: 0\r\n";
+
+	String additionalHeaders = m_requestHeaders.GetAllHeaders();
+	if (additionalHeaders)
+	{
+		request << additionalHeaders;
+	}
+	request << "\r\n";
+
+	//std::basic_string<char, std::char_traits<char>, myallocator<char> > requeststr = request.str();
+
+	/*
+	DWORD ret = WaitForSingleObject(m_connection->m_pSocket->m_hEvent, 60*1000);
+	if (ret == WAIT_TIMEOUT)
+		THROW(-1);
+		*/
+
+	String str = request.str();
+
+	DebugTrace(str);
+
+	size_t nsent = m_connection->m_pSocket->Write(str.GetData8(), str.GetLength());
+	DebugTrace("sent " << nsent << " bytes\n");
+
+#if 0
+	//std::stringstream request;
+
+	std::basic_stringstream<char, std::char_traits<char>, myallocator<char> > request;
+
+	request	<< m_verb.c_str() << " " << m_objectName.c_str() << " HTTP/1.1\r\n"
+				<< "Host: " << m_connection->m_server.c_str() << "\r\n";
+
+	if (m_additionalHeaders)
+		request << m_additionalHeaders.c_str();
+	request << "\r\n";
+
+	std::basic_string<char, std::char_traits<char>, myallocator<char> > requeststr = request.str();
+
+	/*
+	DWORD ret = WaitForSingleObject(m_connection->m_pSocket->m_hEvent, 60*1000);
+	if (ret == WAIT_TIMEOUT)
+		THROW(-1);
+		*/
+
+	int nsent = m_connection->m_pSocket->Write((void*)requeststr.c_str(), requeststr.length());
+#endif
+
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// HttpConnection
+
+HttpConnection::HttpConnection(StringIn server, int port) :
+	m_server(server),
+	m_port(port)
+{
+	m_pSocket = new HttpSocket(this);
+
+//	m_pSocket->m_hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+
+	m_pSocket->Create();
+	m_pSocket->Connect(server, port);
+}
+
+HttpConnection::~HttpConnection()
+{
+	m_pSocket->Close();
+	delete m_pSocket;
+}
+
+HttpRequest* HttpConnection::OpenRequest(StringIn verb, StringIn objectName)
+{
+	HttpRequest* pRequest = new HttpRequest(this, verb, objectName);
+	m_pRequest = pRequest;
+	return pRequest;
+}
+
+/*
+class CacheStream : public ISequentialByteStream
+{
+	ReadFile(m_hFile, 
+};
+
+class BlockingStream : public ISequentialByteStream
+{
+};
+
+ISequentialByteStream* GetBlockingStream(const StringA& url)
+{
+	StringA scheme;
+	StringA server;
+	StringA path;
+
+	const char* p = url.c_str();
+	StringA str;
+	while (*p)
+	{
+		if (*p == ':')
+			break;
+		str += *p;
+		p++;
+	}
+
+	scheme = str;
+	p++;	// colon
+
+	if (scheme == "file")
+	{
+		if (*p != '/') THROW(-1);
+		p++;
+
+		if (*p != '/') THROW(-1);
+		p++;
+
+		return p;
+	}
+	else if (scheme == "http")
+	{
+		if (*p != '/') THROW(-1);
+		p++;
+
+		if (*p != '/') THROW(-1);
+		p++;
+
+		while (*p)
+		{
+			if (*p == '/')
+				break;
+			server += *p;
+			p++;
+		}
+
+		if (*p != '/') THROW(-1);
+		p++;
+
+		path = p;
+
+		StringA tempname = GetTempFilename("C:\\Cache", path.c_str());
+	
+		FILE* tempfile = fopen(tempname.c_str(), "wb");
+		if (tempfile == NULL)
+			THROW(-1);
+
+		HttpConnection* pConnection = new HttpConnection(server);
+		HttpRequest* pRequest = pConnection->OpenRequest("GET", url.c_str());
+		pRequest->Send();
+
+		BYTE buf[512];
+		while (1)
+		{
+			ULONG nRead = pRequest->GetContentStream()->Read(buf, 512);
+			if (nRead > 0)
+			{
+				fwrite(buf, 1, nRead, tempfile);
+			}
+			if (nRead < 512)
+				break;
+		}
+
+		delete pConnection;
+}
+*/
+
+NETEXT String DownloadFile(StringIn url)
+{
+	ASSERT(0);
+
+#if 0
+	StringA scheme;
+	StringA server;
+	StringA path;
+
+	const char* p = url.c_str();
+	StringA str;
+	while (*p)
+	{
+		if (*p == ':')
+			break;
+		str += *p;
+		p++;
+	}
+
+	scheme = str;
+	p++;	// colon
+
+	if (scheme == "file")
+	{
+		if (*p != '/') THROW(-1);
+		p++;
+
+		if (*p != '/') THROW(-1);
+		p++;
+
+		return p;
+	}
+	else if (scheme == "http")
+	{
+		if (*p != '/') THROW(-1);
+		p++;
+
+		if (*p != '/') THROW(-1);
+		p++;
+
+		while (*p)
+		{
+			if (*p == '/')
+				break;
+			server += *p;
+			p++;
+		}
+
+		if (*p != '/') THROW(-1);
+		p++;
+
+		path = p;
+
+		StringA tempname = GetTempFilename("C:\\Cache", path.c_str());
+	
+		FILE* tempfile = fopen(tempname.c_str(), "wb");
+		if (tempfile == NULL)
+			THROW(-1);
+
+		HttpConnection* pConnection = new HttpConnection(server);
+		HttpRequest* pRequest = pConnection->OpenRequest("GET", url.c_str());
+		pRequest->Send();
+
+		uint8 buf[512];
+		while (1)
+		{
+			ULONG nRead = pRequest->GetContentStream()->Read(buf, 512);
+			if (nRead > 0)
+			{
+				fwrite(buf, 1, nRead, tempfile);
+			}
+			if (nRead < 512)
+				break;
+		}
+
+		delete pConnection;
+
+#if 0
+	//	TRACE("%s", headers.c_str());
+		//::MessageBox(NULL, headers.c_str(), "", MB_OK);
+
+		std::string transferEncodingStr;
+		if (headers.GetHeaderValue("Transfer-Encoding", transferEncodingStr) &&
+			strcmp(transferEncodingStr.c_str(), "identity"))
+		{
+			// chunked
+
+			int size;
+			do
+			{
+				std::string str = pSocket->ReadLine();
+
+				if (sscanf(str.c_str(), "%x", &size) != 1)
+					THROW(-1);
+
+				char* buf = new char[size];
+				if (size > 0)
+				{
+					int nRead = pSocket->Read(buf, size);
+					//int nRead = recv(m_socket, buf, 256, 0);
+					if (nRead > 0)
+					{
+						fwrite(buf, 1, nRead, tempfile);
+					}
+				}
+
+				std::string crlf = pSocket->ReadLine();
+				ASSERT(!strcmp(crlf.c_str(), ""));
+			}
+			while (size > 0);
+		}
+		else
+		{
+			std::string contentLengthStr;
+			if (headers.GetHeaderValue("Content-Length", contentLengthStr))
+			{
+				long contentLength;
+				sscanf(contentLengthStr.c_str(), "%d", &contentLength);
+
+				char* buf = new char[1024];
+				long sofar = 0;
+				while (sofar < contentLength)
+				{
+					int len = 1024;
+					if (sofar+len > contentLength)
+						len = contentLength - sofar;
+
+					int nRead = pSocket->Read(buf, len);
+
+					if (nRead > 0)
+					{
+						fwrite(buf, 1, nRead, tempfile);
+					}
+
+					sofar += nRead;
+				}
+
+				delete [] buf;
+			}
+		}
+#endif
+
+		fclose(tempfile);
+		tempfile = NULL;
+
+		return tempname;
+	}
+	else
+	{
+		return url;
+	}
+#endif
+	return nullptr;
+}
+
+}
+}

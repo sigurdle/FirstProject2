@@ -1,0 +1,94 @@
+#X3D V3.0 utf8
+PROFILE Interchange
+META "filename" "RedSphereBlueBox2.x3dv"
+
+Group {
+  children [
+
+	Background
+	{
+		
+		frontUrl [ "D:\Backgrounds\mountain_skybox\front.bmp"]
+		backUrl [ "D:\Backgrounds\mountain_skybox\back.bmp"]
+		rightUrl [ "D:\Backgrounds\mountain_skybox\right.bmp"]
+		leftUrl [ "D:\Backgrounds\mountain_skybox\left.bmp"]
+		topUrl [ "D:\Backgrounds\mountain_skybox\top.bmp"]
+		bottomUrl [ "D:\Backgrounds\mountain_skybox\bottom.bmp"]
+	}
+
+#	Fog
+#	{
+#		fogType "LINEAR"
+#		color 0.4 0 0
+#		visibilityRange 40
+#	}
+  
+  Viewpoint {
+  orientation 0 0 1 0
+  position 0 2 15
+  }
+
+    NavigationInfo {
+      headlight FALSE
+      avatarSize [ 0.25 1.6 0.75 ]
+      type [ "EXAMINE" ]
+      speed 0
+    }
+
+    DEF light PointLight {
+	   color 1 1 1
+		location -1 -1 4
+    }
+   
+    Transform {
+     translation -3.0 3.0 0.0
+      children [
+      
+	Shape {
+	  geometry Sphere { radius 1
+	  }
+	  appearance Appearance {
+	    material Material { diffuseColor 1.0 0.0 0.0
+	    }
+	  }
+	}
+      ]
+    }
+
+    Transform {
+     translation 0.0 0.0 0.0
+      children [
+      
+#	Shape {
+#	  geometry Box { size 2 2 2
+#	  	  }
+#	  appearance Appearance {
+#	    material Material { diffuseColor 0.0 1.0 0.0
+#	    }
+#	  }
+#	}
+
+	Shape {
+	  geometry IndexedFaceSet
+	  {
+		coord Coordinate { point [
+		-3 0 -2,
+		3 0 -2,
+		3 0 -3,
+
+		3 0 2,
+		3 0 3,
+		-3 0 2
+		]}
+		coordIndex [ 0 1 2 3 4 5 -1 ]
+	  }
+	  appearance Appearance {
+	    material Material { diffuseColor 0.0 0.0 1.0
+	    }
+	  }
+	}
+
+      ]
+    }
+]
+}

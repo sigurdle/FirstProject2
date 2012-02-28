@@ -1,0 +1,192 @@
+#include "stdafx.h"
+#include "LXML2.h"
+#include "SVGNumberList.h"
+
+namespace System
+{
+namespace Web
+{
+
+SVGNumberList::~SVGNumberList()
+{
+//		ASSERT(m_pListener == NULL);
+	RemoveAll();
+}
+
+unsigned int SVGNumberList::get_numberOfItems() const
+{
+	return m_items.GetSize();
+}
+
+void SVGNumberList::clear()
+{
+	RemoveAll();
+}
+
+ISVGNumber* SVGNumberList::initialize(/*[in]*/ ISVGNumber* newItem)
+{
+	ASSERT(newItem != NULL);
+	if (newItem == NULL) throw -1;
+
+	RemoveAll();
+
+//	newItem->AddRef();
+	m_items.Add(dynamic_cast<SVGNumber*>(newItem));
+
+	return newItem;
+}
+
+ISVGNumber* SVGNumberList::getItem(unsigned int index)
+{
+	if (index < m_items.GetSize())
+	{
+		return m_items[index];
+		//(*pVal)->AddRef();
+	}
+	else
+		return NULL;
+}
+
+ISVGNumber* SVGNumberList::appendItem(/*[in]*/ ISVGNumber* newItem)
+{
+	ASSERT(0);
+	return NULL;
+}
+
+ISVGNumber* SVGNumberList::removeItem(unsigned int index)
+{
+	ASSERT(0);
+	return NULL;
+}
+
+ISVGNumber* SVGNumberList::replaceItem(/*[in]*/ ISVGNumber* newItem, unsigned int index)
+{
+	ASSERT(0);
+	return NULL;
+}
+
+ISVGNumber* SVGNumberList::insertItemBefore(/*[in]*/ ISVGNumber* newItem, unsigned int index)
+{
+	ASSERT(0);
+	return NULL;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void SVGNumberList::RemoveAll()
+{
+	for (int i = 0; i < m_items.GetSize(); i++)
+	{
+	//	m_items[i]->Release();
+	}
+	m_items.RemoveAll();
+}
+
+//////////////////////////////////////////////////////////////////////
+
+//int GetCommaOrSpaceSepNumberArray(BSTR str, CArray<double,double>& values);
+
+String SVGNumberList::ToString()
+{
+	String str;
+
+	ASSERT(0);
+#if 0
+
+	for (int i = 0; i < m_items.GetSize(); i++)
+	{
+		if (i > 0) str += OLESTR(" ");
+
+		OLECHAR str2[64];
+		swprintf(str2, OLESTR("%g"), m_items[i]->m_value);
+
+		str += str2;
+	}
+#endif
+
+	return str;
+}
+
+void SVGNumberList::setStringValue(StringIn str)
+{
+	ASSERT(str != nullptr);
+
+	RemoveAll();
+
+	vector<double> values;
+	GetCommaOrSpaceSepNumberArray(str, values);
+
+	for (unsigned int i = 0; i < values.GetSize(); i++)
+	{
+		m_items.push_back(new SVGNumber(values[i]));
+#if 0
+		CComObject<SVGNumber>* pSVGNumber;
+		CComObject<SVGNumber>::CreateInstance(&pSVGNumber);
+		if (pSVGNumber)
+		{
+			pSVGNumber->AddRef();
+			pSVGNumber->m_value = values[i];
+
+			m_items.Add(pSVGNumber);
+		}
+		else
+		{
+			return;
+		}
+#endif
+	}
+}
+
+#if 0
+void SVGNumberList::operator = (const SVGNumberList& value)
+{
+	RemoveAll();
+
+	for (int i = 0; i < value.m_items.GetSize(); i++)
+	{
+		ASSERT(0);
+#if 0
+		CComObject<SVGNumber>* pSVGNumber;
+		CComObject<SVGNumber>::CreateInstance(&pSVGNumber);
+		if (pSVGNumber)
+		{
+			pSVGNumber->AddRef();
+			pSVGNumber->m_value = value->m_items[i]->m_value;
+
+			m_items.Add(pSVGNumber);
+		}
+#endif
+	}
+}
+
+void SVGNumberList::operator += (const SVGNumberList& value)
+{
+	ASSERT(0);
+}
+#endif
+
+void SVGNumberList::InterpolateValue(const SVGNumberList& a, const SVGNumberList& b, double t)
+{
+	RemoveAll();
+
+	if (a.m_items.GetSize() == b.m_items.GetSize())
+	{
+		for (int i = 0; i < a.m_items.GetSize(); i++)
+		{
+			ASSERT(0);
+#if 0
+			CComObject<SVGNumber>* pSVGNumber;
+			CComObject<SVGNumber>::CreateInstance(&pSVGNumber);
+			if (pSVGNumber)
+			{
+				pSVGNumber->AddRef();
+				pSVGNumber->m_value = a->m_items[i]->m_value + (b->m_items[i]->m_value - a->m_items[i]->m_value)*t;
+				m_items.Add(pSVGNumber);
+			}
+#endif
+		}
+	}
+}
+
+}	// Web
+}

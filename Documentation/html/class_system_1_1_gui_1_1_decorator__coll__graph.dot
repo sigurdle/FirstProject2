@@ -1,0 +1,40 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::Gui::Decorator",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Gui::FrameworkElement",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_framework_element.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Gui::UIElement",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_u_i_element.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::Gui::Visual",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_visual.html"];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="System::Gui::Element",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_element.html"];
+  Node6 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="System::Gui::DependencyObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_dependency_object.html"];
+  Node7 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="System::DispatcherObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_dispatcher_object.html"];
+  Node8 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node9 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node10 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_visualOffset" ,fontname="Helvetica"];
+  Node10 [label="System::gm::Point\< float \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1gm_1_1_point.html"];
+  Node4 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_visual" ,fontname="Helvetica"];
+  Node11 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_effect" ,fontname="Helvetica"];
+  Node11 [label="System::Gui::Effect",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_effect.html"];
+  Node8 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_visuals" ,fontname="Helvetica"];
+  Node12 [label="System::Gui::GroupVisual",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_group_visual.html"];
+  Node3 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" init" ,fontname="Helvetica"];
+  Node13 [label="System::Gui::UIElement::Init",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_u_i_element_1_1_init.html"];
+  Node14 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_elementProvider" ,fontname="Helvetica"];
+  Node14 [label="System::Gui::UIElement::ElementProviderFragment",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_u_i_element_1_1_element_provider_fragment.html"];
+  Node15 -> Node14 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node15 [label="System::Gui::UIElement::ElementProvider",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_u_i_element_1_1_element_provider.html"];
+  Node8 -> Node15 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 -> Node15 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_owner" ,fontname="Helvetica"];
+}

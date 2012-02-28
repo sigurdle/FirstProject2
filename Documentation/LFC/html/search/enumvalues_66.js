@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['fileaccess_5fnone',['FileAccess_None',['../namespace_system_1_1_i_o.html#a482862b3c03fa32a3249d7904b91d586a5766635bfa5c6a51c1913f46bc51a3e1',1,'System::IO']]],
+  ['fileaccess_5fread',['FileAccess_Read',['../namespace_system_1_1_i_o.html#a482862b3c03fa32a3249d7904b91d586a0a52270e1b465989a587d95598c8f2a2',1,'System::IO']]],
+  ['fileaccess_5freadwrite',['FileAccess_ReadWrite',['../namespace_system_1_1_i_o.html#a482862b3c03fa32a3249d7904b91d586ac21583c3743b2a93624f6b22d745fa1c',1,'System::IO']]],
+  ['fileaccess_5fwrite',['FileAccess_Write',['../namespace_system_1_1_i_o.html#a482862b3c03fa32a3249d7904b91d586a4e510b8eaf8e1466fce2a68389b1fd5b',1,'System::IO']]],
+  ['filemode_5fcreate',['FileMode_Create',['../namespace_system_1_1_i_o.html#a806eadc224c3dfd0d87ac587bb376184a703deeb511050b234b4bea2c338a6acf',1,'System::IO']]],
+  ['filemode_5fcreatenew',['FileMode_CreateNew',['../namespace_system_1_1_i_o.html#a806eadc224c3dfd0d87ac587bb376184a59ec1b6533917f6f593abfec0615c8db',1,'System::IO']]],
+  ['filemode_5fopen',['FileMode_Open',['../namespace_system_1_1_i_o.html#a806eadc224c3dfd0d87ac587bb376184a4053fd2c74cf50639de4350a6710f1c2',1,'System::IO']]],
+  ['filemode_5fopenorcreate',['FileMode_OpenOrCreate',['../namespace_system_1_1_i_o.html#a806eadc224c3dfd0d87ac587bb376184a964d530a54b27cc04a59a4861e8137cf',1,'System::IO']]],
+  ['filemode_5ftruncateexisting',['FileMode_TruncateExisting',['../namespace_system_1_1_i_o.html#a806eadc224c3dfd0d87ac587bb376184a3cd397d9c43120ac7f31b004c82002c3',1,'System::IO']]],
+  ['fileshare_5fnone',['FileShare_None',['../namespace_system_1_1_i_o.html#a73ab08798e3f755afefd1a7ad3914035af2c402bc615b5595fa0307aeaf384a4d',1,'System::IO']]],
+  ['fileshare_5fread',['FileShare_Read',['../namespace_system_1_1_i_o.html#a73ab08798e3f755afefd1a7ad3914035aee86f79d16ee94c868ca39dd27007c68',1,'System::IO']]],
+  ['fileshare_5freadwrite',['FileShare_ReadWrite',['../namespace_system_1_1_i_o.html#a73ab08798e3f755afefd1a7ad3914035a4ef8fbef287aee63c88b8e2f8fa6f9f3',1,'System::IO']]],
+  ['fileshare_5fwrite',['FileShare_Write',['../namespace_system_1_1_i_o.html#a73ab08798e3f755afefd1a7ad3914035a39fa299df71720bb547d3b70a820fe62',1,'System::IO']]],
+  ['filestatus_5ferror',['FileStatus_Error',['../namespace_system_1_1_i_o.html#ab67ce62653c34046a0c0eac726e0e887a30047547f6e3d7e3006071c1ca499a17',1,'System::IO']]],
+  ['filestatus_5ffilenotfound',['FileStatus_FileNotFound',['../namespace_system_1_1_i_o.html#ab67ce62653c34046a0c0eac726e0e887aa26308913f1a1eae69816d203f2bc6dc',1,'System::IO']]],
+  ['filestatus_5fok',['FileStatus_Ok',['../namespace_system_1_1_i_o.html#ab67ce62653c34046a0c0eac726e0e887a076366b5a1980b223e31f57df35c7c50',1,'System::IO']]],
+  ['filestatus_5fpathnotfound',['FileStatus_PathNotFound',['../namespace_system_1_1_i_o.html#ab67ce62653c34046a0c0eac726e0e887ad1e59f1eb6f3d77f03354cc6912ac130',1,'System::IO']]],
+  ['filestatus_5fsharingviolation',['FileStatus_SharingViolation',['../namespace_system_1_1_i_o.html#ab67ce62653c34046a0c0eac726e0e887a1edfe83db9222d1264de4c1cdda08ce0',1,'System::IO']]]
+];

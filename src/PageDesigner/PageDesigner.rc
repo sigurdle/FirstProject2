@@ -1,0 +1,1847 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "atlres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""atlres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "1 TYPELIB ""PageDesigner.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_PDDOCUMENTVIEW MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
+        MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
+        MENUITEM "Place...",                    ID_FILE_PLACE
+        POPUP "Export"
+        BEGIN
+            MENUITEM "SVG...",                      ID_FILE_EXPORT_SVG
+            MENUITEM "PDF...",                      ID_FILE_EXPORT_PDF
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Document Setup...",           ID_FILE_DOCUMENTSETUP
+        MENUITEM SEPARATOR
+        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
+        MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
+        MENUITEM "Redo\tCtrl-Y",                ID_EDIT_REDO
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
+        MENUITEM "Paste Special...",            ID_EDIT_PASTE_SPECIAL
+        MENUITEM "Paste Into",                  ID_EDIT_PASTEINTO
+        MENUITEM "Clear",                       ID_EDIT_CLEAR
+        MENUITEM SEPARATOR
+        MENUITEM "Define Pattern...",           ID_EDIT_DEFINEPATTERN
+        MENUITEM SEPARATOR
+        MENUITEM "Document Color Settings...",  ID_EDIT_DOCUMENTCOLORSETTINGS
+
+        MENUITEM "Preferences...",              ID_EDIT_PREFERENCES
+        MENUITEM "Customize...",                ID_FILE_CUSTOMIZE
+    END
+    POPUP "&Layout"
+    BEGIN
+        MENUITEM "Margins and Columns...",      ID_LAYOUT_MARGINSANDCOLUMNS
+        MENUITEM "Create Guides...",            ID_LAYOUT_CREATEGUIDES
+    END
+    POPUP "View"
+    BEGIN
+        MENUITEM "Zoom in",                     ID_VIEW_ZOOMIN
+        MENUITEM "Zoom out",                    ID_VIEW_ZOOMOUT
+        MENUITEM "Actual Size",                 ID_VIEW_ACTUALSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "Rulers",                      ID_VIEW_RULERS
+        MENUITEM "Transparency Grid",           ID_VIEW_TRANSPARENCYGRID
+        MENUITEM SEPARATOR
+        MENUITEM "Show Text Threads",           ID_VIEW_SHOWTEXTTHREADS
+        MENUITEM SEPARATOR
+        MENUITEM "Baseline Grid",               ID_VIEW_BASELINEGRID
+        MENUITEM "Document Grid",               ID_VIEW_DOCUMENTGRID
+    END
+    POPUP "Type"
+    BEGIN
+        MENUITEM "Character...",                ID_TYPE_CHARACTER
+        MENUITEM "Paragraph...",                ID_TYPE_PARAGRAPH
+        MENUITEM "Create Outlines",             ID_TYPE_CREATEOUTLINES
+        MENUITEM "Show Hidden Characters",      ID_TYPE_SHOWHIDDENCHARACTERS
+    END
+    POPUP "Object"
+    BEGIN
+        POPUP "Arrange"
+        BEGIN
+            MENUITEM "Bring to Front",              ID_OBJECT_ARRANGE_BRINGTOFRONT
+
+            MENUITEM "Bring Forward",               ID_OBJECT_ARRANGE_BRINGFORWARD
+
+            MENUITEM "Send Backward",               ID_OBJECT_ARRANGE_SENDBACKWARD
+
+            MENUITEM "Send to Back",                ID_OBJECT_ARRANGE_SENDTOBACK
+
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Group",                       ID_OBJECT_GROUP
+        MENUITEM "Ungroup",                     ID_OBJECT_UNGROUP
+        MENUITEM "Lock Position",               ID_OBJECT_LOCKPOSITION
+        MENUITEM "Unlock Position",             ID_OBJECT_UNLOCKPOSITION
+        MENUITEM SEPARATOR
+        MENUITEM "Text Frame Options...",       ID_OBJECT_TEXTFRAMEOPTIONS
+        POPUP "Fitting"
+        BEGIN
+            MENUITEM "Fit Content to Frame",        ID_OBJECT_FITTING_FITCONTENTTOFRAME
+
+            MENUITEM "Fit Frame to Content",        ID_OBJECT_FITTING_FITFRAMETOCONTENT
+
+            MENUITEM "Center Content",              ID_OBJECT_FITTING_CENTERCONTENT
+
+            MENUITEM SEPARATOR
+            MENUITEM "Fit Content Proportionally",  ID_OBJECT_FITTING_FITCONTENTPROPORTIONALLY
+
+        END
+        POPUP "Path Type"
+        BEGIN
+            MENUITEM "Options...",                  ID_OBJECT_PATHTYPE_OPTIONS
+
+            MENUITEM "Delete",                      ID_OBJECT_PATHTYPE_DELETE
+
+        END
+        POPUP "Content"
+        BEGIN
+            MENUITEM "Graphic",                     ID_OBJECT_CONTENT_GRAPHIC
+
+            MENUITEM "Text",                        ID_OBJECT_CONTENT_TEXT
+            MENUITEM "Unassigned",                  ID_OBJECT_CONTENT_UNASSIGNED
+
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Rasterize...",                ID_OBJECT_RASTERIZE
+        MENUITEM SEPARATOR
+        POPUP "Path"
+        BEGIN
+            MENUITEM "Add Anchor Points",           ID_OBJECT_PATH_ADDANCHORPOINTS
+
+        END
+        POPUP "Compound Paths"
+        BEGIN
+            MENUITEM "Make",                        ID_OBJECT_COMPOUNDPATHS_MAKE
+
+            MENUITEM "Release",                     ID_OBJECT_COMPOUNDPATHS_RELEASE
+
+        END
+        MENUITEM "Reverse Path",                ID_OBJECT_REVERSEPATH
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "New Window",                  ID_WINDOW_NEW
+        MENUITEM "&Cascade",                    ID_WINDOW_CASCADE
+        MENUITEM "&Tile",                       ID_WINDOW_TILE_HORZ
+        MENUITEM "Arrange &Icons",              ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About PageDesigner...",      ID_APP_ABOUT
+    END
+END
+
+IDR_LAYERS MENU DISCARDABLE 
+BEGIN
+    POPUP "Layers"
+    BEGIN
+        MENUITEM "New Layer",                   ID_LAYERS_NEWLAYER
+        MENUITEM "Layer Options",               ID_LAYERS_LAYEROPTIONS
+        MENUITEM "Delete Layer(s)",             ID_LAYERS_DELETE
+    END
+END
+
+IDR_PAGES MENU DISCARDABLE 
+BEGIN
+    POPUP "Pages"
+    BEGIN
+        MENUITEM "Insert Pages...",             ID_PAGES_INSERTPAGES
+        MENUITEM "New Master...",               ID_PAGES_NEWMASTER
+        MENUITEM SEPARATOR
+        MENUITEM "Master Options...",           ID_PAGES_MASTEROPTIONS
+        MENUITEM "Section Options...",          ID_PAGES_SECTIONOPTIONS
+        MENUITEM SEPARATOR
+        MENUITEM "Keep Spread Together",        ID_PAGES_KEEPSPREADTOGETHER
+        MENUITEM "Allow Pages to Shuffle",      ID_PAGES_ALLOWPAGESTOSHUFFLE
+        MENUITEM SEPARATOR
+        MENUITEM "Palette Options",             ID_PAGES_PALETTEOPTIONS
+        MENUITEM SEPARATOR
+        MENUITEM "Copy",                        ID_PAGES_COPY
+    END
+END
+
+IDR_SWATCHES MENU DISCARDABLE 
+BEGIN
+    POPUP "Swatches"
+    BEGIN
+        MENUITEM "New Color Swatch...",         ID_SWATCHES_NEWCOLORSWATCH
+        MENUITEM "New Gradient Swatch...",      ID_SWATCHES_NEWGRADIENTSWATCH
+
+        MENUITEM "New Tint Swatch...",          ID_SWATCHES_NEWTINTSWATCH
+        MENUITEM SEPARATOR
+        MENUITEM "Delete Swatch",               ID_SWATCHES_DELETESWATCH
+        MENUITEM SEPARATOR
+        MENUITEM "Swatch Options...",           ID_SWATCHES_SWATCHOPTIONS
+    END
+END
+
+IDR_TOOLS MENU DISCARDABLE 
+BEGIN
+    POPUP "Tool"
+    BEGIN
+        MENUITEM "Select",                      ID_TOOL_SELECT
+        MENUITEM "Direct",                      ID_TOOL_DIRECT
+        MENUITEM SEPARATOR
+        POPUP ""
+        BEGIN
+            MENUITEM "Pen",                         ID_TOOL_PATHPEN
+            MENUITEM "Add Anchor",                  ID_TOOL_PATHADDANCHOR
+            MENUITEM "Delete Anchor",               ID_TOOL_PATHDELETEANCHOR
+            MENUITEM "Corner",                      ID_TOOL_PATHCORNER
+        END
+        POPUP ""
+        BEGIN
+            MENUITEM "Text",                        ID_TOOL_TEXT
+            MENUITEM "Text Path",                   ID_TOOL_TEXTPATH
+        END
+        POPUP ""
+        BEGIN
+            MENUITEM "Rectangle Graphic",           ID_TOOL_RECTANGLEGRAPHIC
+            MENUITEM "Ellipse Graphic",             ID_TOOL_ELLIPSEGRAPHIC
+        END
+        POPUP ""
+        BEGIN
+            MENUITEM "Rectangle",                   ID_TOOL_RECTANGLE
+            MENUITEM "Ellipse",                     ID_TOOL_ELLIPSE
+        END
+        MENUITEM "Line",                        ID_TOOL_LINE
+        MENUITEM SEPARATOR
+        MENUITEM "Rotate",                      ID_TOOL_ROTATE
+        MENUITEM "Scale",                       ID_TOOL_SCALE
+        POPUP ""
+        BEGIN
+            MENUITEM "Twirl",                       ID_TOOL_TWIRL
+            MENUITEM "Bulge",                       ID_TOOL_BULGE
+        END
+        MENUITEM "Free Transform",              ID_TOOL_FREETRANSFORM
+        MENUITEM "Symbol Sprayer",              ID_TOOL_SYMBOLSPRAYER
+        MENUITEM SEPARATOR
+        MENUITEM "Gradient",                    ID_TOOL_GRADIENT
+        MENUITEM SEPARATOR
+        MENUITEM "Hand",                        ID_TOOL_HAND
+        MENUITEM "Zoom",                        ID_TOOL_ZOOM
+    END
+END
+
+IDR_TEXTWRAP MENU DISCARDABLE 
+BEGIN
+    POPUP "Text Wrap"
+    BEGIN
+        MENUITEM "None",                        ID_TEXTWRAP_NONE
+        MENUITEM "BBox",                        ID_TEXTWRAP_BBOX
+        MENUITEM "Shape",                       ID_TEXTWRAP_SHAPE
+        MENUITEM "Object",                      ID_TEXTWRAP_OBJECT
+        MENUITEM "Column",                      ID_TEXTWRAP_COLUMN
+        MENUITEM SEPARATOR
+        MENUITEM "Top Offset",                  ID_TEXTWRAP_TOPOFFSET
+        MENUITEM "Left Offset",                 ID_TEXTWRAP_LEFTOFFSET
+        MENUITEM "Bottom Offset",               ID_TEXTWRAP_BOTTOMOFFSET
+        MENUITEM "Right Offset",                ID_TEXTWRAP_RIGHTOFFSET
+    END
+END
+
+IDR_PARAGRAPH MENU DISCARDABLE 
+BEGIN
+    POPUP "Paragraph"
+    BEGIN
+        MENUITEM "Align Left",                  ID_PARAGRAPH_ALIGNLEFT
+        MENUITEM "Align Center",                ID_PARAGRAPH_ALIGNCENTER
+        MENUITEM "Align Right",                 ID_PARAGRAPH_ALIGNRIGHT
+        MENUITEM SEPARATOR
+        MENUITEM "Justify Left",                ID_PARAGRAPH_JUSTIFYLEFT
+        MENUITEM "Justify Center",              ID_PARAGRAPH_JUSTIFYCENTER
+        MENUITEM "Justify Right",               ID_PARAGRAPH_JUSTIFYRIGHT
+        MENUITEM "Justify All",                 ID_PARAGRAPH_JUSTIFYALL
+    END
+END
+
+IDR_CHARACTER MENU DISCARDABLE 
+BEGIN
+    POPUP "Character"
+    BEGIN
+        MENUITEM "Font Face",                   ID_TYPE_FONTFACE
+        MENUITEM "Font Size",                   ID_CHARACTER_FONTSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "Bold",                        ID_CHARACTER_BOLD
+        MENUITEM "Italic",                      ID_CHARACTER_ITALIC
+        MENUITEM "Underline",                   ID_CHARACTER_UNDERLINE
+        MENUITEM SEPARATOR
+        MENUITEM "Line Height",                 ID_CHARACTER_LINEHEIGHT
+    END
+END
+
+IDR_PAGEDESIGNERFRAME MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
+        MENUITEM "Redo\tCtrl-Y",                ID_EDIT_REDO
+        MENUITEM SEPARATOR
+        MENUITEM "Document Color Settings...",  ID_EDIT_DOCUMENTCOLORSETTINGS
+
+        MENUITEM "Preferences...",              ID_EDIT_PREFERENCES
+        MENUITEM "Customize...",                ID_FILE_CUSTOMIZE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Help...",                     ID_HELP
+        MENUITEM "&About PageDesigner...",      ID_APP_ABOUT
+    END
+END
+
+IDR_LINKS MENU DISCARDABLE 
+BEGIN
+    POPUP "Links"
+    BEGIN
+        MENUITEM "Palette Options...",          ID_LINKS_PALETTEOPTIONS
+    END
+END
+
+IDR_TRANSPARENCY MENU DISCARDABLE 
+BEGIN
+    POPUP "Transparency"
+    BEGIN
+        MENUITEM "Make Opacity Mask",           ID_TRANSPARENCY_MAKEOPACITYMASK
+
+        MENUITEM "Release Opacity Mask",        ID_TRANSPARENCY_RELEASEOPACITYMASK
+
+        MENUITEM SEPARATOR
+        MENUITEM "Enable Opacity Mask",         ID_TRANSPARENCY_ENABLEOPACITYMASK
+
+        MENUITEM "Link Opacity Mask",           ID_TRANSPARENCY_LINKOPACITYMASK
+
+    END
+END
+
+IDR_APPEARANCE MENU DISCARDABLE 
+BEGIN
+    POPUP "Appearance"
+    BEGIN
+        MENUITEM "Add New Stroke",              ID_APPEARANCE_ADDNEWSTROKE
+        MENUITEM "Add New Fill",                ID_APPEARANCE_ADDNEWFILL
+        MENUITEM "Remove Item",                 ID_APPEARANCE_REMOVEITEM
+        MENUITEM SEPARATOR
+        MENUITEM "Reduce to Basic Appearance",  ID_APPEARANCE_REDUCETOBASICAPPEARANCE
+
+        MENUITEM SEPARATOR
+        MENUITEM "New Art Has Basic Appearance", 
+                                                ID_APPEARANCE_NEWARTHASBASICAPPEARANCE
+
+    END
+END
+
+IDR_SYMBOLS MENU DISCARDABLE 
+BEGIN
+    POPUP "Symbols"
+    BEGIN
+        MENUITEM "New Symbol...",               ID_SYMBOLS_NEWSYMBOL
+        MENUITEM "Redefine Symbol",             ID_SYMBOLS_REDEFINESYMBOL
+        MENUITEM SEPARATOR
+        MENUITEM "Place Symbol Instance",       ID_SYMBOLS_PLACESYMBOLINSTANCE
+
+        MENUITEM "Break Link to Symbol",        ID_SYMBOLS_BREAKLINKTOSYMBOL
+        MENUITEM SEPARATOR
+        MENUITEM "Symbol Options...",           ID_SYMBOLS_SYMBOLOPTIONS
+    END
+END
+
+IDR_COLOR MENU DISCARDABLE 
+BEGIN
+    POPUP "Color"
+    BEGIN
+        MENUITEM "Grayscale",                   ID_COLOR_GRAYSCALE
+        MENUITEM "RGB",                         ID_COLOR_RGB
+        MENUITEM "HSB",                         ID_COLOR_HSB
+        MENUITEM SEPARATOR
+        MENUITEM "Add to Swatches",             ID_COLOR_ADDTOSWATCHES
+    END
+END
+
+IDR_TABS MENU DISCARDABLE 
+BEGIN
+    POPUP "Tabs"
+    BEGIN
+        MENUITEM "Clear All",                   ID_TABS_CLEARALL
+    END
+END
+
+IDR_NAVIGATOR MENU DISCARDABLE 
+BEGIN
+    POPUP "Navigator"
+    BEGIN
+        MENUITEM "View All Spreads",            ID_NAVIGATOR_VIEWALLSPREADS
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_PAGEDESIGNERFRAME   ICON    DISCARDABLE     "res\\PageDesigner.ico"
+IDR_MDICHILD            ICON    DISCARDABLE     "res\\PageDesignerDoc.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_PAGEDESIGNERFRAME ACCELERATORS PRELOAD MOVEABLE PURE 
+BEGIN
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY 
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "test1 Module\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "TEST1\0"
+            VALUE "LegalCopyright", "Copyright 2001\0"
+            VALUE "OriginalFilename", "PageDesigner.exe\0"
+            VALUE "ProductName", "PageDesigner Module\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "OLESelfRegister", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// REGISTRY
+//
+
+IDR_PAGEDESIGNER        REGISTRY MOVEABLE PURE  "PageDesigner.rgs"
+IDR_PAGESDLG            REGISTRY DISCARDABLE    "PagesDlg.rgs"
+IDR_LAYERSDLG           REGISTRY DISCARDABLE    "LayersDlg.rgs"
+IDR_PDRENDERER          REGISTRY DISCARDABLE    "PDRenderer.rgs"
+IDR_PDMATRIX            REGISTRY DISCARDABLE    "PDMatrix.rgs"
+IDR_GRADIENTDLG         REGISTRY DISCARDABLE    "GradientDlg.rgs"
+IDR_SWATCHESDLG         REGISTRY DISCARDABLE    "SwatchesDlg.rgs"
+IDR_NAVIGATORDLG        REGISTRY DISCARDABLE    "NavigatorDlg.rgs"
+IDR_STROKEDLG           REGISTRY DISCARDABLE    "StrokeDlg.rgs"
+IDR_TEXTWRAPDLG         REGISTRY DISCARDABLE    "TextWrapDlg.rgs"
+IDR_PDGRADIENT          REGISTRY DISCARDABLE    "PDGradient.rgs"
+IDR_FEGAUSSIANBLUR      REGISTRY DISCARDABLE    "FEGaussianBlur.rgs"
+IDR_FEOFFSET            REGISTRY DISCARDABLE    "FEOffset.rgs"
+IDR_FECOMPOSITE         REGISTRY DISCARDABLE    "FEComposite.rgs"
+IDR_PLUGINFILTERSDLG    REGISTRY DISCARDABLE    "PluginFiltersDlg.rgs"
+IDR_STYLESDLG           REGISTRY DISCARDABLE    "StylesDlg.rgs"
+IDR_FEFREETRANSFORM     REGISTRY DISCARDABLE    "FEFreeTransform.rgs"
+IDR_ARCHIVE             REGISTRY DISCARDABLE    "Archive.rgs"
+IDR_PDCONTENTGRAPHIC    REGISTRY DISCARDABLE    "PDContentGraphic.rgs"
+IDR_PDCONTENTTEXT       REGISTRY DISCARDABLE    "PDContentText.rgs"
+IDR_PDLAYER             REGISTRY DISCARDABLE    "PDLayer.rgs"
+IDR_PDPAGE              REGISTRY DISCARDABLE    "PDPage.rgs"
+IDR_PDSPREADDOCUMENT    REGISTRY DISCARDABLE    "PDSpreadDocument.rgs"
+IDR_PDSPREADMASTER      REGISTRY DISCARDABLE    "PDSpreadMaster.rgs"
+IDR_PDOBJECTLAYERGROUP  REGISTRY DISCARDABLE    "PDObjectLayerGroup.rgs"
+IDR_PDOBJECTFRAME       REGISTRY DISCARDABLE    "PDObjectFrame.rgs"
+IDR_PDFILTERPRIMITIVE   REGISTRY DISCARDABLE    "PDFilterPrimitive.rgs"
+IDR_PDAPPEARANCE        REGISTRY DISCARDABLE    "PDAppearance.rgs"
+IDR_PDOBJECTFILL        REGISTRY DISCARDABLE    "PDObjectFill.rgs"
+IDR_PDOBJECTSTROKE      REGISTRY DISCARDABLE    "PDObjectStroke.rgs"
+IDR_PDSWATCHPATTERN     REGISTRY DISCARDABLE    "PDSwatchPattern.rgs"
+IDR_APPEARANCEDLG       REGISTRY DISCARDABLE    "AppearanceDlg.rgs"
+IDR_PDSWATCHCOLOR       REGISTRY DISCARDABLE    "PDSwatchColor.rgs"
+IDR_PDSWATCHGRADIENT    REGISTRY DISCARDABLE    "PDSwatchGradient.rgs"
+IDR_SYMBOLSDLG          REGISTRY DISCARDABLE    "SymbolsDlg.rgs"
+IDR_PDSYMBOL            REGISTRY DISCARDABLE    "PDSymbol.rgs"
+IDR_PDOBJECTSYMBOLINSTANCE REGISTRY DISCARDABLE    "PDObjectSymbolInstance.rgs"
+IDR_PDOBJECTSYMBOLINSTANCESET REGISTRY DISCARDABLE    "PDObjectSymbolInstanceSet.rgs"
+IDR_PDDOCUMENT          REGISTRY DISCARDABLE    "PDDocument.rgs"
+IDR_COLORDLG            REGISTRY DISCARDABLE    "ColorDlg.rgs"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_VISIBLE             BITMAP  DISCARDABLE     "res\\visible.bmp"
+IDB_LOCKED              BITMAP  DISCARDABLE     "res\\locked.bmp"
+IDR_TOOLS               BITMAP  DISCARDABLE     "res\\tools.bmp"
+IDR_PARAGRAPH           BITMAP  DISCARDABLE     "res\\paragrap.bmp"
+IDR_TEXTWRAP            BITMAP  DISCARDABLE     "res\\bmp00004.bmp"
+IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
+IDR_CHARACTER           BITMAP  DISCARDABLE     "res\\toolbar1.bmp"
+IDB_OPACITYMASKLINKED   BITMAP  DISCARDABLE     "res\\opacitym.bmp"
+IDB_TABS_ALIGNLEFT      BITMAP  DISCARDABLE     "res\\tabs_ali.bmp"
+IDB_TABS_ALIGNCENTER    BITMAP  DISCARDABLE     "res\\bmp00013.bmp"
+IDB_TABS_ALIGNRIGHT     BITMAP  DISCARDABLE     "res\\bmp00014.bmp"
+IDB_TABS_ALIGNDECIMAL   BITMAP  DISCARDABLE     "res\\bmp00015.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_HAND2               CURSOR  DISCARDABLE     "res\\hand2.cur"
+IDC_HAND1               CURSOR  DISCARDABLE     "res\\hand1.cur"
+IDC_HAND0               CURSOR  DISCARDABLE     "res\\hand.cur"
+IDC_SELECT              CURSOR  DISCARDABLE     "res\\select.cur"
+IDC_DIRECTOVER          CURSOR  DISCARDABLE     "res\\direct.cur"
+IDC_DIRECTPLUS          CURSOR  DISCARDABLE     "res\\direct1.cur"
+IDC_ZOOMIN              CURSOR  DISCARDABLE     "res\\zoomin.cur"
+IDC_ZOOMOUT             CURSOR  DISCARDABLE     "res\\zoomin1.cur"
+IDC_TEXTTEXTNS          CURSOR  DISCARDABLE     "res\\cursor1.cur"
+IDC_TEXTTEXTEW          CURSOR  DISCARDABLE     "res\\cur00001.cur"
+IDC_TEXTTEXTSN          CURSOR  DISCARDABLE     "res\\cur00002.cur"
+IDC_TEXTTEXTWE          CURSOR  DISCARDABLE     "res\\cur00003.cur"
+IDC_TEXTTEXTNSEW        CURSOR  DISCARDABLE     "res\\cur00004.cur"
+IDC_TEXTTEXTNSWE        CURSOR  DISCARDABLE     "res\\cur00005.cur"
+IDC_TEXTTEXTSNWE        CURSOR  DISCARDABLE     "res\\cur00006.cur"
+IDC_TEXTTEXTSNEW        CURSOR  DISCARDABLE     "res\\cur00007.cur"
+IDC_PLACETEXT           CURSOR  DISCARDABLE     "res\\placetex.cur"
+IDC_LINKTEXT            CURSOR  DISCARDABLE     "res\\linktext.cur"
+IDC_TEXTPATH            CURSOR  DISCARDABLE     "res\\cur00008.cur"
+IDC_TEXTPATHPLUS        CURSOR  DISCARDABLE     "res\\textpath.cur"
+IDC_SIZE_WE             CURSOR  DISCARDABLE     "res\\sizewe.cur"
+IDC_SIZE_NS             CURSOR  DISCARDABLE     "res\\sizens.cur"
+IDC_SIZE_NESW           CURSOR  DISCARDABLE     "res\\cur00009.cur"
+IDC_SIZE_NWSE           CURSOR  DISCARDABLE     "res\\sizenesw.cur"
+IDC_MOVE                CURSOR  DISCARDABLE     "res\\move.cur"
+IDC_ROTATE_N            CURSOR  DISCARDABLE     "res\\rotate_n.cur"
+IDC_ROTATE_S            CURSOR  DISCARDABLE     "res\\cur00010.cur"
+IDC_ROTATE_E            CURSOR  DISCARDABLE     "res\\cur00011.cur"
+IDC_ROTATE_W            CURSOR  DISCARDABLE     "res\\rotate_e.cur"
+IDC_ROTATE_NW           CURSOR  DISCARDABLE     "res\\rotate_w.cur"
+IDC_ROTATE_NE           CURSOR  DISCARDABLE     "res\\cur00012.cur"
+IDC_ROTATE_SE           CURSOR  DISCARDABLE     "res\\cur00013.cur"
+IDC_ROTATE_SW           CURSOR  DISCARDABLE     "res\\rotate_s.cur"
+IDC_SKEW_X              CURSOR  DISCARDABLE     "res\\skew_x.cur"
+IDC_SKEW_Y              CURSOR  DISCARDABLE     "res\\skew_x1.cur"
+IDC_CROSSHAIR           CURSOR  DISCARDABLE     "res\\crosshai.cur"
+IDC_SELECTOVER          CURSOR  DISCARDABLE     "res\\selecton.cur"
+IDC_DIRECT              CURSOR  DISCARDABLE     "res\\directov.cur"
+IDC_PENADD              CURSOR  DISCARDABLE     "res\\pendelet.cur"
+IDC_PENCORNER           CURSOR  DISCARDABLE     "res\\pencorne.cur"
+IDC_PENDELETE           CURSOR  DISCARDABLE     "res\\cur00014.cur"
+IDC_PEN                 CURSOR  DISCARDABLE     "res\\pen.cur"
+IDC_PENNEW              CURSOR  DISCARDABLE     "res\\pennew.cur"
+IDC_PENCLOSE            CURSOR  DISCARDABLE     "res\\penclose.cur"
+IDC_PENCONTINUE         CURSOR  DISCARDABLE     "res\\pen1.cur"
+IDC_PENCHANGELAST       CURSOR  DISCARDABLE     "res\\penadd1.cur"
+IDC_TEXTNEW             CURSOR  DISCARDABLE     "res\\texttext.cur"
+IDC_PENCONNECT          CURSOR  DISCARDABLE     "res\\cur00015.cur"
+IDC_PLACEGRAPHICNEW     CURSOR  DISCARDABLE     "res\\cur00016.cur"
+IDC_PLACEGRAPHICOVER    CURSOR  DISCARDABLE     "res\\cur00017.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_STROKEDLG DIALOG DISCARDABLE  0, 0, 146, 57
+STYLE WS_CHILD
+FONT 7, "Small Fonts"
+BEGIN
+    RTEXT           "Weight:",IDC_STATIC,3,4,37,8,SS_CENTERIMAGE
+    COMBOBOX        IDC_STROKE_WEIGHT,42,3,34,83,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_STROKE_DASHED0,3,33,20,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_STROKE_DASHED1,26,33,20,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_STROKE_DASHED2,50,33,20,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_STROKE_DASHED3,74,33,20,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_STROKE_DASHED4,98,33,20,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_STROKE_DASHED5,122,33,20,12,ES_AUTOHSCROLL
+    RTEXT           "Cap",IDC_STATIC,80,5,16,8,SS_CENTERIMAGE
+    RTEXT           "Join",IDC_STATIC,80,18,16,8,SS_CENTERIMAGE
+    CONTROL         "Radio1",IDC_STROKE_CAP0,"Button",BS_AUTORADIOBUTTON | 
+                    BS_BITMAP | BS_PUSHLIKE | WS_GROUP,100,4,13,11
+    CONTROL         "Radio1",IDC_STROKE_CAP1,"Button",BS_AUTORADIOBUTTON | 
+                    BS_BITMAP | BS_PUSHLIKE,114,4,13,11
+    CONTROL         "Radio1",IDC_STROKE_CAP2,"Button",BS_AUTORADIOBUTTON | 
+                    BS_BITMAP | BS_PUSHLIKE,129,4,13,11
+    CONTROL         "Radio1",IDC_STROKE_JOIN0,"Button",BS_AUTORADIOBUTTON | 
+                    BS_BITMAP | BS_PUSHLIKE | WS_GROUP,100,17,13,11
+    CONTROL         "Radio1",IDC_STROKE_JOIN1,"Button",BS_AUTORADIOBUTTON | 
+                    BS_BITMAP | BS_PUSHLIKE,114,17,13,11
+    CONTROL         "Radio1",IDC_STROKE_JOIN2,"Button",BS_AUTORADIOBUTTON | 
+                    BS_BITMAP | BS_PUSHLIKE,129,17,13,11
+    RTEXT           "Miter Limit:",IDC_STATIC,3,18,37,8,SS_CENTERIMAGE
+    EDITTEXT        IDC_STROKE_MITERLIMIT,42,17,25,12,ES_AUTOHSCROLL
+    LTEXT           "x",IDC_STATIC,68,18,9,8,SS_CENTERIMAGE
+END
+
+IDD_FEGAUSSIANBLURDLG DIALOG DISCARDABLE  0, 0, 186, 50
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Gaussian Blur"
+FONT 8, "MS Sans Serif"
+BEGIN
+    RTEXT           "Dev X",IDC_STATIC,4,10,32,11,SS_CENTERIMAGE
+    EDITTEXT        IDC_FEGAUSSBLUR_DEVX,40,10,40,12,ES_AUTOHSCROLL
+    RTEXT           "Dev Y",IDC_STATIC,4,26,32,11,SS_CENTERIMAGE
+    EDITTEXT        IDC_FEGAUSSBLUR_DEVY,40,25,40,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",1,129,7,50,13
+    PUSHBUTTON      "Cancel",2,129,23,50,13
+END
+
+IDD_PREFSTRANSPARENCYDLG DIALOG DISCARDABLE  0, 0, 209, 110
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Transparency"
+FONT 8, "MS Sans Serif"
+BEGIN
+    RTEXT           "Grid Size",IDC_STATIC,6,8,38,10,SS_CENTERIMAGE
+    COMBOBOX        IDC_PREFSTRANSP_GRIDSIZE,50,6,60,69,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Grid Colors",IDC_STATIC,6,24,38,11,SS_CENTERIMAGE
+    COMBOBOX        IDC_PREFSTRANSP_GRIDCOLORS,50,24,60,133,CBS_DROPDOWNLIST | 
+                    CBS_OWNERDRAWFIXED | CBS_HASSTRINGS | WS_VSCROLL | 
+                    WS_TABSTOP
+END
+
+IDD_PATTERNSWATCHOPTIONSDLG DIALOG DISCARDABLE  0, 0, 280, 95
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Swatch Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_SWATCH_NAME,58,6,142,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",1,215,7,50,13
+    PUSHBUTTON      "Cancel",2,215,23,50,13
+    RTEXT           "Swatch &Name:",IDC_STATIC,5,8,48,10
+END
+
+IDD_SYMBOLOPTIONSDLG DIALOG DISCARDABLE  0, 0, 199, 45
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Symbol Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    RTEXT           "Name:",IDC_STATIC,5,10,25,10,SS_CENTERIMAGE
+    EDITTEXT        IDC_SYMBOL_NAME,33,9,100,13,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",1,143,7,50,13
+    PUSHBUTTON      "Cancel",2,143,23,50,13
+END
+
+IDD_SVGEXPORTOPTIONSDLG DIALOG DISCARDABLE  0, 0, 240, 135
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "SVG Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",1,180,7,50,13,WS_GROUP
+    PUSHBUTTON      "Cancel",2,180,23,50,13
+    GROUPBOX        "Images",IDC_STATIC,7,49,164,38
+    LTEXT           "Location:",IDC_STATIC,13,64,33,10
+    CONTROL         "Embed",IDC_SVG_IMAGESEMBED,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,51,64,39,10
+    CONTROL         "Link",IDC_SVG_IMAGESLINK,"Button",BS_AUTORADIOBUTTON,95,
+                    64,33,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_TOOLS TOOLBAR DISCARDABLE  17, 17
+BEGIN
+    BUTTON      ID_TOOL_SELECT
+    BUTTON      ID_TOOL_DIRECT
+    BUTTON      ID_TOOL_PATHPEN
+    BUTTON      ID_TOOL_PATHADDANCHOR
+    BUTTON      ID_TOOL_PATHDELETEANCHOR
+    BUTTON      ID_TOOL_PATHCORNER
+    BUTTON      ID_TOOL_TEXT
+    BUTTON      ID_TOOL_TEXTPATH
+    BUTTON      ID_TOOL_RECTANGLEGRAPHIC
+    BUTTON      ID_TOOL_ELLIPSEGRAPHIC
+    BUTTON      ID_TOOL_RECTANGLE
+    BUTTON      ID_TOOL_ELLIPSE
+    BUTTON      ID_TOOL_LINE
+    BUTTON      ID_TOOL_ROTATE
+    BUTTON      ID_TOOL_SCALE
+    BUTTON      ID_TOOL_FREETRANSFORM
+    BUTTON      ID_TOOL_SYMBOLSPRAYER
+    BUTTON      ID_TOOL_TWIRL
+    BUTTON      ID_TOOL_BULGE
+    BUTTON      ID_TOOL_GRADIENT
+    BUTTON      ID_TOOL_ZOOM
+    BUTTON      ID_TOOL_HAND
+END
+
+IDR_PARAGRAPH TOOLBAR DISCARDABLE  17, 17
+BEGIN
+    BUTTON      ID_PARAGRAPH_ALIGNLEFT
+    BUTTON      ID_PARAGRAPH_ALIGNCENTER
+    BUTTON      ID_PARAGRAPH_ALIGNRIGHT
+    BUTTON      ID_PARAGRAPH_JUSTIFYLEFT
+    BUTTON      ID_PARAGRAPH_JUSTIFYCENTER
+    BUTTON      ID_PARAGRAPH_JUSTIFYRIGHT
+    BUTTON      ID_PARAGRAPH_JUSTIFYALL
+END
+
+IDR_TEXTWRAP TOOLBAR DISCARDABLE  17, 17
+BEGIN
+    BUTTON      ID_TEXTWRAP_NONE
+    BUTTON      ID_TEXTWRAP_BBOX
+    BUTTON      ID_TEXTWRAP_SHAPE
+    BUTTON      ID_TEXTWRAP_OBJECT
+    BUTTON      ID_TEXTWRAP_COLUMN
+END
+
+IDR_MAINFRAME TOOLBAR DISCARDABLE  17, 17
+BEGIN
+    BUTTON      ID_FILE_NEW
+    BUTTON      ID_FILE_OPEN
+    BUTTON      ID_FILE_SAVE
+    BUTTON      ID_FILE_PRINT
+    BUTTON      ID_EDIT_UNDO
+    BUTTON      ID_EDIT_REDO
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    BUTTON      ID_OBJECT_GROUP
+    BUTTON      ID_OBJECT_UNGROUP
+    BUTTON      ID_OBJECT_ARRANGE_BRINGTOFRONT
+    BUTTON      ID_OBJECT_ARRANGE_SENDTOBACK
+    BUTTON      ID_OBJECT_ARRANGE_BRINGFORWARD
+    BUTTON      ID_OBJECT_ARRANGE_SENDBACKWARD
+    BUTTON      ID_TYPE_CHARACTER
+    BUTTON      ID_TYPE_PARAGRAPH
+    BUTTON      ID_APP_ABOUT
+END
+
+IDR_CHARACTER TOOLBAR DISCARDABLE  17, 17
+BEGIN
+    BUTTON      ID_CHARACTER_FONTSIZE
+    BUTTON      ID_CHARACTER_BOLD
+    BUTTON      ID_CHARACTER_ITALIC
+    BUTTON      ID_CHARACTER_UNDERLINE
+    BUTTON      ID_CHARACTER_LINEHEIGHT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_NEW             "Create a new document\nNew"
+    ID_FILE_OPEN            "Open an existing document\nOpen"
+    ID_FILE_CLOSE           "Close the active document\nClose"
+    ID_FILE_SAVE            "Save the active document\nSave"
+    ID_FILE_SAVE_AS         "Save the active document with a new name\nSave As"
+    ID_FILE_PAGE_SETUP      "Change the printing options\nPage Setup"
+    ID_FILE_PRINT_SETUP     "Change the printer and printing options\nPrint Setup"
+    ID_FILE_PRINT           "Print the active document\nPrint"
+    ID_FILE_PRINT_PREVIEW   "Display full pages\nPrint Preview"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
+    ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_WINDOW_NEW           "Open another window for the active document\nNew Window"
+    ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
+    ID_WINDOW_CASCADE       "Arrange windows so they overlap\nCascade Windows"
+    ID_WINDOW_TILE_HORZ     "Arrange windows as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_TILE_VERT     "Arrange windows as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selection\nErase"
+    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
+    ID_EDIT_UNDO            "Undo the last action\nUndo"
+    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ATL_IDS_SCSIZE          "Change the window size"
+    ATL_IDS_SCMOVE          "Change the window position"
+    ATL_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    ATL_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    ATL_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    ATL_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    ATL_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ATL_IDS_SCRESTORE       "Restore the window to normal size"
+    ATL_IDS_SCTASKLIST      "Activate Task List"
+    ATL_IDS_MDICHILD        "Activate this window"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ATL_IDS_IDLEMESSAGE     "Ready"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ATL_IDS_MRU_FILE        "Open this document"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_PROJNAME            "PageDesigner"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDR_PAGEDESIGNERFRAME   "PageDesigner"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Norwegian (Bokmal) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NOR)
+#ifdef _WIN32
+LANGUAGE LANG_NORWEGIAN, SUBLANG_NORWEGIAN_BOKMAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// REGISTRY
+//
+
+IDR_SWATCHESLIST        REGISTRY DISCARDABLE    "SwatchesList.rgs"
+IDR_GRADIENTEDIT        REGISTRY DISCARDABLE    "GradientEdit.rgs"
+IDR_TOOLSDLG            REGISTRY DISCARDABLE    "ToolsDlg.rgs"
+IDR_TABSCONTROL         REGISTRY DISCARDABLE    "TabsControl.rgs"
+IDR_TABSDLG             REGISTRY DISCARDABLE    "TabsDlg.rgs"
+IDR_SWATCHLIBRARYDLG    REGISTRY DISCARDABLE    "SwatchLibraryDlg.rgs"
+IDR_LINKSDLG            REGISTRY DISCARDABLE    "LinksDlg.rgs"
+IDR_TRANSPARENCYDLG     REGISTRY DISCARDABLE    "TransparencyDlg.rgs"
+IDR_FILTERGRAPHDLG      REGISTRY DISCARDABLE    "FilterGraphDlg.rgs"
+IDR_PDGRADIENTSTOP      REGISTRY DISCARDABLE    "PDGradientStop.rgs"
+IDR_PDSWATCHNONE        REGISTRY DISCARDABLE    "PDSwatchNone.rgs"
+IDR_PDOBJECTGROUP       REGISTRY DISCARDABLE    "PDObjectGroup.rgs"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_SWATCHESLIST        BITMAP  DISCARDABLE     "res\\swatches.bmp"
+IDB_GRADIENTEDIT        BITMAP  DISCARDABLE     "res\\gradient.bmp"
+IDB_TEXTWRAP            BITMAP  DISCARDABLE     "res\\textwrap.bmp"
+IDB_TEXTWRAP_TOP        BITMAP  DISCARDABLE     "res\\bmp00001.bmp"
+IDB_TEXTWRAP_LEFT       BITMAP  DISCARDABLE     "res\\bitmap1.bmp"
+IDB_TEXTWRAP_BOTTOM     BITMAP  DISCARDABLE     "res\\bmp00002.bmp"
+IDB_TEXTWRAP_RIGHT      BITMAP  DISCARDABLE     "res\\bmp00003.bmp"
+IDB_TABSCONTROL         BITMAP  DISCARDABLE     "res\\tabscont.bmp"
+IDB_SWATCHES            BITMAP  DISCARDABLE     "res\\bmp00005.bmp"
+IDB_ACTIVELAYER         BITMAP  DISCARDABLE     "res\\activela.bmp"
+IDB_TABS_POSITIONABOVEFRAME BITMAP  DISCARDABLE     "res\\tabs_pos.bmp"
+IDB_ORIENTATION_PORTRAIT BITMAP  DISCARDABLE     "res\\orientat.bmp"
+IDB_ORIENTATION_LANDSCAPE BITMAP  DISCARDABLE     "res\\bmp00006.bmp"
+IDB_THUMBSIZE_SMALL     BITMAP  DISCARDABLE     "res\\thumbsiz.bmp"
+IDB_THUMBSIZE_MEDIUM    BITMAP  DISCARDABLE     "res\\bmp00007.bmp"
+IDB_THUMBSIZE_LARGE     BITMAP  DISCARDABLE     "res\\bmp00008.bmp"
+IDB_STROKE_CAP0         BITMAP  DISCARDABLE     "res\\bmp00009.bmp"
+IDB_STROKE_CAP1         BITMAP  DISCARDABLE     "res\\stroke_c.bmp"
+IDB_STROKE_CAP2         BITMAP  DISCARDABLE     "res\\bmp00010.bmp"
+IDB_STROKE_JOIN0        BITMAP  DISCARDABLE     "res\\bmp00011.bmp"
+IDB_STROKE_JOIN1        BITMAP  DISCARDABLE     "res\\stroke_j.bmp"
+IDB_STROKE_JOIN2        BITMAP  DISCARDABLE     "res\\bmp00012.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_TEXTWRAPDLG DIALOG DISCARDABLE  0, 0, 129, 46
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_TEXTWRAP_NONE,
+                    "{44801846-7B01-41B2-B527-5A422C019805}",WS_TABSTOP,4,3,
+                    17,13
+    CONTROL         "",IDC_TEXTWRAP_BBOX,
+                    "{44801846-7B01-41B2-B527-5A422C019805}",WS_TABSTOP,23,3,
+                    17,13
+    CONTROL         "",IDC_TEXTWRAP_SHAPE,
+                    "{44801846-7B01-41B2-B527-5A422C019805}",WS_TABSTOP,42,3,
+                    17,13
+    CONTROL         "",IDC_TEXTWRAP_OBJECT,
+                    "{44801846-7B01-41B2-B527-5A422C019805}",WS_TABSTOP,61,3,
+                    17,13
+    CONTROL         "",IDC_TEXTWRAP_COLUMN,
+                    "{44801846-7B01-41B2-B527-5A422C019805}",WS_TABSTOP,80,3,
+                    17,13
+    CONTROL         224,IDC_STATIC,"Static",SS_BITMAP,5,19,11,10
+    CONTROL         226,IDC_STATIC,"Static",SS_BITMAP,5,31,11,10
+    CONTROL         225,IDC_STATIC,"Static",SS_BITMAP,73,19,11,10
+    CONTROL         227,IDC_STATIC,"Static",SS_BITMAP,74,31,11,10
+    CONTROL         "",IDC_TEXTWRAP_TOP,
+                    "{45E01121-EE7E-11D5-95F0-0002E3045703}",WS_TABSTOP,21,
+                    20,36,10
+    CONTROL         "",IDC_TEXTWRAP_BOTTOM,
+                    "{45E01121-EE7E-11D5-95F0-0002E3045703}",WS_TABSTOP,21,
+                    32,36,10
+    CONTROL         "",IDC_TEXTWRAP_LEFT,
+                    "{45E01121-EE7E-11D5-95F0-0002E3045703}",WS_TABSTOP,88,
+                    20,36,10
+    CONTROL         "",IDC_TEXTWRAP_RIGHT,
+                    "{45E01121-EE7E-11D5-95F0-0002E3045703}",WS_TABSTOP,88,
+                    31,36,10
+END
+
+IDD_NEWDOCUMENTDLG DIALOG DISCARDABLE  0, 0, 262, 169
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "New Document"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Number of &Pages:",IDC_STATIC,7,8,57,10
+    EDITTEXT        IDC_NEWDOC_NUMBEROFPAGES,68,7,36,12,ES_AUTOHSCROLL
+    CONTROL         "&Facing Pages",IDC_NEWDOC_FACINGPAGES,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,112,8,76,10
+    CONTROL         "&Master Text Frame",IDC_NEWDOC_MASTERTEXTFRAME,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,112,21,76,10
+    GROUPBOX        "Page &Size: ",IDC_STATIC,8,39,187,49
+    COMBOBOX        IDC_NEWDOC_PAGESIZE_PRESETS,50,37,75,132,
+                    CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "&Width:",IDC_STATIC,12,56,28,10
+    EDITTEXT        IDC_NEWDOC_PAGEWIDTH,44,55,42,12,ES_AUTOHSCROLL
+    RTEXT           "&Height:",IDC_STATIC,12,71,28,10
+    EDITTEXT        IDC_NEWDOC_PAGEHEIGHT,44,70,42,12,ES_AUTOHSCROLL
+    LTEXT           "Orientation:",IDC_STATIC,97,58,39,10
+    CONTROL         "Portrait",IDC_NEWDOC_ORIENTATION_PORTRAIT,"Button",
+                    BS_AUTORADIOBUTTON | BS_BITMAP | BS_PUSHLIKE | WS_GROUP,
+                    141,57,18,14
+    CONTROL         "Landscape",IDC_NEWDOC_ORIENTATION_LANDSCAPE,"Button",
+                    BS_AUTORADIOBUTTON | BS_BITMAP | BS_PUSHLIKE,160,57,18,
+                    14
+    GROUPBOX        "Margins",IDC_STATIC,8,91,187,40
+    RTEXT           "&Top:",IDC_STATIC,15,102,33,10
+    EDITTEXT        IDC_NEWDOC_MARGINS_TOP,54,101,40,12,ES_AUTOHSCROLL
+    RTEXT           "&Bottom:",IDC_STATIC,15,116,33,10
+    EDITTEXT        IDC_NEWDOC_MARGINS_BOTTOM,54,115,40,12,ES_AUTOHSCROLL
+    RTEXT           "&Left:",IDC_NEWDOC_MARGINS_LEFTTEXT,103,102,33,10
+    EDITTEXT        IDC_NEWDOC_MARGINS_LEFT,142,101,40,12,ES_AUTOHSCROLL
+    RTEXT           "&Right:",IDC_NEWDOC_MARGINS_RIGHTTEXT,105,116,33,10
+    EDITTEXT        IDC_NEWDOC_MARGINS_RIGHT,142,115,40,12,ES_AUTOHSCROLL
+    GROUPBOX        "Columns",IDC_STATIC,8,134,187,27
+    RTEXT           "&Number:",IDC_STATIC,14,145,36,10
+    EDITTEXT        IDC_NEWDOC_COLUMNS_NUMBER,54,144,36,12,ES_AUTOHSCROLL
+    RTEXT           "&Gutter:",IDC_STATIC,98,145,36,10
+    EDITTEXT        IDC_NEWDOC_COLUMNS_GUTTER,139,144,42,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",1,204,7,50,13
+    PUSHBUTTON      "Cancel",2,204,23,50,13
+END
+
+IDD_PATHTYPEOPTIONSDLG DIALOG DISCARDABLE  0, 0, 253, 49
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Path Type Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",1,185,7,50,14
+    PUSHBUTTON      "Cancel",2,185,24,50,14
+    CONTROL         "",IDC_PATHTYPE_ALIGN,
+                    "{EA3224A7-9A94-4BD3-9138-970D6F43A335}",WS_TABSTOP,28,
+                    13,53,12
+    LTEXT           "Align",IDC_STATIC,5,14,18,10
+END
+
+IDD_INSERTPAGESDLG DIALOG DISCARDABLE  0, 0, 235, 61
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Insert Pages"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_INSERTPAGES_PAGES,32,6,41,12,ES_AUTOHSCROLL
+    COMBOBOX        IDC_INSERTPAGES_INSERT,32,23,88,75,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_INSERTPAGES_INSERTNUMBER,121,23,44,12,ES_AUTOHSCROLL
+    COMBOBOX        IDC_INSERTPAGES_MASTER,32,42,88,64,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",1,176,9,50,13
+    PUSHBUTTON      "Cancel",2,176,25,50,13
+    RTEXT           "&Pages:",IDC_STATIC,5,7,24,10
+    RTEXT           "&Insert:",IDC_STATIC,5,25,24,10
+    RTEXT           "&Master:",IDC_STATIC,5,44,24,10
+END
+
+IDD_TEXTFRAMEOPTIONSDLG DIALOG DISCARDABLE  0, 0, 243, 177
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Text Frame Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",1,186,7,50,13
+    PUSHBUTTON      "Cancel",2,186,23,50,13
+    GROUPBOX        "Columns",IDC_STATIC,6,5,170,55
+    GROUPBOX        "Inset Spacing",IDC_STATIC,6,65,170,45
+    GROUPBOX        "First Baseline",IDC_STATIC,6,116,170,38
+    CONTROL         "Ignore Text Wrap",IDC_TEXTFRAME_IGNOREWRAP,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,5,161,70,11
+    RTEXT           "Number:",IDC_STATIC,11,17,26,10,SS_CENTERIMAGE
+    RTEXT           "Gutter:",IDC_STATIC,111,17,24,10,SS_CENTERIMAGE
+    EDITTEXT        IDC_TEXTFRAME_COLUMNS_NUMBER,40,16,32,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TEXTFRAME_COLUMNS_GUTTER,137,16,32,12,ES_AUTOHSCROLL
+    RTEXT           "Top",IDC_STATIC,11,77,24,10
+    RTEXT           "Bottom",IDC_STATIC,12,92,24,10
+    RTEXT           "Left",IDC_STATIC,107,77,24,10
+    RTEXT           "Right",IDC_STATIC,107,92,24,10
+    EDITTEXT        IDC_TEXTFRAME_INSET_TOP,40,76,32,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TEXTFRAME_INSET_BOTTOM,40,91,32,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TEXTFRAME_INSET_RIGHT,136,91,32,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TEXTFRAME_INSET_LEFT,136,76,32,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TEXTFRAME_COLUMNS_WIDTH,40,30,32,12,ES_AUTOHSCROLL
+    RTEXT           "Width:",IDC_STATIC,11,31,26,10,SS_CENTERIMAGE
+    CONTROL         "Fixed Column Width",IDC_TEXTFRAME_COLUMNS_FIXEDWIDTH,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,41,45,92,10
+END
+
+IDD_TABSDLG DIALOG DISCARDABLE  0, 0, 166, 43
+STYLE WS_CHILD
+FONT 7, "Small Fonts"
+BEGIN
+    PUSHBUTTON      "",IDC_TABS_POSITIONABOVEFRAME,151,25,15,12,BS_BITMAP | 
+                    WS_GROUP
+    CONTROL         "Radio1",IDC_TABS_ALIGNLEFT,"Button",BS_AUTORADIOBUTTON | 
+                    BS_BITMAP | BS_PUSHLIKE | WS_GROUP,0,0,14,13
+    CONTROL         "Radio2",IDC_TABS_ALIGNCENTER,"Button",
+                    BS_AUTORADIOBUTTON | BS_BITMAP | BS_PUSHLIKE,14,0,14,13
+    CONTROL         "Radio3",IDC_TABS_ALIGNRIGHT,"Button",BS_AUTORADIOBUTTON | 
+                    BS_BITMAP | BS_PUSHLIKE,29,0,14,13
+    CONTROL         "Radio4",IDC_TABS_ALIGNDECIMAL,"Button",
+                    BS_AUTORADIOBUTTON | BS_BITMAP | BS_PUSHLIKE,43,0,14,13
+    LTEXT           "X:",IDC_STATIC,61,3,8,8
+    EDITTEXT        IDC_TABS_X,69,1,32,12,ES_AUTOHSCROLL
+    LTEXT           "Leader:",IDC_STATIC,104,3,24,8
+    EDITTEXT        IDC_TABS_LEADER,129,1,32,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_TABS,"{A0AD4521-0579-11D6-95F0-0002E3045703}",
+                    WS_TABSTOP,10,14,106,27
+END
+
+IDD_PREFSUNITSDLG DIALOG DISCARDABLE  0, 0, 227, 97
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Units && Incremenents"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Ruler Units",IDC_STATIC,6,7,215,62
+    RTEXT           "Origin:",IDC_STATIC,12,18,48,10
+    COMBOBOX        IDC_RULERUNITS_ORIGIN,68,17,80,45,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "&Horizontal:",IDC_STATIC,12,37,48,10
+    RTEXT           "Ver&tical:",IDC_STATIC,12,53,48,10
+    COMBOBOX        IDC_RULERUNITS_HORIZONTAL,68,35,80,90,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_RULERUNITS_VERTICAL,68,51,80,97,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_PREFSGRIDSDLG DIALOG DISCARDABLE  0, 0, 254, 138
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Grids"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Document Grid",IDC_STATIC,6,60,240,66
+    GROUPBOX        "Horizontal",IDC_STATIC,12,79,106,42
+    GROUPBOX        "Vertical",IDC_STATIC,128,79,106,42
+    LTEXT           "Gridline every",IDC_STATIC,20,92,45,11
+    LTEXT           "Subdivisions",IDC_STATIC,20,105,43,10
+    EDITTEXT        IDC_DOCUMENTGRID_HOREVERY,68,90,36,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_DOCUMENTGRID_HORSUBDIVS,68,104,36,12,ES_AUTOHSCROLL
+    LTEXT           "Gridline every",IDC_STATIC,137,92,45,11
+    LTEXT           "Subdivisions",IDC_STATIC,137,105,43,10
+    EDITTEXT        IDC_DOCUMENTGRID_VEREVERY,185,90,36,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_DOCUMENTGRID_VERSUBDIVS,185,104,36,12,ES_AUTOHSCROLL
+    GROUPBOX        "Baseline Grid",IDC_STATIC,6,4,240,51
+    RTEXT           "Start",IDC_STATIC,10,21,56,10
+    RTEXT           "Increment every",IDC_STATIC,10,35,56,9
+    EDITTEXT        IDC_BASELINEGRID_START,74,18,40,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_BASELINEGRID_INCREMENT,74,34,40,12,ES_AUTOHSCROLL
+END
+
+IDD_JUSTIFICATIONDLG DIALOG DISCARDABLE  0, 0, 217, 53
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Justification"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Word Spacing:",IDC_STATIC,7,15,50,12
+    LTEXT           "Minimum",IDC_STATIC,67,3,34,10
+    LTEXT           "Desired",IDC_STATIC,107,3,34,11
+    LTEXT           "Maximum",IDC_STATIC,144,3,34,11
+    EDITTEXT        IDC_WORDSPACING_MINIMUM,67,14,36,13,ES_AUTOHSCROLL
+    EDITTEXT        IDC_WORDSPACING_DESIRED,105,14,36,13,ES_AUTOHSCROLL
+    EDITTEXT        IDC_WORDSPACING_MAXIMUM,144,14,36,13,ES_AUTOHSCROLL
+END
+
+IDD_LAYEROPTIONSDLG DIALOG DISCARDABLE  0, 0, 205, 63
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Layer Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_LAYER_NAME,32,6,104,13,ES_AUTOHSCROLL
+    CONTROL         "&Show Layer",IDC_LAYER_SHOWLAYER,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,11,30,53,12
+    CONTROL         "Show &Guides",IDC_LAYER_SHOWGUIDES,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,73,30,60,12
+    CONTROL         "&Lock Layer",IDC_LAYER_LOCKLAYER,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,11,44,53,12
+    CONTROL         "Loc&k Guides",IDC_LAYER_LOCKGUIDES,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,73,44,60,12
+    DEFPUSHBUTTON   "OK",1,148,5,50,13
+    PUSHBUTTON      "Cancel",2,148,22,50,13
+    LTEXT           "&Name:",IDC_STATIC,7,8,22,10
+END
+
+IDD_PAGESOPTIONSDLG DIALOG DISCARDABLE  0, 0, 213, 159
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Pages Palette Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",1,154,7,50,13,WS_GROUP
+    PUSHBUTTON      "Cancel",2,154,23,50,13
+    GROUPBOX        "Pages",IDC_STATIC,6,5,132,40
+    GROUPBOX        "Masters",IDC_STATIC,6,50,132,40
+    LTEXT           "&Icon Size:",IDC_STATIC,14,17,34,10
+    LTEXT           "I&con Size:",IDC_STATIC,14,63,33,10
+    COMBOBOX        IDC_PAGESOPTIONS_PAGESSIZE,54,15,70,53,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_PAGESOPTIONS_MASTERSSIZE,54,60,70,53,
+                    CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Palette Layout",IDC_STATIC,6,94,132,58
+    CONTROL         "&Pages on Top",IDC_PAGESOPTIONS_LAYOUT_ONTOP,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,14,106,70,10
+    CONTROL         "&Masters on Top",IDC_PAGESOPTIONS_LAYOUT_ONTOP2,"Button",
+                    BS_AUTORADIOBUTTON,14,118,70,10
+    LTEXT           "&Resize:",IDC_STATIC,29,134,27,10
+    COMBOBOX        IDC_PAGESOPTIONS_RESIZE,57,132,69,47,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_RECTANGLEOPTIONSDLG DIALOG DISCARDABLE  0, 0, 186, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Rectangle"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_OBJECT_WIDTH,44,13,38,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_OBJECT_HEIGHT,44,30,38,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",1,129,7,50,13
+    PUSHBUTTON      "Cancel",2,129,23,50,13
+    GROUPBOX        "Options",IDC_STATIC,5,3,113,47
+    RTEXT           "Width",IDC_STATIC,12,15,25,10
+    RTEXT           "Height",IDC_STATIC,12,32,25,10
+END
+
+IDD_ELLIPSEOPTIONSDLG DIALOG DISCARDABLE  0, 0, 186, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Ellipse"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_OBJECT_WIDTH,44,13,38,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_OBJECT_HEIGHT,44,30,38,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",1,129,7,50,13
+    PUSHBUTTON      "Cancel",2,129,23,50,13
+    GROUPBOX        "Options",IDC_STATIC,5,3,113,47
+    RTEXT           "Width",IDC_STATIC,12,15,25,10
+    RTEXT           "Height",IDC_STATIC,12,32,25,10
+END
+
+IDD_SECTIONOPTIONSDLG DIALOG DISCARDABLE  0, 0, 270, 95
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Section Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        " ",IDC_STATIC,5,3,194,83
+    CONTROL         "Start Section",IDC_SECTIONOPTIONS_STARTSECTION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,2,57,12
+    RTEXT           "Page Numbering",IDC_STATIC,12,38,56,10
+    CONTROL         "Continue from Previous Section",
+                    IDC_SECTIONOPTIONS_PAGENUMBERING0,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,72,38,111,11
+    CONTROL         "Start at:",IDC_SECTIONOPTIONS_PAGENUMBERING1,"Button",
+                    BS_AUTORADIOBUTTON,72,51,37,11
+    EDITTEXT        IDC_SECTIONOPTIONS_PAGENUMBERING_STARTAT,115,51,37,12,
+                    ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",1,212,7,50,13
+    PUSHBUTTON      "Cancel",2,212,23,50,13
+    RTEXT           "Style",IDC_STATIC,12,22,56,10
+    COMBOBOX        IDC_SECTIONOPTIONS_STYLE,73,21,88,64,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_COLORSWATCHOPTIONSDLG DIALOG DISCARDABLE  0, 0, 280, 154
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Swatch Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_SWATCH_NAME,58,6,142,12,ES_AUTOHSCROLL
+    CONTROL         "Name with Color &Value",IDC_SWATCH_NAMEWITHCOLORVALUE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,57,22,89,10
+    COMBOBOX        IDC_SWATCH_COLORTYPE,62,38,75,44,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Color &Mode:   ",IDC_STATIC,9,55,198,79
+    COMBOBOX        IDC_SWATCH_COLORMODE,58,54,75,52,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Static",IDC_SWATCH_CHANNELNAME0,17,76,40,10
+    CONTROL         "",IDC_SWATCH_CHANNELSLIDER0,
+                    "{078A92DD-B19C-4B6B-A954-F596DA402DBE}",WS_TABSTOP,61,
+                    76,100,10
+    EDITTEXT        IDC_SWATCH_CHANNELVALUE0,165,75,25,12,ES_AUTOHSCROLL
+    RTEXT           "Static",IDC_SWATCH_CHANNELNAME1,17,88,40,10
+    CONTROL         "",IDC_SWATCH_CHANNELSLIDER1,
+                    "{078A92DD-B19C-4B6B-A954-F596DA402DBE}",WS_TABSTOP,61,
+                    88,100,10
+    EDITTEXT        IDC_SWATCH_CHANNELVALUE1,165,87,25,12,ES_AUTOHSCROLL
+    RTEXT           "Static",IDC_SWATCH_CHANNELNAME2,17,100,40,10
+    CONTROL         "",IDC_SWATCH_CHANNELSLIDER2,
+                    "{078A92DD-B19C-4B6B-A954-F596DA402DBE}",WS_TABSTOP,61,
+                    100,100,10
+    EDITTEXT        IDC_SWATCH_CHANNELVALUE2,165,99,25,12,ES_AUTOHSCROLL
+    RTEXT           "Static",IDC_SWATCH_CHANNELNAME3,17,112,40,10
+    CONTROL         "",IDC_SWATCH_CHANNELSLIDER3,
+                    "{078A92DD-B19C-4B6B-A954-F596DA402DBE}",WS_TABSTOP,61,
+                    112,100,10
+    EDITTEXT        IDC_SWATCH_CHANNELVALUE3,165,111,25,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",1,215,7,50,13
+    PUSHBUTTON      "Cancel",2,215,23,50,13
+    RTEXT           "Swatch &Name:",IDC_STATIC,5,8,48,10
+    CONTROL         "",IDC_SWATCH_COLORSLIDERS,"Static",SS_BLACKFRAME | NOT 
+                    WS_VISIBLE,13,70,187,60
+    LTEXT           "Static",IDC_SWATCH_NAMEWITHCOLORVALUENAME,57,6,145,11
+    RTEXT           "Color &Type:",IDC_STATIC,19,39,36,10
+END
+
+IDD_GRADIENTSWATCHOPTIONSDLG DIALOG DISCARDABLE  0, 0, 310, 162
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Swatch Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",1,247,7,50,13
+    PUSHBUTTON      "Cancel",2,247,23,50,13
+    GROUPBOX        "&Stop Color:",IDC_STATIC,7,43,232,77
+    COMBOBOX        IDC_SWATCH_COLORMODE,58,39,75,52,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",IDC_SWATCH_CHANNELSLIDER0,
+                    "{078A92DD-B19C-4B6B-A954-F596DA402DBE}",WS_TABSTOP,87,
+                    61,100,10
+    CONTROL         "",IDC_SWATCH_CHANNELSLIDER1,
+                    "{078A92DD-B19C-4B6B-A954-F596DA402DBE}",WS_TABSTOP,87,
+                    73,100,10
+    CONTROL         "",IDC_SWATCH_CHANNELSLIDER2,
+                    "{078A92DD-B19C-4B6B-A954-F596DA402DBE}",WS_TABSTOP,87,
+                    85,100,10
+    CONTROL         "",IDC_SWATCH_CHANNELSLIDER3,
+                    "{078A92DD-B19C-4B6B-A954-F596DA402DBE}",WS_TABSTOP,87,
+                    97,100,10
+    RTEXT           "Static",IDC_SWATCH_CHANNELNAME0,43,61,40,10
+    RTEXT           "Static",IDC_SWATCH_CHANNELNAME1,43,73,40,10
+    RTEXT           "Static",IDC_SWATCH_CHANNELNAME2,43,85,40,10
+    RTEXT           "Static",IDC_SWATCH_CHANNELNAME3,43,97,40,10
+    CONTROL         "",IDC_SWATCH_COLORSLIDERS,"Static",SS_BLACKFRAME | NOT 
+                    WS_VISIBLE,13,56,215,58
+    EDITTEXT        IDC_SWATCH_CHANNELVALUE0,191,60,25,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SWATCH_CHANNELVALUE1,191,72,25,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SWATCH_CHANNELVALUE2,191,84,25,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SWATCH_CHANNELVALUE3,191,96,25,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SWATCH_NAME,58,6,142,12,ES_AUTOHSCROLL
+    RTEXT           "Swatch &Name:",IDC_STATIC,5,8,48,10
+    CONTROL         "",IDC_SWATCH_NAMEDCOLORS,
+                    "{8B2AE124-EE82-11D5-95F0-0002E3045703}",WS_TABSTOP,45,
+                    109,180,9
+    CONTROL         "",IDC_SWATCH_GRADIENT,
+                    "{8B2AE12A-EE82-11D5-95F0-0002E3045703}",WS_TABSTOP,65,
+                    122,159,22
+    RTEXT           "&Type:",IDC_STATIC,5,24,48,10
+    COMBOBOX        IDC_SWATCH_GRADIENTTYPE,58,22,74,67,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Gradient Ramp",IDC_STATIC,10,124,50,8
+    LTEXT           "&Location:",IDC_STATIC,143,146,31,10
+    EDITTEXT        IDC_SWATCH_LOCATION,178,145,24,12,ES_AUTOHSCROLL
+    LTEXT           "%",IDC_STATIC,206,146,14,10
+END
+
+IDD_TINTSWATCHOPTIONSDLG DIALOG DISCARDABLE  0, 0, 186, 95
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Swatch Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",1,129,7,50,14
+    PUSHBUTTON      "Cancel",2,129,24,50,14
+END
+
+IDD_DOCUMENTSETUPDLG DIALOG DISCARDABLE  0, 0, 262, 93
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Document Setup"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Number of &Pages:",IDC_STATIC,7,8,57,10
+    EDITTEXT        IDC_NEWDOC_NUMBEROFPAGES,68,7,36,12,ES_AUTOHSCROLL
+    CONTROL         "&Facing Pages",IDC_NEWDOC_FACINGPAGES,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,112,8,76,10
+    CONTROL         "&Master Text Frame",IDC_NEWDOC_MASTERTEXTFRAME,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,112,21,76,10
+    GROUPBOX        "Page &Size: ",IDC_STATIC,8,39,187,49
+    COMBOBOX        IDC_NEWDOC_PAGESIZE_PRESETS,50,37,75,132,
+                    CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "&Width:",IDC_STATIC,12,56,28,10
+    EDITTEXT        IDC_NEWDOC_PAGEWIDTH,44,55,42,12,ES_AUTOHSCROLL
+    RTEXT           "&Height:",IDC_STATIC,12,71,28,10
+    EDITTEXT        IDC_NEWDOC_PAGEHEIGHT,44,70,42,12,ES_AUTOHSCROLL
+    LTEXT           "Orientation:",IDC_STATIC,97,58,39,10
+    CONTROL         "Portrait",IDC_NEWDOC_ORIENTATION_PORTRAIT,"Button",
+                    BS_AUTORADIOBUTTON | BS_BITMAP | BS_PUSHLIKE | WS_GROUP,
+                    141,57,18,14
+    CONTROL         "Landscape",IDC_NEWDOC_ORIENTATION_LANDSCAPE,"Button",
+                    BS_AUTORADIOBUTTON | BS_BITMAP | BS_PUSHLIKE,160,57,18,
+                    14
+    DEFPUSHBUTTON   "OK",1,204,7,50,13
+    PUSHBUTTON      "Cancel",2,204,23,50,13
+END
+
+IDD_DROPCAPSDLG DIALOG DISCARDABLE  0, 0, 186, 42
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Drop Caps"
+FONT 8, "MS Sans Serif"
+BEGIN
+    RTEXT           "Lines:",IDC_STATIC,6,13,24,10
+    RTEXT           "Characters:",IDC_STATIC,82,13,42,10
+    EDITTEXT        IDC_DROPCAPS_LINES,33,11,35,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_DROPCAPS_CHARACTERS,128,11,35,12,ES_AUTOHSCROLL
+END
+
+IDD_PARAGRAPHINDENTSDLG DIALOG DISCARDABLE  0, 0, 206, 108
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Indents and Spacing"
+FONT 8, "MS Sans Serif"
+BEGIN
+    RTEXT           "Alignment:",IDC_STATIC,6,10,60,10,SS_CENTERIMAGE
+    COMBOBOX        IDC_PARAGRAPHINDENTS_ALIGNMENT,72,9,78,101,
+                    CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Left Indent:",IDC_STATIC,6,26,60,10,SS_CENTERIMAGE
+    RTEXT           "First Line Indent:",IDC_STATIC,6,42,60,10,
+                    SS_CENTERIMAGE
+    RTEXT           "Right Indent:",IDC_STATIC,6,56,60,10,SS_CENTERIMAGE
+    RTEXT           "Space Before:",IDC_STATIC,6,74,60,10,SS_CENTERIMAGE
+    RTEXT           "Space After:",IDC_STATIC,6,90,60,10,SS_CENTERIMAGE
+    EDITTEXT        IDC_PARAGRAPHINDENTS_LEFTINDENT,72,25,44,12,
+                    ES_AUTOHSCROLL
+    EDITTEXT        IDC_PARAGRAPHINDENTS_FIRSTLINEINDENT,72,41,44,12,
+                    ES_AUTOHSCROLL
+    EDITTEXT        IDC_PARAGRAPHINDENTS_RIGHTINDENT,72,57,44,12,
+                    ES_AUTOHSCROLL
+    EDITTEXT        IDC_PARAGRAPHINDENTS_SPACEBEFORE,72,73,44,12,
+                    ES_AUTOHSCROLL
+    EDITTEXT        IDC_PARAGRAPHINDENTS_SPACEAFTER,72,89,44,12,
+                    ES_AUTOHSCROLL
+END
+
+IDD_BASICCHARACTERDLG DIALOG DISCARDABLE  0, 0, 222, 114
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Basic Character Formats"
+FONT 8, "MS Sans Serif"
+BEGIN
+    RTEXT           "Font:",IDC_STATIC,6,10,30,10
+    RTEXT           "Size:",IDC_STATIC,6,25,30,10
+    COMBOBOX        IDC_CHARACTER_FONT,40,8,119,205,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_CHARACTER_SIZE,40,24,40,184,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_MASTEROPTIONSDLG DIALOG DISCARDABLE  0, 0, 262, 82
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Master Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    RTEXT           "Prefix:",IDC_STATIC,6,11,58,11,SS_CENTERIMAGE
+    EDITTEXT        IDC_MASTER_PREFIX,70,10,39,12,ES_AUTOHSCROLL
+    RTEXT           "Name:",IDC_STATIC,6,27,58,11,SS_CENTERIMAGE
+    EDITTEXT        IDC_MASTER_NAME,70,26,104,12,ES_AUTOHSCROLL
+    RTEXT           "Based on Master:",IDC_STATIC,6,44,58,11,SS_CENTERIMAGE
+    COMBOBOX        IDC_MASTER_BASEDON,70,43,104,52,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Number of Pages:",IDC_STATIC,6,61,58,11,SS_CENTERIMAGE
+    EDITTEXT        IDC_MASTER_NUMPAGES,70,60,40,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",1,203,7,50,13
+    PUSHBUTTON      "Cancel",2,203,23,50,13
+END
+
+IDD_CREATEGUIDESDLG DIALOG DISCARDABLE  0, 0, 276, 102
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Create Guides"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",1,219,7,50,13
+    PUSHBUTTON      "Cancel",2,219,23,50,13
+    GROUPBOX        "Rows",IDC_STATIC,4,5,96,46
+    RTEXT           "Number:",IDC_STATIC,10,17,30,10,SS_CENTERIMAGE
+    RTEXT           "Gutter:",IDC_STATIC,10,34,30,10,SS_CENTERIMAGE
+    EDITTEXT        IDC_CREATEGUIDES_ROWSNUM,46,16,42,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_CREATEGUIDES_ROWSGUTTER,46,33,42,12,ES_AUTOHSCROLL
+    GROUPBOX        "Columns",IDC_STATIC,107,5,96,46
+    RTEXT           "Number:",IDC_STATIC,113,17,30,10,SS_CENTERIMAGE
+    RTEXT           "Gutter:",IDC_STATIC,113,33,30,10,SS_CENTERIMAGE
+    EDITTEXT        IDC_CREATEGUIDES_COLSNUM,149,16,42,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_CREATEGUIDES_COLSGUTTER,149,33,42,12,ES_AUTOHSCROLL
+    GROUPBOX        "Options",IDC_STATIC,4,57,199,39
+    RTEXT           "Fit Guides to:",IDC_STATIC,10,68,48,10,SS_CENTERIMAGE
+    CONTROL         "Margins",IDC_CREATEGUIDES_FIT0,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,63,68,39,10
+    CONTROL         "Page",IDC_CREATEGUIDES_FIT1,"Button",BS_AUTORADIOBUTTON,
+                    111,68,35,10
+    CONTROL         "Remove Existing Ruler Guides",
+                    IDC_CREATEGUIDES_REMOVEEXISTING,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,12,81,168,10
+END
+
+IDD_MARGINSANDCOLUMNSDLG DIALOG DISCARDABLE  0, 0, 263, 82
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Margins and Columns"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Margins",IDC_STATIC,8,5,187,40
+    RTEXT           "&Top:",IDC_STATIC,15,16,33,10
+    EDITTEXT        IDC_NEWDOC_MARGINS_TOP,54,15,40,12,ES_AUTOHSCROLL
+    RTEXT           "&Bottom:",IDC_STATIC,15,30,33,10
+    EDITTEXT        IDC_NEWDOC_MARGINS_BOTTOM,54,29,40,12,ES_AUTOHSCROLL
+    RTEXT           "&Left:",IDC_NEWDOC_MARGINS_LEFTTEXT,103,16,33,10
+    EDITTEXT        IDC_NEWDOC_MARGINS_LEFT,142,15,40,12,ES_AUTOHSCROLL
+    RTEXT           "&Right:",IDC_NEWDOC_MARGINS_RIGHTTEXT,105,30,33,10
+    EDITTEXT        IDC_NEWDOC_MARGINS_RIGHT,142,29,40,12,ES_AUTOHSCROLL
+    GROUPBOX        "Columns",IDC_STATIC,8,48,187,27
+    RTEXT           "&Number:",IDC_STATIC,14,59,36,10
+    EDITTEXT        IDC_NEWDOC_COLUMNS_NUMBER,54,58,36,12,ES_AUTOHSCROLL
+    RTEXT           "&Gutter:",IDC_STATIC,98,59,36,10
+    EDITTEXT        IDC_NEWDOC_COLUMNS_GUTTER,139,58,42,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",1,207,7,50,13
+    PUSHBUTTON      "Cancel",2,207,23,50,13
+END
+
+IDD_ABOUTDLG DIALOG DISCARDABLE  0, 0, 280, 130
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About PageDesigner"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",1,114,113,50,13
+END
+
+IDD_BRUSHDIMENSIONSDLG DIALOG DISCARDABLE  0, 0, 222, 111
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Brush Dimensions"
+FONT 8, "MS Sans Serif"
+BEGIN
+    RTEXT           "Width",IDC_STATIC,10,9,30,10,SS_CENTERIMAGE
+    COMBOBOX        IDC_BRUSH_WIDTH,47,8,44,160,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Height",IDC_STATIC,10,25,30,10,SS_CENTERIMAGE
+    COMBOBOX        IDC_BRUSH_HEIGHT,47,24,44,160,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Angle",IDC_STATIC,10,41,30,10,SS_CENTERIMAGE
+    COMBOBOX        IDC_BRUSH_ANGLE,47,40,44,190,CBS_DROPDOWN | 
+                    CBS_OWNERDRAWFIXED | CBS_AUTOHSCROLL | CBS_HASSTRINGS | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Show Brush Size",IDC_BRUSH_SHOW,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,65,85,10
+    LTEXT           "Brush size may be interactively changed by holding down the Alt Key before clicking with the tool.",
+                    IDC_STATIC,41,85,175,21
+    ICON            "",IDC_BRUSH_TIP,12,83,20,20,SS_CENTERIMAGE
+END
+
+IDD_LINKSOPTIONSDLG DIALOG DISCARDABLE  0, 0, 186, 188
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Palette Options"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",1,129,7,50,13
+    PUSHBUTTON      "Cancel",2,129,23,50,13
+    GROUPBOX        "Thumbnail Size",IDC_STATIC,5,8,113,160
+    CONTROL         "None",IDC_LINKSOPTIONS_THUMB_NONE,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,14,21,76,11
+    CONTROL         "",IDC_LINKSOPTIONS_THUMB_SMALL,"Button",
+                    BS_AUTORADIOBUTTON,14,38,10,17
+    CONTROL         "",IDC_LINKSOPTIONS_THUMB_MEDIUM,"Button",
+                    BS_AUTORADIOBUTTON,14,66,10,33
+    CONTROL         "",IDC_LINKSOPTIONS_THUMB_LARGE,"Button",
+                    BS_AUTORADIOBUTTON,14,111,10,46
+    CONTROL         290,IDC_STATIC,"Static",SS_BITMAP,26,36,23,21
+    CONTROL         291,IDC_STATIC,"Static",SS_BITMAP,26,64,39,36
+    CONTROL         292,IDC_STATIC,"Static",SS_BITMAP,26,109,55,50
+END
+
+IDD_RASTERIZEDLG DIALOG DISCARDABLE  0, 0, 224, 147
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Rasterize"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",1,165,7,50,13
+    PUSHBUTTON      "Cancel",2,165,23,50,13
+    GROUPBOX        "Resolution",IDC_STATIC,6,21,154,88
+    CONTROL         "Screen (72 ppi)",IDC_RASTERIZE_RES72,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,12,33,79,10
+    CONTROL         "Medium (150 ppi)",IDC_RASTERIZE_RES150,"Button",
+                    BS_AUTORADIOBUTTON,12,47,79,10
+    CONTROL         "High (300 ppi)",IDC_RASTERIZE_RES300,"Button",
+                    BS_AUTORADIOBUTTON,12,61,79,10
+    CONTROL         "Other:",IDC_RASTERIZE_RES_OTHER,"Button",
+                    BS_AUTORADIOBUTTON,12,76,35,10
+    CONTROL         "Use Document Raster Effects Resolution",
+                    IDC_RASTERIZE_RES_DODUMENT,"Button",BS_AUTORADIOBUTTON,
+                    12,91,144,10
+    EDITTEXT        IDC_RASTERIZE_RES_OTHERVALUE,48,76,30,12,ES_AUTOHSCROLL
+    LTEXT           "ppi",IDC_STATIC,80,77,18,10
+    GROUPBOX        "Background",IDC_STATIC,6,111,154,30
+    CONTROL         "White",IDC_RASTERIZE_BG0,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,20,124,36,10
+    CONTROL         "Transparent",IDC_RASTERIZE_BG1,"Button",
+                    BS_AUTORADIOBUTTON,68,124,58,10
+END
+
+IDD_TRANSPARENCYDLG DIALOG DISCARDABLE  0, 0, 146, 76
+STYLE WS_CHILD
+FONT 7, "Small Fonts"
+BEGIN
+    CONTROL         "Clip",IDC_TRANSP_CLIP,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,90,35,56,10
+    CONTROL         "Invert Mask",IDC_TRANSP_INVERT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,90,48,56,10
+    EDITTEXT        IDC_TRANSP_OPACITY,100,4,30,12,ES_AUTOHSCROLL
+    LTEXT           "%",IDC_STATIC,134,5,8,11
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,3,22,139,1
+    CONTROL         "",IDC_TRANSP_THUMBNAIL,"Static",SS_WHITEFRAME,4,27,84,
+                    40
+END
+
+IDD_COLORDLG DIALOG DISCARDABLE  0, 0, 145, 72
+STYLE WS_CHILD
+FONT 7, "Small Fonts"
+BEGIN
+    RTEXT           "Static",IDC_SWATCH_CHANNELNAME0,27,5,8,10,
+                    SS_CENTERIMAGE
+    CONTROL         "",IDC_SWATCH_CHANNELSLIDER0,
+                    "{078A92DD-B19C-4B6B-A954-F596DA402DBE}",WS_TABSTOP,39,5,
+                    80,8
+    EDITTEXT        IDC_SWATCH_CHANNELVALUE0,121,4,22,12,ES_AUTOHSCROLL
+    RTEXT           "Static",IDC_SWATCH_CHANNELNAME1,27,17,8,10,
+                    SS_CENTERIMAGE
+    CONTROL         "",IDC_SWATCH_CHANNELSLIDER1,
+                    "{078A92DD-B19C-4B6B-A954-F596DA402DBE}",WS_TABSTOP,39,
+                    17,80,8
+    EDITTEXT        IDC_SWATCH_CHANNELVALUE1,121,16,22,12,ES_AUTOHSCROLL
+    RTEXT           "Static",IDC_SWATCH_CHANNELNAME2,27,29,8,10,
+                    SS_CENTERIMAGE
+    CONTROL         "",IDC_SWATCH_CHANNELSLIDER2,
+                    "{078A92DD-B19C-4B6B-A954-F596DA402DBE}",WS_TABSTOP,39,
+                    29,80,8
+    EDITTEXT        IDC_SWATCH_CHANNELVALUE2,121,28,22,12,ES_AUTOHSCROLL
+    RTEXT           "Static",IDC_SWATCH_CHANNELNAME3,27,41,8,10,
+                    SS_CENTERIMAGE
+    CONTROL         "",IDC_SWATCH_CHANNELSLIDER3,
+                    "{078A92DD-B19C-4B6B-A954-F596DA402DBE}",WS_TABSTOP,39,
+                    41,80,8
+    EDITTEXT        IDC_SWATCH_CHANNELVALUE3,121,40,22,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SWATCH_COLORSLIDERS,"Static",SS_BLACKFRAME | NOT 
+                    WS_VISIBLE,4,0,140,53
+    CONTROL         "",IDC_COLOR_NONE,"Static",SS_BLACKFRAME | NOT 
+                    WS_VISIBLE,4,54,14,14
+    CONTROL         "",IDC_COLOR_SPECTRUM,
+                    "{FFBA7B14-4B0C-4873-BDE9-E54854A3CBE2}",WS_TABSTOP,18,
+                    54,123,14
+END
+
+IDD_PREFSCLIPBOARDDLG DIALOG DISCARDABLE  0, 0, 214, 95
+STYLE WS_CHILD | WS_CAPTION
+CAPTION "Clipboard"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "PNG",IDC_CLIPBOARD_PNG,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,10,9,60,10
+    CONTROL         "JPEG",IDC_CLIPBOARD_JPEG,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,10,23,60,10
+    CONTROL         "GIF",IDC_CLIPBOARD_GIF,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,10,37,60,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_PATHTYPEOPTIONSDLG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 245
+    END
+
+    IDD_RASTERIZEDLG, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 137
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_TEXTWRAPDLG DLGINIT
+BEGIN
+    IDC_TEXTWRAP_NONE, 0x376, 8, 0
+0x0000, 0x0000, 0x0300, 0x0000, 
+    IDC_TEXTWRAP_BBOX, 0x376, 8, 0
+0x0000, 0x0000, 0x0300, 0x0000, 
+    IDC_TEXTWRAP_SHAPE, 0x376, 8, 0
+0x0000, 0x0000, 0x0300, 0x0000, 
+    IDC_TEXTWRAP_OBJECT, 0x376, 8, 0
+0x0000, 0x0000, 0x0300, 0x0000, 
+    IDC_TEXTWRAP_COLUMN, 0x376, 8, 0
+0x0000, 0x0000, 0x0300, 0x0000, 
+    IDC_TEXTWRAP_TOP, 0x376, 44, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0595, 0x0000, 0x01a7, 0x0000, 0x000b, 
+0xffff, 0x0009, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0003, 0x0000, 0x0000, 
+    IDC_TEXTWRAP_BOTTOM, 0x376, 44, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0595, 0x0000, 0x01a7, 0x0000, 0x000b, 
+0xffff, 0x0009, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0003, 0x0000, 0x0000, 
+    IDC_TEXTWRAP_LEFT, 0x376, 44, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0595, 0x0000, 0x01a7, 0x0000, 0x000b, 
+0xffff, 0x0009, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0003, 0x0000, 0x0000, 
+    IDC_TEXTWRAP_RIGHT, 0x376, 44, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0595, 0x0000, 0x01a7, 0x0000, 0x000b, 
+0xffff, 0x0009, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0003, 0x0000, 0x0000, 
+    0
+END
+
+IDD_PATHTYPEOPTIONSDLG DLGINIT
+BEGIN
+    IDC_PATHTYPE_ALIGN, 0x376, 12, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0xe3f0, 0x0049, 
+    0
+END
+
+IDD_COLORSWATCHOPTIONSDLG DLGINIT
+BEGIN
+    IDC_SWATCH_CHANNELSLIDER0, 0x376, 20, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0f81, 0x0000, 0x01a7, 0x0000, 0x0000, 
+0x0000, 
+    IDC_SWATCH_CHANNELSLIDER1, 0x376, 20, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0f81, 0x0000, 0x01a7, 0x0000, 0x0001, 
+0x0000, 
+    IDC_SWATCH_CHANNELSLIDER2, 0x376, 20, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0f81, 0x0000, 0x01a7, 0x0000, 0x0002, 
+0x0000, 
+    IDC_SWATCH_CHANNELSLIDER3, 0x376, 20, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0f81, 0x0000, 0x01a7, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_GRADIENTSWATCHOPTIONSDLG DLGINIT
+BEGIN
+    IDC_SWATCH_CHANNELSLIDER0, 0x376, 24, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0f81, 0x0000, 0x01a7, 0x0000, 0x0000, 
+0x0000, 0x000b, 0xffff, 
+    IDC_SWATCH_CHANNELSLIDER1, 0x376, 24, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0f81, 0x0000, 0x01a7, 0x0000, 0x0001, 
+0x0000, 0x000b, 0xffff, 
+    IDC_SWATCH_CHANNELSLIDER2, 0x376, 24, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0f81, 0x0000, 0x01a7, 0x0000, 0x0002, 
+0x0000, 0x000b, 0xffff, 
+    IDC_SWATCH_CHANNELSLIDER3, 0x376, 24, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0f81, 0x0000, 0x01a7, 0x0000, 0x0000, 
+0x0000, 0x000b, 0xffff, 
+    IDC_SWATCH_NAMEDCOLORS, 0x376, 44, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x1be8, 0x0000, 0x018d, 0x0000, 0x000b, 
+0xffff, 0x0009, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0003, 0x0000, 0x0000, 
+    IDC_SWATCH_GRADIENT, 0x376, 32, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x18b4, 0x0000, 0x03b9, 0x0000, 0x0013, 
+0xd0d4, 0x00c8, 0x000b, 0xffff, 0x0003, 0x0000, 0x0000, 
+    0
+END
+
+IDD_TABSDLG DLGINIT
+BEGIN
+    IDC_TABS, 0x376, 78, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0dbf, 0x0000, 0x03d3, 0x0000, 0x0013, 
+0xffff, 0x00ff, 0x000b, 0xffff, 0x0009, 0x5203, 0x0be3, 0x8f91, 0x11ce, 
+0xe39d, 0xaa00, 0x4b00, 0x51b8, 0x0001, 0x0000, 0x0000, 0xffff, 0x0000, 
+0x530b, 0x616d, 0x6c6c, 0x4620, 0x6e6f, 0x7374, 0x0013, 0x0000, 0x0000, 
+0x0003, 0x0000, 0x0000, 
+    0
+END
+
+IDD_COLORDLG DLGINIT
+BEGIN
+    IDC_SWATCH_CHANNELSLIDER0, 0x376, 24, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0a56, 0x0000, 0x0123, 0x0000, 0x0000, 
+0x0000, 0x000b, 0xffff, 
+    IDC_SWATCH_CHANNELSLIDER1, 0x376, 24, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0a56, 0x0000, 0x0123, 0x0000, 0x0001, 
+0x0000, 0x000b, 0xffff, 
+    IDC_SWATCH_CHANNELSLIDER2, 0x376, 24, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0a56, 0x0000, 0x0123, 0x0000, 0x0002, 
+0x0000, 0x000b, 0xffff, 
+    IDC_SWATCH_CHANNELSLIDER3, 0x376, 24, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0a56, 0x0000, 0x0123, 0x0000, 0x0000, 
+0x0000, 0x000b, 0xffff, 
+    IDC_COLOR_SPECTRUM, 0x376, 42, 0
+0x0000, 0x0000, 0x0300, 0x0000, 0x0feb, 0x0000, 0x01f7, 0x0000, 0x0013, 
+0xcdcd, 0xcdcd, 0x000b, 0xffff, 0x0003, 0xcdcd, 0xcdcd, 0x000b, 0xffff, 
+0x0003, 0x0000, 0x0000, 
+    0
+END
+
+#endif    // Norwegian (Bokmal) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "PageDesigner.tlb"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

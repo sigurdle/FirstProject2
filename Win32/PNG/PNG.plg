@@ -1,0 +1,56 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: PNG - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x414 /fo"../../Intermediate/Win32/PNG/Release/PNG.res" /d "NDEBUG" "C:\MMStudio\Win32\PNG\PNG.rc"" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14AB.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_USRDLL" /FR"../../Intermediate/Win32/PNG/Release/" /Fp"../../Intermediate/Win32/PNG/Release/PNG.pch" /Yu"stdafx.h" /Fo"../../Intermediate/Win32/PNG/Release/" /Fd"../../Intermediate/Win32/PNG/Release/" /FD /c 
+"C:\MMStudio\src\PNG\MNGDecoder.cpp"
+"C:\MMStudio\src\PNG\PNG.cpp"
+"C:\MMStudio\src\PNG\PNGDecoder.cpp"
+"C:\MMStudio\src\PNG\PNGFormat.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14AB.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14AC.tmp" with contents
+[
+/nologo /G5 /MD /W3 /GR /GX /Zd /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_USRDLL" /FR"../../Intermediate/Win32/PNG/Release/" /Fp"../../Intermediate/Win32/PNG/Release/PNG.pch" /Yc"stdafx.h" /Fo"../../Intermediate/Win32/PNG/Release/" /Fd"../../Intermediate/Win32/PNG/Release/" /FD /c 
+"C:\MMStudio\src\PNG\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14AC.tmp" 
+Creating temporary file "C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14AD.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /pdb:none /debug /machine:I386 /def:".\PNG.def" /out:"../../bin/Win32/Release/PNG.dll" /implib:"Release/PNG.lib" 
+\MMStudio\Intermediate\Win32\PNG\Release\MNGDecoder.obj
+\MMStudio\Intermediate\Win32\PNG\Release\PNG.obj
+\MMStudio\Intermediate\Win32\PNG\Release\PNGDecoder.obj
+\MMStudio\Intermediate\Win32\PNG\Release\PNGFormat.obj
+\MMStudio\Intermediate\Win32\PNG\Release\StdAfx.obj
+\MMStudio\Intermediate\Win32\PNG\Release\PNG.res
+]
+Creating command line "link.exe @C:\DOCUME~1\SIGURD~1\LOCALS~1\Temp\RSP14AD.tmp"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+MNGDecoder.cpp
+PNG.cpp
+C:\MMStudio\src\PNG\PNG.cpp(59) : warning C4390: ';' : empty controlled statement found; is this the intent?
+PNGDecoder.cpp
+PNGFormat.cpp
+Generating Code...
+Linking...
+   Creating library Release/PNG.lib and object Release/PNG.exp
+
+
+
+<h3>Results</h3>
+PNG.dll - 0 error(s), 1 warning(s)
+</pre>
+</body>
+</html>

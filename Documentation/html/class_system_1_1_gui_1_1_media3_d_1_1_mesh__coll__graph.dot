@@ -1,0 +1,29 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::Gui::Media3D::Mesh",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Gui::Media3D::Geometry3D",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_media3_d_1_1_geometry3_d.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Gui::DependencyObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_dependency_object.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::DispatcherObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_dispatcher_object.html"];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node6 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node7 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_subsetMaterial" ,fontname="Helvetica"];
+  Node7 [label="System::vector\< Material * \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1vector.html"];
+  Node8 -> Node7 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_allocator" ,fontname="Helvetica"];
+  Node8 [label="System::__gc_allocator",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__allocator.html"];
+  Node9 -> Node7 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pData" ,fontname="Helvetica"];
+  Node9 [label="System::Gui::Media3D::Material",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_media3_d_1_1_material.html"];
+  Node3 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 -> Node9 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_textureFilename\nm_name" ,fontname="Helvetica"];
+  Node10 [label="System::String",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_string.html"];
+  Node11 -> Node10 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_stringObject" ,fontname="Helvetica"];
+  Node11 [label="System::StringObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_string_object.html"];
+  Node5 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+}

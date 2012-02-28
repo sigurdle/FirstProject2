@@ -1,0 +1,339 @@
+Terminals unused in grammar
+
+   STRING_LITERAL
+
+
+Grammatikk
+
+    0 $accept: lines $end
+
+    1 lines: line
+    2      | lines '\n' line
+
+    3 line: IDENTIFIER ':'
+    4     | IDENTIFIER ':' instruction
+    5     | instruction
+
+    6 instruction: IDENTIFIER expression_list_opt
+
+    7 primary: INTEGER_LITERAL
+    8        | IDENTIFIER
+
+    9 multiplicative_expression: primary
+
+   10 additive_expression: multiplicative_expression
+   11                    | additive_expression '+' multiplicative_expression
+   12                    | additive_expression '-' multiplicative_expression
+
+   13 expression: primary
+   14           | primary '@' '(' additive_expression ')'
+
+   15 expression_list: expression
+   16                | expression_list ',' expression
+
+   17 expression_list_opt: /* tom */
+   18                    | expression_list
+
+
+Terminaler med regler hvor de opptrer
+
+$end (0) 0
+'\n' (10) 2
+'(' (40) 14
+')' (41) 14
+'+' (43) 11
+',' (44) 16
+'-' (45) 12
+':' (58) 3 4
+'@' (64) 14
+error (256)
+STRING_LITERAL (258)
+INTEGER_LITERAL (259) 7
+IDENTIFIER (260) 3 4 6 8
+
+
+Ikke-terminaler med regler hvor de opptrer
+
+$accept (14)
+    til venstre: 0
+lines (15)
+    til venstre: 1 2, til høyre: 0 2
+line (16)
+    til venstre: 3 4 5, til høyre: 1 2
+instruction (17)
+    til venstre: 6, til høyre: 4 5
+primary (18)
+    til venstre: 7 8, til høyre: 9 13 14
+multiplicative_expression (19)
+    til venstre: 9, til høyre: 10 11 12
+additive_expression (20)
+    til venstre: 10 11 12, til høyre: 11 12 14
+expression (21)
+    til venstre: 13 14, til høyre: 15 16
+expression_list (22)
+    til venstre: 15 16, til høyre: 16 18
+expression_list_opt (23)
+    til venstre: 17 18, til høyre: 6
+
+
+tilstand 0
+
+    0 $accept: . lines $end
+
+    IDENTIFIER  skift og gå til tilstand 1
+
+    lines        gå til tilstand 2
+    line         gå til tilstand 3
+    instruction  gå til tilstand 4
+
+
+tilstand 1
+
+    3 line: IDENTIFIER . ':'
+    4     | IDENTIFIER . ':' instruction
+    6 instruction: IDENTIFIER . expression_list_opt
+
+    INTEGER_LITERAL  skift og gå til tilstand 5
+    IDENTIFIER       skift og gå til tilstand 6
+    ':'              skift og gå til tilstand 7
+
+    $default  reduksjon ved hjelp av regel 17 (expression_list_opt)
+
+    primary              gå til tilstand 8
+    expression           gå til tilstand 9
+    expression_list      gå til tilstand 10
+    expression_list_opt  gå til tilstand 11
+
+
+tilstand 2
+
+    0 $accept: lines . $end
+    2 lines: lines . '\n' line
+
+    $end  skift og gå til tilstand 12
+    '\n'  skift og gå til tilstand 13
+
+
+tilstand 3
+
+    1 lines: line .
+
+    $default  reduksjon ved hjelp av regel 1 (lines)
+
+
+tilstand 4
+
+    5 line: instruction .
+
+    $default  reduksjon ved hjelp av regel 5 (line)
+
+
+tilstand 5
+
+    7 primary: INTEGER_LITERAL .
+
+    $default  reduksjon ved hjelp av regel 7 (primary)
+
+
+tilstand 6
+
+    8 primary: IDENTIFIER .
+
+    $default  reduksjon ved hjelp av regel 8 (primary)
+
+
+tilstand 7
+
+    3 line: IDENTIFIER ':' .
+    4     | IDENTIFIER ':' . instruction
+
+    IDENTIFIER  skift og gå til tilstand 14
+
+    $default  reduksjon ved hjelp av regel 3 (line)
+
+    instruction  gå til tilstand 15
+
+
+tilstand 8
+
+   13 expression: primary .
+   14           | primary . '@' '(' additive_expression ')'
+
+    '@'  skift og gå til tilstand 16
+
+    $default  reduksjon ved hjelp av regel 13 (expression)
+
+
+tilstand 9
+
+   15 expression_list: expression .
+
+    $default  reduksjon ved hjelp av regel 15 (expression_list)
+
+
+tilstand 10
+
+   16 expression_list: expression_list . ',' expression
+   18 expression_list_opt: expression_list .
+
+    ','  skift og gå til tilstand 17
+
+    $default  reduksjon ved hjelp av regel 18 (expression_list_opt)
+
+
+tilstand 11
+
+    6 instruction: IDENTIFIER expression_list_opt .
+
+    $default  reduksjon ved hjelp av regel 6 (instruction)
+
+
+tilstand 12
+
+    0 $accept: lines $end .
+
+    $default  aksept
+
+
+tilstand 13
+
+    2 lines: lines '\n' . line
+
+    IDENTIFIER  skift og gå til tilstand 1
+
+    line         gå til tilstand 18
+    instruction  gå til tilstand 4
+
+
+tilstand 14
+
+    6 instruction: IDENTIFIER . expression_list_opt
+
+    INTEGER_LITERAL  skift og gå til tilstand 5
+    IDENTIFIER       skift og gå til tilstand 6
+
+    $default  reduksjon ved hjelp av regel 17 (expression_list_opt)
+
+    primary              gå til tilstand 8
+    expression           gå til tilstand 9
+    expression_list      gå til tilstand 10
+    expression_list_opt  gå til tilstand 11
+
+
+tilstand 15
+
+    4 line: IDENTIFIER ':' instruction .
+
+    $default  reduksjon ved hjelp av regel 4 (line)
+
+
+tilstand 16
+
+   14 expression: primary '@' . '(' additive_expression ')'
+
+    '('  skift og gå til tilstand 19
+
+
+tilstand 17
+
+   16 expression_list: expression_list ',' . expression
+
+    INTEGER_LITERAL  skift og gå til tilstand 5
+    IDENTIFIER       skift og gå til tilstand 6
+
+    primary     gå til tilstand 8
+    expression  gå til tilstand 20
+
+
+tilstand 18
+
+    2 lines: lines '\n' line .
+
+    $default  reduksjon ved hjelp av regel 2 (lines)
+
+
+tilstand 19
+
+   14 expression: primary '@' '(' . additive_expression ')'
+
+    INTEGER_LITERAL  skift og gå til tilstand 5
+    IDENTIFIER       skift og gå til tilstand 6
+
+    primary                    gå til tilstand 21
+    multiplicative_expression  gå til tilstand 22
+    additive_expression        gå til tilstand 23
+
+
+tilstand 20
+
+   16 expression_list: expression_list ',' expression .
+
+    $default  reduksjon ved hjelp av regel 16 (expression_list)
+
+
+tilstand 21
+
+    9 multiplicative_expression: primary .
+
+    $default  reduksjon ved hjelp av regel 9 (multiplicative_expression)
+
+
+tilstand 22
+
+   10 additive_expression: multiplicative_expression .
+
+    $default  reduksjon ved hjelp av regel 10 (additive_expression)
+
+
+tilstand 23
+
+   11 additive_expression: additive_expression . '+' multiplicative_expression
+   12                    | additive_expression . '-' multiplicative_expression
+   14 expression: primary '@' '(' additive_expression . ')'
+
+    '+'  skift og gå til tilstand 24
+    '-'  skift og gå til tilstand 25
+    ')'  skift og gå til tilstand 26
+
+
+tilstand 24
+
+   11 additive_expression: additive_expression '+' . multiplicative_expression
+
+    INTEGER_LITERAL  skift og gå til tilstand 5
+    IDENTIFIER       skift og gå til tilstand 6
+
+    primary                    gå til tilstand 21
+    multiplicative_expression  gå til tilstand 27
+
+
+tilstand 25
+
+   12 additive_expression: additive_expression '-' . multiplicative_expression
+
+    INTEGER_LITERAL  skift og gå til tilstand 5
+    IDENTIFIER       skift og gå til tilstand 6
+
+    primary                    gå til tilstand 21
+    multiplicative_expression  gå til tilstand 28
+
+
+tilstand 26
+
+   14 expression: primary '@' '(' additive_expression ')' .
+
+    $default  reduksjon ved hjelp av regel 14 (expression)
+
+
+tilstand 27
+
+   11 additive_expression: additive_expression '+' multiplicative_expression .
+
+    $default  reduksjon ved hjelp av regel 11 (additive_expression)
+
+
+tilstand 28
+
+   12 additive_expression: additive_expression '-' multiplicative_expression .
+
+    $default  reduksjon ved hjelp av regel 12 (additive_expression)

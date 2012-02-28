@@ -1,0 +1,86 @@
+namespace System
+{
+
+class LFCEXT FunctionType : public _CVType
+{
+public:
+	CTOR FunctionType();
+
+	virtual Type_type get_Kind() const throw() override
+	{
+		return type_function;
+	}
+
+	virtual FunctionType* AsFunction() override
+	{
+		return this;
+	}
+
+	virtual String ToString() override;
+	virtual IO::TextWriter& Write(IO::TextWriter& writer) const override;
+	virtual uint get_sizeof(uint sizeofptr = 0) const override;
+
+	virtual Class_Type GetSerializableType() const override;
+	virtual void Load(TypeArchive& writer) override;
+	virtual void Store(TypeArchive& writer) const override;
+
+	uint GetStackSize(CallType calltype);
+
+	virtual bool Equals(const Type& other) const override
+	{
+		if (other.get_Kind() != type_function) return false;
+		return Equals(*(FunctionType*)&other);
+	}
+
+	bool Equals(const FunctionType& other) const;
+
+	bool get_VarArg() const
+	{
+		return m_parameters.m_bVarArg;
+	}
+
+	ParametersCollection* get_Args()
+	{
+		return new ParametersCollection(m_parameters);
+	}
+
+	virtual Type* Clone() const;
+
+	Type* get_ReturnType() const
+	{
+		return m_pReturnType; 
+	}
+
+	virtual bool IsConst() const override;
+	virtual bool IsVolatile() const override;
+
+public:
+
+	void* m_jsDispatch;
+	void* m_javaDispatch;
+	TemplateParams* m_pTemplateParams;
+	Type* m_pReturnType;
+	unsigned int m_stackSize;
+	FunctionParameters m_parameters;
+	String m_body;	// TODO, not like this
+	CallType m_funcspec : 2;
+
+#if 0
+// libcall
+	class libcall
+	{
+	public:
+		inline CTOR libcall()
+		{
+			m_basename = NULL;
+			m_offset = 0;
+		}
+		StringA* m_basename;
+		short m_offset;
+		short m_tagcall;
+	}
+	m_libcall;
+#endif
+};
+
+}	// System

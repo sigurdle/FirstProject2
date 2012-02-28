@@ -1,0 +1,120 @@
+#include "stdafx.h"
+#include "XPath.h"
+#include "XPathExpression.h"
+#include "XPathResult.h"
+
+namespace System
+{
+namespace XPath
+{
+
+String DataItem::ToString()
+{
+	uint index = m_attributeIndex>>1;
+	if (m_attributeIndex & 1)
+	{
+		return m_data->getAttributeValue(index).ToString();
+	}
+	else
+	{
+		return m_data->getChildElement(index)->GetObject()->ToString();
+	}
+}
+
+String XPathResult::ToString()
+{
+	switch (m_result->m_kind)
+	{
+	case ExprResult::K_BOOL:
+		return m_result->m_boolValue? L"true": L"false";
+
+	case ExprResult::K_INTEGER:
+		//return m_result->m_intValue;
+		break;
+
+	case ExprResult::K_NUMBER:
+		break;
+
+	case ExprResult::K_STRING:
+		return m_result->m_stringValue;
+
+	case ExprResult::K_NODELIST:
+		{
+			String str;
+
+			for (size_t i = 0; i < m_result->m_nodeList->m_items.size(); ++i)
+			{
+				str += m_result->m_nodeList->m_items[i].ToString();
+				str += "\n";
+			}
+
+			return str;
+		}
+		break;
+	}
+
+	return nullptr;
+}
+
+bool evaluateContaining(Exp* exp, XDM::IData* contextNode);
+
+bool XPathExpression::evaluateContaining(XDM::IData* contextNode)
+{
+	if (contextNode == NULL) throw new XPathException(L"contextNode = NULL");
+
+	return XPath::evaluateContaining(m_exp, contextNode);
+}
+
+XPathResult* XPathExpression::evaluate(XDM::IData* contextNode)
+{
+	if (contextNode == NULL)
+	{
+		raise(ArgumentNullException());
+	}
+
+	XPathResult* pResult = new XPathResult;
+	pResult->m_result = XPath::evaluate(m_exp, contextNode, 1, 1);
+
+	return pResult;
+}
+
+XPathResult* XPathExpression::evaluate(XDM::IData* contextNode, XPathResultType type, XPathResult* result)
+{
+	if (contextNode == NULL)
+	{
+		raise(ArgumentNullException());
+	}
+
+	XPathResult* pResult = new XPathResult;
+	pResult->m_result = XPath::evaluate(m_exp, contextNode, 1, 1);
+
+	return pResult;
+
+#if 0
+	CComQIPtr<ILDOMDocument> document;
+	contextNode->get_ownerDocument(&document);
+
+	xmlXPathContextPtr ctxt;
+	ctxt = xmlXPathNewContext(document);
+
+	ctxt->node = contextNode;//documentElement;//xmlDocGetRootElement(document);
+
+	CComObject<CXPathResult>* res = NULL;
+
+	if (m_comp != NULL)
+	{
+	//	if (tree) 
+	//		xmlXPathDebugDumpCompExpr(stdout, comp, 0);
+	
+		res = xmlXPathCompiledEval(m_comp, ctxt);
+	//	xmlXPathFreeCompExpr(comp);
+	}
+	else
+		res = NULL;
+
+	*pVal = res;
+#endif
+}
+
+}	// XPath
+}	// System

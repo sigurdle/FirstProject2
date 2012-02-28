@@ -1,0 +1,65 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+namespace Media3D
+{
+
+IMP_DEPENDENCY_PROPERTY(Transform3D*, Visual3D, Transform, NULL)
+
+DependencyClass* Visual3D::get_Class()
+{
+	static DependencyClass depclass(typeid(Visual3D), baseClass::get_Class());
+
+	static DependencyProperty* properties[] =
+	{
+		get_TransformProperty(),
+	};
+
+	return &depclass;
+}
+
+//DependencyClass* Visual3D::pClass(get_Class());
+
+Visual3D::Visual3D(DependencyClass* depClass) : Object3D(depClass)
+{
+}
+
+void Visual3D::OnSetRoot(IRootVisual* root)
+{
+	uint nchildren = GetChildrenCount();
+	for (uint i = 0; i < nchildren; ++i)
+	{
+		Visual3D* child = GetChild(i);
+		child->SetRoot(root);
+	}
+}
+
+void Visual3D::OnComputedPropertyValueChanged(PropertyValue* pPropertyVal, bool handled)
+{
+	IRootVisual* root = GetRoot();
+	if (root)
+	{
+		root->InvalidateRender();
+	}
+
+	baseClass::OnComputedPropertyValueChanged(pPropertyVal, handled);
+}
+
+size_t Visual3D::GetChildrenCount()
+{
+	return 0;
+}
+
+Visual3D* Visual3D::GetChild(size_t index) throw (ArgumentOutOfRangeException*)
+{
+	raise(ArgumentOutOfRangeException());
+	return NULL;
+}
+
+}	// Media3D
+}	// Gui
+}	// System

@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/firstproject2/!svn/ver/117/FirstProject2/trunk/src/Graphics
+END
+Graphics.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/124/FirstProject2/trunk/src/Graphics/Graphics.cpp
+END
+dllmain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/firstproject2/!svn/ver/126/FirstProject2/trunk/src/Graphics/dllmain.cpp
+END
+Direct3D10.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/126/FirstProject2/trunk/src/Graphics/Direct3D10.cpp
+END
+VertexDeclaration.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/firstproject2/!svn/ver/56/FirstProject2/trunk/src/Graphics/VertexDeclaration.cpp
+END
+Direct3D11.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/firstproject2/!svn/ver/126/FirstProject2/trunk/src/Graphics/Direct3D11.cpp
+END
+OpenGL.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/120/FirstProject2/trunk/src/Graphics/OpenGL.cpp
+END
+RenderTarget.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/firstproject2/!svn/ver/126/FirstProject2/trunk/src/Graphics/RenderTarget.cpp
+END
+stdafx.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/firstproject2/!svn/ver/55/FirstProject2/trunk/src/Graphics/stdafx.cpp
+END
+wmf.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/126/FirstProject2/trunk/src/Graphics/wmf.cpp
+END
+Direct3D9.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/firstproject2/!svn/ver/56/FirstProject2/trunk/src/Graphics/Direct3D9.cpp
+END
+Bitmap.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/firstproject2/!svn/ver/126/FirstProject2/trunk/src/Graphics/Bitmap.cpp
+END

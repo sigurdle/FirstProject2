@@ -1,0 +1,205 @@
+#include "stdafx.h"
+#include "X3D2.h"
+
+namespace System
+{
+namespace x3d
+{
+
+IMP_X3DFIELD0(X3DBackgroundNode, MFFloat, groundAngle, inputOutput)
+IMP_X3DFIELD0(X3DBackgroundNode, MFColor, groundColor, inputOutput)
+IMP_X3DFIELD0(X3DBackgroundNode, MFFloat, skyAngle, inputOutput)
+IMP_X3DFIELD0(X3DBackgroundNode, MFColor, skyColor, inputOutput)
+IMP_X3DFIELD3(X3DBackgroundNode, SFFloat, transparency, inputOutput, 0, 0, 1)
+
+NodeType* X3DBackgroundNode::GetNodeType()
+{
+	static X3DFieldDefinition* fields[] =
+	{
+		get_groundAngleFieldDef(),
+		get_groundColorFieldDef(),
+		get_skyAngleFieldDef(),
+		get_skyColorFieldDef(),
+		get_transparencyFieldDef(),
+	};
+
+	static NodeType nodeType(NULL, typeid(X3DBackgroundNode), fields, _countof(fields), baseClass::GetNodeType());
+	return &nodeType;
+}
+
+X3DBackgroundNode::X3DBackgroundNode(NodeType* nodeType) : X3DBindableNode(nodeType),
+	m_transparency(new SFFloat(get_transparencyFieldDef(), this)),
+	m_skyColor(new MFColor(get_skyColorFieldDef(), this)),
+	m_skyAngle(new MFFloat(get_skyAngleFieldDef(), this)),
+	m_groundColor(new MFColor(get_groundColorFieldDef(), this)),
+	m_groundAngle(new MFFloat(get_groundAngleFieldDef(), this))
+{
+}
+
+void X3DBackgroundNode::OnFieldChanged(X3DField* field)
+{
+	if (field == m_transparency)
+	{
+		m_sky.Destroy();
+	//	m_ground.Invalidate();
+	}
+	else if (field == m_skyAngle || field == m_skyColor)
+	{
+		m_sky.Destroy();
+	}
+	else if (field == m_groundAngle || field == m_groundColor)
+	{
+		m_ground.Destroy();
+	}
+	/*
+	else
+	{
+		X3DBindableNode::OnFieldChanged(field);
+	}
+	*/
+
+	X3DBindableNode::OnFieldChanged(field);
+}
+
+void X3DBackgroundNode::Draw(X3DDrawContext* pDC)
+{
+	D3DXMATRIX modelview = pDC->m_renderContext->modelViewMatrix();
+
+	// remove translation
+	modelview._41 = 0;
+	modelview._42 = 0;
+	modelview._43 = 0;
+	pDC->m_renderContext->PushModelView(modelview);
+//	pG->LoadMatrixf((float*)modelview);
+//	pG->PushAttrib(GL_ENABLE_BIT);
+//	pG->Disable(GL_LIGHTING);
+//	pG->Disable(GL_FOG);
+
+	float zFar = pDC->m_zFar;
+	float skyRadius = (zFar - 1);	// Make it a little bit smaller to be on the safe side
+	float groundRadius = (zFar - 2);	// Make it a little bit smaller to be on the safe side
+
+	float alpha = 1-getTransparency();
+
+	const int slices = 20;
+
+	if (m_skyColor->get_size())
+	{
+		if (!m_sky.IsValid(pDC->m_renderContext))
+		{
+			vector<float> radians;
+			vector<Vec4f> colors;
+
+			radians.reserve(16);
+			colors.reserve(16);
+
+			int angleIndex = 0;
+			int n = 0;
+
+			// At least 8
+			while (n <= 8)
+			{
+				float rad = n/8.0f * M_PI;
+
+				Vec3f color;
+
+				if (m_skyAngle->m_items.GetSize() > angleIndex && m_skyAngle->m_items[angleIndex] <= rad)
+				{
+					rad = m_skyAngle->m_items[angleIndex];
+					++angleIndex;
+					color = m_skyColor->m_items[angleIndex];
+				}
+				else
+				{
+					++n;
+
+					// The first angle is implicitly 0
+					float skyAngleStart = angleIndex>0? m_skyAngle->m_items[angleIndex-1]: 0;
+
+					if (angleIndex < m_skyAngle->m_items.GetSize())
+					{
+						float skyAngleEnd = m_skyAngle->m_items[angleIndex];
+
+						float t = (rad - skyAngleStart) / (skyAngleEnd - skyAngleStart);
+
+						color = m_skyColor->m_items[angleIndex] + (m_skyColor->m_items[angleIndex+1] - m_skyColor->m_items[angleIndex]) * t;
+					}
+					else
+					{
+						color = m_skyColor->m_items[angleIndex];
+					}
+				}
+
+				radians.Add(rad);
+				colors.Add(Vec4f(color, alpha));
+			}
+
+			m_sky.Create(pDC->m_renderContext, skyRadius, slices, radians, colors);
+		}
+
+		m_sky.Draw(pDC->m_renderContext);
+	}
+
+	if (m_groundColor->get_size())
+	{
+		if (!m_ground.IsValid(pDC->m_renderContext))
+		{
+			vector<float> radians;
+			vector<Vec4f> colors;
+
+			radians.reserve(16);
+			colors.reserve(16);
+
+			int angleIndex = 0;
+			int n = 0;
+
+		// At least 4
+			while (n <= 4)
+			{
+				float rad = n/4.0f * (M_PI/2);
+
+				Vec3f color;
+
+				if (m_groundAngle->m_items.GetSize() > angleIndex && m_groundAngle->m_items[angleIndex] <= rad)
+				{
+					rad = m_groundAngle->m_items[angleIndex];
+					++angleIndex;
+					color = m_groundColor->m_items[angleIndex];
+				}
+				else
+				{
+					++n;
+
+					float groundAngleStart = angleIndex>0? m_groundAngle->m_items[angleIndex-1]: 0;
+
+					if (angleIndex < m_groundAngle->m_items.GetSize())
+					{
+						float groundAngleEnd = m_groundAngle->m_items[angleIndex];
+
+						float t = (rad - groundAngleStart) / (groundAngleEnd - groundAngleStart);
+
+						color = m_groundColor->m_items[angleIndex] + (m_groundColor->m_items[angleIndex+1] - m_groundColor->m_items[angleIndex]) * t;
+					}
+					else
+					{
+						color = m_groundColor->m_items[angleIndex];
+					}
+				}
+
+				radians.Add(rad/* + M_PI*/);
+				colors.Add(Vec4f(color, 1));
+			}
+
+			m_ground.Create(pDC->m_renderContext, groundRadius, slices, radians, colors);
+		}
+
+		m_ground.Draw(pDC->m_renderContext);
+	}
+
+	Draw2(pDC);
+
+	pDC->m_renderContext->PopMatrix();
+}
+
+}
+}

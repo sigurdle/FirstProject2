@@ -1,0 +1,419 @@
+#ifndef Web_ElementTimeContainer_h
+#define Web_ElementTimeContainer_h
+
+namespace System
+{
+namespace Web
+{
+
+class WEBEXT ElementTimeContainerImplImpl : public ElementTime
+{
+public:
+
+	CTOR ElementTimeContainerImplImpl(Element* ownerElement) : ElementTime(ownerElement)
+	{
+	}
+
+	virtual void RecalculateTime() = 0;	// Called when one of the children have changed
+
+	void GetTimedChildren(Element* parentElement, vector<Element*>& arr)
+	{
+		ASSERT(0);
+#if 0
+		CComPtr<ILDOMNode> node;
+		parentElement->get_firstChild(&node);
+		while (node)
+		{
+			CComQIPtr<Element, &IID_Element> element((IUnknown*)node);
+
+			if (element)
+			{
+				CComQIPtr<ILElementTime, &IID_ILElementTime> elementTime((IUnknown*)node);
+
+				if (elementTime)
+				{
+					ILElementTimeContainer* elementTimeContainer((IUnknown*)node);
+					if (elementTimeContainer)
+					{
+						CComBSTR timeContainerType;
+						elementTimeContainer->get_timeContainer(&timeContainerType);
+						if (tcscmp(timeContainerType, OLESTR("none")) == 0)	// none is not a timeContainer
+						{
+							GetTimedChildren(element, arr);
+						}
+						else
+						{
+							list.Add(element);
+						}
+					}
+					else
+					{
+						list.Add(element);
+					}
+				}
+				else
+				{
+					GetTimedChildren(element, arr);
+				}
+			}
+
+			CComPtr<ILDOMNode> nextSibling;
+			node->get_nextSibling(&nextSibling);
+			node = nextSibling;
+		}
+#endif
+	}
+};
+
+class WEBEXT ElementTimeContainerImpl :
+	public ElementTimeContainerImplImpl
+{
+public:
+
+	CTOR ElementTimeContainerImpl(Element* ownerElement) : ElementTimeContainerImplImpl(ownerElement)
+	{
+	}
+
+	virtual void RecalculateTime()	// Called when one of the children have changed
+	{
+		//Init(); Don't need to redo this here ??
+		CalculateSimpleDuration();	// based on changed children
+
+		// Recurse to parent
+		IElementTimeContainer* parentTimeContainer = get_parentTimeContainer();
+		ASSERT(0);
+#if 0
+		CComQIPtr<CLElementTimeContainerImplImpl> parentTimeContainerImpl((IUnknown*)parentTimeContainer);
+		if (parentTimeContainerImpl)
+		{
+			parentTimeContainerImpl->RecalculateTime();
+		}
+#endif
+
+		Init2();	// get first interval
+	}
+
+	virtual void CalculateTimeBeforeParent()	// Called by parent before parent knows its simple duration
+	{
+		ASSERT(0);
+#if 0
+		// Calculate children first
+		CArray<Element*,Element*> children;
+		GetTimedChildren(static_cast<T*>(this), children);
+
+		for (int i = 0; i < children.GetSize(); i++)
+		{
+			CComQIPtr<ILElementTime, &IID_ILElementTime> elementTime((IUnknown*)children[i]);
+			CComQIPtr<CLElementTimeImpl>(((IUnknown*)elementTime))->CalculateTimeBeforeParent();
+		}
+
+		Init();
+		CalculateSimpleDuration();	// based on children
+#endif
+	}
+
+	virtual void CalculateTimeAfterParent()	// Called by parent after parent knows its simple duration
+	{
+		ASSERT(0);
+#if 0
+		CArray<Element*,Element*> children;
+		GetTimedChildren(static_cast<T*>(this), children);
+
+		for (int i = 0; i < children.GetSize(); i++)
+		{
+			CComQIPtr<ILElementTime, &IID_ILElementTime> elementTime((IUnknown*)children[i]);
+			CComQIPtr<CLElementTimeImpl>((IUnknown*)elementTime)->CalculateTimeAfterParent();
+		}
+
+		Init2();	// get first interval
+#endif
+	}
+
+// Only used on parallel container
+	String get_endSync()
+	{
+		return m_ownerElement->getAttribute(WSTR("endsync"));
+	}
+
+	void set_endSync(StringIn newVal)
+	{
+		m_ownerElement->setAttribute(WSTR("endsync"), newVal);
+	}
+
+// Extensions
+//	virtual System::StringW* get_timeContainer() = 0;
+	String get_timeContainer()
+	{
+		String timeContainer = m_ownerElement->getAttribute(WSTR("timeContainer"));
+
+		if (timeContainer.GetLength() == 0)
+		{
+			ASSERT(0);
+			return WSTR("par");	// TODO ???
+		}
+		else
+			return timeContainer;
+	}
+
+	void set_timeContainer(StringIn newVal)
+	{
+		m_ownerElement->setAttribute(WSTR("timeContainer"), newVal);
+	}
+
+/*
+SMIL: The endsync attribute 
+
+Semantics of endsync and dur and end: 
+
+If an element specifies both endsync and dur, the endsync attribute
+is ignored. The element's simple duration is defined by the value of dur. 
+
+If an element specifies both endsync and end, but none of dur, repeatDur
+or repeatCount, the endsync attribute is ignored. In this case the element
+behaves as if only end were specified, therefore the element's implicit
+duration is indefinite and will be constrained by the end value. 
+
+Semantics of endsync and restart: 
+In the case of an element that restarts (e.g. because of multiple begin times), the
+element is considered to have ended its active duration when one active duration
+instance has completed. It is not a requirement that all instances associated with
+multiple begin and end times complete, to satisfy the semantics of endsync. This
+means that if the element is playing a second or later instance of an active
+duration, it may be cut short by a parent, once the other children satisfy the endsync
+semantics. 
+*/
+
+	enum EndSync
+	{
+		first,
+		last,
+		ID,
+	};
+
+	EndSync GetEndSync()
+	{
+		EndSync endsyncRule;
+
+		String endsync = m_ownerElement->getAttribute(WSTR("endsync"));
+		if (endsync != nullptr)
+		{
+			if (endsync == L"first")
+				endsyncRule = first;
+			else if (endsync == L"last")
+				endsyncRule = last;
+		}
+		else
+			endsyncRule = last;
+
+		return endsyncRule;
+	}
+
+	virtual double GetIntrinsicDuration()
+	{
+		EndSync endsyncRule = GetEndSync();
+
+		double implicitDur = 0;//-1;
+		ASSERT(0);
+#if 0
+
+		CArray<Element*,Element*> children;
+		GetTimedChildren(static_cast<T*>(this), children);
+
+		for (int i = 0; i < children.GetSize(); i++)
+		{
+			CComQIPtr<ILElementTime, &IID_ILElementTime> elementTime((IUnknown*)children[i]);
+
+			switch (endsyncRule)
+			{
+			case first:
+				{
+				}
+				break;
+
+			case last:
+				{
+					CComPtr<ILTimeInterval> interval;
+					elementTime->get_currentInterval(&interval);
+
+					if (interval)
+					{
+						double end;
+						interval->get_resolvedEnd(&end);
+						implicitDur = max(implicitDur, end);
+					}
+				}
+				break;
+
+			case ID:
+				{
+				}
+				break;
+			}
+		}
+#endif
+		return implicitDur;
+	}
+
+	bool TimeContainerHasEnded()
+	{
+		ASSERT(0);
+		return 0;
+#if 0
+		double/*TimeInstant*/ now = m_activeTime/*getCurrentTime()*/; // normalized for time container
+
+		bool assumedResult;
+
+		EndSync endsyncRule;
+
+		CComBSTR endsync;
+		static_cast<T*>(this)->getAttribute(L"endsync", &endsync);
+		if (endsync)
+		{
+			if (!tcscmp(endsync, OLESTR("first")))
+				endsyncRule = first;
+			else if (!tcscmp(endsync, OLESTR("last")))
+				endsyncRule = last;
+		}
+		else
+			endsyncRule = last;
+
+	// For first or ID, we assume a false result unless we find a child that has ended
+	// For last and all, we assume a true result unless we find a disqualifying child
+
+		if( ( endsyncRule == first ) || ( endsyncRule == ID ) )
+			assumedResult = false;
+		else
+			assumedResult = true;
+
+		CComPtr<ILDOMNode> node;
+		static_cast<T*>(this)->get_firstChild(&node);
+		while (node)
+		{
+			CComQIPtr<ILElementTime, &IID_ILElementTime> elementTime((IUnknown*)node);
+			if (elementTime)
+			{
+				switch (endSyncRule)
+				{
+				case last:
+					{
+				// we just test for disqualifying children
+				// If the child is active, we're definitely not done.
+				// If the child has not yet begun but has a resolved begin,
+				// then we're not done.
+#if 0
+						if( c.isActive() || c.begin.isResolved(now) )
+							return false;
+						// else, keep checking (the assumed result is true)
+#endif
+					}
+					break;
+				}
+			}
+
+			CComPtr<ILDOMNode> nextSibling;
+			node->get_nextSibling(&nextSibling);
+			node = nextSibling;
+		}
+
+		return assumedResult;
+#endif
+	}
+
+	virtual void Seek(/*[in]*/ double tps/*parentSimpleTime*/)
+	{
+#if 0
+		CComBSTR timeContainer;
+		get_timeContainer(&timeContainer);
+
+		//ASSERT(tcscmp(timeContainer, OLESTR("none")));	// We shouldn't be called if we're not a time container
+
+		//if (!tcscmp(timeContainer, OLESTR("par")))
+		{
+			if (m_pCurrentInterval)
+			{
+				if (tps > m_parentSimpleTime)	// Seeking Forward
+				{
+					while (1)	// loop
+					{
+						if (m_pCurrentInterval)
+						{
+							// Check if going from inactive to active on the current interval
+							if (	m_parentSimpleTime <= m_pCurrentInterval->m_begin &&
+									!m_pCurrentInterval->m_bActive &&
+									tps >= m_pCurrentInterval->m_begin)	// From inactive to active
+							{
+								m_pCurrentInterval->m_bActive = TRUE;
+
+								InactiveToActive();
+
+								//static_cast<CLSMILRegionElement*>(region.p)->Activate(m_pCurrentInterval->m_begin, this);
+							}
+
+							// Check if ending the current interval
+							if (m_pCurrentInterval->m_bActive//m_parentSimpleTime < m_pCurrentInterval->m_end)
+								&&	tps >= m_pCurrentInterval->m_end)	// From active to stopped
+							{
+								ActiveToInactive();
+							//
+								m_parentSimpleTime = m_pCurrentInterval->m_end;
+								EndCurrentIntervalAt(m_pCurrentInterval->m_end);
+
+								continue;
+							}
+							else
+							{
+								if (m_restart->m_value->m_value == RESTART_ALWAYS)
+								{
+									CComObject<TimeInstance>* pInstanceTime = GetNextInstanceTime(m_pCurrentInterval->m_begin);
+
+									if (pInstanceTime &&
+										(tps >= *pInstanceTime && *pInstanceTime < m_pCurrentInterval->m_end))
+									{
+										ActiveToInactive();
+
+										m_parentSimpleTime = *pInstanceTime;
+										EndCurrentIntervalAt(*pInstanceTime);
+
+										continue;
+									}
+								}
+							}
+						}
+
+						m_parentSimpleTime = tps;
+						break;
+					}
+				}
+				else
+				{
+				}
+			}
+		}
+
+#endif
+
+		ASSERT(0);
+#if 0
+		ElementTime<T, IBase>::Seek(tps);
+
+		if (m_pCurrentInterval)
+		{
+		// Seek children
+			CArray<Element*,Element*> children;
+			GetTimedChildren(static_cast<T*>(this), children);
+
+			for (int i = 0; i < children.GetSize(); i++)
+			{
+				CComQIPtr<CLElementTimeImpl> elementTime((IUnknown*)children[i]);
+
+				elementTime->Seek(m_tsf);
+			}
+		}
+#endif
+	}
+};
+
+}	// Web
+}
+
+#endif	// Web_ElementTimeContainer_h

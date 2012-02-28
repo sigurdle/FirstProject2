@@ -1,0 +1,37 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::Gui::Media3D::Visual3D",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Gui::Media3D::Object3D",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_media3_d_1_1_object3_d.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Gui::Element",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_element.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::Gui::DependencyObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_dependency_object.html"];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="System::DispatcherObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_dispatcher_object.html"];
+  Node6 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node7 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node1 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="System::Gui::Media3D::ForceField",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_media3_d_1_1_force_field.html"];
+  Node1 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="System::Gui::Media3D::Group",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_media3_d_1_1_group.html"];
+  Node1 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="System::Gui::Media3D::Light",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_media3_d_1_1_light.html"];
+  Node10 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="System::Gui::Media3D::DirectionalLight",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_media3_d_1_1_directional_light.html"];
+  Node10 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="System::Gui::Media3D::PointLight",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_media3_d_1_1_point_light.html"];
+  Node1 -> Node13 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="System::Gui::Media3D::MeshContainer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_media3_d_1_1_mesh_container.html"];
+  Node1 -> Node14 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node14 [label="System::Gui::Media3D::Particles",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_media3_d_1_1_particles.html"];
+  Node1 -> Node15 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node15 [label="System::Gui::Media3D::Shape3D",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_media3_d_1_1_shape3_d.html"];
+  Node1 -> Node16 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node16 [label="System::Gui::Media3D::Visual2D",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_gui_1_1_media3_d_1_1_visual2_d.html"];
+}

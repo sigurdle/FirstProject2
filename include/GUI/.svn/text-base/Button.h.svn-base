@@ -1,0 +1,41 @@
+namespace System
+{
+namespace Gui
+{
+
+class GUIEXT Button : public ContentControl
+{
+public:
+
+	CTOR Button();
+	CTOR Button(Object* content);
+
+	void Init();
+
+//	virtual void RenderRetained(ManagedRetainedRenderContext renderContext) override;
+
+	DEPENDENCY_CLASS(Button, ContentControl)
+//	static DependencyClass* get_Class();
+//	static DependencyClass* pClass;
+
+	DEFINE_THIS(_Button)
+
+//	virtual UIElement* CreateShadowTree();
+};
+
+class GUIEXT _Button : public _ContentControl
+{
+public:
+
+	CTOR _Button(Expressive::ObjectExpression* objectExp) : _ContentControl(objectExp)
+	{
+	}
+
+	Expressive::typed_expression<Object*> getContent() const
+	{
+		return getProperty(Button::get_ContentProperty());
+	}
+};
+
+}
+}

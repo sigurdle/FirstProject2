@@ -1,0 +1,335 @@
+#include "stdafx.h"
+#include "X3D2.h"
+#include "MovieTexture.h"
+
+namespace System
+{
+namespace x3d
+{
+
+NodeType* MovieTexture::GetNodeType()
+{
+	static X3DFieldDefinition* MovieTextureFields[] =
+	{
+		&X3DFieldDefinition("loop", FieldType_SFBool, SAIFieldAccess_inputOutput,-1),
+		&X3DFieldDefinition("repeatS", FieldType_SFBool, SAIFieldAccess_initializeOnly,-1),
+		&X3DFieldDefinition("repeatT", FieldType_SFBool, SAIFieldAccess_initializeOnly,-1),
+		&X3DFieldDefinition("speed", FieldType_SFFloat, SAIFieldAccess_inputOutput,-1),
+		&X3DFieldDefinition("startTime", FieldType_SFTime, SAIFieldAccess_inputOutput,-1),
+		&X3DFieldDefinition("stopTime", FieldType_SFTime, SAIFieldAccess_inputOutput,-1),
+		&X3DFieldDefinition("url", FieldType_MFURL, SAIFieldAccess_inputOutput,-1),
+		/*
+		SFBool   [in,out] loop             FALSE
+		SFFloat  [in,out] speed            1.0   (-8,8)
+		SFTime   [in,out] startTime        0     (-8,8)
+		SFTime   [in,out] stopTime         0     (-8,8)
+		MFString [in,out] url              []    [urn]
+		SFBool   []       repeatS          TRUE
+		SFBool   []       repeatT          TRUE
+		SFTime   [out]    duration_changed
+		SFBool   [out]    isActive
+		 */
+	};
+
+	static NodeType nodeType(WSTR("MovieTexture"), typeid(MovieTexture), MovieTextureFields, _countof(MovieTextureFields), X3DTexture2DNode::GetNodeType());
+	return &nodeType;
+}
+
+MovieTexture::MovieTexture() : X3DTexture2DNode(GetNodeType()),
+	m_url(new MFString(this)),
+	m_repeatS(new SFBool(this, true)),
+	m_repeatT(new SFBool(this, true))
+{
+//	m_texName = 0;
+	m_status = 0;
+}
+
+MovieTexture::~MovieTexture()
+{
+}
+
+void MovieTexture::ApplyTexture(Graphics::Graphics3D* pGraphics)
+{
+	ASSERT(0);
+#if 0
+	pGraphics->Enable(GL_TEXTURE_2D);
+//	ASSERT(glGetError() == GL_NO_ERROR);
+
+	pGraphics->BindTexture(GL_TEXTURE_2D, m_texName);
+//	ASSERT(glGetError() == GL_NO_ERROR);
+
+#if 0
+	pGraphics->glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+//	ASSERT(glGetError() == GL_NO_ERROR);
+#endif
+#endif
+}
+
+#if 0
+ErrorCode CVideoFilter::Seek(MediaShow::TimeUnit unit, LONGLONG t)
+{
+	MediaShow::IMediaSeeking* peerSeeking = dynamic_cast<MediaShow::IMediaSeeking*>(m_pInput->ConnectedTo());
+	if (peerSeeking == NULL)
+		return Error_NoInterface;
+
+	return peerSeeking->Seek(unit, t);
+}
+
+ErrorCode CVideoFilter::GetCurrentPosition(MediaShow::TimeUnit unit, LONGLONG *pVal)
+{
+	/*
+	<IMediaSeeking> peerSeeking = m_pInputPin->m_connectedTo;
+	if (peerSeeking == NULL)
+		return E_NOINTERFACE;
+
+	return peerSeeking->Seek(seconds);
+	*/
+	return Success;
+}
+
+ErrorCode CVideoFilter::GetDuration(MediaShow::TimeUnit unit, LONGLONG *pVal)
+{
+	MediaShow::IMediaSeeking* peerSeeking = dynamic_cast<MediaShow::IMediaSeeking*>(m_pInput->ConnectedTo());
+	if (peerSeeking == NULL)
+		return Error_NoInterface;
+
+	return peerSeeking->GetDuration(unit, pVal);
+}
+
+ErrorCode CVideoFilter::CInputPin::CompleteConnect(MediaShow::IPin* pConnector)
+{
+	ErrorCode hr = BasePinImpl::CompleteConnect(pConnector);
+	if (hr < 0) return hr;
+	
+	return Success;
+}
+
+ErrorCode CVideoFilter::CInputPin::EndOfStream()
+{
+	if (true)//m_pFilter->m_pMediaSource->m_loop->m_value)	// Loop
+	{
+		m_pFilter->m_pFilterGraph->Stop();
+		m_pFilter->m_pFilterGraph->Run();
+	}
+	
+	return Success;
+}
+#endif
+
+void MovieTexture::LoadURL(StringIn filename)
+{
+	ASSERT(m_pVideo == NULL);
+	m_pVideo = new DShow::VideoPlayer(this);
+
+	m_pVideo->Load(filename);
+
+#if 0
+
+	m_filterGraph = new MediaShow::FilterGraph;//.CoCreateInstance(CLSID_LFilterGraph);
+	//if (SUCCEEDED(hr))
+	{
+		m_pVideoFilter = new CVideoFilter;
+		m_pVideoFilter->m_pTexture = this;
+		m_filterGraph->AddFilter(m_pVideoFilter);
+
+		m_filterGraph->LoadURL(FileName);
+	}
+#endif
+}
+
+void MovieTexture::CreateTexture(Graphics::RenderTarget* renderTarget)
+{
+	if (m_status == 0)
+	{
+		m_status = 1;
+
+		if (m_url->get_size() > 0)
+		{
+			auto url0 = m_url->get1Value(0);
+
+#if 0
+			TCHAR fullurl[512];
+			{
+				DWORD resultLen = sizeof(fullurl);
+				InternetCombineUrl(W2A(m_pScene->m_url), W2A(url0), fullurl, &resultLen, 0);
+			}
+
+			ErrorCode hr = LoadURL(_bstr_t(fullurl));
+			if (SUCCEEDED(hr))
+			{
+
+			/*
+			CComPtr<IStream> stream;
+			ErrorCode hr = URLOpenBlockingStream(0, _bstr_t(fullurl), &stream, 0, 0);
+			LDraw::Bitmap* pBitmap = new LDraw::Bitmap(stream);
+			if (pBitmap->GetLastStatus() == LDraw::Ok)
+			{
+				LDraw::BitmapData bitmapData;
+				if (pBitmap->LockBits(
+					&LDraw::Rect(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight()),
+					LDraw::ImageLockModeRead,
+					PixelFormat32bppARGB, &bitmapData) == 0)
+				{
+				}
+			}
+				*/
+
+				glGenTextures(1, &m_texName);
+				ASSERT(glGetError() == GL_NO_ERROR);
+
+				glBindTexture(GL_TEXTURE_2D, m_texName);
+				ASSERT(glGetError() == GL_NO_ERROR);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (m_repeatS->m_value)? GL_REPEAT : GL_CLAMP);
+				ASSERT(glGetError() == GL_NO_ERROR);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (m_repeatT->m_value)? GL_REPEAT : GL_CLAMP);
+				ASSERT(glGetError() == GL_NO_ERROR);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				ASSERT(glGetError() == GL_NO_ERROR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				ASSERT(glGetError() == GL_NO_ERROR);
+
+				LVIDEOINFOHEADER2* vih = ((LVIDEOINFOHEADER2*)m_pVideoFilter->m_pInput->m_mt->pbFormat);
+
+				int width = vih->bmiHeader.biWidth;
+				int height = vih->bmiHeader.biHeight;
+
+				m_texwidth = 1;
+				while (m_texwidth < width) m_texwidth <<= 1;
+
+				m_texheight = 1;
+				while (m_texheight < height) m_texheight <<= 1;
+
+				//BYTE* p = new BYTE[m_texwidth*m_texheight*3];
+
+				glTexImage2D(GL_TEXTURE_2D, 0, 4, m_texwidth, m_texheight, 0/*border*/, GL_RGB, GL_UNSIGNED_BYTE, NULL/*bitmapData.Scan0*/);
+				ASSERT(glGetError() == GL_NO_ERROR);
+
+				//	pBitmap->UnlockBits(&bitmapData);
+
+				//delete pBitmap;
+
+				m_filterGraph->Run();
+			}
+#endif
+		}
+	}
+}
+
+HRESULT MovieTexture::Init(IDirect3DDevice9* d3ddev, uint width, uint height, ID3D10Texture2D* texture)
+{
+	ASSERT(m_pBitmap == nullptr);
+
+	m_pBitmap = new Graphics::Bitmap(width, height, 0, Graphics::PixelFormat_t::RGBAP_32, nullptr);
+	m_pBitmap->m_d3d10_texture = texture;
+	m_pBitmap->m_d3d10_texture->AddRef();
+
+	return S_OK;
+}
+
+HRESULT MovieTexture::DrawScene(IDirect3DDevice9* d3ddev, IDirect3DTexture9* texture)
+{
+	return S_OK;
+}
+
+#if 0
+
+ErrorCode_Bool CVideoFilter::CInputPin::Receive(MediaShow::IMediaSample *pSample)
+{
+	CriticalSectionLock lock(m_pLock);
+
+#if 0
+	/*
+
+	while (1)
+	{
+		EnterCriticalSection(&m_pFilter->m_pLock);
+		if (m_pFilter->m_state == LState_Running)
+			break;
+		LeaveCriticalSection(&m_pFilter->m_pLock);
+	}
+	LeaveCriticalSection(&m_pFilter->m_pLock);
+
+	*/
+
+//	MessageBeep(-1);
+
+	LONGLONG timeStart;
+	LONGLONG timeEnd;
+	pSample->GetTime(&timeStart, &timeEnd);
+
+// Wait until it's time to display the sample
+	HANDLE hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	m_pFilter->m_clock->AdviseTime(m_pFilter->m_tStart/*baseTime*/, timeStart/*streamTime*/, hEvent, NULL);
+	WaitForSingleObject(hEvent, INFINITE);
+	CloseHandle(hEvent);
+
+	ASSERT(m_pSample == NULL);
+
+	m_pSample = static_cast<CVideoSample*>(pSample);
+//	m_pSample->AddRef();
+
+	// Create an event and wait for it be set by another thread to process m_pSample
+	m_hReceivedEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	WaitForSingleObject(m_hReceivedEvent, INFINITE);
+	CloseHandle(m_hReceivedEvent);
+	m_hReceivedEvent = NULL;
+
+	// m_pSample has been processed, we can delete it
+	DeleteObject(m_pSample->m_hBitmap);
+	delete m_pSample;//->Release();
+	m_pSample = NULL;
+
+#if 0
+
+	LVIDEOINFOHEADER2* vih = (LVIDEOINFOHEADER2*)m_mt->pbFormat;
+
+	int width = vih->bmiHeader.biWidth;
+	int height = vih->bmiHeader.biHeight;
+
+	BYTE* p = new BYTE[m_pFilter->m_pTexture->m_texwidth*m_pFilter->m_pTexture->m_texheight*3];
+
+	for (int y = 0; y < height; y++)
+	{
+		BYTE* dest = p + m_pFilter->m_pTexture->m_texwidth*3*y;
+		BYTE* src = m_pSample->m_bits + ROWBYTES(width, 24)*y;
+
+		for (int x = 0; x < width; x++)
+		{
+			*dest++ = *src++;
+			*dest++ = *src++;
+			*dest++ = *src++;
+		}
+	}
+
+	glBindTexture(GL_TEXTURE_2D, m_pFilter->m_pTexture->m_texName);
+	ASSERT(glGetError() == GL_NO_ERROR);
+
+	glTexSubImage2D(GL_TEXTURE_2D,
+		0,	// level (0=base image)
+		0, // xoffset
+		0,	// yoffset,
+		m_pFilter->m_pTexture->m_texwidth,
+		m_pFilter->m_pTexture->m_texheight,
+		GL_RGB, GL_UNSIGNED_BYTE,
+		p);
+	if (glGetError() != GL_NO_ERROR)
+	{
+		TRACE("glTexSubImage2D() failed\n");
+	}
+
+	delete p;
+#if 0
+	m_pFilter->m_pMoviePlayer->m_cwnd.PostMessage(WM_USER+100, 0, 0);
+#endif
+#endif
+#endif
+
+	return Success_True;
+}
+#endif
+
+}	// x3d
+}	// System

@@ -1,0 +1,25 @@
+var namespace_system_1_1rdf =
+[
+    [ "RdfBase", "class_system_1_1rdf_1_1_rdf_base.html", null ],
+    [ "predicate", "class_system_1_1rdf_1_1predicate.html", null ],
+    [ "Literal", "class_system_1_1rdf_1_1_literal.html", null ],
+    [ "ObjectVariant", "class_system_1_1rdf_1_1_object_variant.html", null ],
+    [ "Resource", "class_system_1_1rdf_1_1_resource.html", null ],
+    [ "Model", "class_system_1_1rdf_1_1_model.html", null ],
+    [ "RDF", "class_system_1_1rdf_1_1_r_d_f.html", null ],
+    [ "RDFS", "class_system_1_1rdf_1_1_r_d_f_s.html", null ],
+    [ "OWL", "class_system_1_1rdf_1_1_o_w_l.html", null ],
+    [ "lex_loc", "struct_system_1_1rdf_1_1lex__loc.html", null ],
+    [ "lex_val", "struct_system_1_1rdf_1_1lex__val.html", null ],
+    [ "Lexer", "class_system_1_1rdf_1_1_lexer.html", null ],
+    [ "TurtleParser", "class_system_1_1rdf_1_1_turtle_parser.html", null ],
+    [ "Predicate", "namespace_system_1_1rdf.html#abf0043caf1d3ae5ed8e614952cce0f26", null ],
+    [ "Keyword", "namespace_system_1_1rdf.html#ade9097ce5074230fd1b609dccdeb3599", null ],
+    [ "Token", "namespace_system_1_1rdf.html#aea462bdde416154141e94c7e335e7c9c", null ],
+    [ "MapNS", "namespace_system_1_1rdf.html#a8e9b3a6c4a611930a39612b43ca8b1b1", null ],
+    [ "N3", "namespace_system_1_1rdf.html#a924f3528c13650a2d8656238f4ac61bf", null ],
+    [ "NT", "namespace_system_1_1rdf.html#a3a61420ef709c0bfc8ab0b83ee583a13", null ],
+    [ "ToXML", "namespace_system_1_1rdf.html#aa601feb09d5efaf781e2caadb787567f", null ],
+    [ "rdfsURI", "namespace_system_1_1rdf.html#a99d469e98a51d02c8d3127af63df6fb4", null ],
+    [ "rdfURI", "namespace_system_1_1rdf.html#af1429ba572fd7d163f94ff142eac3ffd", null ]
+];

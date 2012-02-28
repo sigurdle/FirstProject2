@@ -1,0 +1,39 @@
+namespace System
+{
+
+class LFCEXT ModifierType : public _CVType
+{
+public:
+	CTOR ModifierType();
+	CTOR ModifierType(Type* pPointerTo, bool bConst, bool bVolatile);
+
+	virtual Type_type get_Kind() const throw() override
+	{
+		return type_cv;
+	}
+
+	Type* get_Type() const throw()
+	{
+		return m_pPointerTo; 
+	}
+
+	virtual uint get_sizeof(uint sizeofptr = 0) const override;
+
+	virtual Class_Type GetSerializableType() const override;
+	virtual void Load(TypeArchive& stream) override;
+	virtual void Store(TypeArchive& stream) const override;
+
+	virtual Type* GetStripped() override;
+	virtual Type* Normalized() override;
+
+	virtual String ToString() override;
+	virtual IO::TextWriter& Write(IO::TextWriter& stream) const override;
+	virtual Type* Clone() const override;
+
+	virtual bool IsConst() const override;
+	virtual bool IsVolatile() const override;
+
+	Type* m_pPointerTo;
+};
+
+}	// System

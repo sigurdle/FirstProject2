@@ -1,0 +1,38 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::Web::CASDTDAttribute",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Web::CASDTDObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_c_a_s_d_t_d_object.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node5 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_ownerASModel" ,fontname="Helvetica"];
+  Node5 [label="System::Web::ASDTDModel",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_a_s_d_t_d_model.html"];
+  Node6 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_entityDeclarations\nm_elementDeclarations\nm_attributeDeclarations" ,fontname="Helvetica"];
+  Node6 [label="System::Web::CDTDASNamedObjectMap",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_c_d_t_d_a_s_named_object_map.html"];
+  Node7 -> Node6 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_items" ,fontname="Helvetica"];
+  Node7 [label="System::vector\< IASObject * \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1vector.html"];
+  Node8 -> Node7 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_allocator" ,fontname="Helvetica"];
+  Node8 [label="System::__gc_allocator",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__allocator.html"];
+  Node9 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_url" ,fontname="Helvetica"];
+  Node9 [label="System::String",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_string.html"];
+  Node10 -> Node9 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_stringObject" ,fontname="Helvetica"];
+  Node10 [label="System::StringObject",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_string_object.html"];
+  Node3 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_userdataList" ,fontname="Helvetica"];
+  Node11 [label="System::vector\< CUserData * \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1vector.html"];
+  Node8 -> Node11 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_allocator" ,fontname="Helvetica"];
+  Node12 -> Node11 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pData" ,fontname="Helvetica"];
+  Node12 [label="System::Web::CSSRule::CUserData",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_web_1_1_c_s_s_rule_1_1_c_user_data.html"];
+  Node9 -> Node12 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_key" ,fontname="Helvetica"];
+  Node3 -> Node12 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_data" ,fontname="Helvetica"];
+  Node9 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_value\nm_name" ,fontname="Helvetica"];
+  Node13 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_enums" ,fontname="Helvetica"];
+  Node13 [label="System::vector\< String \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1vector.html"];
+  Node8 -> Node13 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_allocator" ,fontname="Helvetica"];
+  Node9 -> Node13 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pData" ,fontname="Helvetica"];
+}

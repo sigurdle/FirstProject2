@@ -1,0 +1,27 @@
+var struct_b_i_t_m_a_p_v5_h_e_a_d_e_r =
+[
+    [ "bV5AlphaMask", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#aaa3a1d694487556b38eeb50fdccfbb5e", null ],
+    [ "bV5BitCount", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#aabfa32f57830fc934004909f58703656", null ],
+    [ "bV5BlueMask", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#ac4b621f2b1e0f51669e66366b471b201", null ],
+    [ "bV5ClrImportant", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#ac332bafc9a4f1f40a28dd97041550fe3", null ],
+    [ "bV5ClrUsed", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#abfeca7bcfdea97ea59d1646995b2627c", null ],
+    [ "bV5Compression", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#a41a404c6db91082a87613342e244bf96", null ],
+    [ "bV5CSType", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#aebeb7f06782e0a45ed9c5a88a78bded2", null ],
+    [ "bV5Endpoints", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#a4fa2c48c31b376d4b7b539f92c1e8c1d", null ],
+    [ "bV5GammaBlue", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#ac91cb2069644ed5858f8334ff2aec3f4", null ],
+    [ "bV5GammaGreen", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#ac621ead020ca7f19c15222dc2f2a4c5e", null ],
+    [ "bV5GammaRed", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#aff01b8a8a3ec2fbd6aa3badcd883708a", null ],
+    [ "bV5GreenMask", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#ae9286dbf8b8c4a91ef13cb8569ffafae", null ],
+    [ "bV5Height", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#a1a6ed178a56e076c74e2068bff19b73a", null ],
+    [ "bV5Intent", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#a854506c3959da48a9cfa9cc0879c9e94", null ],
+    [ "bV5Planes", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#a10cfba0e447a1d5336ced21e09eaa5bf", null ],
+    [ "bV5ProfileData", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#a393568e072e7f88afc4a662091372767", null ],
+    [ "bV5ProfileSize", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#ac2ad1d14fd2efb512dc39ffee4d58b42", null ],
+    [ "bV5RedMask", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#ab59cbfd0b452c385a91e7e3d63dd811b", null ],
+    [ "bV5Reserved", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#a5306062dca586d70ae15bab1fa0fb9d9", null ],
+    [ "bV5Size", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#a5b9ab834d69fc3ec8b37cf9bca86e0e9", null ],
+    [ "bV5SizeImage", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#ae3929129579654e8e6d31918461f7809", null ],
+    [ "bV5Width", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#aebe625b990885446d51b0a5261f4ba21", null ],
+    [ "bV5XPelsPerMeter", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#af13fdd7d610ce7229937187655df9d95", null ],
+    [ "bV5YPelsPerMeter", "struct_b_i_t_m_a_p_v5_h_e_a_d_e_r.html#ac95a39cc98afb186a6a43484b0c35d28", null ]
+];

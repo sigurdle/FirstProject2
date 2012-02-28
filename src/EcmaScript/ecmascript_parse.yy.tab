@@ -1,0 +1,128 @@
+
+/* A Bison parser, made by GNU Bison 2.4.1.  */
+
+/* Skeleton interface for Bison's Yacc-like parsers in C
+   
+      Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
+   Free Software Foundation, Inc.
+   
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+   
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+
+/* As a special exception, you may create a larger work that contains
+   part or all of the Bison parser skeleton and distribute that work
+   under terms of your choice, so long as that work isn't itself a
+   parser generator using the skeleton or a modified version thereof
+   as a parser skeleton.  Alternatively, if you modify or redistribute
+   the parser skeleton itself, you may (at your option) remove this
+   special exception, which will cause the skeleton and the resulting
+   Bison output files to be licensed under the GNU General Public
+   License without this special exception.
+   
+   This special exception was added by the Free Software Foundation in
+   version 2.2 of Bison.  */
+
+
+/* Tokens.  */
+#ifndef YYTOKENTYPE
+# define YYTOKENTYPE
+   /* Put the tokens into the symbol table, so that GDB and other debuggers
+      know about them.  */
+   enum yytokentype {
+     STRING_LITERAL = 258,
+     INTEGER_LITERAL = 259,
+     FLOAT_LITERAL = 260,
+     IDENTIFIER = 261,
+     NULL_KW = 262,
+     TRUE_KW = 263,
+     FALSE_KW = 264,
+     THIS_KW = 265,
+     NEW_KW = 266,
+     DELETE_KW = 267,
+     FUNCTION_KW = 268,
+     RETURN_KW = 269,
+     VOID_KW = 270,
+     IF_KW = 271,
+     ELSE_KW = 272,
+     VAR_KW = 273,
+     DO_KW = 274,
+     WHILE_KW = 275,
+     FOR_KW = 276,
+     BREAK_KW = 277,
+     CONTINUE_KW = 278,
+     IN_KW = 279,
+     TYPEOF_KW = 280,
+     TRY_KW = 281,
+     CATCH_KW = 282,
+     THROW_KW = 283,
+     PLUSPLUS = 284,
+     MINUSMINUS = 285,
+     LOGICAL_OR = 286,
+     LOGICAL_AND = 287,
+     EQUALEQUAL = 288,
+     LEQ = 289,
+     GEQ = 290
+   };
+#endif
+
+
+
+#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+typedef union YYSTYPE
+{
+
+/* Line 1676 of yacc.c  */
+#line 22 "D:\\Users\\Sigurd\\Documents\\VSProjects\\FirstProject2\\src\\EcmaScript\\ecmascript_parse.yy."
+
+int int_literal;
+double float64_literal;
+char* id;
+char* string_literal;
+A_Exp* exp;
+A_Stm* stm;
+A_StmList* stm_list;
+A_Function* fun;
+A_Elem* elem;
+A_ElemList* elem_list;
+A_VarDecl* vardecl;
+A_VarDeclList* vardecl_list;
+A_ExpList* exp_list;
+A_IdentifierList* id_list;
+
+
+
+/* Line 1676 of yacc.c  */
+#line 106 "ecmascript_parse.yy.tab."
+} YYSTYPE;
+# define YYSTYPE_IS_TRIVIAL 1
+# define yystype YYSTYPE /* obsolescent; will be withdrawn */
+# define YYSTYPE_IS_DECLARED 1
+#endif
+
+extern YYSTYPE ecmascriptlval;
+
+#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
+typedef struct YYLTYPE
+{
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
+} YYLTYPE;
+# define yyltype YYLTYPE /* obsolescent; will be withdrawn */
+# define YYLTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_TRIVIAL 1
+#endif
+
+extern YYLTYPE ecmascriptlloc;
+

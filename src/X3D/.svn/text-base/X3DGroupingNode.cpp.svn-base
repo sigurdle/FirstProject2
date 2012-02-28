@@ -1,0 +1,225 @@
+#include "stdafx.h"
+#include "X3D2.h"
+
+namespace System
+{
+namespace x3d
+{
+
+int HitTestChildren(MFNode* children, const D3DXMATRIX& projection, const D3DXMATRIX& view, const D3DXMATRIX& model, const D3D10_VIEWPORT& vp, int type, Vec2f mousepos, Vec3f pos, IHitTest* hitTest)
+{
+	for (uint i = 0; i < children->m_items.size(); ++i)
+	{
+		X3DNode* node = children->m_items[i];
+
+		if (node)
+		{
+			RenderImplImpl* render = dynamic_cast<RenderImplImpl*>(node->GetNode());
+			if (render)
+			{
+				render->HitTest(projection, view, model, vp, type, mousepos, pos, hitTest);
+			}
+		}
+	}
+
+	return 0;
+}
+
+void DrawGlobalLightsChildren(X3DDrawContext* pDC, MFNode* children)
+{
+//	int nLight = pDC->m_nLight;
+	int nNames = pDC->m_namedNodes.GetSize();
+
+	unsigned int i;
+
+	for (i = 0; i < children->m_items.GetSize(); i++)
+	{
+		X3DNode* node = children->m_items[i];
+
+		if (node && node->GetLights())
+		{
+			RenderImplImpl* render = dynamic_cast<RenderImplImpl*>(node->GetNode());
+			if (render)
+			{
+				render->DrawGlobalLights(pDC);
+			}
+		}
+	}
+}
+
+void DrawChildren(X3DDrawContext* pDC, MFNode* children)
+{
+	int nLight = pDC->m_renderContext->m_nLight;
+	int nNames = pDC->m_namedNodes.GetSize();
+
+	for (uint i = 0; i < children->m_items.GetSize(); ++i)
+	{
+		X3DNode* node = children->m_items[i];
+
+		if (node)
+		{
+			RenderImplImpl* render = dynamic_cast<RenderImplImpl*>(node->GetNode());
+			if (render)
+			{
+				render->PreDraw(pDC);
+			}
+		}
+	}
+
+	for (uint i = 0; i < children->m_items.GetSize(); ++i)
+	{
+		X3DNode* node = children->m_items[i];
+
+		if (node)
+		{
+			RenderImplImpl* render = dynamic_cast<RenderImplImpl*>(node->GetNode());
+			if (render)
+			{
+				render->Draw(pDC);
+			}
+		}
+	}
+
+	for (int i = pDC->m_namedNodes.GetSize(); i >= nNames; i--)
+	{
+#if 0	// TODO
+		glPopName();
+#endif
+	}
+//	if (pDC->m_pGraphics3D)
+	{
+		for (int i = pDC->m_renderContext->m_nLight; i >= nLight; i--)
+		{
+			;//pDC->m_pGraphics3D->Disable(GL_LIGHT0+i);
+		}
+		pDC->m_renderContext->m_nLight = nLight;
+		pDC->m_renderContext->m_lights.resize(pDC->m_renderContext->m_nLight);
+	}
+}
+
+void DrawOverlayChildren(X3DDrawContext* pDC, MFNode* children)
+{
+	for (uint i = 0; i < children->m_items.GetSize(); ++i)
+	{
+		X3DNode* node = children->m_items[i];
+
+		if (node)
+		{
+			RenderImplImpl* render = dynamic_cast<RenderImplImpl*>(node->GetNode());
+			if (render)
+			{
+				render->DrawOverlay(pDC);
+			}
+		}
+	}
+}
+
+///////////////
+
+IMP_X3DFIELD1(X3DGroupingNode, SFVec3f, bboxCenter, initializeOnly, Vec3f(-1,-1,-1))
+IMP_X3DFIELD1(X3DGroupingNode, SFVec3f, bboxSize, initializeOnly, Vec3f(-1,-1,-1))
+IMP_X3DFIELD0(X3DGroupingNode, TypedMFNode<X3DChildNode*>, children, inputOutput)
+
+NodeType* X3DGroupingNode::GetNodeType()
+{
+	static X3DFieldDefinition addChildren("addChildren", FieldType_MFNode, SAIFieldAccess_inputOnly, offsetof(X3DGroupingNode, m_addChildren));
+	static X3DFieldDefinition removeChildren("removeChildren", FieldType_MFNode, SAIFieldAccess_inputOnly, offsetof(X3DGroupingNode, m_removeChildren));
+	//static X3DFieldDefinition children(WSTR("children"), FieldType_MFNode, SAIFieldAccess_inputOutput, offsetof(X3DGroupingNode, m_children));
+
+	static X3DFieldDefinition* fields[] =
+	{
+		&addChildren,
+		&removeChildren,
+		get_bboxCenterFieldDef(),
+		get_bboxSizeFieldDef(),
+		get_childrenFieldDef(),
+		/*
+		MFNode  [in]     addChildren             [X3DChildNode]
+		MFNode  [in]     removeChildren          [X3DChildNode]
+		MFNode  [in,out] children       []       [X3DChildNode]
+		SFVec3f []       bboxCenter     0 0 0    (-8,8)
+		SFVec3f []       bboxSize       -1 -1 -1 (0,8) or -1 -1 -1
+		*/
+	};
+
+	static NodeType nodeType(NULL, typeid(X3DGroupingNode), fields, _countof(fields), baseClass::GetNodeType());
+	return &nodeType;
+}
+
+X3DGroupingNode::X3DGroupingNode(NodeType* nodeType) : X3DChildNode(nodeType),
+	m_children(new TypedMFNode<X3DChildNode*>(get_childrenFieldDef(), this)),
+	m_bboxCenter(new SFVec3f(get_bboxCenterFieldDef(), this)),
+	m_bboxSize(new SFVec3f(get_bboxSizeFieldDef(), this))
+{
+}
+
+void X3DGroupingNode::addActors()
+{
+	MFNode* children = getChildrenField();
+
+	uint count = children->get_size();
+	for (uint i = 0; i < count; i++)
+	{
+		X3DNode* node = children->get1Value(i);
+		node->addActors();
+	}
+}
+
+void X3DGroupingNode::UpdatePos()
+{
+	uint count = m_children->get_size();
+	for (uint i = 0; i < count; ++i)
+	{
+		X3DNode* node = m_children->get1Value(i);
+		node->UpdatePos();
+	}
+}
+
+BoundingBox X3DGroupingNode::CalculateBoundingBox(gm::matrix4f& transform)
+{
+//	if (!m_computedBBoxValid)
+	{
+//		m_computedBBoxValid = true;
+
+		Vec3f minV;
+		Vec3f maxV;
+
+		for (uint i = 0; i < m_children->m_items.size(); ++i)
+		{
+			X3DBoundedImplImpl* bounded = dynamic_cast<X3DBoundedImplImpl*>(m_children->get1Value(i));
+			if (bounded)
+			{
+				BoundingBox bbox = bounded->CalculateBoundingBox(transform);
+
+				if (bbox.IsValid())
+				{
+					if (i == 0)
+					{
+						minV = bbox.m_center - bbox.m_size/2;
+						maxV = bbox.m_center + bbox.m_size/2;
+					}
+					else
+					{
+						minV[0] = std::min(minV[0], bbox.m_center[0] - bbox.m_size[0]/2);
+						minV[1] = std::min(minV[1], bbox.m_center[1] - bbox.m_size[1]/2);
+						minV[2] = std::min(minV[2], bbox.m_center[2] - bbox.m_size[2]/2);
+
+						maxV[0] = std::max(maxV[0], bbox.m_center[0] + bbox.m_size[0]/2);
+						maxV[1] = std::max(maxV[1], bbox.m_center[1] + bbox.m_size[1]/2);
+						maxV[2] = std::max(maxV[2], bbox.m_center[2] + bbox.m_size[2]/2);
+					}
+				}
+			}
+		}
+
+		Vec3f size(maxV - minV);
+		Vec3f center(minV + size/2);
+
+		return BoundingBox(center, size);
+	}
+
+	return BoundingBox();
+}
+
+}	// x3d
+}

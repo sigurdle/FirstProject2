@@ -1,0 +1,2328 @@
+Nonterminals useless in grammar
+
+   AbsoluteLocationPath
+   AbbreviatedAbsoluteLocationPath
+   AbbreviatedRelativeLocationPath
+   AbbreviatedStep
+   AbbreviatedAxisSpecifier
+   AtomicType
+
+
+Terminals unused in grammar
+
+   identifier
+   TWO_PUNCT
+   TWO_SLASH
+   '@'
+
+
+Rules useless in grammar
+
+   94 AbsoluteLocationPath: '/' RelativeLocationPath
+
+   95 AbbreviatedAbsoluteLocationPath: TWO_SLASH RelativeLocationPath
+
+   96 AbbreviatedRelativeLocationPath: RelativeLocationPath TWO_SLASH StepExpr
+
+   97 AbbreviatedStep: '.'
+   98                | TWO_PUNCT
+
+   99 AbbreviatedAxisSpecifier: /* tom */
+  100                         | '@'
+
+  101 AtomicType: QName
+
+
+Tilstand 126 konflikter: 2 skift/reduksjon
+
+
+Grammatikk
+
+    0 $accept: XPath $end
+
+    1 XPath: Expr
+
+    2 Expr: ExprSingle
+    3     | Expr ',' ExprSingle
+
+    4 ExprSingle: OrExpr
+
+    5 LocationPath: RelativeLocationPath
+
+    6 RelativeLocationPath: StepExpr
+    7                     | StepExpr '/' RelativeLocationPath
+
+    8 StepExpr: AxisStep
+    9         | FilterExpr
+
+   10 AxisStep: AxisSpecifier NodeTest Predicates_opt
+
+   11 AxisSpecifier: AxisName TWO_COLON
+
+   12 Predicates: Predicate
+   13           | Predicates Predicate
+
+   14 Predicates_opt: /* tom */
+   15               | Predicates
+
+   16 NodeTest: NameTest
+   17         | KindTest
+
+   18 KindTest: ELEMENT_KW '(' ')'
+   19         | ELEMENT_KW '(' QNameOrWildcard ')'
+   20         | ELEMENT_KW '(' QNameOrWildcard ',' QName ')'
+
+   21 NameTest: Wildcard
+   22         | QName
+
+   23 QNameOrWildcard: '*'
+   24                | QName
+
+   25 Wildcard: '*'
+   26         | NCName ':' '*'
+   27         | '*' ':' NCName
+
+   28 QName: NCName
+   29      | NCName ':' NCName
+
+   30 Predicate: '[' PredicateExpr ']'
+
+   31 PredicateExpr: Expr
+
+   32 Number: INTEGER_LITERAL
+
+   33 PrimaryExpr: '(' Expr ')'
+   34            | Number
+   35            | ContextItemExpr
+   36            | FunctionCall
+   37            | Constructor
+
+   38 ExprList: ExprSingle
+   39         | ExprList ',' ExprSingle
+
+   40 FunctionCall: QName '(' ExprList ')'
+
+   41 ContextItemExpr: '.'
+
+   42 Constructor: DirectConstructor
+
+   43 DirectConstructor: DirElemConstructor
+
+   44 DirElemConstructor: '<' QName DirAttributeList_opt EMPTY_ELEMENT
+   45                   | '<' QName DirAttributeList_opt '>' DirElemContents ELEMENT_END QName '>'
+
+   46 DirAttributeList_opt: /* tom */
+   47                     | DirAttributeList
+
+   48 DirAttributeList: DirAttribute
+   49                 | DirAttributeList DirAttribute
+
+   50 DirAttribute: QName EQ STRING_LITERAL
+
+   51 DirElemContents: DirElemContent
+   52                | DirElemContents DirElemContent
+
+   53 DirElemContent: DirectConstructor
+
+   54 OrExpr: AndExpr
+   55       | OrExpr OR AndExpr
+
+   56 AndExpr: EqualityExpr
+   57        | AndExpr AND EqualityExpr
+
+   58 EqualityExpr: RelationalExpr
+   59             | EqualityExpr EQ RelationalExpr
+   60             | EqualityExpr NEQ RelationalExpr
+
+   61 RelationalExpr: AdditiveExpr
+   62               | RelationalExpr '<' AdditiveExpr
+   63               | RelationalExpr '>' AdditiveExpr
+   64               | RelationalExpr LTEQ AdditiveExpr
+   65               | RelationalExpr GTEQ AdditiveExpr
+
+   66 AdditiveExpr: MultiplicativeExpr
+   67             | AdditiveExpr '+' MultiplicativeExpr
+   68             | AdditiveExpr '-' MultiplicativeExpr
+
+   69 MultiplicativeExpr: UnionExpr
+   70                   | MultiplicativeExpr '*' UnionExpr
+   71                   | MultiplicativeExpr DIV UnionExpr
+   72                   | MultiplicativeExpr IDIV UnionExpr
+   73                   | MultiplicativeExpr MOD UnionExpr
+
+   74 UnaryExpr: ValueExpr
+   75          | '-' UnaryExpr
+   76          | '+' UnaryExpr
+
+   77 ValueExpr: PathExpr
+
+   78 UnionExpr: IntersectExceptExpr
+
+   79 IntersectExceptExpr: InstanceofExpr
+
+   80 PathExpr: LocationPath
+
+   81 CastExpr: UnaryExpr
+
+   82 CastableExpr: CastExpr
+
+   83 TreatExpr: CastableExpr
+
+   84 InstanceofExpr: TreatExpr
+   85               | TreatExpr INSTANCE_KW OF_KW SequenceType
+
+   86 SequenceType: EMPTY_SEQUENCE_KW '(' ')'
+   87             | ItemType
+   88             | ItemType OccurrenceIndicator
+
+   89 ItemType: KindTest
+
+   90 OccurrenceIndicator: '?'
+   91                    | '*'
+   92                    | '+'
+
+   93 FilterExpr: PrimaryExpr Predicates_opt
+
+
+Terminaler med regler hvor de opptrer
+
+$end (0) 0
+'(' (40) 18 19 20 33 40 86
+')' (41) 18 19 20 33 40 86
+'*' (42) 23 25 26 27 70 91
+'+' (43) 67 76 92
+',' (44) 3 20 39
+'-' (45) 68 75
+'.' (46) 41
+'/' (47) 7
+':' (58) 26 27 29
+'<' (60) 44 45 62
+'>' (62) 45 63
+'?' (63) 90
+'@' (64)
+'[' (91) 30
+']' (93) 30
+error (256)
+INTEGER_LITERAL (258) 32
+STRING_LITERAL (259) 50
+identifier (260)
+TWO_COLON (261) 11
+TWO_PUNCT (262)
+TWO_SLASH (263)
+NCName (264) 26 27 28 29
+AxisName (265) 11
+OR (266) 55
+AND (267) 57
+EQ (268) 50 59
+NEQ (269) 60
+LTEQ (270) 64
+GTEQ (271) 65
+DIV (272) 71
+IDIV (273) 72
+MOD (274) 73
+ELEMENT_KW (275) 18 19 20
+INSTANCE_KW (276) 85
+OF_KW (277) 85
+EMPTY_SEQUENCE_KW (278) 86
+EMPTY_ELEMENT (279) 44
+ELEMENT_END (280) 45
+
+
+Ikke-terminaler med regler hvor de opptrer
+
+$accept (41)
+    til venstre: 0
+XPath (42)
+    til venstre: 1, til høyre: 0
+Expr (43)
+    til venstre: 2 3, til høyre: 1 3 31 33
+ExprSingle (44)
+    til venstre: 4, til høyre: 2 3 38 39
+LocationPath (45)
+    til venstre: 5, til høyre: 80
+RelativeLocationPath (46)
+    til venstre: 6 7, til høyre: 5 7
+StepExpr (47)
+    til venstre: 8 9, til høyre: 6 7
+AxisStep (48)
+    til venstre: 10, til høyre: 8
+AxisSpecifier (49)
+    til venstre: 11, til høyre: 10
+Predicates (50)
+    til venstre: 12 13, til høyre: 13 15
+Predicates_opt (51)
+    til venstre: 14 15, til høyre: 10 93
+NodeTest (52)
+    til venstre: 16 17, til høyre: 10
+KindTest (53)
+    til venstre: 18 19 20, til høyre: 17 89
+NameTest (54)
+    til venstre: 21 22, til høyre: 16
+QNameOrWildcard (55)
+    til venstre: 23 24, til høyre: 19 20
+Wildcard (56)
+    til venstre: 25 26 27, til høyre: 21
+QName (57)
+    til venstre: 28 29, til høyre: 20 22 24 40 44 45 50
+Predicate (58)
+    til venstre: 30, til høyre: 12 13
+PredicateExpr (59)
+    til venstre: 31, til høyre: 30
+Number (60)
+    til venstre: 32, til høyre: 34
+PrimaryExpr (61)
+    til venstre: 33 34 35 36 37, til høyre: 93
+ExprList (62)
+    til venstre: 38 39, til høyre: 39 40
+FunctionCall (63)
+    til venstre: 40, til høyre: 36
+ContextItemExpr (64)
+    til venstre: 41, til høyre: 35
+Constructor (65)
+    til venstre: 42, til høyre: 37
+DirectConstructor (66)
+    til venstre: 43, til høyre: 42 53
+DirElemConstructor (67)
+    til venstre: 44 45, til høyre: 43
+DirAttributeList_opt (68)
+    til venstre: 46 47, til høyre: 44 45
+DirAttributeList (69)
+    til venstre: 48 49, til høyre: 47 49
+DirAttribute (70)
+    til venstre: 50, til høyre: 48 49
+DirElemContents (71)
+    til venstre: 51 52, til høyre: 45 52
+DirElemContent (72)
+    til venstre: 53, til høyre: 51 52
+OrExpr (73)
+    til venstre: 54 55, til høyre: 4 55
+AndExpr (74)
+    til venstre: 56 57, til høyre: 54 55 57
+EqualityExpr (75)
+    til venstre: 58 59 60, til høyre: 56 57 59 60
+RelationalExpr (76)
+    til venstre: 61 62 63 64 65, til høyre: 58 59 60 62 63 64 65
+AdditiveExpr (77)
+    til venstre: 66 67 68, til høyre: 61 62 63 64 65 67 68
+MultiplicativeExpr (78)
+    til venstre: 69 70 71 72 73, til høyre: 66 67 68 70 71 72 73
+UnaryExpr (79)
+    til venstre: 74 75 76, til høyre: 75 76 81
+ValueExpr (80)
+    til venstre: 77, til høyre: 74
+UnionExpr (81)
+    til venstre: 78, til høyre: 69 70 71 72 73
+IntersectExceptExpr (82)
+    til venstre: 79, til høyre: 78
+PathExpr (83)
+    til venstre: 80, til høyre: 77
+CastExpr (84)
+    til venstre: 81, til høyre: 82
+CastableExpr (85)
+    til venstre: 82, til høyre: 83
+TreatExpr (86)
+    til venstre: 83, til høyre: 84 85
+InstanceofExpr (87)
+    til venstre: 84 85, til høyre: 79
+SequenceType (88)
+    til venstre: 86 87 88, til høyre: 85
+ItemType (89)
+    til venstre: 89, til høyre: 87 88
+OccurrenceIndicator (90)
+    til venstre: 90 91 92, til høyre: 88
+FilterExpr (91)
+    til venstre: 93, til høyre: 9
+
+
+tilstand 0
+
+    0 $accept: . XPath $end
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    XPath                 gå til tilstand 9
+    Expr                  gå til tilstand 10
+    ExprSingle            gå til tilstand 11
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    OrExpr                gå til tilstand 25
+    AndExpr               gå til tilstand 26
+    EqualityExpr          gå til tilstand 27
+    RelationalExpr        gå til tilstand 28
+    AdditiveExpr          gå til tilstand 29
+    MultiplicativeExpr    gå til tilstand 30
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 1
+
+   32 Number: INTEGER_LITERAL .
+
+    $default  reduksjon ved hjelp av regel 32 (Number)
+
+
+tilstand 2
+
+   28 QName: NCName .
+   29      | NCName . ':' NCName
+
+    ':'  skift og gå til tilstand 41
+
+    $default  reduksjon ved hjelp av regel 28 (QName)
+
+
+tilstand 3
+
+   11 AxisSpecifier: AxisName . TWO_COLON
+
+    TWO_COLON  skift og gå til tilstand 42
+
+
+tilstand 4
+
+   41 ContextItemExpr: '.' .
+
+    $default  reduksjon ved hjelp av regel 41 (ContextItemExpr)
+
+
+tilstand 5
+
+   33 PrimaryExpr: '(' . Expr ')'
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    Expr                  gå til tilstand 43
+    ExprSingle            gå til tilstand 11
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    OrExpr                gå til tilstand 25
+    AndExpr               gå til tilstand 26
+    EqualityExpr          gå til tilstand 27
+    RelationalExpr        gå til tilstand 28
+    AdditiveExpr          gå til tilstand 29
+    MultiplicativeExpr    gå til tilstand 30
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 6
+
+   44 DirElemConstructor: '<' . QName DirAttributeList_opt EMPTY_ELEMENT
+   45                   | '<' . QName DirAttributeList_opt '>' DirElemContents ELEMENT_END QName '>'
+
+    NCName  skift og gå til tilstand 2
+
+    QName  gå til tilstand 44
+
+
+tilstand 7
+
+   76 UnaryExpr: '+' . UnaryExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    UnaryExpr             gå til tilstand 45
+    ValueExpr             gå til tilstand 32
+    PathExpr              gå til tilstand 35
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 8
+
+   75 UnaryExpr: '-' . UnaryExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    UnaryExpr             gå til tilstand 46
+    ValueExpr             gå til tilstand 32
+    PathExpr              gå til tilstand 35
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 9
+
+    0 $accept: XPath . $end
+
+    $end  skift og gå til tilstand 47
+
+
+tilstand 10
+
+    1 XPath: Expr .
+    3 Expr: Expr . ',' ExprSingle
+
+    ','  skift og gå til tilstand 48
+
+    $default  reduksjon ved hjelp av regel 1 (XPath)
+
+
+tilstand 11
+
+    2 Expr: ExprSingle .
+
+    $default  reduksjon ved hjelp av regel 2 (Expr)
+
+
+tilstand 12
+
+   80 PathExpr: LocationPath .
+
+    $default  reduksjon ved hjelp av regel 80 (PathExpr)
+
+
+tilstand 13
+
+    5 LocationPath: RelativeLocationPath .
+
+    $default  reduksjon ved hjelp av regel 5 (LocationPath)
+
+
+tilstand 14
+
+    6 RelativeLocationPath: StepExpr .
+    7                     | StepExpr . '/' RelativeLocationPath
+
+    '/'  skift og gå til tilstand 49
+
+    $default  reduksjon ved hjelp av regel 6 (RelativeLocationPath)
+
+
+tilstand 15
+
+    8 StepExpr: AxisStep .
+
+    $default  reduksjon ved hjelp av regel 8 (StepExpr)
+
+
+tilstand 16
+
+   10 AxisStep: AxisSpecifier . NodeTest Predicates_opt
+
+    NCName      skift og gå til tilstand 50
+    ELEMENT_KW  skift og gå til tilstand 51
+    '*'         skift og gå til tilstand 52
+
+    NodeTest  gå til tilstand 53
+    KindTest  gå til tilstand 54
+    NameTest  gå til tilstand 55
+    Wildcard  gå til tilstand 56
+    QName     gå til tilstand 57
+
+
+tilstand 17
+
+   40 FunctionCall: QName . '(' ExprList ')'
+
+    '('  skift og gå til tilstand 58
+
+
+tilstand 18
+
+   34 PrimaryExpr: Number .
+
+    $default  reduksjon ved hjelp av regel 34 (PrimaryExpr)
+
+
+tilstand 19
+
+   93 FilterExpr: PrimaryExpr . Predicates_opt
+
+    '['  skift og gå til tilstand 59
+
+    $default  reduksjon ved hjelp av regel 14 (Predicates_opt)
+
+    Predicates      gå til tilstand 60
+    Predicates_opt  gå til tilstand 61
+    Predicate       gå til tilstand 62
+
+
+tilstand 20
+
+   36 PrimaryExpr: FunctionCall .
+
+    $default  reduksjon ved hjelp av regel 36 (PrimaryExpr)
+
+
+tilstand 21
+
+   35 PrimaryExpr: ContextItemExpr .
+
+    $default  reduksjon ved hjelp av regel 35 (PrimaryExpr)
+
+
+tilstand 22
+
+   37 PrimaryExpr: Constructor .
+
+    $default  reduksjon ved hjelp av regel 37 (PrimaryExpr)
+
+
+tilstand 23
+
+   42 Constructor: DirectConstructor .
+
+    $default  reduksjon ved hjelp av regel 42 (Constructor)
+
+
+tilstand 24
+
+   43 DirectConstructor: DirElemConstructor .
+
+    $default  reduksjon ved hjelp av regel 43 (DirectConstructor)
+
+
+tilstand 25
+
+    4 ExprSingle: OrExpr .
+   55 OrExpr: OrExpr . OR AndExpr
+
+    OR  skift og gå til tilstand 63
+
+    $default  reduksjon ved hjelp av regel 4 (ExprSingle)
+
+
+tilstand 26
+
+   54 OrExpr: AndExpr .
+   57 AndExpr: AndExpr . AND EqualityExpr
+
+    AND  skift og gå til tilstand 64
+
+    $default  reduksjon ved hjelp av regel 54 (OrExpr)
+
+
+tilstand 27
+
+   56 AndExpr: EqualityExpr .
+   59 EqualityExpr: EqualityExpr . EQ RelationalExpr
+   60             | EqualityExpr . NEQ RelationalExpr
+
+    EQ   skift og gå til tilstand 65
+    NEQ  skift og gå til tilstand 66
+
+    $default  reduksjon ved hjelp av regel 56 (AndExpr)
+
+
+tilstand 28
+
+   58 EqualityExpr: RelationalExpr .
+   62 RelationalExpr: RelationalExpr . '<' AdditiveExpr
+   63               | RelationalExpr . '>' AdditiveExpr
+   64               | RelationalExpr . LTEQ AdditiveExpr
+   65               | RelationalExpr . GTEQ AdditiveExpr
+
+    LTEQ  skift og gå til tilstand 67
+    GTEQ  skift og gå til tilstand 68
+    '<'   skift og gå til tilstand 69
+    '>'   skift og gå til tilstand 70
+
+    $default  reduksjon ved hjelp av regel 58 (EqualityExpr)
+
+
+tilstand 29
+
+   61 RelationalExpr: AdditiveExpr .
+   67 AdditiveExpr: AdditiveExpr . '+' MultiplicativeExpr
+   68             | AdditiveExpr . '-' MultiplicativeExpr
+
+    '+'  skift og gå til tilstand 71
+    '-'  skift og gå til tilstand 72
+
+    $default  reduksjon ved hjelp av regel 61 (RelationalExpr)
+
+
+tilstand 30
+
+   66 AdditiveExpr: MultiplicativeExpr .
+   70 MultiplicativeExpr: MultiplicativeExpr . '*' UnionExpr
+   71                   | MultiplicativeExpr . DIV UnionExpr
+   72                   | MultiplicativeExpr . IDIV UnionExpr
+   73                   | MultiplicativeExpr . MOD UnionExpr
+
+    DIV   skift og gå til tilstand 73
+    IDIV  skift og gå til tilstand 74
+    MOD   skift og gå til tilstand 75
+    '*'   skift og gå til tilstand 76
+
+    $default  reduksjon ved hjelp av regel 66 (AdditiveExpr)
+
+
+tilstand 31
+
+   81 CastExpr: UnaryExpr .
+
+    $default  reduksjon ved hjelp av regel 81 (CastExpr)
+
+
+tilstand 32
+
+   74 UnaryExpr: ValueExpr .
+
+    $default  reduksjon ved hjelp av regel 74 (UnaryExpr)
+
+
+tilstand 33
+
+   69 MultiplicativeExpr: UnionExpr .
+
+    $default  reduksjon ved hjelp av regel 69 (MultiplicativeExpr)
+
+
+tilstand 34
+
+   78 UnionExpr: IntersectExceptExpr .
+
+    $default  reduksjon ved hjelp av regel 78 (UnionExpr)
+
+
+tilstand 35
+
+   77 ValueExpr: PathExpr .
+
+    $default  reduksjon ved hjelp av regel 77 (ValueExpr)
+
+
+tilstand 36
+
+   82 CastableExpr: CastExpr .
+
+    $default  reduksjon ved hjelp av regel 82 (CastableExpr)
+
+
+tilstand 37
+
+   83 TreatExpr: CastableExpr .
+
+    $default  reduksjon ved hjelp av regel 83 (TreatExpr)
+
+
+tilstand 38
+
+   84 InstanceofExpr: TreatExpr .
+   85               | TreatExpr . INSTANCE_KW OF_KW SequenceType
+
+    INSTANCE_KW  skift og gå til tilstand 77
+
+    $default  reduksjon ved hjelp av regel 84 (InstanceofExpr)
+
+
+tilstand 39
+
+   79 IntersectExceptExpr: InstanceofExpr .
+
+    $default  reduksjon ved hjelp av regel 79 (IntersectExceptExpr)
+
+
+tilstand 40
+
+    9 StepExpr: FilterExpr .
+
+    $default  reduksjon ved hjelp av regel 9 (StepExpr)
+
+
+tilstand 41
+
+   29 QName: NCName ':' . NCName
+
+    NCName  skift og gå til tilstand 78
+
+
+tilstand 42
+
+   11 AxisSpecifier: AxisName TWO_COLON .
+
+    $default  reduksjon ved hjelp av regel 11 (AxisSpecifier)
+
+
+tilstand 43
+
+    3 Expr: Expr . ',' ExprSingle
+   33 PrimaryExpr: '(' Expr . ')'
+
+    ','  skift og gå til tilstand 48
+    ')'  skift og gå til tilstand 79
+
+
+tilstand 44
+
+   44 DirElemConstructor: '<' QName . DirAttributeList_opt EMPTY_ELEMENT
+   45                   | '<' QName . DirAttributeList_opt '>' DirElemContents ELEMENT_END QName '>'
+
+    NCName  skift og gå til tilstand 2
+
+    $default  reduksjon ved hjelp av regel 46 (DirAttributeList_opt)
+
+    QName                 gå til tilstand 80
+    DirAttributeList_opt  gå til tilstand 81
+    DirAttributeList      gå til tilstand 82
+    DirAttribute          gå til tilstand 83
+
+
+tilstand 45
+
+   76 UnaryExpr: '+' UnaryExpr .
+
+    $default  reduksjon ved hjelp av regel 76 (UnaryExpr)
+
+
+tilstand 46
+
+   75 UnaryExpr: '-' UnaryExpr .
+
+    $default  reduksjon ved hjelp av regel 75 (UnaryExpr)
+
+
+tilstand 47
+
+    0 $accept: XPath $end .
+
+    $default  aksept
+
+
+tilstand 48
+
+    3 Expr: Expr ',' . ExprSingle
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    ExprSingle            gå til tilstand 84
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    OrExpr                gå til tilstand 25
+    AndExpr               gå til tilstand 26
+    EqualityExpr          gå til tilstand 27
+    RelationalExpr        gå til tilstand 28
+    AdditiveExpr          gå til tilstand 29
+    MultiplicativeExpr    gå til tilstand 30
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 49
+
+    7 RelativeLocationPath: StepExpr '/' . RelativeLocationPath
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+
+    RelativeLocationPath  gå til tilstand 85
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 50
+
+   26 Wildcard: NCName . ':' '*'
+   28 QName: NCName .
+   29      | NCName . ':' NCName
+
+    ':'  skift og gå til tilstand 86
+
+    $default  reduksjon ved hjelp av regel 28 (QName)
+
+
+tilstand 51
+
+   18 KindTest: ELEMENT_KW . '(' ')'
+   19         | ELEMENT_KW . '(' QNameOrWildcard ')'
+   20         | ELEMENT_KW . '(' QNameOrWildcard ',' QName ')'
+
+    '('  skift og gå til tilstand 87
+
+
+tilstand 52
+
+   25 Wildcard: '*' .
+   27         | '*' . ':' NCName
+
+    ':'  skift og gå til tilstand 88
+
+    $default  reduksjon ved hjelp av regel 25 (Wildcard)
+
+
+tilstand 53
+
+   10 AxisStep: AxisSpecifier NodeTest . Predicates_opt
+
+    '['  skift og gå til tilstand 59
+
+    $default  reduksjon ved hjelp av regel 14 (Predicates_opt)
+
+    Predicates      gå til tilstand 60
+    Predicates_opt  gå til tilstand 89
+    Predicate       gå til tilstand 62
+
+
+tilstand 54
+
+   17 NodeTest: KindTest .
+
+    $default  reduksjon ved hjelp av regel 17 (NodeTest)
+
+
+tilstand 55
+
+   16 NodeTest: NameTest .
+
+    $default  reduksjon ved hjelp av regel 16 (NodeTest)
+
+
+tilstand 56
+
+   21 NameTest: Wildcard .
+
+    $default  reduksjon ved hjelp av regel 21 (NameTest)
+
+
+tilstand 57
+
+   22 NameTest: QName .
+
+    $default  reduksjon ved hjelp av regel 22 (NameTest)
+
+
+tilstand 58
+
+   40 FunctionCall: QName '(' . ExprList ')'
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    ExprSingle            gå til tilstand 90
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    ExprList              gå til tilstand 91
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    OrExpr                gå til tilstand 25
+    AndExpr               gå til tilstand 26
+    EqualityExpr          gå til tilstand 27
+    RelationalExpr        gå til tilstand 28
+    AdditiveExpr          gå til tilstand 29
+    MultiplicativeExpr    gå til tilstand 30
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 59
+
+   30 Predicate: '[' . PredicateExpr ']'
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    Expr                  gå til tilstand 92
+    ExprSingle            gå til tilstand 11
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    PredicateExpr         gå til tilstand 93
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    OrExpr                gå til tilstand 25
+    AndExpr               gå til tilstand 26
+    EqualityExpr          gå til tilstand 27
+    RelationalExpr        gå til tilstand 28
+    AdditiveExpr          gå til tilstand 29
+    MultiplicativeExpr    gå til tilstand 30
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 60
+
+   13 Predicates: Predicates . Predicate
+   15 Predicates_opt: Predicates .
+
+    '['  skift og gå til tilstand 59
+
+    $default  reduksjon ved hjelp av regel 15 (Predicates_opt)
+
+    Predicate  gå til tilstand 94
+
+
+tilstand 61
+
+   93 FilterExpr: PrimaryExpr Predicates_opt .
+
+    $default  reduksjon ved hjelp av regel 93 (FilterExpr)
+
+
+tilstand 62
+
+   12 Predicates: Predicate .
+
+    $default  reduksjon ved hjelp av regel 12 (Predicates)
+
+
+tilstand 63
+
+   55 OrExpr: OrExpr OR . AndExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    AndExpr               gå til tilstand 95
+    EqualityExpr          gå til tilstand 27
+    RelationalExpr        gå til tilstand 28
+    AdditiveExpr          gå til tilstand 29
+    MultiplicativeExpr    gå til tilstand 30
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 64
+
+   57 AndExpr: AndExpr AND . EqualityExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    EqualityExpr          gå til tilstand 96
+    RelationalExpr        gå til tilstand 28
+    AdditiveExpr          gå til tilstand 29
+    MultiplicativeExpr    gå til tilstand 30
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 65
+
+   59 EqualityExpr: EqualityExpr EQ . RelationalExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    RelationalExpr        gå til tilstand 97
+    AdditiveExpr          gå til tilstand 29
+    MultiplicativeExpr    gå til tilstand 30
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 66
+
+   60 EqualityExpr: EqualityExpr NEQ . RelationalExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    RelationalExpr        gå til tilstand 98
+    AdditiveExpr          gå til tilstand 29
+    MultiplicativeExpr    gå til tilstand 30
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 67
+
+   64 RelationalExpr: RelationalExpr LTEQ . AdditiveExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    AdditiveExpr          gå til tilstand 99
+    MultiplicativeExpr    gå til tilstand 30
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 68
+
+   65 RelationalExpr: RelationalExpr GTEQ . AdditiveExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    AdditiveExpr          gå til tilstand 100
+    MultiplicativeExpr    gå til tilstand 30
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 69
+
+   62 RelationalExpr: RelationalExpr '<' . AdditiveExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    AdditiveExpr          gå til tilstand 101
+    MultiplicativeExpr    gå til tilstand 30
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 70
+
+   63 RelationalExpr: RelationalExpr '>' . AdditiveExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    AdditiveExpr          gå til tilstand 102
+    MultiplicativeExpr    gå til tilstand 30
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 71
+
+   67 AdditiveExpr: AdditiveExpr '+' . MultiplicativeExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    MultiplicativeExpr    gå til tilstand 103
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 72
+
+   68 AdditiveExpr: AdditiveExpr '-' . MultiplicativeExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    MultiplicativeExpr    gå til tilstand 104
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 73
+
+   71 MultiplicativeExpr: MultiplicativeExpr DIV . UnionExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 105
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 74
+
+   72 MultiplicativeExpr: MultiplicativeExpr IDIV . UnionExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 106
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 75
+
+   73 MultiplicativeExpr: MultiplicativeExpr MOD . UnionExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 107
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 76
+
+   70 MultiplicativeExpr: MultiplicativeExpr '*' . UnionExpr
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 108
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 77
+
+   85 InstanceofExpr: TreatExpr INSTANCE_KW . OF_KW SequenceType
+
+    OF_KW  skift og gå til tilstand 109
+
+
+tilstand 78
+
+   29 QName: NCName ':' NCName .
+
+    $default  reduksjon ved hjelp av regel 29 (QName)
+
+
+tilstand 79
+
+   33 PrimaryExpr: '(' Expr ')' .
+
+    $default  reduksjon ved hjelp av regel 33 (PrimaryExpr)
+
+
+tilstand 80
+
+   50 DirAttribute: QName . EQ STRING_LITERAL
+
+    EQ  skift og gå til tilstand 110
+
+
+tilstand 81
+
+   44 DirElemConstructor: '<' QName DirAttributeList_opt . EMPTY_ELEMENT
+   45                   | '<' QName DirAttributeList_opt . '>' DirElemContents ELEMENT_END QName '>'
+
+    EMPTY_ELEMENT  skift og gå til tilstand 111
+    '>'            skift og gå til tilstand 112
+
+
+tilstand 82
+
+   47 DirAttributeList_opt: DirAttributeList .
+   49 DirAttributeList: DirAttributeList . DirAttribute
+
+    NCName  skift og gå til tilstand 2
+
+    $default  reduksjon ved hjelp av regel 47 (DirAttributeList_opt)
+
+    QName         gå til tilstand 80
+    DirAttribute  gå til tilstand 113
+
+
+tilstand 83
+
+   48 DirAttributeList: DirAttribute .
+
+    $default  reduksjon ved hjelp av regel 48 (DirAttributeList)
+
+
+tilstand 84
+
+    3 Expr: Expr ',' ExprSingle .
+
+    $default  reduksjon ved hjelp av regel 3 (Expr)
+
+
+tilstand 85
+
+    7 RelativeLocationPath: StepExpr '/' RelativeLocationPath .
+
+    $default  reduksjon ved hjelp av regel 7 (RelativeLocationPath)
+
+
+tilstand 86
+
+   26 Wildcard: NCName ':' . '*'
+   29 QName: NCName ':' . NCName
+
+    NCName  skift og gå til tilstand 78
+    '*'     skift og gå til tilstand 114
+
+
+tilstand 87
+
+   18 KindTest: ELEMENT_KW '(' . ')'
+   19         | ELEMENT_KW '(' . QNameOrWildcard ')'
+   20         | ELEMENT_KW '(' . QNameOrWildcard ',' QName ')'
+
+    NCName  skift og gå til tilstand 2
+    ')'     skift og gå til tilstand 115
+    '*'     skift og gå til tilstand 116
+
+    QNameOrWildcard  gå til tilstand 117
+    QName            gå til tilstand 118
+
+
+tilstand 88
+
+   27 Wildcard: '*' ':' . NCName
+
+    NCName  skift og gå til tilstand 119
+
+
+tilstand 89
+
+   10 AxisStep: AxisSpecifier NodeTest Predicates_opt .
+
+    $default  reduksjon ved hjelp av regel 10 (AxisStep)
+
+
+tilstand 90
+
+   38 ExprList: ExprSingle .
+
+    $default  reduksjon ved hjelp av regel 38 (ExprList)
+
+
+tilstand 91
+
+   39 ExprList: ExprList . ',' ExprSingle
+   40 FunctionCall: QName '(' ExprList . ')'
+
+    ','  skift og gå til tilstand 120
+    ')'  skift og gå til tilstand 121
+
+
+tilstand 92
+
+    3 Expr: Expr . ',' ExprSingle
+   31 PredicateExpr: Expr .
+
+    ','  skift og gå til tilstand 48
+
+    $default  reduksjon ved hjelp av regel 31 (PredicateExpr)
+
+
+tilstand 93
+
+   30 Predicate: '[' PredicateExpr . ']'
+
+    ']'  skift og gå til tilstand 122
+
+
+tilstand 94
+
+   13 Predicates: Predicates Predicate .
+
+    $default  reduksjon ved hjelp av regel 13 (Predicates)
+
+
+tilstand 95
+
+   55 OrExpr: OrExpr OR AndExpr .
+   57 AndExpr: AndExpr . AND EqualityExpr
+
+    AND  skift og gå til tilstand 64
+
+    $default  reduksjon ved hjelp av regel 55 (OrExpr)
+
+
+tilstand 96
+
+   57 AndExpr: AndExpr AND EqualityExpr .
+   59 EqualityExpr: EqualityExpr . EQ RelationalExpr
+   60             | EqualityExpr . NEQ RelationalExpr
+
+    EQ   skift og gå til tilstand 65
+    NEQ  skift og gå til tilstand 66
+
+    $default  reduksjon ved hjelp av regel 57 (AndExpr)
+
+
+tilstand 97
+
+   59 EqualityExpr: EqualityExpr EQ RelationalExpr .
+   62 RelationalExpr: RelationalExpr . '<' AdditiveExpr
+   63               | RelationalExpr . '>' AdditiveExpr
+   64               | RelationalExpr . LTEQ AdditiveExpr
+   65               | RelationalExpr . GTEQ AdditiveExpr
+
+    LTEQ  skift og gå til tilstand 67
+    GTEQ  skift og gå til tilstand 68
+    '<'   skift og gå til tilstand 69
+    '>'   skift og gå til tilstand 70
+
+    $default  reduksjon ved hjelp av regel 59 (EqualityExpr)
+
+
+tilstand 98
+
+   60 EqualityExpr: EqualityExpr NEQ RelationalExpr .
+   62 RelationalExpr: RelationalExpr . '<' AdditiveExpr
+   63               | RelationalExpr . '>' AdditiveExpr
+   64               | RelationalExpr . LTEQ AdditiveExpr
+   65               | RelationalExpr . GTEQ AdditiveExpr
+
+    LTEQ  skift og gå til tilstand 67
+    GTEQ  skift og gå til tilstand 68
+    '<'   skift og gå til tilstand 69
+    '>'   skift og gå til tilstand 70
+
+    $default  reduksjon ved hjelp av regel 60 (EqualityExpr)
+
+
+tilstand 99
+
+   64 RelationalExpr: RelationalExpr LTEQ AdditiveExpr .
+   67 AdditiveExpr: AdditiveExpr . '+' MultiplicativeExpr
+   68             | AdditiveExpr . '-' MultiplicativeExpr
+
+    '+'  skift og gå til tilstand 71
+    '-'  skift og gå til tilstand 72
+
+    $default  reduksjon ved hjelp av regel 64 (RelationalExpr)
+
+
+tilstand 100
+
+   65 RelationalExpr: RelationalExpr GTEQ AdditiveExpr .
+   67 AdditiveExpr: AdditiveExpr . '+' MultiplicativeExpr
+   68             | AdditiveExpr . '-' MultiplicativeExpr
+
+    '+'  skift og gå til tilstand 71
+    '-'  skift og gå til tilstand 72
+
+    $default  reduksjon ved hjelp av regel 65 (RelationalExpr)
+
+
+tilstand 101
+
+   62 RelationalExpr: RelationalExpr '<' AdditiveExpr .
+   67 AdditiveExpr: AdditiveExpr . '+' MultiplicativeExpr
+   68             | AdditiveExpr . '-' MultiplicativeExpr
+
+    '+'  skift og gå til tilstand 71
+    '-'  skift og gå til tilstand 72
+
+    $default  reduksjon ved hjelp av regel 62 (RelationalExpr)
+
+
+tilstand 102
+
+   63 RelationalExpr: RelationalExpr '>' AdditiveExpr .
+   67 AdditiveExpr: AdditiveExpr . '+' MultiplicativeExpr
+   68             | AdditiveExpr . '-' MultiplicativeExpr
+
+    '+'  skift og gå til tilstand 71
+    '-'  skift og gå til tilstand 72
+
+    $default  reduksjon ved hjelp av regel 63 (RelationalExpr)
+
+
+tilstand 103
+
+   67 AdditiveExpr: AdditiveExpr '+' MultiplicativeExpr .
+   70 MultiplicativeExpr: MultiplicativeExpr . '*' UnionExpr
+   71                   | MultiplicativeExpr . DIV UnionExpr
+   72                   | MultiplicativeExpr . IDIV UnionExpr
+   73                   | MultiplicativeExpr . MOD UnionExpr
+
+    DIV   skift og gå til tilstand 73
+    IDIV  skift og gå til tilstand 74
+    MOD   skift og gå til tilstand 75
+    '*'   skift og gå til tilstand 76
+
+    $default  reduksjon ved hjelp av regel 67 (AdditiveExpr)
+
+
+tilstand 104
+
+   68 AdditiveExpr: AdditiveExpr '-' MultiplicativeExpr .
+   70 MultiplicativeExpr: MultiplicativeExpr . '*' UnionExpr
+   71                   | MultiplicativeExpr . DIV UnionExpr
+   72                   | MultiplicativeExpr . IDIV UnionExpr
+   73                   | MultiplicativeExpr . MOD UnionExpr
+
+    DIV   skift og gå til tilstand 73
+    IDIV  skift og gå til tilstand 74
+    MOD   skift og gå til tilstand 75
+    '*'   skift og gå til tilstand 76
+
+    $default  reduksjon ved hjelp av regel 68 (AdditiveExpr)
+
+
+tilstand 105
+
+   71 MultiplicativeExpr: MultiplicativeExpr DIV UnionExpr .
+
+    $default  reduksjon ved hjelp av regel 71 (MultiplicativeExpr)
+
+
+tilstand 106
+
+   72 MultiplicativeExpr: MultiplicativeExpr IDIV UnionExpr .
+
+    $default  reduksjon ved hjelp av regel 72 (MultiplicativeExpr)
+
+
+tilstand 107
+
+   73 MultiplicativeExpr: MultiplicativeExpr MOD UnionExpr .
+
+    $default  reduksjon ved hjelp av regel 73 (MultiplicativeExpr)
+
+
+tilstand 108
+
+   70 MultiplicativeExpr: MultiplicativeExpr '*' UnionExpr .
+
+    $default  reduksjon ved hjelp av regel 70 (MultiplicativeExpr)
+
+
+tilstand 109
+
+   85 InstanceofExpr: TreatExpr INSTANCE_KW OF_KW . SequenceType
+
+    ELEMENT_KW         skift og gå til tilstand 51
+    EMPTY_SEQUENCE_KW  skift og gå til tilstand 123
+
+    KindTest      gå til tilstand 124
+    SequenceType  gå til tilstand 125
+    ItemType      gå til tilstand 126
+
+
+tilstand 110
+
+   50 DirAttribute: QName EQ . STRING_LITERAL
+
+    STRING_LITERAL  skift og gå til tilstand 127
+
+
+tilstand 111
+
+   44 DirElemConstructor: '<' QName DirAttributeList_opt EMPTY_ELEMENT .
+
+    $default  reduksjon ved hjelp av regel 44 (DirElemConstructor)
+
+
+tilstand 112
+
+   45 DirElemConstructor: '<' QName DirAttributeList_opt '>' . DirElemContents ELEMENT_END QName '>'
+
+    '<'  skift og gå til tilstand 6
+
+    DirectConstructor   gå til tilstand 128
+    DirElemConstructor  gå til tilstand 24
+    DirElemContents     gå til tilstand 129
+    DirElemContent      gå til tilstand 130
+
+
+tilstand 113
+
+   49 DirAttributeList: DirAttributeList DirAttribute .
+
+    $default  reduksjon ved hjelp av regel 49 (DirAttributeList)
+
+
+tilstand 114
+
+   26 Wildcard: NCName ':' '*' .
+
+    $default  reduksjon ved hjelp av regel 26 (Wildcard)
+
+
+tilstand 115
+
+   18 KindTest: ELEMENT_KW '(' ')' .
+
+    $default  reduksjon ved hjelp av regel 18 (KindTest)
+
+
+tilstand 116
+
+   23 QNameOrWildcard: '*' .
+
+    $default  reduksjon ved hjelp av regel 23 (QNameOrWildcard)
+
+
+tilstand 117
+
+   19 KindTest: ELEMENT_KW '(' QNameOrWildcard . ')'
+   20         | ELEMENT_KW '(' QNameOrWildcard . ',' QName ')'
+
+    ','  skift og gå til tilstand 131
+    ')'  skift og gå til tilstand 132
+
+
+tilstand 118
+
+   24 QNameOrWildcard: QName .
+
+    $default  reduksjon ved hjelp av regel 24 (QNameOrWildcard)
+
+
+tilstand 119
+
+   27 Wildcard: '*' ':' NCName .
+
+    $default  reduksjon ved hjelp av regel 27 (Wildcard)
+
+
+tilstand 120
+
+   39 ExprList: ExprList ',' . ExprSingle
+
+    INTEGER_LITERAL  skift og gå til tilstand 1
+    NCName           skift og gå til tilstand 2
+    AxisName         skift og gå til tilstand 3
+    '.'              skift og gå til tilstand 4
+    '('              skift og gå til tilstand 5
+    '<'              skift og gå til tilstand 6
+    '+'              skift og gå til tilstand 7
+    '-'              skift og gå til tilstand 8
+
+    ExprSingle            gå til tilstand 133
+    LocationPath          gå til tilstand 12
+    RelativeLocationPath  gå til tilstand 13
+    StepExpr              gå til tilstand 14
+    AxisStep              gå til tilstand 15
+    AxisSpecifier         gå til tilstand 16
+    QName                 gå til tilstand 17
+    Number                gå til tilstand 18
+    PrimaryExpr           gå til tilstand 19
+    FunctionCall          gå til tilstand 20
+    ContextItemExpr       gå til tilstand 21
+    Constructor           gå til tilstand 22
+    DirectConstructor     gå til tilstand 23
+    DirElemConstructor    gå til tilstand 24
+    OrExpr                gå til tilstand 25
+    AndExpr               gå til tilstand 26
+    EqualityExpr          gå til tilstand 27
+    RelationalExpr        gå til tilstand 28
+    AdditiveExpr          gå til tilstand 29
+    MultiplicativeExpr    gå til tilstand 30
+    UnaryExpr             gå til tilstand 31
+    ValueExpr             gå til tilstand 32
+    UnionExpr             gå til tilstand 33
+    IntersectExceptExpr   gå til tilstand 34
+    PathExpr              gå til tilstand 35
+    CastExpr              gå til tilstand 36
+    CastableExpr          gå til tilstand 37
+    TreatExpr             gå til tilstand 38
+    InstanceofExpr        gå til tilstand 39
+    FilterExpr            gå til tilstand 40
+
+
+tilstand 121
+
+   40 FunctionCall: QName '(' ExprList ')' .
+
+    $default  reduksjon ved hjelp av regel 40 (FunctionCall)
+
+
+tilstand 122
+
+   30 Predicate: '[' PredicateExpr ']' .
+
+    $default  reduksjon ved hjelp av regel 30 (Predicate)
+
+
+tilstand 123
+
+   86 SequenceType: EMPTY_SEQUENCE_KW . '(' ')'
+
+    '('  skift og gå til tilstand 134
+
+
+tilstand 124
+
+   89 ItemType: KindTest .
+
+    $default  reduksjon ved hjelp av regel 89 (ItemType)
+
+
+tilstand 125
+
+   85 InstanceofExpr: TreatExpr INSTANCE_KW OF_KW SequenceType .
+
+    $default  reduksjon ved hjelp av regel 85 (InstanceofExpr)
+
+
+tilstand 126
+
+   87 SequenceType: ItemType .
+   88             | ItemType . OccurrenceIndicator
+
+    '*'  skift og gå til tilstand 135
+    '+'  skift og gå til tilstand 136
+    '?'  skift og gå til tilstand 137
+
+    '*'       [reduksjon ved hjelp av regel 87 (SequenceType)]
+    '+'       [reduksjon ved hjelp av regel 87 (SequenceType)]
+    $default  reduksjon ved hjelp av regel 87 (SequenceType)
+
+    OccurrenceIndicator  gå til tilstand 138
+
+
+tilstand 127
+
+   50 DirAttribute: QName EQ STRING_LITERAL .
+
+    $default  reduksjon ved hjelp av regel 50 (DirAttribute)
+
+
+tilstand 128
+
+   53 DirElemContent: DirectConstructor .
+
+    $default  reduksjon ved hjelp av regel 53 (DirElemContent)
+
+
+tilstand 129
+
+   45 DirElemConstructor: '<' QName DirAttributeList_opt '>' DirElemContents . ELEMENT_END QName '>'
+   52 DirElemContents: DirElemContents . DirElemContent
+
+    ELEMENT_END  skift og gå til tilstand 139
+    '<'          skift og gå til tilstand 6
+
+    DirectConstructor   gå til tilstand 128
+    DirElemConstructor  gå til tilstand 24
+    DirElemContent      gå til tilstand 140
+
+
+tilstand 130
+
+   51 DirElemContents: DirElemContent .
+
+    $default  reduksjon ved hjelp av regel 51 (DirElemContents)
+
+
+tilstand 131
+
+   20 KindTest: ELEMENT_KW '(' QNameOrWildcard ',' . QName ')'
+
+    NCName  skift og gå til tilstand 2
+
+    QName  gå til tilstand 141
+
+
+tilstand 132
+
+   19 KindTest: ELEMENT_KW '(' QNameOrWildcard ')' .
+
+    $default  reduksjon ved hjelp av regel 19 (KindTest)
+
+
+tilstand 133
+
+   39 ExprList: ExprList ',' ExprSingle .
+
+    $default  reduksjon ved hjelp av regel 39 (ExprList)
+
+
+tilstand 134
+
+   86 SequenceType: EMPTY_SEQUENCE_KW '(' . ')'
+
+    ')'  skift og gå til tilstand 142
+
+
+tilstand 135
+
+   91 OccurrenceIndicator: '*' .
+
+    $default  reduksjon ved hjelp av regel 91 (OccurrenceIndicator)
+
+
+tilstand 136
+
+   92 OccurrenceIndicator: '+' .
+
+    $default  reduksjon ved hjelp av regel 92 (OccurrenceIndicator)
+
+
+tilstand 137
+
+   90 OccurrenceIndicator: '?' .
+
+    $default  reduksjon ved hjelp av regel 90 (OccurrenceIndicator)
+
+
+tilstand 138
+
+   88 SequenceType: ItemType OccurrenceIndicator .
+
+    $default  reduksjon ved hjelp av regel 88 (SequenceType)
+
+
+tilstand 139
+
+   45 DirElemConstructor: '<' QName DirAttributeList_opt '>' DirElemContents ELEMENT_END . QName '>'
+
+    NCName  skift og gå til tilstand 2
+
+    QName  gå til tilstand 143
+
+
+tilstand 140
+
+   52 DirElemContents: DirElemContents DirElemContent .
+
+    $default  reduksjon ved hjelp av regel 52 (DirElemContents)
+
+
+tilstand 141
+
+   20 KindTest: ELEMENT_KW '(' QNameOrWildcard ',' QName . ')'
+
+    ')'  skift og gå til tilstand 144
+
+
+tilstand 142
+
+   86 SequenceType: EMPTY_SEQUENCE_KW '(' ')' .
+
+    $default  reduksjon ved hjelp av regel 86 (SequenceType)
+
+
+tilstand 143
+
+   45 DirElemConstructor: '<' QName DirAttributeList_opt '>' DirElemContents ELEMENT_END QName . '>'
+
+    '>'  skift og gå til tilstand 145
+
+
+tilstand 144
+
+   20 KindTest: ELEMENT_KW '(' QNameOrWildcard ',' QName ')' .
+
+    $default  reduksjon ved hjelp av regel 20 (KindTest)
+
+
+tilstand 145
+
+   45 DirElemConstructor: '<' QName DirAttributeList_opt '>' DirElemContents ELEMENT_END QName '>' .
+
+    $default  reduksjon ved hjelp av regel 45 (DirElemConstructor)

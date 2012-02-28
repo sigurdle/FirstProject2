@@ -1,0 +1,21 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::sql::ast::DataType",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Object",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_object.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::__gc_alloc",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1____gc__alloc.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::sql::ast::CharDataType",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1sql_1_1ast_1_1_char_data_type.html"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="System::sql::ast::CharVaryingDataType",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1sql_1_1ast_1_1_char_varying_data_type.html"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="System::sql::ast::NumericDataType",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1sql_1_1ast_1_1_numeric_data_type.html"];
+  Node1 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="System::sql::ast::VarCharDataType",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1sql_1_1ast_1_1_var_char_data_type.html"];
+  Node1 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="System::sql::ast::XMLDataType",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1sql_1_1ast_1_1_x_m_l_data_type.html"];
+}

@@ -1,0 +1,14 @@
+<filter name="AVI Decoder">
+ <inputpin name="Video Input" minOccurs="1" maxOccurs="1">
+   <mediatypes>
+	 <mediatype majortype="Video" />
+ 	</mediatypes>
+ </inputpin>
+
+ <outputpin name="Video Output" minOccurs="1" maxOccurs="1">
+	<mediatypes>
+	 <mediatype majortype="Video" />
+	</mediatypes>
+ </outputpin>
+
+</filter>

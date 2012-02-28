@@ -1,0 +1,167 @@
+#ifndef x3d_X3DNode_h
+#define x3d_X3DNode_h
+
+namespace System
+{
+
+namespace x3d
+{
+
+class X3DEXT X3DNode : public Object
+{
+public:
+	virtual ~X3DNode();
+
+	virtual X3DNode* GetNode()
+	{
+		return this;
+	}
+
+	virtual void Change(X3DField* pSourceField);
+	virtual void Set(X3DField* pSourceField, X3DField* pDestField);
+	virtual void OnFieldChanged(X3DField* pField);
+
+	virtual void DoTime(double gt)
+	{
+	}
+
+	NodeType* getType() const throw ();
+
+	String getTypeName() const throw ()
+	{
+		return getType()->get_name();
+	}
+
+	virtual uint getFieldCount() throw();
+	virtual X3DField* getField(uint index) throw (ArgumentOutOfRangeException*);
+	virtual X3DField* getField(StringIn name) throw ();
+
+	virtual X3DFieldDefinitions* getFieldDefinitions()
+	{
+		return getType()->getFieldDefinitions();
+	}
+
+	String getNodeName() const throw ()
+	{
+		return getType()->get_name();
+	}
+
+//	virtual String toVRMLString();
+//	virtual String toXMLString();
+	virtual String ToString() override;
+
+	virtual IO::TextWriter& WriteVRML(IO::TextWriter& stream);
+
+#ifndef __LERSTAD__
+//	X3DSFIELD(TypedSFNode<X3DMetadataObject*>, metadata, Metadata)
+	X3DSFIELD(TypedSFNode<X3DNode*>, metadata, Metadata)
+#else
+	X3DSFIELD(SFNode, metadata, Metadata)
+#endif
+
+#if 0
+///	X3DMetadataObject* getMetadata() const
+	X3DMetadataObject* getMetadata()
+	{
+		return dynamic_cast<X3DMetadataObject*>(m_metadata->getValue());
+//		return m_metadata->getValue();
+	}
+
+	void setMetadata(X3DMetadataObject* metadata);
+#endif
+#if 0
+
+	TypedSFNode<X3DNode*>* getMetadataField()
+	{
+		return m_metadata;
+	}
+#endif
+
+	MFNode* GetFirstParentOfFieldName(StringIn fieldname);
+	X3DNode* GetFirstParentNodeOfFieldName(StringIn fieldname);
+
+	virtual void addActors()
+	{
+	}
+
+	virtual void UpdatePos()
+	{
+	}
+
+	virtual uint32 GetLights()
+	{
+		return 0;
+	}
+
+	String getDefName()
+	{
+		return m_name;
+	}
+
+	Event2<X3DNode*, X3DField*>& get_FieldChanged()
+	{
+		return FieldChanged;
+	}
+
+	static NodeType* GetNodeType();
+	//static X3DFieldDefinition* get_metadataFieldDef();
+
+	bool m_selected;	// TODO? not like this?
+
+protected:
+
+	CTOR X3DNode(NodeType* nodeType);
+
+	friend class X3DScene;
+	friend class SFNode;
+	friend class MFNode;
+	friend class NodeType;
+	friend class X3DPrototypeInstance;
+	friend class SAIProtoDeclaration;
+	friend class VRMLLoader;
+	friend class COGLSceneRenderer;
+
+	friend void DrawGlobalLightsChildren(X3DDrawContext* pDC, MFNode* children);
+	friend int HitTestChildren(MFNode* children, const D3DXMATRIX& projection, const D3DXMATRIX& view, const D3DXMATRIX& model, const D3D10_VIEWPORT& vp, int type, Vec2f mousepos, Vec3f pos, IHitTest* hitTest);
+
+	void RemoveParent(MFNode* mfnode);
+
+/* Fields:
+	SFNode [in,out] metadata NULL [X3DMetadataObject]
+*/
+
+//	TypedSFNode<X3DMetadataObject*>* m_metadata;
+//	TypedSFNode<X3DNode*>* m_metadata;
+
+public:
+	X3DScene* m_scene;
+	X3DLayerNode* m_ownerLayer;
+
+protected:
+	String m_name;
+	Event2<X3DNode*, X3DField*> FieldChanged;
+
+public:	// TODO: protected
+	vector<MFNode*> m_parents;
+//	vector<X3DField*> m_fields;
+//	vector<int> m_fields;
+};
+
+class X3DEXT X3DChildNode : public X3DNode
+{
+protected:
+	CTOR X3DChildNode(NodeType* nodeType);
+
+public:
+
+	static NodeType* GetNodeType();
+};
+
+X3DEXT Object* asxml(X3DNode* node);
+X3DEXT void asxml(IXmlWriter* xmlwriter, X3DNode* x3dnode);
+X3DEXT TextDocument* asvrml(X3DNode* node);
+
+}	// x3d
+}	// System
+
+#endif // x3d_X3DNode_h

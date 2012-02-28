@@ -1,0 +1,27 @@
+var class_system_1_1_i_o_1_1_text_reader =
+[
+    [ "TextReader", "class_system_1_1_i_o_1_1_text_reader.html#a840251ea6298bdd2f9b2e52037bfee27", null ],
+    [ "ReadBool", "class_system_1_1_i_o_1_1_text_reader.html#adb1607fd93bef5c01f9d215ae861083a", null ],
+    [ "ReadChar", "class_system_1_1_i_o_1_1_text_reader.html#a698c378682c9eda5863f269f36fdbf24", null ],
+    [ "ReadCharacter", "class_system_1_1_i_o_1_1_text_reader.html#af0fa8cdf06722af1b4824fd542a0c0ab", null ],
+    [ "ReadChars", "class_system_1_1_i_o_1_1_text_reader.html#a4a776424d2be2684fdcc9a29c780bd31", null ],
+    [ "ReadChars", "class_system_1_1_i_o_1_1_text_reader.html#ab6d2c9e3bc465fd39982930a30f21968", null ],
+    [ "ReadChars32", "class_system_1_1_i_o_1_1_text_reader.html#af0f5e55f2e45fd58b6a0d8a3bbb77513", null ],
+    [ "ReadChars32", "class_system_1_1_i_o_1_1_text_reader.html#a74ebcbb30064858086d70ef6590e7a07", null ],
+    [ "ReadDouble", "class_system_1_1_i_o_1_1_text_reader.html#ac8d4361ce99064bae5c288d805c1ad55", null ],
+    [ "ReadFloat", "class_system_1_1_i_o_1_1_text_reader.html#a80200622af350f54d7c170267a5db929", null ],
+    [ "ReadInt", "class_system_1_1_i_o_1_1_text_reader.html#a64f3631064d85de4c854e4fddbaa6fa8", null ],
+    [ "ReadInt64", "class_system_1_1_i_o_1_1_text_reader.html#ab6e73428615c469f1743e8940a52c514", null ],
+    [ "ReadLine", "class_system_1_1_i_o_1_1_text_reader.html#ae2941d9de2cc968f352fe679635d0d8c", null ],
+    [ "ReadLong", "class_system_1_1_i_o_1_1_text_reader.html#a494f471e86598606b804faa5d4a9a4c9", null ],
+    [ "ReadSByte", "class_system_1_1_i_o_1_1_text_reader.html#abd331b53bf5f06dd23bd4b42a43516f7", null ],
+    [ "ReadShort", "class_system_1_1_i_o_1_1_text_reader.html#a6c28b7c4e54c76b70c9794fe2a8d2e61", null ],
+    [ "ReadToEof", "class_system_1_1_i_o_1_1_text_reader.html#aa58357d7e0d03f05731ea214ce3a0b64", null ],
+    [ "ReadToEol", "class_system_1_1_i_o_1_1_text_reader.html#a9a319609b9108f242439e47910423218", null ],
+    [ "ReadUByte", "class_system_1_1_i_o_1_1_text_reader.html#ad8de8bcf24b9afc967ae05fba4553ce2", null ],
+    [ "ReadUInt", "class_system_1_1_i_o_1_1_text_reader.html#af86d813bd99331b3b4242b0b0bf926a4", null ],
+    [ "ReadUInt64", "class_system_1_1_i_o_1_1_text_reader.html#ad74564905c2b05bb52785ea739124c4f", null ],
+    [ "ReadULong", "class_system_1_1_i_o_1_1_text_reader.html#ad9877ad63ede106146eedc861409047b", null ],
+    [ "ReadUShort", "class_system_1_1_i_o_1_1_text_reader.html#af1729dcb1359cb03480af62fe3fbc9ed", null ],
+    [ "ReadWChar", "class_system_1_1_i_o_1_1_text_reader.html#a4d1d8083b3189f7fdfd3cb5047808b38", null ]
+];

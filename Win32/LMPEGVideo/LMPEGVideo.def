@@ -1,0 +1,5 @@
+; LMPEGVideo.def : Declares the module parameters.
+
+LIBRARY      "LMPEGVideo.DLL"
+
+EXPORTS

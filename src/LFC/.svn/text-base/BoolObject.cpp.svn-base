@@ -1,0 +1,18 @@
+#include "stdafx.h"
+#include "LFC.h"
+
+namespace System
+{
+
+String BoolObject::ToString()
+{
+	return m_value? "true": "false";
+}
+
+BoolObject BoolObject::s_values[2] =
+{
+	BoolObject(false),
+	BoolObject(true),
+};
+
+}	// System

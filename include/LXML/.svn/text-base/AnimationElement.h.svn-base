@@ -1,0 +1,613 @@
+#ifndef Web_AnimationElement_h
+#define Web_AnimationElement_h
+
+namespace System
+{
+namespace Web
+{
+
+class EnumerationAdditiveType :
+	public CSingleObject
+{
+public:
+
+	CTOR EnumerationAdditiveType()
+	{
+		m_value = (AdditiveType)-1;	// undefined
+	}
+
+	operator AdditiveType ()
+	{
+		return m_value;
+	}
+
+	EnumerationAdditiveType& operator = (AdditiveType value)
+	{
+		m_value = value;
+		return *this;
+	}
+
+	EnumerationAdditiveType& operator += (AdditiveType value)
+	{
+		m_value = value;
+		return *this;
+	}
+
+	void setStringValue(StringIn str)
+	{
+		if (str == L"sum")
+			m_value = ADDITIVE_SUM;
+		else if (str == L"replace")
+			m_value = ADDITIVE_REPLACE;
+		else
+			ASSERT(0);
+	}
+
+	String getStringValue()
+	{
+		ASSERT(0);
+		return null;
+	}
+
+	void InterpolateValue(EnumerationAdditiveType& a, EnumerationAdditiveType& b, double t)
+	{
+		ASSERT(0);
+	}
+
+	AdditiveType m_value;
+};
+
+class EnumerationAccumulateType :
+	public CSingleObject
+{
+public:
+
+	CTOR EnumerationAccumulateType()
+	{
+		m_value = (AccumulateType)-1;	// undefined
+	}
+
+	operator AccumulateType ()
+	{
+		return m_value;
+	}
+
+	EnumerationAccumulateType& operator = (AccumulateType value)
+	{
+		m_value = value;
+		return *this;
+	}
+
+	EnumerationAccumulateType& operator += (AccumulateType value)
+	{
+		m_value = value;
+		return *this;
+	}
+
+	void setStringValue(StringIn str)
+	{
+		if (str == L"none")
+			m_value = ACCUMULATE_NONE;
+		else if (str == L"sum")
+			m_value = ACCUMULATE_SUM;
+		else
+			ASSERT(0);
+	}
+
+	String getStringValue()
+	{
+		if (m_value == ACCUMULATE_NONE)
+			return WSTR("none");
+		else if (m_value == ACCUMULATE_SUM)
+			return WSTR("sum");
+		else
+			ASSERT(0);
+		return null;
+	}
+
+	void InterpolateValue(EnumerationAccumulateType& a, EnumerationAccumulateType& b, double t)
+	{
+		ASSERT(0);
+	}
+
+	AccumulateType m_value;
+};
+
+// Base interface for all kinds of animations, including <set>
+
+class WEBEXT ElementAnimation : public ElementTime
+{
+public:
+	CTOR ElementAnimation(Element* ownerElement);
+	~ElementAnimation();
+
+	virtual void OnSetTargetElement(Element* targetElement) = 0;
+
+	virtual Object* GetValueObject(Object* prevValue, Object* baseValue) = 0;
+
+	double m_currentSimpleTime;
+
+	bool m_bInError;
+
+//	CValueType* m_animValue;
+	Object* m_currentValue;	// TODO remove ??
+//	CValueType* m_currentValue;	// TODO remove ??
+
+	CAttributeType* m_pAttributeType;
+	CATAttr* m_animatedAttr;
+
+	int m_reentrance;
+
+	virtual void SetValuesFromAttributes() = 0;
+	virtual void DoAnimationForElement(Element* target) = 0;
+	virtual void DoAnimationForElementAttr(CATAttr* pAnimatedAttr)
+	{
+	}
+
+//	HRESULT SetValuesFromAttributesElement(Element* thisNode);
+
+#if 0	// We don't have any timed children (so this method isn't here)
+	virtual void RecalculateTime()	// Called when one of the children have changed
+	{
+		Init();
+		CalculateSimpleDuration();
+
+		ILElementTimeContainer* parentTimeContainer;
+		get_parentTimeContainer(&parentTimeContainer);
+
+		// Recurse to parent
+		if (parentTimeContainer)
+		{
+			ASSERT(0);
+			//CLElementTimeContainerImpl*parentTimeContainer)->RecalculateTime();
+		}
+
+		Init2();
+	}
+#endif
+
+	virtual void CalculateTimeBeforeParent()	// Called by parent before parent knows its simple duration
+	{
+		Init();
+		CalculateSimpleDuration();
+	}
+
+	virtual void CalculateTimeAfterParent()	// Called by parent after parent knows its simple duration
+	{
+		Init2();	// get first interval
+	}
+
+	Element* get_targetElement();
+	Attr* get_xmlAttribute();
+
+	String get_attributeName()
+	{
+		return m_ownerElement->getAttribute(WSTR("attributeName"));
+	}
+	
+	void set_attributeName(StringIn newVal)
+	{
+		m_ownerElement->setAttribute(WSTR("attributeName"), newVal);
+	}
+
+	AttributeType get_attributeType()
+	{
+		String attributeType = m_ownerElement->getAttribute(WSTR("attributeType"));
+
+		if (attributeType == null)
+		{
+			return ATTRIBUTE_TYPE_AUTO;
+		}
+		else
+		{
+			if (attributeType.CompareNoCase(L"XML") == 0)
+				return ATTRIBUTE_TYPE_XML;
+			else if (attributeType.CompareNoCase(L"CSS") == 0)
+				return ATTRIBUTE_TYPE_CSS;
+			else // if (wcsicmp(attributeType, WSTR("AUTO")))
+				return ATTRIBUTE_TYPE_AUTO;
+		}
+	}
+	void set_attributeType(AttributeType newVal)
+	{
+		if (newVal == ATTRIBUTE_TYPE_XML)
+			m_ownerElement->setAttribute(WSTR("attributeType"), WSTR("XML"));
+		else if (newVal == ATTRIBUTE_TYPE_CSS)
+			m_ownerElement->setAttribute(WSTR("attributeType"), WSTR("CSS"));
+		else if (newVal == ATTRIBUTE_TYPE_AUTO)
+			m_ownerElement->setAttribute(WSTR("attributeType"), WSTR("auto"));
+		else
+			THROW(-1);
+	}
+
+	virtual void InactiveToActive();
+	virtual void ActiveToInactive();
+
+	Attr* m_attributeTypeAttr;
+	Attr* m_attributeNameAttr;
+
+	Element* m_targetElement;
+	Attr* m_xmlAttribute;
+#ifndef __LERSTAD__
+	list<ElementAnimation*>::iterator m_inlist;
+#else
+	Object* m_inlist;
+#endif
+};
+
+#if 0
+class AnimationElementImpl : public ElementAnimation
+{
+public:
+
+	/*
+	int FinalConstruct()
+	{
+		HRESULT hr;
+
+		hr = CLElementTime<T, IBase>::FinalConstruct();
+		if (FAILED(hr)) return hr;
+
+		return 0;
+	}
+
+	void FinalRelease()
+	{
+		CLElementTime<T, IBase>::FinalRelease();
+	}
+	*/
+
+//	virtual void DoAnimationForElement(Element* target);
+
+//
+
+};
+#endif
+
+//int GetSemicolonSepStringArray(BSTR str, CArray<CWCharString,CWCharString>& values);
+//int GetSemicolonOrSpaceSepNumberArray(BSTR str, CArray <double,double>& values);
+
+class WEBEXT KeySpline : public Object
+{
+public:
+	CTOR KeySpline()
+	{
+		m_x1 = 0;
+		m_y1 = 0;
+		m_x2 = 0;
+		m_y2 = 0;
+	}
+
+	double m_x1;
+	double m_y1;
+	double m_x2;
+	double m_y2;
+
+public:
+	double get_x1() const
+	{
+		return m_x1;
+	}
+	void set_x1(/*[in]*/ double newVal)
+	{
+		m_x1 = newVal;
+	}
+	double get_y1() const
+	{
+		return m_y1;
+	}
+	void set_y1(/*[in]*/ double newVal)
+	{
+		m_y1 = newVal;
+	}
+	double get_x2() const
+	{
+		return m_x2;
+	}
+	void set_x2(/*[in]*/ double newVal)
+	{
+		m_x2 = newVal;
+	}
+	double get_y2() const
+	{
+		return m_y2;
+	}
+	void set_y2(/*[in]*/ double newVal)
+	{
+		m_y2 = newVal;
+	}
+};
+
+WEBEXT int ParseKeySplines(const WCHAR* s, vector<KeySpline*>& keySplines);
+
+// base class for all animateXXX elements
+class WEBEXT ElementAnimate :
+	public ElementAnimation,
+//	public IAnimateXXX,
+	public IValueTypeListener
+{
+public:
+	CTOR ElementAnimate(Element* ownerElement, CalcModeType calcMode = CALCMODE_LINEAR);
+
+// CValueTypeListener
+	virtual void OnValueTypeChange(CValueType* pValue);
+
+	virtual Object* GetValueObject(Object* prevValue, Object* baseValue);
+
+//
+	virtual void SetValuesFromAttributes();
+	virtual void DoAnimationForElementAttr(CATAttr* pAnimatedAttr);
+	virtual void DoAnimationForElement(Element* target);
+
+	AdditiveType get_additive() const
+	{
+		return m_additive;
+	}
+
+	void set_additive(AdditiveType newVal)
+	{
+		ASSERT(0);
+	}
+
+	AccumulateType get_accumulate() const
+	{
+		return m_accumulate;
+	}
+
+	void set_accumulate(AccumulateType newVal)
+	{
+		ASSERT(0);
+	}
+
+	CalcModeType get_calcMode() const
+	{
+		return m_calcMode;
+	}
+
+	void set_calcMode(CalcModeType newVal)
+	{
+		ASSERT(0);
+	}
+
+	// IAnimateXXX
+	ISMILAttributeValue* GetCurrentValue()
+	{
+		ASSERT(0);
+		return NULL;
+		//*pVal = m_currentValue;
+	}
+
+#if 0
+	STDMETHODIMP GetFromValue(/*[out,retval]*/ ILSMILAttributeValue* *pVal)
+	{
+		if (pVal == NULL) return E_POINTER;
+		*pVal = m_fromValue;
+		if (*pVal) (*pVal)->AddRef();
+		return S_OK;
+	}
+
+	STDMETHODIMP GetToValue(/*[out,retval]*/ ILSMILAttributeValue* *pVal)
+	{
+		if (pVal == NULL) return E_POINTER;
+		*pVal = m_toValue;
+		if (*pVal) (*pVal)->AddRef();
+		return S_OK;
+	}
+
+	STDMETHODIMP GetByValue(/*[out,retval]*/ ILSMILAttributeValue* *pVal)
+	{
+		if (pVal == NULL) return E_POINTER;
+		*pVal = m_byValue;
+		if (*pVal) (*pVal)->AddRef();
+		return S_OK;
+	}
+#endif
+
+	size_t GetNValues()
+	{
+		return m_valuesValues.GetSize();
+	}
+
+	Object* GetValue(int index)
+	{
+		if (index == -3)
+		{
+			return m_fromValue;
+		}
+		else if (index == -2)
+		{
+			return m_toValue;
+		}
+		else if (index == -1)
+		{
+			return m_byValue;
+		}
+		else if ((unsigned int)index < m_valuesValues.size())
+		{
+			return m_valuesValues[index];
+		}
+
+		return NULL;
+	}
+
+	ErrorCode GetKeySpline(/*[in]*/ long index, /*[out,retval]*/ IKeySpline* *pVal)
+	{
+		ASSERT(0);
+#if 0
+		if (pVal == NULL) return E_POINTER;
+		if (index >= 0 && index < m_keySplines.GetSize())
+		{
+			*pVal = m_keySplines[index];
+			(*pVal)->AddRef();
+		}
+		else
+			*pVal = NULL;
+#endif
+		return Success;
+	}
+
+	ErrorCode InsertKeyTimeValue(/*[in]*/ double keyTime, StringIn value, /*[out,retval]*/ long *pindex);
+	ErrorCode RemoveKeyTime(/*[in]*/ long index);
+
+	void DoAnimationForElement2(CATAttr* pAnimatedAttr, bool& bAdditive);
+
+	void OnSetTargetElement(Element* targetElement);
+
+private:
+
+	AdditiveType m_additive;
+	AccumulateType m_accumulate;
+	CalcModeType m_calcMode;
+
+protected:	// TODO
+
+	IValueHandler* m_valueHandler;
+
+	vector<double> m_keyTimes;
+	vector<KeySpline*> m_keySplines;
+
+	// These depend on the element/property being animated
+	/*
+	CValueType* m_fromValue;
+	CValueType* m_toValue;
+	CValueType* m_byValue;
+	vector<CValueType*, __gc_allocator> m_valuesValues;
+	*/
+	Object* m_fromValue;
+	Object* m_toValue;
+	Object* m_byValue;
+	vector<Object*> m_valuesValues;
+
+	Attr* m_additiveAttr;
+	Attr* m_accumulateAttr;
+	Attr* m_calcModeAttr;
+	Attr* m_fromAttr;
+	Attr* m_toAttr;
+	Attr* m_byAttr;
+	Attr* m_valuesAttr;
+	Attr* m_keyTimesAttr;
+	Attr* m_keySplinesAttr;
+
+	/*
+	CXMLAttr2T<CreateInstanceT<CValueTypeWrapper<CreateInstanceT<EnumerationAdditiveType> > > >* m_additive;
+	CXMLAttr2T<CreateInstanceT<CValueTypeWrapper<CreateInstanceT<EnumerationAccumulateType> > > >* m_accumulate;
+	CXMLAttr2T<CreateInstanceT<CValueTypeWrapper<CreateInstanceT<EnumerationCalcModeType> > > >* m_calcMode;
+	*/
+};
+
+/*
+// Implementation of SMIL and SVG <animate> element
+class AnimateElementImpl : public ElementAnimateImpl
+{
+public:
+};
+*/
+
+// Implementation of SMIL and SVG <set> element
+class WEBEXT ElementSet :
+	public ElementAnimation,
+	public IValueTypeListener
+{
+public:
+	CTOR ElementSet(Element* ownerElement);
+
+	virtual void OnSetTargetElement(Element* targetElement);
+
+	virtual Object* GetValueObject(Object* prevValue, Object* baseValue);
+
+	CValueType* m_toValue;
+
+	virtual void DoAnimationForElementAttr(CATAttr* pAnimatedAttr);
+	virtual void DoAnimationForElement(Element* target);
+
+	virtual void SetValuesFromAttributes()
+	{
+		ASSERT(0);
+#if 0
+		Element* thisNode = static_cast<T*>(this);//->GetUnknown();
+
+		CComPtr<Element> target;
+		get_targetElement(&target);
+
+		CComQIPtr<ILSMILAnimationTarget, &IID_ILSMILAnimationTarget> animtarget((IUnknown*)target);
+
+		CComBSTR attrName;
+		thisNode->getAttribute(L"attributeName", &attrName);
+
+		m_pAttributeType = NULL;	// The type of property being animated (factory class for creating new values of that type)
+		m_animatedAttr = NULL;	// The attribute being animated
+
+		BSTR attrType = NULL;
+		thisNode->getAttribute(L"attributeType", &attrType);
+
+		CAnimationTarget* pAnimationTarget = static_cast<CAnimationTarget*>(animtarget.p);
+
+		if ((attrType == NULL) || !wcscmp(attrType, L"auto"))
+		{
+			int propertyIndex = GetCSSStyleIndex(attrName);
+			if (propertyIndex >= 0)
+			{
+				CCSSPropertyType* pPropertyType = new CCSSPropertyType;
+				pPropertyType->m_propertyIndex = propertyIndex;
+				m_pAttributeType = pPropertyType;
+			}
+			else
+			{
+				m_animatedAttr = CComQIPtr<CLDOMElementImplImpl, &IID_IUnknown/*TODO*/>((IUnknown*)target)->GetXMLAttribute(attrName);
+				m_pAttributeType = (CATXMLAttr*)m_animatedAttr;
+			}
+		}
+		else if (!wcscmp(attrType, L"CSS"))
+		{
+			int propertyIndex = GetCSSStyleIndex(attrName);
+			if (propertyIndex >= 0)
+			{
+				CCSSPropertyType* pPropertyType = new CCSSPropertyType;
+				pPropertyType->m_propertyIndex = propertyIndex;
+				m_pAttributeType = pPropertyType;
+			}
+		}
+		else if (!wcscmp(attrType, L"XML"))
+		{
+			m_animatedAttr = CComQIPtr<CLDOMElementImplImpl, &IID_IUnknown/*TODO*/>(target)->GetXMLAttribute(attrName);
+			m_pAttributeType = (CATXMLAttr*)m_animatedAttr;
+		}
+
+		SysFreeString(attrType);
+
+		if (m_pAttributeType)
+		{
+			CComBSTR tostr;
+			thisNode->getAttribute(L"to", &tostr);
+
+			m_bInError = FALSE;
+
+			if ((BSTR)tostr != NULL)
+			{
+				m_toValue = m_pAttributeType->NewVal();
+				*m_toValue = _bstr_t(tostr);
+
+				m_toValue->m_pListener = this;
+			}
+
+			m_currentValue = m_pAttributeType->NewVal();
+		}
+#endif
+	}
+
+// CValueTypeListener
+	virtual void OnValueTypeChange(CValueType* pValue)
+	{
+		if (pValue == m_toValue)
+		{
+			m_ownerElement->setAttribute(WSTR("to"), m_toValue->getStringValue());
+		}
+		else
+			ASSERT(0);
+	}
+};
+
+}	// Web
+}
+
+#endif	// __ANIMATIONELEMENT_H

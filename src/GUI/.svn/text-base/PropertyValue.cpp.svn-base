@@ -1,0 +1,307 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+Object PropertyValue::UnsetValue;
+
+PropertyValue::PropertyValue(DependencyObject* owner, DependencyProperty* dp) :
+	m_owner(owner),
+	m_dp(dp),
+	m_localValue(&UnsetValue),
+	m_computedValue(&UnsetValue)
+{
+}
+
+Type* PropertyValue::GetOutputType()
+{
+	return m_dp->get_Type().GetType();
+}
+
+DependencyProperty* PropertyValue::GetPropertyDefinition()
+{
+	return m_dp;
+}
+
+DependencyObject* PropertyValue::GetOwner()
+{
+	return m_owner;
+}
+
+void PropertyValue::OnObjectChanged(Object* object)
+{
+	OnComputedValueChanged();
+}
+
+void PropertyValue::OnComputedValueChanged()
+{
+	if (m_valueChanged == false)
+	{
+		m_valueChanged = true;
+		m_owner->OnComputedPropertyValueChanged(this, false);
+		m_valueChanged = false;
+	}
+}
+
+void PropertyValue::OnComputedValueChanging(Object* oldValue, Object* newValue)
+{
+	if (m_valueChanged == false)
+	{
+		m_valueChanged = true;
+		m_owner->OnComputedPropertyValueChanging(this, oldValue, newValue, false);
+		m_valueChanged = false;
+	}
+}
+
+Object* PropertyValue::GetComputedObjectValue()
+{
+	if (m_computedValue == &UnsetValue)
+	{
+		Object* localValue = m_owner->GetLocalPropertyValue(this);
+		if (localValue != &UnsetValue)
+		{
+			m_computedValue = localValue;
+		}
+		else if (m_inBinding)
+		{
+			try
+			{
+				m_computedValue = m_inBinding->GetOutput(this);
+			}
+			catch (Exception* e)
+			{
+				// TODO
+				m_computedValue = FloatObject::GetObject(0);
+			}
+
+			// TODO... 
+
+			PropertyMetadata* metadata = m_dp->get_Metadata();
+			if (metadata && metadata->m_notifyOnValueChange)
+			{
+				// Setup to listen for changes to the object
+				DependencyObject* depObject = dynamic_cast<DependencyObject*>(m_computedValue);
+				if (depObject)
+				{
+					depObject->AddNotify(this);
+				}
+			}
+		}
+		else if (m_owner->HasComputedPropertyValue(m_dp))
+		{
+			m_computedValue = m_owner->GetComputedPropertyObjectValue2(m_dp);
+		}
+		else
+		{
+			m_computedValue = GetPropertyDefinition()->get_DefaultValue();
+		}
+	}
+
+	VERIFY(m_computedValue != &UnsetValue);
+	return m_computedValue;
+}
+
+Object* PropertyValue::GetLocalObjectValue()
+{
+	return m_owner->GetLocalPropertyValue(this);
+}
+
+void PropertyValue::SetLocalObjectValue(Object* localValue)
+{
+	// TODO
+	//m_owner->SetLocalPropertyValue(this);
+	m_localValue = localValue;
+
+	PropertyMetadata* metadata = m_dp->get_Metadata();
+	if (metadata && metadata->m_notifyOnValueChange)
+	{
+		// Setup to listen for changes to the object
+		DependencyObject* depObject = dynamic_cast<DependencyObject*>(m_localValue);
+		if (depObject)
+		{
+			depObject->AddNotify(this);
+		}
+	}
+
+	// TODO, don't update here if in init phase
+
+// TODO, if there are times that computed value isn't set to localValue, then don't need to update anything either
+
+	Object* oldValue = m_computedValue;
+
+	m_computedValue = &UnsetValue;
+	Object* newValue = GetComputedObjectValue();
+	m_computedValue = oldValue;
+
+	OnComputedValueChanging(oldValue, newValue);
+
+	m_computedValue = newValue;
+	OnComputedValueChanged();
+
+	SendComputedValueDownStream();
+}
+
+/*
+
+The difference between UpdateObjectValue and SetOutput is that UpdateObjectValue is called from us, while
+SetOutput comes from one of our outbindings
+*/
+
+void PropertyValue::UpdateObjectValue(Object* value)
+{
+//	SetOutput(NULL, value);
+
+	// If we have our local value alreay set, we replace it with the new value
+	// Also, if we have no incoming, we set the localValue
+
+	Object* localValue = m_owner->GetLocalPropertyValue(this);
+	if (localValue != &UnsetValue || m_inBinding == NULL)
+	{
+		m_localValue = value;	// TODO
+
+	// TODO, if there are times that computed value isn't set to localValue, then don't need to update anything either
+		m_computedValue = &UnsetValue;
+		m_computedValue = GetComputedObjectValue();
+		OnComputedValueChanged();
+
+		SendComputedValueDownStream();
+	}
+	else
+	{
+		m_inBinding->SetOutput(this, value);
+	}
+}
+
+int PropertyValue::SetOutput(IBinding* caller, Object* value)
+{
+	/*
+	if (m_dp == &WindowVisual::ClientWidthProperty)
+	{
+		TRACE("");
+	}
+	*/
+
+//	ASSERT(m_outBindings.find(caller) != m_outBindings.end());
+
+	// If we have our local value alreay set, we replace it with the new value
+	// Also, if we have no incoming, we set the localValue
+
+	Object* localValue = m_owner->GetLocalPropertyValue(this);
+
+	if (localValue != &UnsetValue || m_inBinding == NULL)
+	{
+		m_localValue = value;	// TODO
+	// TODO, if there are times that computed value isn't set to localValue, then don't need to update anything either
+		m_computedValue = &UnsetValue;
+		m_computedValue = GetComputedObjectValue();
+		OnComputedValueChanged();
+
+		SendComputedValueDownStreamExcept(caller);
+	}
+	else
+	{
+		m_inBinding->SetOutput(this, value);
+	}
+	return 0;
+}
+
+Object* PropertyValue::GetOutput(IBinding* caller)
+{
+	return GetComputedObjectValue();
+}
+
+int PropertyValue::SetInput(IBinding* caller, Object* value)
+{
+	/*
+	if (m_dp == &WindowVisual::ClientWidthProperty)
+	{
+		TRACE("");
+	}
+
+	if (m_dp == &RectangleVisual::WidthProperty)
+	{
+		TRACE("");
+	}
+	*/
+
+	if (GetPropertyDefinition()->get_Type().GetType()->get_Kind() == type_class)
+	{
+		ASSERT(value->GetType()->IsDerivedFrom(GetPropertyDefinition()->get_Type().GetType()->GetClass()));
+	}
+
+	ASSERT(caller == m_inBinding);
+
+//	Object* localValue = m_owner->GetLocalPropertyValue(this);
+//	if (localValue == &UnsetValue)
+	if (!m_owner->HasLocalPropertyValue(this))
+	{
+		m_computedValue = value;
+		OnComputedValueChanged();
+		//m_computedValue = &UnsetValue;
+		//m_computedValue = GetComputedObjectValue();
+	}
+
+	SendComputedValueDownStream();
+
+	return 0;
+}
+
+int PropertyValue::SendComputedValueDownStreamExcept(IBinding* exceptThis)
+{
+	int result = 0;
+
+	for (auto it = m_outBindings.begin(); it != m_outBindings.end(); ++it)
+	{
+		IInputBinding* binding = *it;
+
+	//	if (binding != exceptThis)
+		{
+			int result2 = binding->SetInput(this, m_computedValue);
+			if (result2)
+			{
+				++result;
+			}
+		}
+	}
+
+	return result;
+}
+
+void* PropertyValue::Connect(IInputBinding* binding)
+{
+	/*
+	if (!binding->GetOutputType()->IsOfType(GetOutputType()))
+	{
+		ASSERT(0);
+		return NULL;
+	}
+	*/
+	ASSERT(m_outBindings.find(binding) == m_outBindings.end());
+	return m_outBindings.insert(m_outBindings.end(), binding).m_ptr;
+}
+
+void PropertyValue::SetInputBinding(IBinding* inBinding)
+{
+	ASSERT(m_inBinding == NULL);
+
+	if (inBinding == NULL) raise(ArgumentNullException());
+
+	m_inBinding = inBinding;
+	m_inBindingPtr = m_inBinding->Connect(this);
+
+//	Object* localValue = m_owner->GetLocalPropertyValue(this);
+//	if (localValue == &UnsetValue)
+	if (!m_owner->HasLocalPropertyValue(this))
+	{
+		m_computedValue = &UnsetValue;
+		OnComputedValueChanged();
+
+		// TODO, update here, unless in init phase
+	}
+}
+
+}	// Gui
+}	// System

@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/firstproject2/!svn/ver/122/FirstProject2/trunk/src/JSVM
+END
+JSVM.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/firstproject2/!svn/ver/126/FirstProject2/trunk/src/JSVM/JSVM.cpp
+END
+dllmain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/firstproject2/!svn/ver/122/FirstProject2/trunk/src/JSVM/dllmain.cpp
+END
+stdafx.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/firstproject2/!svn/ver/122/FirstProject2/trunk/src/JSVM/stdafx.cpp
+END

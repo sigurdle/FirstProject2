@@ -1,0 +1,28 @@
+var class_system_1_1_n_n_t_p_1_1_news_account =
+[
+    [ "NewsAccount", "class_system_1_1_n_n_t_p_1_1_news_account.html#acc72699ad3b9430cc73763708a82fa79", null ],
+    [ "Authenticate", "class_system_1_1_n_n_t_p_1_1_news_account.html#a3bf0139734ba59144280c3ab964ea461", null ],
+    [ "Connect", "class_system_1_1_n_n_t_p_1_1_news_account.html#ad5cb7c00cecc2a402c1eb5416862ce74", null ],
+    [ "FindNewsGroup", "class_system_1_1_n_n_t_p_1_1_news_account.html#a2635492e39cea0c1c84c98cd546f5268", null ],
+    [ "FindNewsGroups", "class_system_1_1_n_n_t_p_1_1_news_account.html#a355c4b3a407aa9c1a4f7de7fa970d132", null ],
+    [ "get_NewsGroups", "class_system_1_1_n_n_t_p_1_1_news_account.html#a580466c958a7545ab379dd3b72fd2399", null ],
+    [ "get_Port", "class_system_1_1_n_n_t_p_1_1_news_account.html#ae577d4cf8cc527bca39c78d7a2f57a70", null ],
+    [ "get_Response", "class_system_1_1_n_n_t_p_1_1_news_account.html#a55a9fccef6f8923cac067904e2994580", null ],
+    [ "GetArticle", "class_system_1_1_n_n_t_p_1_1_news_account.html#aae4989ee44e444600fad5cceb243590a", null ],
+    [ "GetList", "class_system_1_1_n_n_t_p_1_1_news_account.html#a4f7311235d45ed076c719c4a6dc5132d", null ],
+    [ "Quit", "class_system_1_1_n_n_t_p_1_1_news_account.html#a418ccc0e697aa47225c2c2c68917f363", null ],
+    [ "set_Port", "class_system_1_1_n_n_t_p_1_1_news_account.html#a39768a0995d8afdb3ffd90943362d296", null ],
+    [ "set_Server", "class_system_1_1_n_n_t_p_1_1_news_account.html#a3642b505c9cdd0e8ecca53aefffa3f79", null ],
+    [ "SetAuthInfo", "class_system_1_1_n_n_t_p_1_1_news_account.html#aa71fe0efea27921ec6d89615dd2411fc", null ],
+    [ "SetGroup", "class_system_1_1_n_n_t_p_1_1_news_account.html#a70e7fc22b4792d1f5b3b239e13ac5d13", null ],
+    [ "m_group", "class_system_1_1_n_n_t_p_1_1_news_account.html#ae71a5655e71f44e7d09d629680a2ff93", null ],
+    [ "m_newsgroups", "class_system_1_1_n_n_t_p_1_1_news_account.html#a20c41b69bad72151ad42fbcb593635ec", null ],
+    [ "m_newsgroupsByFullName", "class_system_1_1_n_n_t_p_1_1_news_account.html#a9312331623be05465822037bc36a69b8", null ],
+    [ "m_newsgroupsByPartName", "class_system_1_1_n_n_t_p_1_1_news_account.html#a586cff0f372aad9e1903c09a9729cb28", null ],
+    [ "m_password", "class_system_1_1_n_n_t_p_1_1_news_account.html#a1b4aeb04ca7715a7fa15bd30f0a7f80d", null ],
+    [ "m_port", "class_system_1_1_n_n_t_p_1_1_news_account.html#a77da9718fc8a103201bdd742d0c118a7", null ],
+    [ "m_pSocket", "class_system_1_1_n_n_t_p_1_1_news_account.html#abb37cc7311b71bdd2e4297502e41fbd8", null ],
+    [ "m_response", "class_system_1_1_n_n_t_p_1_1_news_account.html#a76b6a1edd0c7e164d053854ca08b230a", null ],
+    [ "m_server", "class_system_1_1_n_n_t_p_1_1_news_account.html#a0b071c2f7f60af5fd89d8ccab7c655cb", null ],
+    [ "m_username", "class_system_1_1_n_n_t_p_1_1_news_account.html#a84cfb2a12f2de39e89ccfef8bb171d3b", null ]
+];

@@ -1,0 +1,13 @@
+digraph G
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="System::Mpeg4::SampleDescription",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_mpeg4_1_1_sample_description.html"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="System::Mpeg4::MP4ASampleDescription",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_mpeg4_1_1_m_p4_a_sample_description.html"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="System::Mpeg4::MP4SSampleDescription",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_mpeg4_1_1_m_p4_s_sample_description.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="System::Mpeg4::MP4VSampleDescription",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_system_1_1_mpeg4_1_1_m_p4_v_sample_description.html"];
+}

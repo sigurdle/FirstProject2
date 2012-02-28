@@ -1,0 +1,89 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+namespace System
+{
+namespace Gui
+{
+
+IMP_DEPENDENCY_PROPERTY(CapStyle, StrokeStyle, StartCap, CapStyle_Flat)
+IMP_DEPENDENCY_PROPERTY(CapStyle, StrokeStyle, EndCap, CapStyle_Flat)
+IMP_DEPENDENCY_PROPERTY(CapStyle, StrokeStyle, DashCap, CapStyle_Flat)
+IMP_DEPENDENCY_PROPERTY(float, StrokeStyle, DashOffset, 0.0f)
+IMP_DEPENDENCY_PROPERTY(LineJoinStyle, StrokeStyle, LineJoin, LineJoinStyle_Miter)
+IMP_DEPENDENCY_PROPERTY(float, StrokeStyle, MiterLimit, 10.0f)
+IMP_DEPENDENCY_PROPERTY(DashStyle, StrokeStyle, DashPattern, DashStyle_solid)
+
+DependencyClass* StrokeStyle::get_Class()
+{
+	static DependencyClass depclass(typeid(thisClass), baseClass::get_Class());
+
+	static DependencyProperty* properties[] =
+	{
+		get_StartCapProperty(),
+		get_EndCapProperty(),
+		get_DashCapProperty(),
+		get_LineJoinProperty(),
+		get_MiterLimitProperty(),
+		get_DashOffsetProperty(),
+		get_DashPatternProperty(),
+	};
+
+	return &depclass;
+}
+
+DependencyClass* StrokeStyle::pClass(get_Class());
+
+StrokeStyle::StrokeStyle() : DependencyObject(get_Class())
+{
+}
+
+void StrokeStyle::OnComputedPropertyValueChanged(PropertyValue* pPropertyValue, bool handled)
+{
+	if (pPropertyValue->m_dp == get_StartCapProperty() ||
+		pPropertyValue->m_dp == get_EndCapProperty() ||
+		pPropertyValue->m_dp == get_DashCapProperty() ||
+		pPropertyValue->m_dp == get_LineJoinProperty() ||
+		pPropertyValue->m_dp == get_MiterLimitProperty() ||
+		pPropertyValue->m_dp == get_DashOffsetProperty() ||
+		pPropertyValue->m_dp == get_DashPatternProperty())
+	{
+		if (m_d2d1strokeStyle)
+		{
+			m_d2d1strokeStyle->Release();
+			m_d2d1strokeStyle = NULL;
+		}
+	}
+	else
+	{
+		handled = false;
+	}
+
+	baseClass::OnComputedPropertyValueChanged(pPropertyValue, handled);
+}
+
+ID2D1StrokeStyle* StrokeStyle::GetD2D1(Graphics::RenderTarget* rt)
+{
+	if (this == NULL) return NULL;
+
+	if (m_d2d1strokeStyle == NULL)
+	{
+		float* dashes = NULL;
+		D2D1_DASH_STYLE dashStyle = (D2D1_DASH_STYLE)get_DashPattern();
+
+		Graphics::Direct10::get_D2DFactory()->CreateStrokeStyle(
+			D2D1::StrokeStyleProperties(
+			(D2D1_CAP_STYLE)get_StartCap(),
+			(D2D1_CAP_STYLE)get_EndCap(),
+			(D2D1_CAP_STYLE)get_DashCap(),
+			(D2D1_LINE_JOIN)get_LineJoin(),
+			get_MiterLimit(), dashStyle, get_DashOffset()),
+			dashes, 0,
+		&m_d2d1strokeStyle);
+	}
+
+	return m_d2d1strokeStyle;
+}
+
+}	// Gui
+}	// System

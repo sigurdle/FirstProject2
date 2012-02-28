@@ -1,0 +1,210 @@
+#include "stdafx.h"
+#include "GUI2.h"
+
+#include "physics.h"
+
+namespace System
+{
+namespace Gui
+{
+namespace Media3D
+{
+
+DependencyClass* HeightMap::get_Class()
+{
+	static DependencyClass depclass(typeid(HeightMap), baseClass::get_Class());
+
+	/*
+	static DependencyProperty* properties[] =
+	{
+		get_DataProperty(),
+	};
+	*/
+
+	return &depclass;
+}
+
+DependencyClass* HeightMap::pClass(get_Class());
+
+void HeightMap::Render(ManagedRenderContext renderContext)
+{
+	int cols = 50;
+	int rows = 50;
+
+	if (m_bitmap)
+	{
+		if (m_d3d10_VertexBuffer == NULL)
+		{
+			float cellwidth = 0.25;
+			float cellheight = 0.25;
+
+		//	int width = 100;
+		//	int height = 100;
+
+			Graphics::VERTEX_XYZ_T2* vertices = new Graphics::VERTEX_XYZ_T2[(cols+1)*(rows+1)];
+			uint32* indices = new uint32[cols*rows*6];
+
+			Graphics::VERTEX_XYZ_T2* pvertex = vertices;
+			uint32* pindex = indices;
+
+			float rwidth = 1.0f/(cols+1);
+			float rheight = 1.0f/(rows+1);
+
+			int i = 0;
+
+			for (int y = 0; y <= rows; ++y)
+			{
+				for (int x = 0; x <= cols; ++x)
+				{
+					(*pvertex).position = gm::vector3f(x*cellwidth, 0, y*cellheight);
+					(*pvertex).texcoord = gm::vector2f(x*rwidth, y*rheight);
+					ASSERT(x*rwidth <= 1);
+					ASSERT(y*rheight <= 1);
+
+					++pvertex;
+				}
+			}
+
+			for (int y = 0; y < rows; ++y)
+			{
+				for (int x = 0; x < cols; ++x)
+				{
+					*pindex++ = (y+1)*(rows+1) + x;
+					*pindex++ = (y+1)*(rows+1) + x+1;
+					*pindex++ = (y+0)*(rows+1) + x;
+
+					*pindex++ = (y+1)*(rows+1) + x+1;
+					*pindex++ = (y+0)*(rows+1) + x+1;
+					*pindex++ = (y+0)*(rows+1) + x;
+				}
+			}
+
+			{
+				D3D10_BUFFER_DESC bd;
+				bd.Usage = D3D10_USAGE_DEFAULT;
+				bd.ByteWidth = sizeof(Graphics::VERTEX_XYZ_T2)*(cols+1)*(rows+1);
+				bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+				bd.CPUAccessFlags = 0;
+				bd.MiscFlags = 0;
+				D3D10_SUBRESOURCE_DATA InitData;
+				InitData.pSysMem = vertices;
+				renderContext.m_p->GetRT()->m_d3d10->m_device->CreateBuffer(&bd, &InitData, &m_d3d10_VertexBuffer);
+			}
+
+			{
+				D3D10_BUFFER_DESC bd;
+				bd.Usage = D3D10_USAGE_DEFAULT;
+				bd.ByteWidth = sizeof(uint32)*cols*rows*6;
+				bd.BindFlags = D3D10_BIND_INDEX_BUFFER;
+				bd.CPUAccessFlags = 0;
+				bd.MiscFlags = 0;
+				D3D10_SUBRESOURCE_DATA InitData;
+				InitData.pSysMem = indices;
+				renderContext.m_p->GetRT()->m_d3d10->m_device->CreateBuffer(&bd, &InitData, &m_d3d10_IndexBuffer);
+			}
+		}
+	}
+
+	if (m_inputLayout == NULL)
+	{
+		// Define the input layout
+		D3D10_INPUT_ELEMENT_DESC layout[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },  
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 },  
+		};
+
+		ID3DX10EffectTechnique* m_d3d10_technique0 = renderContext.m_p->GetRT()->m_d3d10->m_d3d10_effect->GetTechniqueByName("HeightMapTechnique");
+		//	m_res->m_d3d9_technique1 = m_res->m_d3d9_effect->GetTechniqueByName("RenderLinearGradient");
+		//	m_res->m_d3d9_technique4 = m_res->m_d3d9_effect->GetTechniqueByName("RenderTextSolidColor");
+
+		// Create the input layout
+		D3DX10_PASS_DESC PassDesc;
+		m_d3d10_technique0->GetPassByIndex(0)->GetDesc(&PassDesc);
+		HRESULT hr = renderContext.m_p->GetRT()->m_d3d10->m_device->CreateInputLayout(layout, _countof(layout), PassDesc.pIAInputSignature, 
+				PassDesc.IAInputSignatureSize, &m_inputLayout);
+		ASSERT(SUCCEEDED(hr));
+	}
+
+	if (m_d3d10_VertexBuffer && m_d3d10_IndexBuffer)
+	{
+		UINT stride[1] = { sizeof(Graphics::VERTEX_XYZ_T2) };
+		UINT offset[1] = {0};
+		renderContext.m_p->GetRT()->m_d3d10->m_device->IASetVertexBuffers(0, 1, &m_d3d10_VertexBuffer, stride, offset);
+
+		renderContext.m_p->GetRT()->m_d3d10->m_device->IASetIndexBuffer(m_d3d10_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+		renderContext.m_p->GetRT()->m_d3d10->m_device->IASetInputLayout(m_inputLayout);
+
+		renderContext.m_p->GetRT()->m_d3d10->m_device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		renderContext.m_p->GetRT()->m_d3d10->m_device->DrawIndexed(cols*rows*6, 0/*StartIndexLocation*/, 0/*BaseVertexLocation*/);
+	}
+}
+
+void HeightMap::AddShapeDesc(physx::PxScene* scene, physx::PxRigidActor* actorDesc)
+{
+	uint nbColumns = m_bitmap->GetWidth();
+	uint nbRows = m_bitmap->GetHeight();
+
+#if defined(PX_PHYSICS_NXPHYSICS_API) && 0
+
+	physx::PxHeightFieldDesc heightFieldDesc;
+
+	heightFieldDesc.nbColumns           = nbColumns;
+	heightFieldDesc.nbRows              = nbRows;
+	heightFieldDesc.thickness      = -1;
+	heightFieldDesc.convexEdgeThreshold = 0;
+
+	// allocate storage for samples
+	heightFieldDesc.samples             = new NxU32[nbColumns*nbRows];
+	heightFieldDesc.sampleStride        = sizeof(NxU32);
+
+	Graphics::MAPPED_TEXTURE2D mapped;
+	m_bitmap->Map(D3D10_MAP_READ, &mapped);
+
+	NxU8* currentByte = (NxU8*)heightFieldDesc.samples;
+
+	for (NxU32 row = 0; row < nbRows; ++row)
+	{
+		for (NxU32 column = 0; column < nbColumns; column++)
+		{
+			NxHeightFieldSample* currentSample = (NxHeightFieldSample*)currentByte;
+
+			ubyte* src = (ubyte*)mapped.pData + mapped.RowPitch*row + column*4;
+
+			currentSample->height         = ((int)src[0]-127)*255;//computeHeight(row,column); //desired height value. Signed 16bit integer
+			currentSample->materialIndex0 = 0;//gMaterial0;
+			currentSample->materialIndex1 = 0;//gMaterial1;
+
+			currentSample->tessFlag = 0;
+
+			currentByte += heightFieldDesc.sampleStride;
+		}
+	}
+
+	NxHeightField* heightField = scene->getPhysicsSDK().createHeightField(heightFieldDesc);
+
+	// data has been copied, we can free our buffer
+	delete[] heightFieldDesc.samples;
+	m_bitmap->Unmap();
+
+	float gVerticalScale = 4;
+	float gHorizontalScale = 4;
+
+	NxHeightFieldShapeDesc* shapedesc = new NxHeightFieldShapeDesc;
+	shapedesc->heightField     = heightField;
+	shapedesc->heightScale     = gVerticalScale;
+	shapedesc->rowScale        = gHorizontalScale;
+	shapedesc->columnScale     = gHorizontalScale;
+	shapedesc->materialIndexHighBits = 0;
+	shapedesc->holeMaterial = 2;
+	shapedesc->meshFlags = 0;
+	actorDesc->shapes.push_back(shapedesc);
+
+
+#endif
+}
+
+}	// Media3D
+}	// Gui
+}	// System
