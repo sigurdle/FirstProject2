@@ -426,7 +426,7 @@ TypedX3DFieldDefinition<type>* classname::get_##fieldname##FieldDef()	\
 }
 
 #define X3DNODE_ABSTRACT(name, basename)	\
-	static NodeType* GetNodeType();	typedef basename baseClass;
+	static NodeType* GetNodeType();	typedef name thisClass; typedef basename baseClass;
 
 #define X3DNODE(name, basename)	\
 	private: static NodeType* nodeType;	\

@@ -16,9 +16,9 @@ NodeType* X3DShapeNode::GetNodeType()
 	};
 	*/
 
-	static NodeType nodeType(nullptr, typeid(X3DShapeNode), nullptr, 0, X3DChildNode::GetNodeType());
+	static NodeType nodeType(nullptr, typeid(thisClass), nullptr, 0, baseClass::GetNodeType());
 	return &nodeType;
 }
 
-}
-}
+}	// x3d
+}	// System

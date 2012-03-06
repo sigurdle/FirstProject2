@@ -17,8 +17,8 @@ public:
 
 	virtual void setAppearance(X3DAppearanceNode *node) = 0;
 
-	static NodeType* GetNodeType();
+	X3DNODE_ABSTRACT(X3DShapeNode, X3DChildNode)
 };
 
 }	// x3d
-}
+}	// System
